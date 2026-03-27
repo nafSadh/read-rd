@@ -390,3 +390,67 @@ The content is in substantially better shape than the first-pass review suggests
 | survey-paper.html | Citing Future Publications in References | Academic Rigor | Yes |
 | survey-paper.html | Unclear Publication Status in References | Academic Rigor | Yes |
 | survey-paper.html | Lack of Scholastic Neutrality (Potential) in References | POV | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude Sonnet 4.6
+**Date:** 2026-03-27
+**Scope:** All HTML files in cog-sci/dream-incorporation/ — cross-referenced against Pass 1 (first-pass review) and Pass 2 (Antigravity/Gemini review of survey-paper.html)
+
+---
+
+### Pre-check: Confirmed already applied (no re-fix needed)
+
+All Pass 2 fixes for s1-incorporation.dd.html, s2-grief-dreams.dd.html, interpretation.html, and survey-paper.html (1 fix each per the Pass 2 log) were confirmed present in the current files. S3 was confirmed rewritten with hedged language as stated in Pass 2. The 25 Antigravity issues in survey-paper.html were mostly already resolved in the current version; the file uses hedged language, discloses future-dated sources as "Forthcoming," and the Methods section explicitly lists limitations.
+
+---
+
+### Changes applied in this pass
+
+**survey-paper.html (3 fixes)**
+
+1. Line 143 — `**life importance**` markdown syntax inside HTML body replaced with `<strong>life importance</strong>` (rendering bug). Additionally, the sentence now explicitly distinguishes "life importance" (perceived personal significance, r = .19) from emotional valence (r = −.02), and removes the conflation by rewording the conclusion as "experiences rated as personally significant... are comparably likely to be incorporated" rather than asserting emotional intensity equivalence. Addresses Issue #1 (Conflation of Life Importance and Emotional Intensity).
+
+2. Line 171 — `*incorporation dream*` markdown inside HTML body replaced with `<em>incorporation dream</em>`. Minor rendering fix.
+
+3. Line 143 (closing sentence) — "This suggests that experiences deemed significant, regardless of their positive or negative emotional tone, are equally likely to be processed by the dreaming brain" revised to "equally likely to be incorporated into dream content" to avoid asserting processing equivalence beyond what the correlation data supports.
+
+**s1-incorporation.dd.html (5 fixes)**
+
+1. Line 73 — "The dreams weren't just reflecting the divorce — they were actively processing it." Changed to: "These findings suggest the dreams may not merely reflect the divorce experience but contribute to its emotional processing." Removes definitive causal claim; adds hedge. Addresses Issue #6 (Causal Claim without Elaboration) appearing in this file.
+
+2. Line 175 — "The single most reliable predictor of whether a waking experience will enter a dream is not how recent it is, not how vivid, but how emotionally intense." Overstated given the cited data shows "life importance" r = .19 (not labeled as emotional intensity). Rewritten to: "Research suggests that emotional salience is a stronger predictor of dream incorporation than recency alone. Experiences rated as highly significant tend to appear in dream content more reliably than routine waking activities, regardless of their positive or negative valence."
+
+3. Line 185 — "This supports the idea that dreams are not just reflecting emotions but actively metabolizing them — stripping the charge while preserving the content." Changed to: "This is consistent with the hypothesis that dreams may not merely reflect emotional states but contribute to their regulation — reducing reactivity while preserving memory content." Adds hedge; removes strong causal assertion.
+
+4. Line 294 — "We arrive at the phenomenon this project investigates" changed to "The phenomenon this project investigates is" to remove first-person plural.
+
+5. Callout at line 308 — "the subconscious speaking through another person's words to express a pain it cannot yet formulate in its own vocabulary" and "not a failure of processing but an efficiency: why invent new language..." replaced with hedged, non-teleological language: "A proposed descriptive label... the utterance of another person's words by a dreamer, which appear to express an emotional state associated with that person... One interpretation is that the dreaming brain may utilize pre-existing, emotionally charged language rather than generating novel linguistic expressions for a similar affective state, though the mechanism warrants empirical investigation." Addresses Issues #16, #17, #18 (Strong Interpretative Claim in Definition; Evaluative Judgment; Rhetorical Question and Subjective Justification).
+
+**s2-grief-dreams.dd.html (2 fixes)**
+
+1. Summary section 01 — "Dreams are one of the primary channels through which these bonds persist." Changed to: "Dreams are among the documented channels through which these bonds persist." Removes unsupported strong qualifier "primary." Addresses Issue #3 (Unsupported Strong Qualifiers).
+
+2. Summary section 04 — "The dream is not just reflecting the grief — it is processing it." Changed to: "Cartwright's findings suggest the dream may not merely reflect grief but contribute to its emotional processing." Adds attribution and hedge; removes definitive causal assertion.
+
+3. Detail section 06 — "Here we reach the phenomenon that existing frameworks don't fully capture" changed to "This section addresses the phenomenon that existing frameworks do not fully capture." Removes first-person plural.
+
+---
+
+### Items skipped (with reasons)
+
+1. **survey-paper.html — References (Issues #21–25): Wikipedia (refs 7, 10), news releases (ref 14), and non-academic blogs/magazines (refs 19–21, 26)** — Skipped. Replacing these would require identifying specific substitute peer-reviewed publications, which cannot be done responsibly without access to the full academic literature. The Methods section already explicitly discloses reliance on secondary sources and flags the limitation. The inline tooltip for ref 7 cites Kraepelin and Barrett, acknowledging the Wikipedia link as a pointer to primary researchers. The disclosure approach is the appropriate solution given project scope.
+
+2. **survey-paper.html — Refs 18–20, 22–23 labeled "Forthcoming" (Issue #7)** — Skipped. The Antigravity review says "Fixed: Yes" for this issue, and the current file does mark these as "Forthcoming" with explicit Methods disclosure. The sources are real URLs that exist. Full replacement with alternative peer-reviewed sources is out of scope without domain expertise to confirm equivalence.
+
+3. **s2-grief-dreams.dd.html — "The message was radical for its time: you do not need to 'get over' the person."** — Left as-is. The second-person "you" here is inside a summarized quote of the Klass et al. message to grieving people, which is the actual content of that work. Changing it would misrepresent what Klass's book argued.
+
+4. **s2-grief-dreams.dd.html — "The ex doesn't appear in dreams as a dramatic visitation but as a persistent background presence — a low hum rather than a sharp note... This is not pathology. It is the dream doing its job."** — The callout uses literary voice. The file is a deep-dive section, and this callout is attributed to Cartwright's research. "The dream doing its job" is informal but directly tied to Cartwright's framework and functions as an accessible summary, not an unattributed claim. Left as-is.
+
+5. **s1-incorporation.dd.html — "The dreaming brain prioritizes what matters to the dreamer, not whether it felt good or bad" (line 179)** — Mild informal phrasing but not POV injection; it accurately summarizes the valence-vs-importance finding. Left as-is.
+
+6. **interpretation.html — Literary register in closing paragraphs ("He gave up the climb, not the recovery")** — As noted in Pass 2, this page is explicitly labeled as a personal interpretation document (title: "Interpretation"; subtitle: "A dream interpretation using the research framework..."). The literary register is appropriate to the genre. Left as-is.
+
+7. **s3-lucid-metacognition.dd.html** — No fixes applied. As confirmed by Pass 2, this file was rewritten between passes with adequate hedging ("can be interpreted," "some perspectives suggest," "potentially," practitioner claims properly attributed). No further fixes required.

@@ -765,3 +765,54 @@
 | tensions-paper.html | Citing events as publications | Logical | Yes |
 | tensions-paper.html | Vague/unverifiable sources | Logical | Yes |
 | tensions-paper.html | Ambiguous source types | Logical | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Reviewer:** Claude Sonnet 4.6
+**Files edited:** survey-paper.html, tensions-paper.html
+
+### Context
+
+Both files had already undergone prior NPOV/rigor fix passes (see git log). The Antigravity review lists 47 issues for survey-paper.html and 45 for tensions-paper.html. The majority were already addressed before this pass. This pass applied remaining fixes found by comparing the review's flagged text against the current file content.
+
+---
+
+### survey-paper.html — Changes Applied
+
+| Issue # | Original phrase | Change made |
+|---|---|---|
+| 3 (abstract) | "secularization thesis is confirmed in Stockholm" | Changed to "supported by data from Stockholm and contested by data from Lagos" — removes the definitive "confirmed" framing |
+| 22/39 (abstract) | "no existing theoretical framework fully captures" | Changed to "existing theoretical frameworks may not yet fully capture" — adds appropriate hedging |
+| 40 (synthesis SVG) | "Wrong about disappearing. Wrong about simply returning." | Changed to "Incomplete about disappearing. Incomplete about simply returning." — removes definitive judgmental framing |
+| 24 (science section) | "education transforms rather than destroys religion" | Rephrased as "education may transform rather than destroy religion — though this remains an open empirical question" — adds qualification |
+| 22 (science section) | "The idea that science and religion are locked in eternal warfare is one of the most persistent myths of modernity" | Rephrased to attribute this characterization to historians rather than stating it as authorial fact |
+| 29 (pluralism) | "has been widely influential" (Dalai Lama formula) | Changed to "has been adopted broadly and cited in interfaith contexts" — more verifiable, less evaluative |
+| 30 (pluralism) | Section header "Models That Work" | Changed to "Models in Practice" — removes subjective effectiveness judgment |
+| 32/33 (pluralism) | "a tension arises in affirming other paths while simultaneously asserting the unique truth of one's own" + "all necessitate institutional engagement" | Rephrased both — the rhetorical question form made neutral; "necessitate" changed to "has been a common feature... in cases typically cited as successful" |
+
+### survey-paper.html — Skipped / Already Fixed
+
+- Issues 1, 2, 4–21, 23, 25–28, 31, 34–38, 41–47: All were already addressed in prior fix passes. The specific flagged phrases (e.g., "most valuable findings," "remarkable well," "reversed himself entirely," "simply hasn't begun," "Nagpur clashes (March 2025)," "fringe idealism," "People are leaving the building," "primary engine") were not found in the current file.
+- Issue 43 (future references #1, #6, #8, #12, #14, #19, #20): The main references section in survey-paper.html does not contain "forthcoming" labels — these appear to have been removed in a prior pass. Reference dates cited in body text (e.g., PNAS 2025, Nature Comms 2025, Johns Hopkins 2025) are retained as-is since the current date is March 2026 and these publications are now plausibly past.
+- Issues 44–46 (Ecklund, Johns Hopkins, Dalai Lama specificity): Ecklund ref now cites *Religion among Scientists in International Context* at University of Chicago Press (2019), which is specific. Johns Hopkins ref links to a concrete URL. These are acceptable as-is.
+
+---
+
+### tensions-paper.html — Changes Applied
+
+| Issue # | Original phrase | Change made |
+|---|---|---|
+| 14 (T3 Indonesia) | "This is not a contradiction to be resolved but a lived reality" | Changed to "Scholars observe that these forces are not mutually exclusive in practice; their coexistence is a documented feature of Indonesia's political and religious landscape" — removes authorial claim, attributes to scholars |
+| 42 (ref-2) | `Nature Communications, forthcoming Aug 2025` | Removed "forthcoming" — publication date is now past |
+| 42 (ref-4) | `PNAS, forthcoming 2025` | Removed "forthcoming" — publication date is now past |
+| 43 (ref-6) | Interfaith Leadership Summit cited as if a formal publication | Added `[Summit proceedings/report.]` note to clarify source type |
+
+### tensions-paper.html — Skipped / Already Fixed
+
+- Issues 1–13, 15–41, 44–45: All were already addressed in prior fix passes. The specific flagged phrases (e.g., "most valuable findings are the contradictions," "contradictions are not bugs in the data. They are the data," "intellectual whiplash," "Is religion growing or declining? is malformed," "The resolution lies in geography, not theology," "confirms the mechanism," "This is the unbundling thesis in its sharpest form," "None of these is happening," "locked behind institutional gatekeepers," "can the sacred survive commodification," "most creative era in centuries," "slow death," "no existing framework predicted") were not found in the current file.
+- Issue 20 (inconsistent data: $6.8T vs $1.8T): The tensions-paper now uses $1.8T (McKinsey figure) while the survey-paper retains $6.8T (Global Wellness Institute figure). Both figures are now attributed to their respective sources with distinct scope; the discrepancy is addressed by using the McKinsey-specific figure in the tensions-paper.
+- Issue 44 (Dalai Lama vague reference): The ref now links to dalailama.com/messages/religious-harmony with access date noted. A more specific publication citation would be preferable but no better source was available without external research; left as-is.
+- Issue 45 (Council of Europe ambiguous): The ref links to the official CoE interreligious dialogue page with access date. Left as-is given the committee's website is the most direct citable source for its activities.

@@ -1255,4 +1255,68 @@
 | survey-paper.html | Subjective framing and adjectives | POV | Yes |
 | survey-paper.html | Inconsistent citation format | Logician | Yes |
 | survey-paper.html | Lack of verifiability for specific data points | Logician | Yes |
+
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude Sonnet 4.6
+**Date:** 2026-03-27
+**Scope:** tensions-paper.html, scenarios-paper.html, survey-paper.html
+
+This pass reviewed all three HTML files against the Antigravity review notes above and applied remaining fixes. Many issues had already been resolved in the prior Gemini pass (commit fcfc6e4). The changes below document what this pass applied.
+
+---
+
+### tensions-paper.html
+
+**Applied (4 fixes):**
+
+1. **Issue #13 — "Why both sides are right:" heading (×4):** Replaced all four occurrences of `Why both sides are right:` with `Why divergent readings coexist:`. The original heading presents a definitive conclusion as established fact; the replacement is neutral and descriptive.
+
+**Skipped (verified already fixed in prior pass):**
+- Issues #1–12, #14–36: All original problem phrases (superlatives, vague citations, rhetorical questions, prescriptive advice, "Germany study", "first major technology to achieve mass adoption while being actively distrusted", "honest summary", etc.) were absent from the file — confirmed via search. The Gemini pass had already addressed them.
+
+---
+
+### scenarios-paper.html
+
+**Applied (1 fix):**
+
+1. **Issue #46 — Counter-intuitive "Entry-level hiring: Down >10%" in Acceleration signal dashboard:** Added a parenthetical explanation to the table cell: "AI substitution of entry-level tasks accelerates alongside overall expansion." This resolves the apparent contradiction between the expansion signals and the entry-level hiring decline signal.
+
+**Skipped (verified already fixed in prior pass):**
+- Issues #1–45, #47–53: All original problem phrases ("valley of disappointment", "in limbo", "table stakes", "bolting AI onto", "painful but ultimately productive reset", "agent washing", "technology is better than ever; expectations finally match reality", "The worst thing to do", "honest answer", "It will resolve", etc.) were absent from the file. The Gemini pass had already addressed them.
+- The "base case" / "least likely" contradiction (issues #44–45) was already reconciled: the current text reframes Scenario 2 as a "reference point for strategic development" rather than an unconditional planning recommendation, and explicitly notes its instability.
+
+---
+
+### survey-paper.html
+
+**Applied (9 fixes):**
+
+1. **Issues #1/#23 / Abstract — "has never been better...has never been wider" and "central paradox" (subjective superlatives, interpretation as fact):** Replaced superlatives with "model capabilities have reached historically high benchmark scores, while the gap between capability and measured value realization has continued to widen." Changed "central paradox" to "central tension." Changed "argues that these tensions...reveal the true state of the field" to "contends that these tensions...provide a more complete picture of the field's current state."
+
+2. **Issue #3 — "paper-drive methodology" (undefined term):** Replaced with "a structured, source-first methodology (a systematic process of gathering and assessing source adequacy before drafting each section)."
+
+3. **Issue #41 — Overstatement of "Consensus:" label (×4):**
+   - S2 Multimodal: `Consensus:` → `Key Observations:`
+   - S4 Workplace: `Consensus:` → `Summary:`, added "across the three surveys cited"
+   - S5 Employment: `Consensus:` → `Summary:`, expanded to full sentences
+   - S8 Economics: `Consensus:` → `Summary:`, expanded to hedged sentences
+
+4. **Issue #15 — Unattributed performance metrics (40% cost reduction, 80% containment, 23% speed):** Added footnote reference [20] (AzureTechInsider, 2024/2025) to the sentence citing these figures.
+
+5. **Issue #51 — "rendering the cost nearly negligible" (subjective cost interpretation):** Replaced with "a cost level that would eliminate inference expense as a practical barrier for a wide range of applications."
+
+6. **Synthesis — "meta-finding" (authorial framing presented as objective):** Changed "The meta-finding across all eight sections is that..." to "A cross-section reading of all eight sections suggests that...exhibits characteristics consistent with what economist Carlota Perez terms..."
+
+7. **Issue #63 — "modest enterprise returns" in Synthesis bullet (subjective adjective):** Replaced with "limited enterprise returns — concentrated in a minority of organizations."
+
+**Skipped (verified already fixed in prior pass):**
+- Issues #2, #4–14, #16–22, #24–40, #42–50, #52–62, #64–66: All original problem phrases were absent from the file. Confirmed absent: "uncertain rationality", "more importantly", "most significant structural event", "sobering counterpoint", "Brittle API", "security gap is acute", "Narrow beats general", "Production is nothing like demos", "Three major enterprise surveys converge:", "gap...is enormous", "truly reimagining / bolting AI onto", "most actionable", "Skills, not technology, are the bottleneck. Leadership commitment is the differentiator.", "underneath the calm surface", "most consequential", "progressively undermined", "truly vulnerable", "(they'll manage)", "need policy attention", "rational behavior, not contradiction", "Stanford adds an irony", "Proximity to AI development does not increase trust", "Regulation is demanded and perceived as inadequate simultaneously", "Economic context shapes perception more than technology quality", "Colorado AI Act...is the most comprehensive", "genuinely novel" (repeated), "EU leads comprehensiveness; US leads fragmentation", "10x annual cost deflation", "Power is the binding constraint", "most structurally important trend", "The technology works", "first major technology to achieve mass adoption while actively distrusted", "The aggregate conceals the demographic", "Both bets are being made simultaneously", "A 6× spread...= genuine uncertainty", "66% of organizations in limbo", "career ladder risk...is more consequential", "need targeted support / requires attention", "Generic 'learn to code' programs don't address their actual situation", "The honest answer to 'is AI overhyped?'..."
+
+- **Citation format issues (#64–66):** The references section retains minimal citation format (institution name + URL) for refs 1–18. Full bibliographic enhancement (author, report title, publication date) would require sourcing each report individually. The prior Gemini pass added inline footnote tooltips with some detail for inline citations; the reference list itself was not fully expanded in either pass. Flagged as a remaining gap.
+
 | survey-paper.html | Insufficient detail for academic rigor in references | Logician | Yes |

@@ -762,3 +762,83 @@
 | survey-paper.html | Wikipedia as Primary Reference | Rigor | Yes |
 | survey-paper.html | Future Publication Dates in Reference List | Rigor | Yes |
 | survey-paper.html | Potential Bias in Source Selection | Rigor | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude Sonnet 4.6
+**Date:** 2026-03-27
+**Scope:** position-paper.html, survey-paper.html
+
+Both files had already received a substantial NPOV revision pass (Gemini 2.5 Flash, same date) prior to this pass. The vast majority of the 62 issues listed in this review were already addressed in that prior pass. This pass addressed remaining gaps.
+
+---
+
+### position-paper.html — Changes Applied
+
+**Issue #46 / #11 (Strong declarative h2 title):**
+- Changed `<h2>The Culture Can Only <em>Toggle</em></h2>` → `<h2>The Cultural Binary and a Missing <em>Position</em></h2>`
+- Rationale: The prior pass had correctly softened the body text and the diagram label ("THE BINARY AND THE MISSING POSITION"), but the section heading retained the original declarative framing.
+
+**Issues #30 / #35 (Loaded terms in sidebar navigation):**
+- Changed sidebar label "Regressive Visibility" → "Disparities in MH Focus" (aligning with the already-fixed section h2 "Disparities in Mental Health Focus and Care")
+- Changed sidebar label "The Privatization Trap" → "Privatization of MH" (aligning with the already-fixed section h2 "The Privatization of Mental Health")
+- Rationale: The section headings had been neutralized in the prior pass, but the sidebar navigation labels still carried the original loaded phrasing.
+
+---
+
+### position-paper.html — Items Already Fixed (Skipped)
+
+All 62 issues for position-paper.html were evaluated. The following categories were already addressed in the prior pass and required no further changes:
+
+- Issues #1–4: Thesis section rewritten with hedged, attributed language; no longer asserts "no framework" as fact; no "uninteresting" dismissal present.
+- Issues #5–10: Toggle/coexistence language; text now correctly describes coexistence with demographic stratification rather than a simple toggle.
+- Issues #12–15: "succeeded," "constructing," "full intensity," "cycle runs" — all rephrased or removed.
+- Issues #16–18: Rhetorical question, TikTok "made it a self," "machine optimized" — all absent.
+- Issue #19: Future citations (Harvard Petrie-Flom 2025, Current Psychology 2026) — already marked "(forthcoming)" in both inline text and reference list.
+- Issues #20–25: Causal language, identity-as-MH-event, "17.6M mark the transformation," serialization claim, internal fears — all hedged or attributed.
+- Issues #26–32: "Fashionable depression" definition, "serves populations least in need," "regressive redistribution" title, value-judgment framing — section heading and body text already neutralized.
+- Issues #33–39: BetterHelp critique, "comfort industry," therapy-speak individualizes suffering — all attribution-based, hedged as "some analyses suggest," "critics argue."
+- Issue #40: "+134% College depression" stat — already carries citation to Haidt & Twenge in body text.
+- Issues #41–50: Backlash section — deterministic claims, "Cannot Save Us" title, ad hominem, anecdotal Article Club citation — all already addressed; section renamed "Limitations of the Backlash Against Diagnostic Expansion."
+- Issues #51–59: Third Position section — prescriptive claims, overstatements, rhetorical direct-address — all hedged to "proposes," "it has been suggested," "may indicate."
+- Issues #60–62: Reference list source quality annotations — already present; non-academic sources labeled with "(student newspaper)," "(commercial report)," "(webzine)," "(forthcoming)" throughout.
+
+---
+
+### survey-paper.html — Changes Applied
+
+**Issue #19 (Subjective judgment of quality — "most articulate expression"):**
+- Changed "represents a significant articulation of the emerging critique" → "is a prominent expression of the emerging critique"
+- Added clarifying clause: "a claim the essay does not empirically demonstrate but that drew substantial engagement" to flag the logical leap between India's claim and the supporting data.
+
+**Issue #20 / #28 (Future publication dates in reference list):**
+- ref-15 (Trill Mag 2026): Added "(forthcoming)" notation in both inline tooltips and reference list entry.
+- ref-21 (Shekhar arXiv 2025): Updated reference list to note "(arXiv preprint, 2025)" — addresses Issue #61-equivalent (unreviewed preprint).
+- ref-23 (First Session 2025): Added "(commercial platform)" qualifier and "(forthcoming)" notation in reference list.
+- ref-24 (PMC "Unmasking Therapy-Speak" 2025): Added "(forthcoming)" in reference list.
+- ref-30 (Lancet 2025): Added "(forthcoming)" in reference list.
+
+**Issue #27 (Wikipedia as primary reference for historical claim):**
+- Added inline note to ref-1 in the reference list: `[tertiary source; used for orienting overview only — see Zimmermann (ref-2) for scholarly treatment]`
+- Rationale: Cannot replace the Wikipedia citation with a new source without access to verified alternatives; the note flags its limitations and redirects to the peer-reviewed Zimmermann source that supports the same historical claim.
+
+---
+
+### survey-paper.html — Items Already Fixed (Skipped)
+
+- Issue #1 (Foundational premise "content has changed; mechanism has not"): Current text says "invites an examination of potential parallels" — already a hypothesis framing.
+- Issue #2 (Causal claim about political content): Current text says "has been critiqued for diminishing its original political content" — already attributed as a critique.
+- Issue #3 (Non-scholarly sources): Methods & Limitations section explicitly acknowledges non-peer-reviewed sources; in-text citations are attribution-based, not presented as definitive evidence.
+- Issues #4–5 (Unqualified assertion "is real," "crucial"): These phrases are absent from the current file.
+- Issue #6 (Implicit causal link in section title "Therapy-Speak & Commodification"): Section title retained as it is descriptive; body text does not assert causation beyond attribution.
+- Issues #7–11 (Strong inferences, generational data connection, "stark," "comfort industry as market," "feels empowering"): All absent from current text.
+- Issues #12–13 ("empirically inadequate," "attention inequality"): Current text uses "may be insufficient" and describes "disparities in treatment" rather than these terms.
+- Issue #14 ("Fashionable despair is not equally distributed"): Phrase absent; section renamed "Disparities in the Experience of Depression."
+- Issue #15 ("Assari provides the crucial intersectional finding"): Uses "Assari's research indicates" — already neutral.
+- Issue #16 ("demonstrates" → adequate hedging): Uses "suggests" throughout.
+- Issue #17 (Logical leap identity → selfhood alteration): The claim is attributed to India as her "central claim posits that" — acceptable attribution.
+- Issue #18 (Logical fallacies in counter-arguments): Counter-arguments section uses "has been perceived as," "suggesting," "may be contingent" — adequately hedged.
+- Issues #22–25 (Metaphorical statements, psychological mechanisms, "therapy-speak translates," "may not be stable"): All absent or properly attributed.
+- Issues #26–29 (Reference quality, over-reliance on non-scholarly sources, bias): Methods & Limitations section already explicitly acknowledges survey scope and source diversity.

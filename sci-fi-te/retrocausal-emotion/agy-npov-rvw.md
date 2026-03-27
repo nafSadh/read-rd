@@ -237,3 +237,38 @@ No subjective POV found.
 | survey-paper.html | Inconsistent Numbering in Reference List | Structural | Yes |
 | survey-paper.html | Incomplete Reference Information | Structural | Yes |
 | survey-paper.html | Factual Inconsistency (Future Date) | Factual | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+**File reviewed:** `survey-paper.html`
+
+### What Was Already Fixed (Prior to This Pass)
+
+The Gemini fix pass (recorded in the "Issues Found and Fixed" section above) and an earlier editing pass had already addressed nearly all issues flagged by the Logician and POV Reviewer in Sections 1–11. Specifically:
+
+- **Section 1 (Abstract):** Declarative claims ("Hope and depression are not reactions to the future; they are the future's fingerprint on the present", "This is not metaphor") were removed; the abstract now uses hedged, exploratory language.
+- **Section 3:** "Retrocausality is becoming increasingly concrete" (POV: subjective evaluation) — removed. "2026 follow-up" reference (Logician: future date) — corrected to a real date; ref-13 in the reference list was set to 2014.
+- **Section 4 (hope/callout):** The "Bridge" callout formerly asserted hope as a "retrocausal signal" and an "advanced wave traveling backward." It now explicitly acknowledges the block universe as ontological rather than causal, flags the speculative nature of any retrocausal reinterpretation, and notes the significant departure from Seligman's stated position.
+- **Section 5 (depression):** "clinical practice has overwhelmingly focused on past trauma" (POV: unsubstantiated generalization) — softened to "its emphasis in clinical discourse has varied."
+- **Section 6 (free will):** "Rovelli is less patient" (POV: subjective characterization) — removed. "For a writer, Carroll's framework is powerful" (POV: subjective evaluation) — removed; replaced with neutral framing of the framework's utility.
+- **Section 7 (embodiment):** "Against the backdrop of timelessness, the body insists on time" (POV: anthropomorphic/poetic assertion) — removed. "thermodynamic imprint" (Logician: unjustified technical jargon) — replaced with "entropy configuration." The worldline/determinism tension in Section 7 was resolved by framing therapeutic processes as conceptualized segments rather than literal alterations.
+- **Section 8 (literary):** "The best temporal fiction doesn't explain the physics — it enacts it" (POV: subjective value judgment) — revised to "Works of temporal fiction often enact physics." "Borges anticipated many-worlds before Everett" (Logician: overstatement) — softened to "a literary concept often discussed in relation to Everett's Many-Worlds Interpretation." "gelato as measurement" listed without explanation — removed from the structural conceits list.
+- **Section 9 (tensions):** "Bell himself dismissed it — confusing it with superdeterminism" (POV: interprets Bell's reasoning) — changed to "a stance sometimes interpreted as conflating it with superdeterminism." "the phenomenology maps perfectly onto retrocausal language" (POV: "perfectly" is a strong subjective claim) — revised to raise it as an open question. "The therapeutic answer must be the first" (POV: strong prescriptive judgment) — softened to "addressing the internal machinery is generally prioritized." "The poetic truth may be the second" — removed. T6 body/block tension was significantly hedged throughout.
+- **Section 10 (methods):** "because the connections are the point" (POV: authorial framing) — removed. "The central limitation is honest" (POV: subjective judgment) — "honest" removed. "The value of the project is not empirical but conceptual and aesthetic" (POV: subjective value claim) — reframed as "The project's aim is not empirical validation but conceptual and aesthetic exploration."
+- **Reference list (Issue 8):** ref-16b formerly had `value="16"` (same as ref-16); corrected to `value="17"` so every reference has a unique sequential number.
+
+### Changes Applied in This Pass
+
+1. **In-text date inconsistency (Section 02 / ref-13):** The in-text link label and tooltip both read "2015" for the Price & Wharton Conversation article, while the reference list entry (ref-13) correctly reads 2014. Changed in-text "2015 follow-up" → "2014 follow-up" and tooltip "The Conversation, 2015" → "The Conversation, 2014" for consistency with the reference list.
+
+2. **In-text citation display for ref-16b:** The reference list entry `id="ref-16b"` renders as list item 17 (`value="17"`), but the in-text footnote anchor still displayed `[16b]`. Changed the display text to `[17]` so the inline citation matches the rendered reference number. The anchor `href="#ref-16b"` is retained so the link still resolves correctly.
+
+### What Was Skipped (With Reasons)
+
+- **Incomplete reference information (Issue 9):** The review noted that ref-23b (Clark: Surfing Uncertainty) and ref-33 (Seligman: Learned Helplessness) lacked URLs. Both entries already include full bibliographic details in plain text (author, title, publisher, year). Adding URLs for these would be speculative (no canonical stable URL is obvious without verification), and the existing plain-text citations are academically adequate. Skipped to avoid introducing incorrect links.
+- **Rovelli free will elaboration (Section 6 Logician):** The Logician noted that Rovelli's claim about Spinoza resolving free will confusions lacked internal elaboration. The current text faithfully attributes this claim to Rovelli with a citation. Expanding the argument would require editorial interpretation beyond what the source supports; skipped as out of scope for an NPOV fix pass.
+- **Carroll free will analogy justification (Section 6 Logician):** The Logician noted the arrow-of-time analogy relies on assertion rather than derivation. The current text presents Carroll's view as his position with citation, which is appropriate attribution; no unattributed claim remains. Skipped.

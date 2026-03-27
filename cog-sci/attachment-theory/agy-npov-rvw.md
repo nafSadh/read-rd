@@ -584,3 +584,127 @@
 | survey-paper.html | Reliance on non-scholarly sources for critical perspectives in references | Logician | Yes |
 | survey-paper.html | Inclusion of future publication date without qualification in references | Logician | Yes |
 | survey-paper.html | Lack of full citation information in references | Logician | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude (claude-sonnet-4-6)
+**Date:** 2026-03-27
+**File reviewed:** survey-paper.html
+
+### State at time of pass
+
+The Gemini review marked all 71 issues as "Fixed: Yes" in its summary table. On reading the current HTML, most issues had already been addressed in a prior edit pass. This pass identified and applied the remaining unfixed items.
+
+---
+
+### Changes Applied
+
+**1. SVG diagram label — Issue #37**
+- Location: Section 05 critique diagram, SVG text
+- Old: `At each step: nuance lost, certainty gained`
+- New: `At each step: specificity reduced, perceived certainty increased`
+- Reason: "nuance lost, certainty gained" is subjective commentary; the new phrasing describes the process neutrally.
+
+**2. Section 07 sub-heading — Issue #60**
+- Location: Synthesis section, `<h3>` tag
+- Old: `The Honest Framing`
+- New: `Synthesis of Evidence`
+- Reason: "Honest" injects a moral/ethical judgment. The neutral heading describes the content of the subsection accurately.
+
+**3. Synthesis paragraph — Issue #58**
+- Location: Section 07 synthesis paragraph
+- Old: `A significant contribution of the theory is the concept of earned security`
+- New: `One contribution identified in the literature is the concept of earned security`
+- Reason: "significant contribution" is a subjective superlative judgment. The revised phrasing attributes the claim to the literature rather than stating it as fact.
+
+**4. Methods limitations sentence — Issue #67**
+- Location: Section 08 Limitations paragraph
+- Old: `The "useful rather than true" framing may be perceived as an uncharitable interpretation by proponents of attachment theory.`
+- New: `The "useful rather than true" framing represents one critical perspective and does not encompass the full range of scholarly positions on attachment theory.`
+- Reason: "Uncharitable interpretation" and "proponents may perceive" anticipates subjective reader reactions using evaluative language. The revised phrasing states the limitation directly and neutrally.
+
+**5. Section 04 sub-heading — evaluative heading**
+- Location: Section 04 Neuroscience, `<h3>` tag
+- Old: `The Scientific Problems`
+- New: `Critiques and Contested Claims`
+- Reason: "Problems" implies an evaluative judgment of the theory's validity. The revised heading neutrally describes the content as critiques and ongoing disputes.
+
+**6. Tension card — Issue #54**
+- Location: Section 04 Polyvagal Validity tension card
+- Old: `Porges: a clinically useful, testable neurobiological hierarchy`
+- New: `Porges: a testable neurobiological hierarchy with clinical applications`
+- Reason: "clinically useful" is a subjective assessment of value. Restructured to describe applications without implying a quality judgment.
+
+**7. Section 05 sub-heading — evaluative heading**
+- Location: Section 05 Critique, `<h3>` tag
+- Old: `The Cultural Problem`
+- New: `Cross-Cultural Variation`
+- Reason: "Problem" frames the cross-cultural data as an established problem rather than a contested finding. The revised heading describes the content descriptively.
+
+**8. In-text Porges citation year — Issue #39/#70**
+- Location: Section 04 paragraph, in-text citation
+- Old: `Porges (2025)` / tooltip `N3 Porges (2025)`
+- New: `Porges (forthcoming)` / tooltip `N3 Porges (forthcoming)`
+- Reason: The reference list already corrected the entry to "Forthcoming," but the in-text citation still showed "(2025)." Made consistent with the reference list.
+
+---
+
+### Items Already Fixed (Not Requiring Additional Changes)
+
+The following 63 issues from the Gemini review were already addressed in the prior pass and required no further changes:
+
+- **Issues #1–4** (Abstract POV language): Abstract fully rewritten in neutral, attributed language. "peculiar position," "more trusted than MBTI," "does not withstand scrutiny," and the strong evaluative statement on popularization are all gone.
+- **Issue #3** (r≈.30 called "weak"): Now reads "statistically significant but far from deterministic."
+- **Issue #5** (cross-cultural diagram data without elaboration): Prose in Section 01 now explicitly elaborates on the 52%/0% data before the diagram.
+- **Issue #6** (Science-to-Folk Pipeline in Origins): The pipeline in the timeline diagram maps stages to historical developments; the surrounding prose frames the timeline as illustrating "conceptual evolution." Substantially addressed.
+- **Issue #7** ("key insight"): Entire passage reworked; phrase does not appear.
+- **Issue #8** (assertive Bowlby contrast): Reworked with attribution to Bowlby's framework.
+- **Issue #9** ("empirical breakthrough"): Now reads "Empirical advancements were made by."
+- **Issue #10** ("not without problems"): Now reads "faced methodological criticisms from its inception."
+- **Issue #11** ("a distinction that matters"): Phrase removed; consequence stated factually.
+- **Issue #12** ("most thorough"): Bretherton now cited as offering "a comprehensive historical account."
+- **Issue #13** ("messier"): Replaced; Section 02 now says "more complex underlying structure."
+- **Issue #14** ("most careful methodologist"): Not present; passage fully reworked.
+- **Issue #15** ("The problem:"): Not present.
+- **Issue #16** (prescriptive "give pause" language): Not present.
+- **Issue #17** ("feel definitive and identity-affirming"): Attributed to UnHerd's comparison; stated as their characterization.
+- **Issue #18** ("no clean types"): Not present; replaced with "without distinct categorical boundaries."
+- **Issue #19** (rhetorical question in Section 04): Not present; Section 04 opens with declarative framing.
+- **Issue #20** ("The Core Problem" heading): Not present.
+- **Issue #21** ("Your childhood determines your love life"): Not present.
+- **Issue #22** ("severe" criticism): Not present; now "attracted criticism."
+- **Issue #23** (Wikipedia "useful"): Now reads "summarizes some of the critique literature."
+- **Issue #24** ("not satisfied the neuroscience community"): Now reads "remains a subject of ongoing discussion."
+- **Issues #25–29** (source quality, logical leap, citation gaps, blurring, rhetorical language): Section 05 now properly attributes all claims to named sources; "devastating" is gone; source labels are transparent.
+- **Issue #30** ("critically significant"): Not present.
+- **Issue #31** ("reckoning"): Not present.
+- **Issue #32** ("preeminent"): Now "prominent temperament researcher."
+- **Issue #33** ("He was wrong"): Reworked to "this prediction … has not materialized as anticipated."
+- **Issue #34** ("devastating"): Not present.
+- **Issue #35** (Baltimore/Tokyo/Nairobi rhetorical flourish): Retained but converted to conditional, attributed phrasing ("suggests that behaviors … might be perceived differently").
+- **Issue #36** ("most pointed comparison"): Not present.
+- **Issue #38** (blog post sources in Section 06): Blog posts now clearly identified as such in the prose (e.g., "A blog post by Calm," "A blog post on goodemdrtherapy.com," "a blog post by Kindman & Co").
+- **Issue #39** (Calm 2025 future date): In-text citation corrected to "Calm (n.d.)"; reference list shows "Calm. (n.d.)."
+- **Issue #40** ("the narrative pathway" → "a narrative pathway"): Section 06 now reads "documents a narrative pathway."
+- **Issue #41** (ICEEFT self-referential): Identified as "ICEEFT's research summary" — source provenance transparent.
+- **Issue #42** (EMDR efficacy unsubstantiated): Section 06 now cites a 2023 meta-analysis (18 RCTs, 1,213 subjects) for EMDR effect sizes.
+- **Issues #43–47** (Section 06/07 subjective claims about "greatest contribution," "most useful version," "The Hope," callout premise): Callout heading changed to "Conceptual Implications"; premise is hedged ("if … is considered"); "most useful version" and "greatest contribution" not present.
+- **Issues #48–57** (Section 08 synthesis POV language): Synthesis section fully reworked; all flagged phrases absent.
+- **Issues #61–66** (Methods section weaknesses): Methods section now acknowledges secondary source reliance, Wikipedia use, and confirmation-bias-informed framing without using prescriptive or self-justifying language.
+- **Issue #68–69** (reference list source mixing): Reference list now includes full citation details for academic sources and clearly-labeled non-academic entries.
+- **Issue #71** (abbreviated citations): Reference list now includes full author, title, journal, year, and page details for all academic sources.
+
+---
+
+### Items Skipped (With Reasons)
+
+**Issues #25, #28, #29, #38, #41, #68, #69** — Source replacement for non-peer-reviewed references:
+The review recommended replacing blog posts (Calm, goodemdrtherapy.com, Kindman & Co, ICEEFT) and non-scholarly sources (Fatherly, UnHerd, Refinery29, personalityresearch.org, Wikipedia) with peer-reviewed alternatives. These sources remain because: (a) replacing them requires identifying specific peer-reviewed substitutes, which is beyond the scope of a language-fix pass; (b) the text now clearly identifies these sources by type (e.g., "A blog post by…"), making their non-scholarly status transparent to the reader. The methodological limitation is acknowledged in Section 08.
+
+**Issue #6** (Science-to-Folk Pipeline placement in Origins timeline) — Partially addressed:
+The SVG diagram cannot accommodate extended explanatory prose. The surrounding HTML text frames the diagram as illustrating "key historical milestones and conceptual evolution," which implicitly connects the pipeline to the historical narrative. Full remediation would require restructuring the diagram or adding a caption paragraph, which is deferred.
+
+**Issue #64** (vague "systematic web searches" description) — Already substantially addressed:
+The Methods section now specifies "systematic web searches using predefined keywords across relevant academic databases and search engines for each dimension, supplemented by citation tracking." This is more specific than the original but still lacks enumerated databases or inclusion/exclusion criteria; further specificity would require fabricating methodological details not established in the source material.

@@ -584,3 +584,47 @@
 | survey-paper.html | Subjective judgment "Limitations are significant" | POV | Yes |
 | survey-paper.html | Prescriptive statement on necessary future research | POV | Yes |
 | survey-paper.html | Subjective judgment of a deficiency | POV | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+**File reviewed:** survey-paper.html
+
+### Context
+
+When this pass began, the HTML had already been substantially revised in a prior edit pass — the great majority of the 71 flagged issues (specific phrases like "landmark meta-analysis," "remarkably consistent," "the practitioner is literally training," "most evidence-based psychotherapy," "Critically, SABS scores," "The cognitive work IS the practice," etc.) were no longer present in the file. This pass addressed the residual issues that remained.
+
+### Changes Applied
+
+| # | Location | Change | Reason |
+|---|---|---|---|
+| 1 | Sidebar nav (line 113) | "Toxic Stoicism" → "Misapplied Stoicism" | "toxic" is evaluative/POV (issues #4, #14) |
+| 2 | Section 04 heading (line 191) | "Toxic Stoicism" → "Misapplied Stoicism" | Same: removes evaluative label from section title |
+| 3 | Section 04 body (line 192) | "The fundamental mechanism of toxic Stoicism involves a misinterpretation" → "A common pattern in misapplied Stoicism involves a conflation" | Removes "toxic" label; "fundamental mechanism" overstated; "conflation" more neutral than "misinterpretation" |
+| 4 | Section 04 body (line 193) | "directly linked to" → "associated with" | "directly linked" implies established causation; the research shows association (issue #10) |
+| 5 | Section 04 body (line 194) | "reveals how far the pop version has drifted from the philosophical original" → "documents significant divergences between contemporary popular presentations and the philosophical tradition" | "reveals how far...drifted" is evaluative framing (issue #63) |
+| 6 | Section 04 body (line 195) | "may lead to victim-blaming" → "may be used to suggest that individuals bear sole responsibility for outcomes partly determined by systemic factors" | "victim-blaming" is a critical/evaluative characterization (issue #61); replaced with a descriptive account of the misapplication |
+| 7 | Methods (line 244) | "misuse and toxic Stoicism" → "misuse and misapplied Stoicism" | Removes "toxic" label from dimension description |
+| 8 | Methods (line 244) | "the pop-psychology pipeline" → "the commercialization trajectory" | "pop-psychology pipeline" carries dismissive connotation (issues #7, #43); matches the revised section title already in use |
+| 9 | Evidence section (line 182) | "often demonstrates greater methodological rigor" → "sometimes draws on more controlled study designs" | "greater methodological rigor" is a comparative judgment without explicit criteria (issue #33); replaced with a factual description |
+| 10 | Synthesis section (line 233) | "Historical Stoic philosophy did not advocate for political quietism" → "Classical Stoic authors such as Marcus Aurelius wrote extensively on social duty, suggesting that political engagement was integral to the tradition" | "did not advocate" is a definitive interpretation of historical intent (issue #62); replaced with attribution to specific authors and softer framing |
+| 11 | Synthesis callout (line 237) | "authentic Stoic practices" → "philosophically-grounded Stoic practices" | "authentic" is a subjective qualifier (issue #54); replaced with a more descriptive term |
+| 12 | Framework section (line 151) | "feelings of inauthenticity that eroded their relationships over time" → "self-reported feelings of inauthenticity that were associated with eroded relationship quality over time" | Attributes the characterization to self-report and softens causal language (issues #23, #29) |
+
+### Items Not Changed (with reasons)
+
+| Issue | Element | Reason Skipped |
+|---|---|---|
+| #37 | "2025 PMC systematic review" citation | The reference list already carries a disclaimer "[date unverified — cite pending publication confirmation]"; further change would alter the reference list structure. The fix note is sufficient. |
+| #34 | "The whole may be more than the sum of parts, but this remains untested" (tension card) | This phrase was not present in the current file; already removed in prior pass. |
+| #41 | "cultural appropriation" as pipeline endpoint | Not present in current file; the SVG diagram already reads "Potential for misinterpretation or negative outcomes." Already addressed in prior pass. |
+| #45 | "cultural appropriation" endpoint | Same as above. |
+| #70 | "The field needs: dedicated RCTs..." prescriptive framing | Current text reads "Future research directions include..." which is already descriptive, not prescriptive. No change needed. |
+| #71 | "What is missing is the empirical work" | Current text reads "Empirical work in these areas remains to be conducted." Already neutralized in prior pass. |
+| #69 | "Limitations are significant" | Current text reads "Several limitations are present." Already fixed in prior pass. |
+| Section heading "Toxic Stoicism" sidebar id | The HTML `id="toxic"` attribute on the section element was retained (not changed) | Changing the id would break anchor links and JavaScript scroll behavior; the visible label was changed instead. |
+| #22 | Neuroscience section: "mechanistic justification for Stoic practice" | Current text reads "has been interpreted as providing a neurobiological rationale...by suggesting the training of relevant neural circuits." Already hedged in prior pass. |
+| #19/#26 | "neural correlate of what the Stoics described" | Not present in current file; replaced in prior pass with "align with philosophical descriptions, such as the Stoic concept of achieving equanimity through reason." |

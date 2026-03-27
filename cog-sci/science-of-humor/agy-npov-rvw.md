@@ -578,3 +578,55 @@
 | survey-paper.html | Speculative and Highly Subjective Claims (Section 9) | NPOV | Yes |
 | survey-paper.html | Temporal Inconsistency in Source Dates | Logical Rigor | Yes |
 | survey-paper.html | Personal Voice and Definitive Statements (Section 10) | NPOV | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude (claude-sonnet-4-6)
+**Date:** 2026-03-27
+**Files inspected:** position-paper.html, survey-paper.html
+
+### Findings
+
+Both files were read in full and checked against all 47 issues in the position-paper section and all 21 issues in the survey-paper section.
+
+---
+
+### position-paper.html
+
+**Result:** All 47 flagged issues were already resolved in the file as found.
+
+A full-text scan for every specific phrase cited in the review (e.g., "pose a serious challenge", "And most critically:", "It is exactly what a social theory predicts", "Crucially, Dunbar's research demonstrates", "group membership, not intellectual appreciation", "most striking recent evidence", "counterintuitive finding", "The Strongest Evidence", "ultimate fitness indicator", "cognitive theories cannot explain", "vast pattern-matching capability, enormous cultural knowledge, and sophisticated language understanding", "makes perfect sense", "should be getting good at it") returned no matches. The content was substantially rewritten in a prior pass to hedge speculative claims, remove subjective intensifiers, avoid false dichotomies, and attribute conclusions rather than stating them as objective fact.
+
+References (issues 43–47): The reference list uses consistent APA-style format with author names, year, title, journal/publisher, and volume/page numbers throughout. No "PMC" appears in displayed titles. ArXiv entries are marked as preprints. No changes were required.
+
+**Changes made:** None. The prior Gemini pass had already applied all fixes.
+
+---
+
+### survey-paper.html
+
+**Result:** Two residual issues were found and fixed.
+
+**Fix 1 — Issue 27 (Subjective judgment: "counterintuitive finding"), line 265**
+
+"Counterintuitively" introduced a subjective characterization of the meta-analysis finding. The associated inference also overstated causation.
+
+- Before: `Counterintuitively, non-humorous laughter (such as laughter yoga) showed higher effect sizes than humorous laughter — suggesting the physical act matters more than cognitive humor appreciation.`
+- After: `Notably, non-humorous laughter (such as laughter yoga) showed higher effect sizes than humorous laughter — a result that complicates any assumption that the cognitive appreciation of humor is the active ingredient.`
+
+**Fix 2 — Issues 18 and 13 (Subjective framing: "fails in instructive ways"; evaluative "most effective"), line 293**
+
+"AI humor fails in instructive ways" is a subjective evaluation of the failures as instructive. "Most effective humorous AI outputs are those generated unintentionally" retained the evaluative superlative from the original issue 13 ("most genuinely funny").
+
+- Before: `AI humor fails in instructive ways. Observations suggest that some of the most effective humorous AI outputs are those generated unintentionally — the gap between confident delivery and absurd content can result in a comedic effect that has been likened to an 'uncanny valley' phenomenon.`
+- After: `AI humor exhibits failure patterns that illuminate the requirements of humor production. Observations suggest that AI outputs perceived as humorous are frequently unintentional — the gap between confident delivery and absurd content can result in a comedic effect that has been characterized as resembling an 'uncanny valley' phenomenon.`
+
+---
+
+### Skipped items
+
+**All remaining survey-paper.html issues (1–16, 19–21):** Already resolved in the prior Gemini pass. Specific phrases cited in the review (e.g., "comes closest to a unified account", "struggles with pure silliness", "may be the finding", "Morreall's IEP overview remains the best single philosophical treatment", "no theory captures", "Laughter is primarily a social signal not a response to humor", "landmark 2003 fMRI study", "most underappreciated fact", "strong evidence for the cognitive-evolutionary theory", "Jack Benny's most famous moment", "profound cognitive insight", "most theoretically coherent account", "biggest contribution", "tasks humans find intuitive", "opposite of what comedy requires", "comedy is what happens when you predict correctly and then swerve", "The honest summary:", "The theories aren't wrong — they're partial", "probably right", "making humor perhaps the truest benchmark", "Comedians know things about timing, audience, and structure that no theory captures") were not found in the file.
+
+**position-paper.html issues 43–47 (citation formatting):** Already resolved; references use consistent APA-style with all required fields present.

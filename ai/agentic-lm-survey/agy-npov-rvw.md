@@ -737,3 +737,75 @@ Pass 2 applied 19 edits across 5 files: removing second-person address (5 fixes)
 | survey-paper.html | Duplicate reference entry | Logical | Yes |
 | survey-paper.html | Lack of academic rigor in citation format | Logical | Yes |
 | survey-paper.html | Logical inconsistency in future-dated arXiv reference | Logical | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Reviewer:** Claude Sonnet 4.6
+**Date:** 2026-03-27
+**Scope:** survey-paper.html and s5-cross-cutting.dd.html
+
+### Context
+
+The review file contains three distinct prior review blocks:
+1. Logician + POV Reviewer notes for s5-cross-cutting.dd.html (two passes, sections 1–6 each)
+2. Pass 2 — Full Survey NPOV Review (Claude Opus 4.6, 2026-03-27): applied 19 edits across all 5 dd.html files and survey-paper.html
+3. NPOV & Scholastic Rigor Review — survey-paper.html (Gemini 2.5 Flash, 2026-03-27): 52 issues identified
+
+Before applying fixes, this pass audited the current state of both HTML files against all review notes. The majority of issues had already been resolved in prior passes. The remaining unfixed issues are addressed below.
+
+### Changes Applied
+
+#### survey-paper.html
+
+**Fix 1 — Abstract, "dominant action domain" (Gemini review #6)**
+- Old: `Software development has become the dominant action domain`
+- New: `Software development has emerged as a primary action domain`
+- Reason: "dominant" is an unqualified superlative that overstates the evidence; the field also encompasses robotics, GUI agents, and scientific discovery agents.
+
+**Fix 2 — Section 1.1, "neutral governance" (Gemini review #7)**
+- Old: `is established to provide neutral governance`
+- New: `aims to provide neutral governance`
+- Reason: Joint stewardship by six competing companies does not inherently guarantee neutrality; the claim should reflect intent rather than assured outcome.
+
+**Fix 3 — Section 10 Conclusion, "dominant action domain" (Gemini review #6)**
+- Old: `Software development emerged as a dominant action domain`
+- New: `Software development emerged as a primary action domain`
+- Reason: Same as Fix 1; consistency with abstract.
+
+#### s5-cross-cutting.dd.html
+
+**Fix 4 — Section 06, "layering is now clear" (Section 6 POV Reviewer note)**
+- Old: `yet its distinct characteristics are now sufficiently clear to warrant formalization`
+- New: `yet its distinct characteristics are sufficiently clear to suggest that formalization may be warranted`
+- Reason: "now sufficiently clear to warrant" makes a confident assertion of both clarity and necessity. The revised phrasing hedges both the judgment of clarity and the prescription.
+
+### Items Reviewed but Not Fixed
+
+**survey-paper.html — "100% actionable recommendations within the trial parameters" (Gemini #28)**
+Already qualified with "within the trial parameters" in a prior pass. The phrase accurately reports the cited study's findings under controlled conditions; further qualification would misrepresent the source.
+
+**survey-paper.html — "all tested defense mechanisms fail" (Gemini #32)**
+Text already reads "all tested defense mechanisms fail under adaptive attacks" — "all tested" correctly scopes the claim to the 78-study meta-analysis. No further hedging applied.
+
+**survey-paper.html — SQL injection analogy (Gemini #33)**
+Text already reads "A parallel can be drawn to SQL injection" — the analogy-as-proof issue is resolved; "can be drawn" frames it as illustrative, not deductive.
+
+**survey-paper.html — "first genuine cross-vendor standard" (Gemini #9, #36)**
+Text already reads "establishing a cross-vendor standard" (section 7.1) and "represent a significant step towards cross-vendor standardization" (section 1.2). Both already omit "first genuine."
+
+**survey-paper.html — Research agenda prescriptive language (Gemini #46, #47)**
+Research agenda language was revised in prior passes to use "is proposed," "is hypothesized," "could offer," and "are identified as necessary components." Remaining normative framing ("Measuring agentic scaling laws... is essential") is appropriate in an explicit research agenda section.
+
+**survey-paper.html — First-person plural "We read / Our industry" (section 9)**
+Pass 2 explicitly documented that first-person in survey-paper.html is standard academic convention for a survey authored in first person; those instances were intentionally left unchanged.
+
+**survey-paper.html — Future-dated arXiv references (Gemini #49, #52)**
+The paper's stated coverage window is January 2025–March 2026 and the draft date is March 2026. References within that window are consistent with the paper's scope. Modifying them would misrepresent the survey's claimed coverage.
+
+**s5-cross-cutting.dd.html — "organically rather than through a unified architectural design" (Section 6 POV)**
+Text reads "appears to have evolved organically rather than through a unified architectural design" — "appears to have evolved" already hedges this as an interpretation. No further change needed.
+
+**s5-cross-cutting.dd.html — Sections 1–6 earlier Logician/POV notes (first two review passes)**
+Pass 2 documented that s5-cross-cutting.dd.html was "already substantially revised for NPOV prior to this pass." Audit confirmed this: the flagged phrases (mundane markdown, may matter more than MCP, unanticipated development, winning approach, ultimate self-extending, doing the same thing, drops dramatically, etc.) are not present in the current file. Those fixes were applied in an earlier pass not recorded in this document.

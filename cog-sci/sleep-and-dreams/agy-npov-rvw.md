@@ -754,3 +754,77 @@
 | tensions-paper.html | Reinterpreting nature of tensions with subjective descriptors | POV | Yes |
 | tensions-paper.html | Subjective judgment about best characterization | POV | Yes |
 | tensions-paper.html | Temporal inconsistency in references | Logician | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+
+### Status at Time of Pass
+
+Both `survey-paper.html` and `tensions-paper.html` had already undergone a prior fix pass (the Gemini review pass documented in the summary tables above). The majority of the 60+ flagged issues were already resolved. This pass audited the current state of both files and applied the remaining fixes.
+
+---
+
+### survey-paper.html — Changes Applied
+
+| Issue (review #) | Original phrase | Fix applied |
+|---|---|---|
+| #11 / #34 | `"genuinely novel state of consciousness, distinct from merely 'waking up inside a dream'"` | Replaced with: `"researchers characterize it as a hybrid state with distinct neurophysiological markers not observed in either ordinary dreaming or wakefulness alone"` — removes the strong authorial assertion of novelty and the colloquial framing |
+| #32 | `"most clinically severe sleep disorders"` (re: FFI) | Changed to `"a rare and clinically severe sleep disorder — affecting fewer than 100 known families worldwide —"` — replaces unattributed superlative with objective prevalence data |
+| #10 / POV | `"The clinical applications have moved from anecdotal to evidence-based"` | Changed to `"The clinical applications have accumulated an evidence base over several decades"` — removes the strong evaluative framing of a scientific transition |
+| #2 | `"Walker (2017) provided a compelling synthesis"` (in tension card) | Changed to `"Walker (2017) provided a widely read synthesis"` — removes subjective judgment, replaces with objective descriptor |
+| #56 / #57 | Reference list lacked explanation of prefix system and non-sequential numbering | Added a legend paragraph before the `<ol>` explaining: letter prefixes (W/B/D/L/E/F) and their thematic meaning; that numeric gaps reflect a shared master literature collection; that "(forthcoming)" entries post-date the primary collection window |
+
+---
+
+### survey-paper.html — Issues Skipped (Already Fixed in Prior Pass)
+
+All 55 other issues listed in the review (issues #1, #3–#9, #12–#31, #33, #35–#55, #58–#60) were already resolved in the prior Gemini fix pass. Confirmed by systematic grep across all flagged phrases: no matches found in the current file.
+
+Notable already-fixed items verified:
+- "most valuable findings are the tensions" → removed
+- "offers a compelling candidate explanation" (Section 1 abstract) → already removed; abstract now reads "presents a candidate explanation"
+- "Landmark Cell (2024) paper" → now "A Cell (2024) paper described the mechanism"
+- "Critically, the sedative zolpidem" → now "The sedative zolpidem (Ambien) suppresses these oscillations in the study's conditions"
+- "The analogy is apt" → removed; replaced with objective statement
+- "strikingly thin for such a sweeping claim" → now "limited for such a broad claim"
+- "it clearly does" → now "evidence indicates that it does"
+- Future dates (2025 RCT, 2026 review) → reference list already carries "(forthcoming)" notation
+- "This single protocol transformed lucid dreaming from anecdote to science" → already removed
+- Philosophical callout "If you can be aware within a dream" → already rewritten to third person
+- "consciousness is a spectrum, not a switch" → already attributed/softened
+- Sleep economy figure conflict → already addressed with clarifying note about varying market definitions
+- "The real danger is the cycle" → already rephrased
+- "Teenagers are not lazy" → already rephrased to biological framing
+- "schools ignore this evidence" → already rephrased to "maintain earlier start times despite this recommendation"
+- FFI causal overclaim → already clarified as disease-induced insomnia vs. general deprivation
+- "Sleep Apnea: The Silent Epidemic" → heading already changed
+- "most definitive proof" → already removed; FFI framing now hedged
+- "not merely 'nice to have'" → already removed
+- "captured by industry", "transformed into cultural anxiety", "The irony" → all already removed
+- "biggest unresolved question" → already removed
+- "framework remains useful even where specific claims have been challenged" → already replaced with reasoned explanation
+
+---
+
+### tensions-paper.html — Changes Applied
+
+None. All 30 issues listed in the review were already resolved in the prior fix pass. Systematic grep across all flagged phrases returned no matches. The file is clean.
+
+Notable already-fixed items verified:
+- "most compelling candidate" → now "a prominent candidate for a core function"
+- "especially intractable" → removed
+- "most ambitious attempt at resolution" → replaced with objective characterization
+- "the safest position is that most adults need 7–9 hours" → rephrased to attribute uncertainty
+- Future-dated citations (2026 meta-analysis, 2025/2026 sources) → reference list carries "(Forthcoming)" notations; inline text for the 2026 item already reads "A future comprehensive review, such as the 2026 meta-analysis"
+- "almost nobody receives" → replaced with formal language
+- "makes this worse" → removed
+- "Nobody disputes" → qualified
+- "most promising bridge", "showing particular promise", "one of the most striking in all of medicine" → all replaced
+- "pipeline problem", "distorted", "anxiety-producing folk wisdom" → all replaced in meta-tension section
+- "wearable-device obsessions" → replaced with neutral language
+- "most accurate description of sleep science" → rephrased
+- "not problems awaiting solutions … deepest mysteries" → rephrased to neutral characterization

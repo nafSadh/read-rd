@@ -202,3 +202,58 @@ No logical issues found.
 | survey-paper.html | Unsupported extension of research scope (design stance) | Logical Leap/Unsupported Extension | Yes |
 | survey-paper.html | Interpretive conclusion presented as direct finding (deconversion) | Interpretive Conclusion | Yes |
 | survey-paper.html | Un-cited generalization about deconversion grief | Un-cited Generalization | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**File:** survey-paper.html
+
+### Changes Applied
+
+**Abstract (Section 1)**
+- Removed implied authorial judgment "The most valuable findings are the tensions." Replaced with neutral framing: "Areas of particular interest are the tensions in the literature, where credible researchers, examining the same evidence, reach opposing conclusions." appended to the final abstract paragraph. The "honest summary" phrasing was already absent (handled by prior pass).
+
+**Section 3 — Mental Health: Contemplative Practices callout**
+- Changed "Research indicates that many consistent positive findings regarding mental health outcomes are associated with contemplative practices" to "Among the dimensions of religiosity studied, contemplative practices show some of the more consistent associations with positive mental health outcomes in the reviewed literature" — removes absolute claim, ties to reviewed literature.
+- Changed "This evidence leads to the hypothesis that observed benefits may be primarily practice-dependent rather than belief-dependent. Consequently, it has been proposed that..." to "This evidence supports the hypothesis that... Some researchers have consequently proposed... though this interpretation remains an active area of investigation." — frames as hypothesis/interpretation rather than conclusion.
+
+**Section 6 — Neuroscience: Meditation and DMN paragraph**
+- Removed declarative "Benefits are practice-dependent, not belief-dependent." Replaced with: "suggesting that the neural effects of meditation practice may be independent of religious belief — though the broader relationship between practice, belief, and mental health outcomes remains an open empirical question." — softens the strong inference identified by the Logician in Section 4.
+- Changed "A key finding is that..." to "A notable finding is that..." — removes subjective prominence framing ("The critical finding" variant).
+
+**Section 5 — Morality: Self-Report Gap paragraph**
+- Revised "while self-reports may suggest universal generosity, behavioral manifestations of generosity often appear to be directed primarily within religious networks" to "Behavioral studies also indicate that observed generosity tends to flow primarily within religious networks, even when self-reports suggest broader generosity — a pattern consistent with the parochial prosociality documented in the moral foundations literature." — removes the rhetorical "whatever self-reports suggest" framing and provides context.
+
+**Section 7 — Tensions: Tension 2 card**
+- Changed "Scrupulosity and religious trauma are real clinical presentations that existing 'religion is good for you' reviews tend to underrepresent" to "documented clinical presentations that broader meta-analyses of religion and mental health may not fully capture" — removes subjective "real" and hedges the "underrepresent" claim.
+- Changed "The meditation exception suggests that practice, not belief, is associated with the most consistent positive findings" to "Research on the meditation exception suggests that practice, not belief, accounts for some of the more consistent associations with positive outcomes" — removes "most consistent" superlative, attributes to research rather than authorial voice.
+
+**Section 7 — Tensions: Tension 4 card**
+- Changed "The religious impulse may be detaching from organized religion rather than disappearing — 'no religion' does not equal 'no spirituality'" to a hedged version explicitly framing this as a researcher hypothesis, not an authorial declaration.
+
+### Items Already Addressed (by Gemini pass — not re-edited)
+
+The following issues flagged in the Logician/POV notes were absent from the HTML when this pass was applied, indicating the prior Gemini pass had already resolved them:
+
+- "deceptively simple question," "sweet spot," "straightforward" (Section 2 POV)
+- "flagship mechanism," "most popular," "compelling empirical support" (Section 2 POV)
+- "Critical nuance is essential here," "profound implications for science education" (Section 3 POV)
+- "creationism is cognitively natural; evolution is cognitively unnatural" (Section 3 Logician)
+- "The Dark Side" heading (Section 4 POV) — replaced with "Adverse Manifestations"
+- "misused as a tool" (Section 4 POV) — replaced with "employed as a tool"
+- "striking finding," "The psychological cost is real," rhetorical question on educated generation (Section 6 POV)
+- "provides the clearest picture," "This search is over," "most striking findings," "The critical finding" (Section 7 POV)
+- "The most valuable findings," "not bugs in the literature," "has no compelling empirical support," "the field's most cited mechanism may be its weakest," "drives the most robust positive findings," "substantially undermines" (Section 8 POV)
+- "plagues the field," "deserves particular emphasis," "Religion is not one thing," "may describe no one accurately," "still struggles," "The honest summary" (Section 9 POV)
+- "Futile Fate of Faith" reference label (Section 10 POV)
+- All 7 issues from the Gemini NPOV section (Sections 3 and 6 Logician/unreferenced assertion items)
+
+### Items Skipped with Reasons
+
+- **Section 5 (Morality) Logician note:** "No logical issues found" — nothing to fix.
+- **Section 6, 8, 10 Logician notes:** All noted "No logical issues found."
+- **Section 4 Logician — "Benefits appear practice-dependent, not belief-dependent":** Addressed in the Neuroscience meditation paragraph rather than adding a citation, since the DMN signature finding is the cited evidence. Full removal would lose the empirical point; softening to a hypothesis was the appropriate fix.
+- **Abstract "cognitively natural" framing:** The abstract uses "cognitively natural" as a defined technical term from CSR literature, not as an authorial assertion. Retained with this function.
+- **Tension 3 final sentence ("Most secular societies..."):** Retained as an empirically grounded comparative observation relevant to the tension being described, not a rhetorical flourish.
