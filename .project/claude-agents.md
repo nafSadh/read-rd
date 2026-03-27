@@ -1,0 +1,43 @@
+# NPOV & Scholastic Rigor Review — Agent Tracking
+**Started**: 2026-03-27
+**Completed**: 2026-03-27
+**Goal**: Remove personal POV injection, ensure logical consistency & scholastic rigor across all paper-drives and deep-dives
+
+## Agents
+
+| # | ID | Scope | Status | Notes File |
+|---|-----|-------|--------|------------|
+| 1 | cog-sci-1 | attachment-theory, brain-energy, dream-incorporation | DONE | cog-sci/{attachment-theory,brain-energy,dream-incorporation}/claude-npov-rvw.md |
+| 2 | cog-sci-2 | fashionable-despair, religion-psychology, science-of-humor | DONE | cog-sci/{fashionable-despair,religion-psychology,science-of-humor}/claude-npov-rvw.md |
+| 3 | cog-sci-3 | sleep-and-dreams, stoicism-in-practice | DONE | cog-sci/{sleep-and-dreams,stoicism-in-practice}/claude-npov-rvw.md |
+| 4 | ai | agentic-lm-survey, genai-2026-outlook | DONE | ai/{agentic-lm-survey,genai-2026-outlook}/claude-npov-rvw.md |
+| 5 | anthro | flag-history, religion-today | DONE | anthro/{flag-history,religion-today}/claude-npov-rvw.md |
+| 6 | craft | art-of-typography, constructed-languages, science-of-music | DONE | craft/{art-of-typography,constructed-languages,science-of-music}/claude-npov-rvw.md |
+| 7 | philosophy | paradoxes, persuasion-survey, stoicism-landscape, sophies-world-* | DONE | philosophy/{paradoxes,persuasion-survey,stoicism-landscape,sophies-world-companion,sophies-world-reader}/claude-npov-rvw.md |
+| 8 | physics-scifi | the-cosmos, retrocausal-emotion, time-travel-fiction | DONE | physics/the-cosmos/claude-npov-rvw.md, sci-fi-te/{retrocausal-emotion,time-travel-fiction}/claude-npov-rvw.md |
+| 9 | self | audhd, career, wellbeing, how-to-know-a-person | DONE | self/claude-npov-rvw.md |
+| 10 | misc | hiking/bay-area, standalone dd.html files | DONE | hiking/bay-area/claude-npov-rvw.md |
+
+## Final Summary
+- **Total files edited**: 92
+- **Total insertions/deletions**: 247 / 248 (near-perfect 1:1 replacements)
+- **Review notes written**: 25 (in respective project directories as claude-npov-rvw.md)
+
+### Issue breakdown (approximate across all agents)
+- **TONE**: ~60% of fixes — editorial superlatives, enthusiast language, informal register
+- **POV**: ~25% of fixes — second-person "you/your", first-person "we/our"
+- **RIGOR**: ~10% of fixes — uncited statistics, unsupported claims, overstatements
+- **BIAS**: ~5% of fixes — one-sided framing, geographic skew, product favoritism
+
+### Cleanest projects (no/minimal issues)
+- physics/the-cosmos (0 changes)
+- philosophy/paradoxes (minimal)
+- cog-sci/brain-energy (minimal)
+
+### Most issues found
+- ai/agentic-lm-survey (Anthropic product favoritism, uncited revenue figures)
+- cog-sci/fashionable-despair (editorial voice throughout)
+- sci-fi-te/retrocausal-emotion (second-person address in physics explanations)
+
+### Logical consistency
+No contradictions or broken arguments found in any project. Structure and methodology are sound across the board.

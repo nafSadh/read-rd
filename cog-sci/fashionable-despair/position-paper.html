@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Missing Third Position — Position Paper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#2e6ab406;--grad2:#9b7aed04}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#9b7aed06;--grad2:#4ee8d004}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s;line-height:1.7}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent)}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:200px;min-width:200px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo{font-family:var(--serif);font-size:20px;color:var(--bright);font-weight:500;letter-spacing:.5px}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.sidebar-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:10px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;text-decoration:none;color:var(--text)}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;letter-spacing:.5px}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.sidebar-foot a{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none;letter-spacing:.5px}
+.sidebar-foot a:hover{color:var(--accent)}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--bg2);color:var(--dim);font-size:16px;transition:all .2s}
+.theme-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.main{flex:1;margin-left:200px;padding:0 0 120px}
+.paper-hero{padding:60px 80px 40px;max-width:860px;margin:0 auto;position:relative}
+.paper-hero::after{content:'';position:absolute;bottom:0;left:80px;right:80px;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent)}
+.paper-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+[data-theme="light"] .paper-badge{color:var(--dim)}
+.paper-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.paper-title{font-family:var(--serif);font-size:42px;font-weight:500;color:var(--bright);line-height:1.15;letter-spacing:.5px;margin-bottom:14px}
+.paper-title em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-subtitle{font-family:var(--sans);font-size:16px;color:var(--dim);line-height:1.7;max-width:640px}
+.paper-meta{display:flex;gap:24px;margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.paper-body{max-width:860px;margin:0 auto;padding:0 80px}
+.paper-section{padding:48px 0;border-bottom:1px solid var(--border);position:relative}
+.paper-section:last-child{border-bottom:none}
+.paper-section .s-num{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+[data-theme="light"] .paper-section .s-num{color:var(--dim)}
+.paper-section h2{font-family:var(--serif);font-size:32px;font-weight:500;color:var(--bright);line-height:1.25;letter-spacing:.5px;margin-bottom:24px}
+.paper-section h2 em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-section h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:36px 0 14px;text-transform:uppercase;letter-spacing:2.5px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.paper-section p{font-family:var(--serif);font-size:17px;line-height:2;margin-bottom:18px;letter-spacing:.2px}
+.paper-section strong{color:var(--bright);font-weight:600}
+.paper-section a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--border)}
+.paper-section a:hover{border-bottom-color:var(--accent)}
+.paper-stat-row{display:flex;gap:0;margin:20px 0;border:1px solid var(--border)}
+.paper-stat{flex:1;padding:14px 10px;text-align:center;border-right:1px solid var(--border)}
+.paper-stat:last-child{border-right:none}
+.paper-stat .val{font-family:var(--mono);font-size:16px;color:var(--bright);font-weight:500;display:block}
+.paper-stat .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans);margin-top:3px;display:block}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:24px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-family:var(--serif);font-style:italic;color:var(--bright)}
+.diagram-wrap{margin:24px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}
+.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .border{stroke:var(--border)}
+sup{font-size:11px;line-height:0;vertical-align:super}
+sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}
+sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+sup.fn:hover>a{color:var(--bright)}
+sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;font-style:normal;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+.ref-list-num{padding-left:2.5em;margin:0}
+.ref-list-num li{font-family:var(--mono);font-size:12px;color:var(--dim);padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%);letter-spacing:.2px;line-height:1.6}
+.ref-list-num li:last-child{border-bottom:none}
+.ref-list-num li::marker{color:var(--accent);font-weight:600}
+.ref-list-num li a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+.ref-list-num li a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.paper-hero{padding:32px 24px 28px}.paper-hero::after{left:24px;right:24px}.paper-body{padding:0 24px}.paper-title{font-size:28px}.paper-stat-row{flex-wrap:wrap}.paper-stat{min-width:45%}.theme-btn{top:8px;right:8px}}
+</style>
+</head>
+<body data-theme="light">
+<script>(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s),document.body.setAttribute('data-theme',s);else{const d=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',d);document.body.setAttribute('data-theme',d)}})();</script>
+
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">F<em>D</em></div>
+    <div class="sidebar-sub">Position Paper</div>
+  </div>
+  <div class="sidebar-nav">
+  <a href="#thesis" class="sidebar-item" data-target="thesis"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Thesis</span></a>
+  <a href="#toggle" class="sidebar-item" data-target="toggle"><span class="sidebar-num">01</span><span class="sidebar-label">The Two Positions</span></a>
+  <a href="#old" class="sidebar-item" data-target="old"><span class="sidebar-num">02</span><span class="sidebar-label">Not New, But Different</span></a>
+  <a href="#lock-in" class="sidebar-item" data-target="lock-in"><span class="sidebar-num">03</span><span class="sidebar-label">Identity Lock-In</span></a>
+  <a href="#regressive" class="sidebar-item" data-target="regressive"><span class="sidebar-num">04</span><span class="sidebar-label">Regressive Visibility</span></a>
+  <a href="#privatization" class="sidebar-item" data-target="privatization"><span class="sidebar-num">05</span><span class="sidebar-label">The Privatization Trap</span></a>
+  <a href="#backlash-risk" class="sidebar-item" data-target="backlash-risk"><span class="sidebar-num">06</span><span class="sidebar-label">The Backlash Trap</span></a>
+  <a href="#third" class="sidebar-item" data-target="third"><span class="sidebar-num">07</span><span class="sidebar-label">The Third Position</span></a>
+  <a href="#pos-references" class="sidebar-item" data-target="pos-references"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">References</span></a>
+  </div>
+  <div class="sidebar-foot">
+    <a href="index.html">&larr; Project</a>
+    <a href="survey-paper.html">Survey &rarr;</a>
+  </div>
+</div>
+
+<button class="theme-btn" aria-label="Toggle theme"></button>
+
+<div class="main">
+  <div class="paper-hero">
+    <div class="paper-badge"><span class="dot"></span>FASHIONABLE DESPAIR &middot; POSITION PAPER</div>
+    <h1 class="paper-title">The Missing Third <em>Position</em></h1>
+    <p class="paper-subtitle">The problem is not that being depressed is fashionable. The problem is that a culture with no template for ordinary suffering can only toggle between hiding pain and performing it.</p>
+    <div class="paper-meta">
+      <span>nafsadh</span>
+      <span>March 2026</span>
+      <span>7 Arguments &middot; 38 Sources</span>
+      <span><a href="https://read.sadh.app/cog-sci/fashionable-despair/" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a></span>
+    </div>
+  </div>
+
+  <div class="paper-body">
+
+    <!-- THESIS -->
+    <section class="paper-section" id="thesis">
+      <div class="s-num">THE CLAIM</div>
+      <h2>Suffering as <em>Ordinary</em></h2>
+      <p>Lifetime depression diagnoses in the United States rose from 19.6% to 29.0% between 2015 and 2023 (Gallup, n&thinsp;=&thinsp;5,167).<sup class="fn"><a href="#pos-ref-1">[1]</a><span class="tip"><a href="https://news.gallup.com/poll/505745/depression-rates-reach-new-highs.aspx" target="_blank">Gallup, &ldquo;Depression Rates Reach New Highs&rdquo; (2023) &rarr;</a></span></sup> Forty percent of U.S. high school students report persistent sadness or hopelessness (CDC YRBS, 2023).<sup class="fn"><a href="#pos-ref-2">[2]</a><span class="tip"><a href="https://www.cdc.gov/yrbs/results/2023-yrbs-results.html" target="_blank">CDC YRBS 2023 Results &rarr;</a></span></sup> Meanwhile, 72% of Gen&nbsp;Z women say mental health challenges are an important part of their identity (Skeptic Research Center, n&thinsp;=&thinsp;3,014).<sup class="fn"><a href="#pos-ref-3">[3]</a><span class="tip"><a href="https://research.skeptic.com/mental-health-challenges-are-an-important-part-of-my-identity-percent-agreed-by-generation-and-sex/" target="_blank">Skeptic Research Center (2022), n&thinsp;=&thinsp;3,014 American adults, DASS-21 validated &rarr;</a></span></sup></p>
+      <p>This paper argues that these numbers reflect something deeper than a diagnostic trend. They are the signature of a culture that has <strong>no framework for suffering that is neither stigmatized nor aestheticized</strong>. No template exists for suffering that is simply ordinary &mdash; neither hidden nor displayed, neither shameful nor interesting. The debate over whether sadness is &ldquo;genuine or performed&rdquo; is itself the symptom.</p>
+      <p>The claim that depression is fashionable is true but uninteresting. Melancholy has been fashionable since Ficino reframed it as the mark of genius in 1489.<sup class="fn"><a href="#pos-ref-4">[4]</a><span class="tip"><a href="https://quod.lib.umich.edu/j/jii/4750978.0002.205/--history-of-melancholy?rgn=main;view=fulltext" target="_blank">Zimmermann, &ldquo;History of Melancholy&rdquo; (1995) &rarr;</a></span></sup> What matters is what the current version does that previous versions did not, who it serves, and what structural absence makes it inevitable. Seven arguments converge on a single conclusion: the culture needs a third position.</p>
+    </section>
+
+    <!-- 1: THE TOGGLE -->
+    <section class="paper-section" id="toggle">
+      <div class="s-num">ARGUMENT 01</div>
+      <h2>The Culture Can Only <em>Toggle</em></h2>
+      <p>The destigmatization movement succeeded. But the only available alternative to hiding suffering turned out to be displaying it. The culture moved from position&nbsp;1 to position&nbsp;2 without ever constructing a position&nbsp;3.</p>
+
+      <div class="diagram-wrap"><svg viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="500" height="140" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="250" y="18" text-anchor="middle" font-size="9" class="lbl" letter-spacing="1.5">THE BINARY AND THE MISSING POSITION</text>
+        <line x1="30" y1="26" x2="470" y2="26" stroke="currentColor" class="border" stroke-width="0.5"/>
+        <!-- Position 1 -->
+        <rect x="20" y="42" width="140" height="50" fill="rgba(139,32,32,0.06)" stroke="#8b2020" rx="3"/>
+        <text x="90" y="60" text-anchor="middle" font-size="9" class="lbl">Position 1</text>
+        <text x="90" y="74" text-anchor="middle" font-size="8" class="lbl">SUFFERING IS SHAMEFUL</text>
+        <text x="90" y="85" text-anchor="middle" font-size="7" class="lbl">Hide it &middot; Tough it out</text>
+        <!-- Arrow -->
+        <line x1="160" y1="67" x2="190" y2="67" stroke="var(--dim)" stroke-width="1"/>
+        <polygon points="188,64 194,67 188,70" fill="var(--dim)"/>
+        <!-- Position 2 -->
+        <rect x="195" y="42" width="140" height="50" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" rx="3"/>
+        <text x="265" y="60" text-anchor="middle" font-size="9" class="lbl-hi">Position 2</text>
+        <text x="265" y="74" text-anchor="middle" font-size="8" class="lbl">SUFFERING IS INTERESTING</text>
+        <text x="265" y="85" text-anchor="middle" font-size="7" class="lbl">Display it &middot; Curate it</text>
+        <!-- Missing -->
+        <rect x="355" y="42" width="130" height="50" fill="none" stroke="var(--accent)" rx="3" stroke-dasharray="4,3"/>
+        <text x="420" y="60" text-anchor="middle" font-size="9" class="lbl-hi">Position 3</text>
+        <text x="420" y="74" text-anchor="middle" font-size="8" class="lbl-hi">SUFFERING IS ORDINARY</text>
+        <text x="420" y="85" text-anchor="middle" font-size="7" class="lbl">Neither hidden nor performed</text>
+        <!-- Label -->
+        <text x="420" y="115" text-anchor="middle" font-size="8" class="lbl-hi" font-style="italic">Missing</text>
+        <!-- Toggle arrow -->
+        <path d="M90,95 Q90,120 265,120 Q265,95 265,95" fill="none" stroke="var(--dim)" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="178" y="130" text-anchor="middle" font-size="7" class="lbl">culture toggles</text>
+      </svg></div>
+
+      <p>The evidence for this binary is quantitative. The Skeptic Research Center survey (n&thinsp;=&thinsp;3,014, DASS-21 validated) found 72% of Gen&nbsp;Z women agree that mental health challenges are an important part of their identity, versus 27% of Boomer men.<sup class="fn"><a href="#pos-ref-3">[3]</a><span class="tip"><a href="https://research.skeptic.com/mental-health-challenges-are-an-important-part-of-my-identity-percent-agreed-by-generation-and-sex/" target="_blank">Skeptic Research Center (2022), n&thinsp;=&thinsp;3,014 American adults, DASS-21 validated &rarr;</a></span></sup> A Harmony Healthcare IT survey (n&thinsp;=&thinsp;1,010 Gen&nbsp;Z Americans) found 46% have received a formal diagnosis and another 37% believe they have an undiagnosed condition &mdash; meaning 83% of Gen&nbsp;Z see themselves through a clinical lens.<sup class="fn"><a href="#pos-ref-5">[5]</a><span class="tip"><a href="https://www.harmonyhit.com/state-of-gen-z-mental-health/" target="_blank">Harmony Healthcare IT, &ldquo;State of Gen Z Mental Health&rdquo; (2025), n&thinsp;=&thinsp;1,010 &rarr;</a></span></sup> Blue Shield of California reports 94% of Gen&nbsp;Z youth experience regular mental health challenges.<sup class="fn"><a href="#pos-ref-6">[6]</a><span class="tip"><a href="https://news.blueshieldca.com/2025/09/30/new-poll-94-of-gen-z-youth-report-experiencing-regular-mental-health-challenges" target="_blank">Blue Shield of California poll (Sept 2025) &rarr;</a></span></sup> This is not simply increased openness. Identity-level fusion with a diagnostic category is position&nbsp;2 operating at full intensity.</p>
+      <p>Meanwhile, position&nbsp;1 persists, sorted by demographics. African American men remain the demographic most reluctant to seek mental health services: 30% willing, versus 51% of non-African American males (Ward &amp; Mengesha, PMC).<sup class="fn"><a href="#pos-ref-7">[7]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6390869/" target="_blank">Ward &amp; Mengesha, PMC (2019) &rarr;</a></span></sup> SAMHSA&rsquo;s National Survey on Drug Use and Health (2021&ndash;2023, pooled) confirms that white and multiracial adults receive mental health services at significantly higher rates than Black, Hispanic, or Asian adults.<sup class="fn"><a href="#pos-ref-8">[8]</a><span class="tip"><a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt47097/2023-nsduh-race-eth-companion.pdf" target="_blank">SAMHSA NSDUH 2021&ndash;2023 Race/Ethnicity Companion Report &rarr;</a></span></sup> The two positions coexist. They are demographically sorted.</p>
+    </section>
+
+    <!-- 2: NOT NEW -->
+    <section class="paper-section" id="old">
+      <div class="s-num">ARGUMENT 02</div>
+      <h2>Not New, But <em>Different</em></h2>
+      <p>The template is ancient. Zimmermann traces melancholy as fashionable pose to Hippocrates; Ficino formalized the link between Saturn and intellectual greatness in 1489.<sup class="fn"><a href="#pos-ref-4">[4]</a><span class="tip"><a href="https://quod.lib.umich.edu/j/jii/4750978.0002.205/--history-of-melancholy?rgn=main;view=fulltext" target="_blank">Zimmermann, &ldquo;History of Melancholy&rdquo; (1995) &rarr;</a></span></sup> Frink documents the Romantics using melancholy as protest against Enlightenment rationalism.<sup class="fn"><a href="#pos-ref-9">[9]</a><span class="tip"><a href="https://scholarworks.uni.edu/etd/346/" target="_blank">Frink, &ldquo;Romantic Melancholy&rdquo; (2016) &rarr;</a></span></sup> Wurtzel&rsquo;s <em>Prozac Nation</em> and the 1990s memoir wave made depression a literary genre.<sup class="fn"><a href="#pos-ref-10">[10]</a><span class="tip"><a href="https://www.washingtonpost.com/books/2024/12/12/prozac-nation-wurtzel-anniversary/" target="_blank">Washington Post, &ldquo;Prozac Nation at 30&rdquo; (2024) &rarr;</a></span></sup> The cycle runs: reframe, fashion, market, backlash.</p>
+      <p>So what is genuinely different now? One mechanism: <strong>identity fusion at algorithmic scale.</strong> Ficino made melancholy a pose. The Romantics made it an aesthetic. Prozac made it a diagnosis. TikTok made it a <em>self</em> &mdash; and the algorithm locks you in.</p>
+      <p>The empirical evidence for algorithmic lock-in is specific. Meta&rsquo;s own internal research (leaked 2021) found that 32% of teen girls said Instagram made them feel worse about their bodies, and 13.5% said it worsened suicidal thoughts.<sup class="fn"><a href="#pos-ref-11">[11]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/2021_Facebook_leak" target="_blank">2021 Facebook Files leak; originally Wall Street Journal &rarr;</a></span></sup> A Frontiers in Psychology study (2025) found that test accounts simulating 13-year-olds were exposed to feeds centered on depressive content in under one hour, with half of recommended videos focusing on depressive themes after just 15&ndash;20 minutes.<sup class="fn"><a href="#pos-ref-12">[12]</a><span class="tip"><a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1523649/full" target="_blank">Frontiers in Psychology, algorithm rabbit hole study (2025) &rarr;</a></span></sup> A meta-analysis of 17 RCTs (n&thinsp;=&thinsp;5,624) found that restricting social media use improved well-being with effect size d&thinsp;=&thinsp;0.17 (95% CI 0.08&ndash;0.27), and 5 of 7 studies measuring depression found significant reduction.<sup class="fn"><a href="#pos-ref-13">[13]</a><span class="tip"><a href="https://www.jmir.org/2025/1/e67953" target="_blank">JMIR, Meta-analysis of 17 social media restriction RCTs (2024&ndash;2025), n&thinsp;=&thinsp;5,624 &rarr;</a></span></sup> Haidt and Twenge document a 134% rise in depression among U.S. college undergraduates between the early 2010s and 2020, replicated across Anglosphere countries.<sup class="fn"><a href="#pos-ref-14">[14]</a><span class="tip"><a href="https://jonathanhaidt.com/social-media/" target="_blank">Haidt &amp; Twenge, &ldquo;The Anxious Generation&rdquo; data (2024) &rarr;</a></span></sup></p>
+      <p>Previous eras had performance. They did not have a closed loop between performance, identity, community, and a machine optimized to keep the loop running.</p>
+    </section>
+
+    <!-- 3: LOCK-IN -->
+    <section class="paper-section" id="lock-in">
+      <div class="s-num">ARGUMENT 03</div>
+      <h2>The Recovery <em>Paradox</em></h2>
+      <p>When suffering becomes identity, recovery threatens the self. Byron could stop performing melancholy and still be Byron. A teenager whose social identity, feed, community, and self-concept are organized around #sadgirl cannot stop being sad without an identity crisis that is itself a mental health event.</p>
+
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">17.6M</span><span class="lbl">TikTok posts under &ldquo;depressed girl aesthetic&rdquo;</span></div>
+        <div class="paper-stat"><span class="val">30%</span><span class="lbl">Gen Z self-diagnose via social media</span></div>
+        <div class="paper-stat"><span class="val">52%</span><span class="lbl">Of top ADHD TikTok videos: misleading</span></div>
+      </div>
+
+      <p>The self-diagnosis pipeline is now quantified. 30% of Gen&nbsp;Z self-diagnose mental illness based on social media content (Scimatic, 2024).<sup class="fn"><a href="#pos-ref-15">[15]</a><span class="tip"><a href="https://scimatic.org/storage/journals/11/pdfs/5625.pdf" target="_blank">Scimatic, Self-diagnosis prevalence study (2024) &rarr;</a></span></sup> Among the 100 most popular ADHD TikTok videos (~500&nbsp;million combined views), 52% were classified as misleading; non-healthcare providers produced misleading content at 55.1% versus 27.3% for providers (Yeung et&nbsp;al., <em>Canadian Journal of Psychiatry</em>, p&thinsp;&lt;&thinsp;0.001).<sup class="fn"><a href="#pos-ref-16">[16]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9659797/" target="_blank">Yeung, Ng &amp; Abi-Jaoude, Canadian J. of Psychiatry (2022), 100 top ADHD TikToks &rarr;</a></span></sup> A Harvard Petrie-Flom review found 84% of TikTok mental health videos deceptive, with only 9% of creators possessing relevant qualifications.<sup class="fn"><a href="#pos-ref-17">[17]</a><span class="tip"><a href="https://petrieflom.law.harvard.edu/2025/04/02/dr-tiktok-the-impacts-of-misinformation-on-mental-health-self-diagnosis/" target="_blank">Harvard Petrie-Flom, &ldquo;Dr. TikTok&rdquo; (2025) &rarr;</a></span></sup> 17.6&nbsp;million TikTok posts mark the transformation from expression to genre.<sup class="fn"><a href="#pos-ref-18">[18]</a><span class="tip"><a href="https://thebatt.com/opinion/opinion-depression-isnt-aesthetic/" target="_blank">The Batt, &ldquo;Depression Isn&rsquo;t Aesthetic&rdquo; (2024) &rarr;</a></span></sup></p>
+      <p>Phase Learning documents how algorithmic reinforcement creates feedback loops that discourage help-seeking.<sup class="fn"><a href="#pos-ref-19">[19]</a><span class="tip"><a href="https://www.phaselearning.org/post/the-sad-girl-aesthetic-romanticizing-mental-illness" target="_blank">Phase Learning, &ldquo;Romanticizing Mental Illness&rdquo; (2024) &rarr;</a></span></sup> A <em>Current Psychology</em> study (2026) confirmed the association between mental health TikTok consumption and both self-reported symptoms and perceived prevalence.<sup class="fn"><a href="#pos-ref-20">[20]</a><span class="tip"><a href="https://link.springer.com/article/10.1007/s12144-026-09067-9" target="_blank">Current Psychology, TikTok MH content &amp; symptom self-report (2026) &rarr;</a></span></sup> The serialization problem &mdash; ongoing content requires ongoing suffering &mdash; is the platform-era intensifier that previous cultural cycles lacked.</p>
+
+      <div class="callout">
+        <h4>THE BIND</h4>
+        <p>The fear is not that getting better is hard. The fear is that getting better means becoming invisible &mdash; losing the aesthetic identity that makes you legible to your community.</p>
+      </div>
+    </section>
+
+    <!-- 4: REGRESSIVE -->
+    <section class="paper-section" id="regressive">
+      <div class="s-num">ARGUMENT 04</div>
+      <h2>A Regressive <em>Redistribution</em></h2>
+      <p>Fashionable depression is not a universal cultural shift. It is a <strong>class-specific cultural shift</strong> that serves the populations least in need while leaving the populations most in need exactly where they were.</p>
+
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">48%</span><span class="lbl">White Americans receiving MH care</span></div>
+        <div class="paper-stat"><span class="val">31%</span><span class="lbl">Black Americans receiving MH care</span></div>
+        <div class="paper-stat"><span class="val">22%</span><span class="lbl">Asian Americans receiving MH care</span></div>
+        <div class="paper-stat"><span class="val">2.5&times;</span><span class="lbl">LGBTQ+ depression risk vs. general</span></div>
+      </div>
+
+      <p>DBSA reports that 48% of white Americans who need care receive it, compared with 31% of Black Americans and 22% of Asian Americans; LGBTQ individuals face 2.5 times the depression risk.<sup class="fn"><a href="#pos-ref-21">[21]</a><span class="tip"><a href="https://www.dbsalliance.org/education/disparities-mental-health-care/" target="_blank">DBSA, &ldquo;Disparities in Mental Health&rdquo; (2021) &rarr;</a></span></sup> SAMHSA&rsquo;s pooled NSDUH data (2021&ndash;2023) confirm that white and multiracial adults receive services at significantly higher rates than Black, Hispanic, or Asian adults.<sup class="fn"><a href="#pos-ref-8">[8]</a><span class="tip"><a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt47097/2023-nsduh-race-eth-companion.pdf" target="_blank">SAMHSA NSDUH 2021&ndash;2023 Race/Ethnicity Companion Report &rarr;</a></span></sup> The sad girl aesthetic, meanwhile, is dominated by white, thin, conventionally attractive women.<sup class="fn"><a href="#pos-ref-22">[22]</a><span class="tip"><a href="https://www.dailycal.org/2022/07/17/social-medias-sad-girl-depression-its-aesthetic" target="_blank">Daily Cal, &ldquo;Social Media&rsquo;s Sad Girl&rdquo; (2022) &rarr;</a></span></sup></p>
+      <p>The Lancet&rsquo;s 2025 meta-analysis (1.3&nbsp;million people, 421&nbsp;studies) documents increasing depression among Black populations after 2020, driven by both COVID and the aftermath of George Floyd&rsquo;s murder.<sup class="fn"><a href="#pos-ref-23">[23]</a><span class="tip"><a href="https://www.thelancet.com/journals/lanam/article/PIIS2667-193X(25)00037-7/fulltext" target="_blank">Lancet meta-analysis (2025), 1.3M people, 421 studies &rarr;</a></span></sup> Assari&rsquo;s intersectional analysis shows the effects are multiplicative, not additive: high income is protective for white women but becomes a <em>risk factor</em> for African American men.<sup class="fn"><a href="#pos-ref-24">[24]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5742759/" target="_blank">Assari, PMC (2017) &rarr;</a></span></sup> Mereish, examining 42 intersectional groups, finds past-year depression prevalence ranging from 3.4% to 31.4%.<sup class="fn"><a href="#pos-ref-25">[25]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10153310/" target="_blank">Mereish, PMC (2023) &rarr;</a></span></sup> CDC YRBS data show 53% of female high school students report persistent sadness, with LGBQ+ students at 2&ndash;3&times; the rate of heterosexual peers.<sup class="fn"><a href="#pos-ref-2">[2]</a><span class="tip"><a href="https://www.cdc.gov/yrbs/results/2023-yrbs-results.html" target="_blank">CDC YRBS 2023 Results &rarr;</a></span></sup></p>
+      <p>The awareness economy concentrates cultural attention where structural need is lowest. The populations with the most reason to suffer are stuck in position&nbsp;1. The populations with the least reason have moved to position&nbsp;2. Neither has access to position&nbsp;3.</p>
+    </section>
+
+    <!-- 5: PRIVATIZATION -->
+    <section class="paper-section" id="privatization">
+      <div class="s-num">ARGUMENT 05</div>
+      <h2>The Privatization <em>Trap</em></h2>
+      <p>Therapy-speak individualizes suffering and neutralizes its political force. Bandinelli and Pinz&oacute;n Arteaga argue that the therapeutic frame translates structural problems into personal pathology: poverty becomes &ldquo;burnout,&rdquo; discrimination becomes &ldquo;anxiety,&rdquo; exploitation becomes &ldquo;boundary issues.&rdquo;<sup class="fn"><a href="#pos-ref-26">[26]</a><span class="tip"><a href="https://www.madinamerica.com/2025/04/the-certainties-of-therapy-speak-are-contributing-to-our-social-collapse/" target="_blank">Bandinelli &amp; Pinz&oacute;n, Mad in America (2025) &rarr;</a></span></sup> The vocabulary feels empowering, but the diagnosis locates the problem in the individual, not the system.</p>
+
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">$4.4B</span><span class="lbl">Online therapy market (2025)</span></div>
+        <div class="paper-stat"><span class="val">$1.03B</span><span class="lbl">BetterHelp revenue (2024)</span></div>
+        <div class="paper-stat"><span class="val">70%</span><span class="lbl">BetterHelp users: poor experience</span></div>
+        <div class="paper-stat"><span class="val">30%</span><span class="lbl">Less likely to try therapy after</span></div>
+      </div>
+
+      <p>The economic infrastructure is now enormous. The online therapy market reached $4.39&nbsp;billion in 2025, projected to hit $14.10&nbsp;billion by 2034.<sup class="fn"><a href="#pos-ref-27">[27]</a><span class="tip"><a href="https://www.globenewswire.com/news-release/2025/12/08/3201720/0/en/" target="_blank">GlobeNewsWire, Online therapy market report (2025) &rarr;</a></span></sup> BetterHelp alone generated $1.03&nbsp;billion in 2024 revenue with 5&nbsp;million+ users.<sup class="fn"><a href="#pos-ref-28">[28]</a><span class="tip"><a href="https://taptwicedigital.com/blog/better-help-stats" target="_blank">TapTwice Digital, BetterHelp statistics (2024) &rarr;</a></span></sup> But outcomes are poor: BetterHelp spent $900&nbsp;million on marketing in 2023; 70% of surveyed users reported poor experience and 30% became <em>less likely</em> to pursue therapy afterward.<sup class="fn"><a href="#pos-ref-29">[29]</a><span class="tip"><a href="https://www.firstsession.com/resources/betterhelp-reviews-survey-results" target="_blank">First Session, &ldquo;BetterHelp Risk&rdquo; (2025) &rarr;</a></span></sup> This is the comfort industry optimized for customer acquisition, not clinical outcomes.</p>
+      <p>PMC research documents therapy language being weaponized for epistemic injustice &mdash; using therapeutic vocabulary to delegitimize another person&rsquo;s emotional experience.<sup class="fn"><a href="#pos-ref-30">[30]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12583418/" target="_blank">PMC, &ldquo;Unmasking Therapy-Speak&rdquo; (2025) &rarr;</a></span></sup> Cosmetic pharmacology, which Kramer identified in <em>Listening to Prozac</em>, was the early form<sup class="fn"><a href="#pos-ref-31">[31]</a><span class="tip"><a href="https://journals.upress.ufl.edu/rhm/article/view/1487" target="_blank">Rhetoric of Depression, UF Press (2023) &rarr;</a></span></sup> &mdash; but the social media version is more powerful because it does not even require medication. It requires only a hashtag.</p>
+    </section>
+
+    <!-- 6: BACKLASH RISK -->
+    <section class="paper-section" id="backlash-risk">
+      <div class="s-num">ARGUMENT 06</div>
+      <h2>The Backlash <em>Cannot Save Us</em></h2>
+      <p>The backlash against fashionable depression is largely correct on diagnosis. The overdiagnosis data is substantial: a Johns Hopkins study (Mojtabai, 2013) found that roughly 1 in 4 depression diagnoses in U.S. primary care are false positives &mdash; patients who do not meet criteria on structured clinical interview.<sup class="fn"><a href="#pos-ref-32">[32]</a><span class="tip"><a href="https://publichealth.jhu.edu//2013/mojtabai-depression-over-diagnosis-and-over-treatment" target="_blank">Mojtabai, Johns Hopkins, depression overdiagnosis (2013) &rarr;</a></span></sup> Canadian primary care data show misdiagnosis rates of 65.9% for major depressive disorder and 71.0% for generalized anxiety disorder.<sup class="fn"><a href="#pos-ref-33">[33]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3184591/" target="_blank">PMC, Canadian primary care misdiagnosis rates &rarr;</a></span></sup> Frances&rsquo;s critique of DSM-5 diagnostic inflation is supported by the numbers: U.S. ADHD diagnoses rose 67% from 6.1% to 10.2% between 1997 and 2016, with an additional 15.2% increase in adult ADHD from 2020 to 2023.<sup class="fn"><a href="#pos-ref-34">[34]</a><span class="tip"><a href="https://www.cdc.gov/adhd/data/index.html" target="_blank">CDC ADHD data; Psychiatric Research and Clinical Practice (2024) &rarr;</a></span></sup> Gallup&rsquo;s survey data show lifetime depression diagnoses rising from 19.6% to 29.0% between 2015 and 2023, with women&rsquo;s rates rising at nearly twice the rate of men&rsquo;s.<sup class="fn"><a href="#pos-ref-1">[1]</a><span class="tip"><a href="https://news.gallup.com/poll/505745/depression-rates-reach-new-highs.aspx" target="_blank">Gallup, &ldquo;Depression Rates Reach New Highs&rdquo; (2023), n&thinsp;=&thinsp;5,167 &rarr;</a></span></sup></p>
+
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">~25%</span><span class="lbl">Primary care depression Dx: false positive</span></div>
+        <div class="paper-stat"><span class="val">+67%</span><span class="lbl">ADHD diagnoses, 1997&ndash;2016</span></div>
+        <div class="paper-stat"><span class="val">+134%</span><span class="lbl">College depression, 2010s&ndash;2020</span></div>
+        <div class="paper-stat"><span class="val">29%</span><span class="lbl">U.S. adults: lifetime depression Dx</span></div>
+      </div>
+
+      <p>But the backlash is wrong on prescription. It risks pushing the culture back to position&nbsp;1 (suffering is shameful, hide it) rather than forward to position&nbsp;3 (suffering is ordinary, live with it). The counter-backlash names the risk correctly: India&rsquo;s critique can be read as privilege talking &mdash; it is easier to dismiss diagnosis when you do not need one. Article Club discussion surfaces the defense that people are trying to give themselves permission to exist.<sup class="fn"><a href="#pos-ref-35">[35]</a><span class="tip"><a href="https://articleclub.substack.com/p/502-nobody-has-a-personality-anymore" target="_blank">Article Club, Discussion #502 (2025) &rarr;</a></span></sup> The Gronholm and Thornicroft &ldquo;subtyping&rdquo; paradox applies here too: exempting the critic from the need for diagnosis may paradoxically increase stigma for those who need it most.<sup class="fn"><a href="#pos-ref-36">[36]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9483822/" target="_blank">Gronholm &amp; Thornicroft, PMC (2022) &rarr;</a></span></sup></p>
+
+      <div class="callout">
+        <h4>THE RISK</h4>
+        <p>Any backlash that cannot articulate position&nbsp;3 &mdash; suffering as ordinary &mdash; will default to re-imposing position&nbsp;1. The pendulum is not a solution. A new equilibrium is.</p>
+      </div>
+    </section>
+
+    <!-- 7: THE THIRD POSITION -->
+    <section class="paper-section" id="third">
+      <div class="s-num">ARGUMENT 07</div>
+      <h2>The Third <em>Position</em></h2>
+      <p>Position&nbsp;3 holds that suffering is an unremarkable feature of being alive. It requires neither concealment nor content. It is not interesting or shameful. It is simply <em>there</em> &mdash; like weather, or age, or the fact that Tuesday follows Monday.</p>
+      <p>What would position&nbsp;3 look like in practice? The evidence suggests three structural requirements:</p>
+
+      <h3>RECONNECT DIAGNOSIS TO CONTEXT</h3>
+      <p>The false positive rate in primary care depression diagnosis (~25%)<sup class="fn"><a href="#pos-ref-32">[32]</a><span class="tip"><a href="https://publichealth.jhu.edu//2013/mojtabai-depression-over-diagnosis-and-over-treatment" target="_blank">Mojtabai, Johns Hopkins, depression overdiagnosis (2013) &rarr;</a></span></sup> and the DSM-5&rsquo;s removal of the bereavement exclusion<sup class="fn"><a href="#pos-ref-37">[37]</a><span class="tip"><a href="https://tpcjournal.nbcc.org/dsm-psychotherapy-counseling-and-the-medicalization-of-mental-illness-a-commentary-from-allen-frances/" target="_blank">Frances, &ldquo;DSM &amp; Medicalization&rdquo; (2022) &rarr;</a></span></sup> imply that diagnosis should be contextualized &mdash; not eliminated, but connected to the conditions that produce suffering. A person who is sad because their life is structurally bad does not need a diagnostic label. They need structural change. Position&nbsp;3 makes this distinction possible without requiring either that suffering be hidden or that it be interesting.</p>
+
+      <h3>REDISTRIBUTE ATTENTION</h3>
+      <p>Shekhar&rsquo;s research on digital permission structures offers a model: Black men&rsquo;s mental health disclosure on YouTube operates through collective care rather than individual branding, with positive comments receiving 2.4&times; engagement.<sup class="fn"><a href="#pos-ref-38">[38]</a><span class="tip"><a href="https://arxiv.org/abs/2510.20881" target="_blank">Shekhar, &ldquo;Digital Permission Structures&rdquo; (2025), 2.4&times; positive engagement &rarr;</a></span></sup> The attention economy is not inevitable. Alternative platforms and community structures can support a different economy of vulnerability &mdash; one oriented toward mutual care rather than mutual display. The 48%&ndash;22% treatment gap<sup class="fn"><a href="#pos-ref-21">[21]</a><span class="tip"><a href="https://www.dbsalliance.org/education/disparities-mental-health-care/" target="_blank">DBSA, &ldquo;Disparities in Mental Health&rdquo; (2021) &rarr;</a></span></sup> is not a knowledge problem. It is an attention problem.</p>
+
+      <h3>DECOUPLE IDENTITY FROM DIAGNOSIS</h3>
+      <p>The 72%-to-27% gap between Gen&nbsp;Z women and Boomer men who see mental health as core identity<sup class="fn"><a href="#pos-ref-3">[3]</a><span class="tip"><a href="https://research.skeptic.com/mental-health-challenges-are-an-important-part-of-my-identity-percent-agreed-by-generation-and-sex/" target="_blank">Skeptic Research Center (2022), n&thinsp;=&thinsp;3,014 American adults &rarr;</a></span></sup> is not evidence of generational weakness. It is evidence that the culture currently offers young women no pathway to selfhood that does not route through diagnostic categories. The 46% formal diagnosis rate among Gen&nbsp;Z<sup class="fn"><a href="#pos-ref-5">[5]</a><span class="tip"><a href="https://www.harmonyhit.com/state-of-gen-z-mental-health/" target="_blank">Harmony Healthcare IT (2025), n&thinsp;=&thinsp;1,010 &rarr;</a></span></sup> may reflect genuine illness. But the additional 37% who believe they have an undiagnosed condition &mdash; bringing the total to 83% who see themselves through a clinical lens &mdash; suggests that the diagnostic frame has become the default vocabulary for ordinary human difficulty. Position&nbsp;3 creates an alternative: you can suffer <em>and</em> have a personality. You can be sad <em>and</em> that not be the most interesting thing about you.</p>
+
+      <div class="callout">
+        <h4>ONE SENTENCE</h4>
+        <p>The problem is not that being depressed is fashionable; the problem is that a culture with no template for ordinary suffering can only toggle between hiding pain and performing it.</p>
+      </div>
+    </section>
+
+    <!-- REFERENCES -->
+    <section class="paper-section" id="pos-references">
+      <div class="s-num">REFERENCES</div>
+      <h2>References</h2>
+      <ol class="ref-list-num">
+        <li id="pos-ref-1" value="1"><a href="https://news.gallup.com/poll/505745/depression-rates-reach-new-highs.aspx" target="_blank">Gallup, &ldquo;Depression Rates Reach New Highs&rdquo; (Feb 2023), n&thinsp;=&thinsp;5,167</a></li>
+        <li id="pos-ref-2" value="2"><a href="https://www.cdc.gov/yrbs/results/2023-yrbs-results.html" target="_blank">CDC Youth Risk Behavior Survey, 2023 Results</a></li>
+        <li id="pos-ref-3" value="3"><a href="https://research.skeptic.com/mental-health-challenges-are-an-important-part-of-my-identity-percent-agreed-by-generation-and-sex/" target="_blank">Skeptic Research Center (2022), n&thinsp;=&thinsp;3,014, DASS-21 validated</a></li>
+        <li id="pos-ref-4" value="4"><a href="https://quod.lib.umich.edu/j/jii/4750978.0002.205/--history-of-melancholy?rgn=main;view=fulltext" target="_blank">Zimmermann, &ldquo;History of Melancholy&rdquo; (1995)</a></li>
+        <li id="pos-ref-5" value="5"><a href="https://www.harmonyhit.com/state-of-gen-z-mental-health/" target="_blank">Harmony Healthcare IT, &ldquo;State of Gen Z Mental Health&rdquo; (May 2025), n&thinsp;=&thinsp;1,010</a></li>
+        <li id="pos-ref-6" value="6"><a href="https://news.blueshieldca.com/2025/09/30/new-poll-94-of-gen-z-youth-report-experiencing-regular-mental-health-challenges" target="_blank">Blue Shield of California poll (Sept 2025)</a></li>
+        <li id="pos-ref-7" value="7"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6390869/" target="_blank">Ward &amp; Mengesha, PMC (2019)</a></li>
+        <li id="pos-ref-8" value="8"><a href="https://www.samhsa.gov/data/sites/default/files/reports/rpt47097/2023-nsduh-race-eth-companion.pdf" target="_blank">SAMHSA NSDUH 2021&ndash;2023 Race/Ethnicity Companion Report</a></li>
+        <li id="pos-ref-9" value="9"><a href="https://scholarworks.uni.edu/etd/346/" target="_blank">Frink, &ldquo;Romantic Melancholy&rdquo; (2016)</a></li>
+        <li id="pos-ref-10" value="10"><a href="https://www.washingtonpost.com/books/2024/12/12/prozac-nation-wurtzel-anniversary/" target="_blank">Washington Post, &ldquo;Prozac Nation at 30&rdquo; (2024)</a></li>
+        <li id="pos-ref-11" value="11"><a href="https://en.wikipedia.org/wiki/2021_Facebook_leak" target="_blank">2021 Facebook Files (Wall Street Journal); Meta internal research</a></li>
+        <li id="pos-ref-12" value="12"><a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1523649/full" target="_blank">Frontiers in Psychology, algorithm rabbit hole study (2025)</a></li>
+        <li id="pos-ref-13" value="13"><a href="https://www.jmir.org/2025/1/e67953" target="_blank">JMIR, Meta-analysis of 17 social media restriction RCTs (2024&ndash;25), n&thinsp;=&thinsp;5,624</a></li>
+        <li id="pos-ref-14" value="14"><a href="https://jonathanhaidt.com/social-media/" target="_blank">Haidt &amp; Twenge, &ldquo;The Anxious Generation&rdquo; data (2024)</a></li>
+        <li id="pos-ref-15" value="15"><a href="https://scimatic.org/storage/journals/11/pdfs/5625.pdf" target="_blank">Scimatic, Self-diagnosis via social media prevalence (2024)</a></li>
+        <li id="pos-ref-16" value="16"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9659797/" target="_blank">Yeung, Ng &amp; Abi-Jaoude, Canadian J. of Psychiatry (2022), 100 top ADHD TikToks</a></li>
+        <li id="pos-ref-17" value="17"><a href="https://petrieflom.law.harvard.edu/2025/04/02/dr-tiktok-the-impacts-of-misinformation-on-mental-health-self-diagnosis/" target="_blank">Harvard Petrie-Flom, &ldquo;Dr. TikTok&rdquo; (2025)</a></li>
+        <li id="pos-ref-18" value="18"><a href="https://thebatt.com/opinion/opinion-depression-isnt-aesthetic/" target="_blank">The Batt, &ldquo;Depression Isn&rsquo;t Aesthetic&rdquo; (2024)</a></li>
+        <li id="pos-ref-19" value="19"><a href="https://www.phaselearning.org/post/the-sad-girl-aesthetic-romanticizing-mental-illness" target="_blank">Phase Learning, &ldquo;Romanticizing Mental Illness&rdquo; (2024)</a></li>
+        <li id="pos-ref-20" value="20"><a href="https://link.springer.com/article/10.1007/s12144-026-09067-9" target="_blank">Current Psychology, TikTok MH content &amp; symptom self-report (2026)</a></li>
+        <li id="pos-ref-21" value="21"><a href="https://www.dbsalliance.org/education/disparities-mental-health-care/" target="_blank">DBSA, &ldquo;Disparities in Mental Health&rdquo; (2021)</a></li>
+        <li id="pos-ref-22" value="22"><a href="https://www.dailycal.org/2022/07/17/social-medias-sad-girl-depression-its-aesthetic" target="_blank">Daily Cal, &ldquo;Social Media&rsquo;s Sad Girl&rdquo; (2022)</a></li>
+        <li id="pos-ref-23" value="23"><a href="https://www.thelancet.com/journals/lanam/article/PIIS2667-193X(25)00037-7/fulltext" target="_blank">Lancet meta-analysis (2025), 1.3M people, 421 studies</a></li>
+        <li id="pos-ref-24" value="24"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5742759/" target="_blank">Assari, &ldquo;Social Determinants of Depression&rdquo; PMC (2017)</a></li>
+        <li id="pos-ref-25" value="25"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10153310/" target="_blank">Mereish, &ldquo;Depression at Intersection of Race, Sex, Sexual Orientation&rdquo; PMC (2023)</a></li>
+        <li id="pos-ref-26" value="26"><a href="https://www.madinamerica.com/2025/04/the-certainties-of-therapy-speak-are-contributing-to-our-social-collapse/" target="_blank">Bandinelli &amp; Pinz&oacute;n Arteaga, Mad in America (2025)</a></li>
+        <li id="pos-ref-27" value="27"><a href="https://www.globenewswire.com/news-release/2025/12/08/3201720/0/en/" target="_blank">GlobeNewsWire, Online therapy services market report (2025)</a></li>
+        <li id="pos-ref-28" value="28"><a href="https://taptwicedigital.com/blog/better-help-stats" target="_blank">TapTwice Digital, BetterHelp statistics (2024); $1.03B revenue</a></li>
+        <li id="pos-ref-29" value="29"><a href="https://www.firstsession.com/resources/betterhelp-reviews-survey-results" target="_blank">First Session, &ldquo;BetterHelp Risk&rdquo; (2025); $900M marketing spend</a></li>
+        <li id="pos-ref-30" value="30"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12583418/" target="_blank">PMC, &ldquo;Unmasking Therapy-Speak&rdquo; (2025)</a></li>
+        <li id="pos-ref-31" value="31"><a href="https://journals.upress.ufl.edu/rhm/article/view/1487" target="_blank">Rhetoric of Depression, UF Press (2023)</a></li>
+        <li id="pos-ref-32" value="32"><a href="https://publichealth.jhu.edu//2013/mojtabai-depression-over-diagnosis-and-over-treatment" target="_blank">Mojtabai, Johns Hopkins, depression overdiagnosis in primary care (2013)</a></li>
+        <li id="pos-ref-33" value="33"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3184591/" target="_blank">PMC, Canadian primary care MDD/GAD misdiagnosis rates</a></li>
+        <li id="pos-ref-34" value="34"><a href="https://www.cdc.gov/adhd/data/index.html" target="_blank">CDC ADHD data; Psychiatric Research &amp; Clinical Practice (2024)</a></li>
+        <li id="pos-ref-35" value="35"><a href="https://articleclub.substack.com/p/502-nobody-has-a-personality-anymore" target="_blank">Article Club, Discussion #502 (2025)</a></li>
+        <li id="pos-ref-36" value="36"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9483822/" target="_blank">Gronholm &amp; Thornicroft, PMC (2022)</a></li>
+        <li id="pos-ref-37" value="37"><a href="https://tpcjournal.nbcc.org/dsm-psychotherapy-counseling-and-the-medicalization-of-mental-illness-a-commentary-from-allen-frances/" target="_blank">Frances, &ldquo;DSM &amp; Medicalization&rdquo; (2022)</a></li>
+        <li id="pos-ref-38" value="38"><a href="https://arxiv.org/abs/2510.20881" target="_blank">Shekhar, &ldquo;Digital Permission Structures&rdquo; (2025)</a></li>
+      </ol>
+    </section>
+
+  </div>
+</div>
+
+<script>
+// Theme toggle
+const themeBtn = document.querySelector('.theme-btn');
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);document.body.setAttribute('data-theme',t);localStorage.setItem('theme',t);themeBtn.textContent=t==='dark'?'\u263C':'\u25D1'}
+themeBtn.addEventListener('click',()=>setTheme(document.body.getAttribute('data-theme')==='dark'?'light':'dark'));
+setTheme(document.body.getAttribute('data-theme')||'light');
+
+// Sidebar active state
+const sections = document.querySelectorAll('.paper-section');
+const sidebarLinks = document.querySelectorAll('.sidebar-item');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      sidebarLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.sidebar-item[data-target="${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
