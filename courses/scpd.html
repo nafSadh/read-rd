@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCPD Study Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ── Theme tokens ── */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --card-bg:#ffffff;--card-border:#e2ddd2;--card-hover:#f5f2ec;
+  --tag-bg:#2e6ab412;--tag-text:#2e6ab4;
+  --grain-opacity:0.015;
+  --topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#131620;--bg3:#1a1f2d;
+  --border:#2a2f3f;--border-hi:#3a4055;
+  --text:#8490aa;--dim:#5d6a82;--bright:#c8cdd8;
+  --accent:#9b7aed;--accent2:#b49af5;--accent-soft:#9b7aed12;
+  --cyan:#4ee8d0;--green:#4ee8d0;--red:#e85856;--amber:#f0b955;
+  --card-bg:#131620;--card-border:#2a2f3f;--card-hover:#1a1f2d;
+  --tag-bg:#9b7aed15;--tag-text:#9b7aed;
+  --grain-opacity:0.02;
+  --topbar-glow:#9b7aed15;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);color:var(--text)}
+body{
+  font-family:'Jost',-apple-system,sans-serif;
+  font-size:16px;line-height:1.6;
+  min-height:100vh;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E");
+  opacity:var(--grain-opacity);pointer-events:none;z-index:9999;
+}
+
+/* ── Topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 32px;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
+  letter-spacing:2px;color:var(--accent);text-transform:uppercase;
+}
+.topbar-sep{width:1px;height:18px;background:var(--border)}
+.topbar-title{font-size:14px;color:var(--dim);letter-spacing:.5px}
+.theme-toggle{
+  background:none;border:1px solid var(--border);border-radius:6px;
+  color:var(--dim);cursor:pointer;padding:6px 12px;font-size:12px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:1px;
+  transition:all .2s;
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Hero ── */
+.hero{
+  max-width:900px;margin:0 auto;padding:64px 32px 40px;
+  text-align:center;
+}
+.hero-badge{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--accent);
+  padding:4px 14px;border-radius:20px;margin-bottom:20px;
+}
+.hero h1{
+  font-family:'EB Garamond',Georgia,serif;
+  font-size:clamp(32px,5vw,52px);font-weight:400;
+  color:var(--bright);line-height:1.15;margin-bottom:16px;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{
+  font-size:17px;color:var(--dim);max-width:600px;margin:0 auto;
+  line-height:1.7;
+}
+
+/* ── Course section ── */
+.courses{max-width:1080px;margin:0 auto;padding:0 32px 80px}
+.course-section{margin-bottom:56px}
+.course-header{
+  display:flex;align-items:baseline;gap:14px;
+  margin-bottom:8px;padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.course-code{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--accent);
+  font-weight:600;
+}
+.course-name{
+  font-family:'EB Garamond',Georgia,serif;font-size:26px;
+  color:var(--bright);font-weight:400;
+}
+.course-desc{
+  font-size:14px;color:var(--dim);margin-bottom:24px;
+  max-width:700px;line-height:1.6;
+}
+
+/* ── Cards grid ── */
+.section-label{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);
+  margin:32px 0 14px;font-weight:600;
+}
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+.card{
+  display:flex;flex-direction:column;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:10px;padding:20px 18px 16px;
+  text-decoration:none;color:var(--text);
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.card:hover{
+  border-color:var(--accent);background:var(--card-hover);
+  transform:translateY(-2px);
+  box-shadow:0 4px 20px var(--accent-soft);
+}
+.card-num{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:2px;color:var(--dim);margin-bottom:8px;
+  text-transform:uppercase;
+}
+.card-title{
+  font-size:16px;font-weight:500;color:var(--bright);
+  line-height:1.35;margin-bottom:8px;flex:1;
+}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.card-tag{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:1px;text-transform:uppercase;
+  background:var(--tag-bg);color:var(--tag-text);
+  padding:2px 8px;border-radius:4px;
+}
+.card-tag.slides{--tag-bg:#4ee8d015;--tag-text:var(--cyan)}
+.card-tag.guide{--tag-bg:#2e6e3e15;--tag-text:var(--green)}
+
+/* ── Footer ── */
+.footer{
+  text-align:center;padding:40px 32px;
+  border-top:1px solid var(--border);
+  font-size:13px;color:var(--dim);
+}
+.footer a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
+.footer a:hover{border-bottom-color:var(--accent)}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .topbar{padding:10px 16px}
+  .hero{padding:40px 16px 24px}
+  .hero h1{font-size:28px}
+  .courses{padding:0 16px 48px}
+  .card-grid{grid-template-columns:1fr}
+  .course-header{flex-direction:column;gap:4px}
+}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">SCPD</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-title">Stanford Center for Professional Development</div>
+  </div>
+  <button class="theme-toggle" onclick="
+    const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=t;
+    this.textContent=t==='dark'?'light':'dark';
+  ">light</button>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">Study Hub</div>
+  <h1>Stanford SCPD<br><em>Interactive Course Materials</em></h1>
+  <p>Deep dives, slide decks, and animated guides for XCS229 Machine Learning and XCS236 Deep Generative Models. Each page is a standalone interactive reference with diagrams, worked examples, and theme toggle.</p>
+</div>
+
+<div class="courses">
+
+  <!-- ═══════════════ XCS229 ═══════════════ -->
+  <div class="course-section">
+    <div class="course-header">
+      <span class="course-code">XCS229</span>
+      <span class="course-name">Machine Learning</span>
+    </div>
+    <div class="course-desc">Andrew Ng's foundational ML course covering supervised learning, unsupervised learning, and reinforcement learning. Theory-heavy with mathematical rigor and practical problem sets.</div>
+
+    <div class="section-label">Overview</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-ml/xcs229.dd.html">
+        <span class="card-num">Overview</span>
+        <span class="card-title">XCS229 Course Overview</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+
+    <div class="section-label">Lectures</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-ml/linear-regression.dd.html">
+        <span class="card-num">Lecture 01</span>
+        <span class="card-title">Linear Regression</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/logistic-regression.dd.html">
+        <span class="card-num">Lecture 02</span>
+        <span class="card-title">Logistic Regression</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/glm.dd.html">
+        <span class="card-num">Lecture 03</span>
+        <span class="card-title">Generalized Linear Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/generative-algorithms.dd.html">
+        <span class="card-num">Lecture 04</span>
+        <span class="card-title">Generative Algorithms</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/svm-kernels.dd.html">
+        <span class="card-num">Lecture 05</span>
+        <span class="card-title">SVM &amp; Kernel Methods</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/decision-trees-ensemble.dd.html">
+        <span class="card-num">Lecture 06</span>
+        <span class="card-title">Decision Trees &amp; Ensembles</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/neural-networks.dd.html">
+        <span class="card-num">Lecture 07</span>
+        <span class="card-title">Neural Networks</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/unsupervised.dd.html">
+        <span class="card-num">Lecture 08</span>
+        <span class="card-title">Unsupervised Learning</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/pca-ica.dd.html">
+        <span class="card-num">Lecture 09</span>
+        <span class="card-title">PCA &amp; ICA</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/bias-variance.dd.html">
+        <span class="card-num">Lecture 10</span>
+        <span class="card-title">Bias-Variance Tradeoff</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/reinforcement-learning.dd.html">
+        <span class="card-num">Lecture 11</span>
+        <span class="card-title">Reinforcement Learning</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+
+    <div class="section-label">Problem Sets</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-ml/ps1.dd.html">
+        <span class="card-num">Problem Set 1</span>
+        <span class="card-title">Linear &amp; Logistic Regression</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/ps2.dd.html">
+        <span class="card-num">Problem Set 2</span>
+        <span class="card-title">Bayesian &amp; Kernel Methods</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/ps3.dd.html">
+        <span class="card-num">Problem Set 3</span>
+        <span class="card-title">Trees, Ensembles &amp; NNs</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/ps4.dd.html">
+        <span class="card-num">Problem Set 4</span>
+        <span class="card-title">Unsupervised &amp; EM</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/ps5.dd.html">
+        <span class="card-num">Problem Set 5</span>
+        <span class="card-title">RL &amp; Review</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+
+    <div class="section-label">Supplementary Topics</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-ml/linear-algebra.dd.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">Linear Algebra Review</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/kernel-methods.dd.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">Kernel Methods</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/autoencoders.dd.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">Autoencoders</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-ml/transformers.slides.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">Transformers</span>
+        <span class="card-tags"><span class="card-tag slides">slides</span></span>
+      </a>
+      <a class="card" href="scpd-ml/cnn-rnn.slides.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">CNN &amp; RNN</span>
+        <span class="card-tags"><span class="card-tag slides">slides</span></span>
+      </a>
+      <a class="card" href="scpd-ml/kv-cache.dd.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">KV Cache</span>
+        <span class="card-tags">
+          <span class="card-tag">deep dive</span>
+          <span class="card-tag slides">slides</span>
+          <span class="card-tag guide">guide</span>
+        </span>
+      </a>
+      <a class="card" href="scpd-ml/problem-sets.dd.html">
+        <span class="card-num">Supplement</span>
+        <span class="card-title">Problem Sets Overview</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════ XCS236 ═══════════════ -->
+  <div class="course-section">
+    <div class="course-header">
+      <span class="course-code">XCS236</span>
+      <span class="course-name">Deep Generative Models</span>
+    </div>
+    <div class="course-desc">Comprehensive study of deep generative models — from autoregressive and latent variable models through normalizing flows, GANs, energy-based models, score-based models, and diffusion. Covers both theory and modern practice.</div>
+
+    <div class="section-label">Overview</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-deep-gen-ai/xcs236.dd.html">
+        <span class="card-num">Overview</span>
+        <span class="card-title">XCS236 Course Overview</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+
+    <div class="section-label">Lectures</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-deep-gen-ai/intro.dd.html">
+        <span class="card-num">Lecture 01</span>
+        <span class="card-title">Introduction to Generative Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/autoregressive.dd.html">
+        <span class="card-num">Lecture 02</span>
+        <span class="card-title">Autoregressive Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/mle-latent.dd.html">
+        <span class="card-num">Lecture 03</span>
+        <span class="card-title">MLE &amp; Latent Variables</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/vae.dd.html">
+        <span class="card-num">Lecture 04</span>
+        <span class="card-title">Variational Autoencoders</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/normalizing-flows.dd.html">
+        <span class="card-num">Lecture 05</span>
+        <span class="card-title">Normalizing Flows</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/gan.dd.html">
+        <span class="card-num">Lecture 06</span>
+        <span class="card-title">Generative Adversarial Networks</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/ebm.dd.html">
+        <span class="card-num">Lecture 07</span>
+        <span class="card-title">Energy-Based Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/score-based.dd.html">
+        <span class="card-num">Lecture 08</span>
+        <span class="card-title">Score-Based Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/diffusion.dd.html">
+        <span class="card-num">Lecture 09</span>
+        <span class="card-title">Diffusion Models</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/evaluation.dd.html">
+        <span class="card-num">Lecture 10</span>
+        <span class="card-title">Evaluation &amp; Metrics</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+
+    <div class="section-label">Problem Sets</div>
+    <div class="card-grid">
+      <a class="card" href="scpd-deep-gen-ai/ps1.dd.html">
+        <span class="card-num">Problem Set 1</span>
+        <span class="card-title">Autoregressive &amp; Latent Variable</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/ps2.dd.html">
+        <span class="card-num">Problem Set 2</span>
+        <span class="card-title">VAE, Flows &amp; GANs</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+      <a class="card" href="scpd-deep-gen-ai/ps3.dd.html">
+        <span class="card-num">Problem Set 3</span>
+        <span class="card-title">EBMs, Score &amp; Diffusion</span>
+        <span class="card-tags"><span class="card-tag">deep dive</span></span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Built with the <a href="https://github.com/nafSadh/scpd">nafSadh/scpd</a> project
+</div>
+
+</body>
+</html>

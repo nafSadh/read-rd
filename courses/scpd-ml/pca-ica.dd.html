@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCA & ICA — Dimensionality Reduction & Source Separation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Dimensionality Reduction', title: '<em>Dimensionality</em> Reduction' },
+  { num: '02', short: 'PCA Formulation', title: '<em>PCA</em> Formulation' },
+  { num: '03', short: 'PCA Algorithm', title: '<em>PCA</em> Algorithm' },
+  { num: '04', short: 'Choosing k', title: '<em>Choosing</em> k' },
+  { num: '05', short: 'ICA Setup', title: '<em>ICA</em> Problem Setup' },
+  { num: '06', short: 'ICA Ambiguities', title: '<em>ICA</em> Ambiguities' },
+  { num: '07', short: 'ICA Algorithm', title: '<em>ICA</em> Algorithm' },
+  { num: '08', short: 'Self-Supervised', title: '<em>Self-Supervised</em> & Foundation Models' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // 01 Dimensionality Reduction
+  `<p>High-dimensional data poses computational and statistical challenges due to the "curse of dimensionality." As the number of features grows, data becomes sparse, distances become less meaningful, and models require exponentially more training samples. Dimensionality reduction addresses this by projecting data onto lower-dimensional subspaces while preserving essential structure.</p>
+  <p>Two complementary objectives motivate reduction techniques: compression reduces storage and computation costs by removing redundancy, while denoising improves model generalization by filtering noise. Principal Component Analysis (PCA) assumes linear structure and finds orthogonal directions of maximum variance. Independent Component Analysis (ICA) relaxes linearity assumptions and seeks components that are statistically independent. Both are unsupervised methods applied in signal processing, image compression, feature extraction, and visualization.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">n → k</div><div class="sl">Reduction Ratio</div></div>
+    <div class="st"><div class="sv">Orthogonal</div><div class="sl">PCA Constraint</div></div>
+    <div class="st"><div class="sv">Independent</div><div class="sl">ICA Constraint</div></div>
+    <div class="st"><div class="sv">Unsupervised</div><div class="sl">Both Methods</div></div>
+  </div>`,
+
+  // 02 PCA Formulation
+  `<p>PCA seeks to find a set of orthogonal directions (principal components) that capture the maximum variance in the data. Given centered data X ∈ ℝ^(m×n), the first principal component is the direction u₁ that maximizes Var(Xu₁). The second principal component is orthogonal to the first and maximizes variance in the remaining directions. This greedy optimization is equivalent to finding eigenvectors of the sample covariance matrix Σ = (1/m)X^T X, sorted by decreasing eigenvalue.</p>
+  <p>Mathematically, the problem reduces to eigendecomposition: Σv = λv. The eigenvalues λ represent variance explained per component, and eigenvectors v form the principal directions. PCA is optimal in a least-squares sense: if we project data onto the k-dimensional subspace spanned by the top-k eigenvectors, we minimize reconstruction error ‖X − X̂‖²_F. This elegant formulation connects variance maximization, eigendecomposition, and least-squares fitting into a unified framework.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Orthogonality</h4>
+      <p>Principal components are mutually perpendicular, ensuring they capture independent directions of variance.</p>
+    </div>
+    <div class="feat">
+      <h4>Eigendecomposition</h4>
+      <p>Solution found via eigendecomposition of covariance matrix; top-k eigenvectors are optimal projection directions.</p>
+    </div>
+    <div class="feat">
+      <h4>Variance Explained</h4>
+      <p>Eigenvalues quantify the amount of variance captured by each component; larger eigenvalues indicate more important directions.</p>
+    </div>
+    <div class="feat">
+      <h4>Centered Data</h4>
+      <p>Requires zero-mean data. Centering via X := X − mean(X) removes translation, ensuring variance-optimal fit.</p>
+    </div>
+  </div>`,
+
+  // 03 PCA Algorithm
+  `<p>PCA implementation involves three steps: (1) center the data X := X − mean(X), (2) compute the covariance matrix Σ = (1/m)X^T X or its singular value decomposition, and (3) extract eigenvectors and eigenvalues. The direct eigendecomposition approach requires O(n³) time but is stable for moderate dimensions. For high-dimensional problems (n >> m), Singular Value Decomposition (SVD) of X itself is preferred: X = UΣV^T. The right singular vectors V directly give principal components, and the singular values σᵢ relate to eigenvalues via λᵢ = σᵢ²/(m−1).</p>
+  <p>Numerical stability of SVD exceeds covariance matrix eigendecomposition, especially when X is ill-conditioned. SVD avoids explicitly forming X^T X, which squares the condition number and risks numerical errors. After SVD, projecting data onto the first k components yields the low-rank approximation X̂ = UₖΣₖVₖ^T, where Uₖ, Σₖ, Vₖ contain the top-k singular vectors and values. This compressed representation achieves k(m+n) storage instead of m·n, enabling efficient computation and storage for large datasets.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 280" style="max-height:250px">
+      <rect class="node" x="20" y="20" width="80" height="50" rx="4"/>
+      <text class="node-text" x="60" y="52" text-anchor="middle">Data X</text>
+
+      <line class="edge-hi" x1="100" y1="45" x2="140" y2="45"/>
+      <text class="lbl-hi" x="115" y="35">Center</text>
+
+      <rect class="node" x="140" y="20" width="80" height="50" rx="4"/>
+      <text class="node-text" x="180" y="52" text-anchor="middle">X_centered</text>
+
+      <line class="edge-hi" x1="220" y1="45" x2="260" y2="45"/>
+      <text class="lbl-hi" x="235" y="35">SVD</text>
+
+      <rect class="node-hi" x="260" y="20" width="80" height="50" rx="4"/>
+      <text class="node-text" x="300" y="52" text-anchor="middle">U,Σ,V^T</text>
+
+      <line class="edge-hi" x1="340" y1="45" x2="380" y2="45"/>
+      <text class="lbl-hi" x="360" y="35">Select</text>
+
+      <rect class="node-hi" x="380" y="20" width="80" height="50" rx="4"/>
+      <text class="node-text" x="420" y="48" text-anchor="middle">Top k</text>
+      <text class="node-sub" x="420" y="62" text-anchor="middle">components</text>
+
+      <rect class="node" x="20" y="130" width="140" height="60" rx="4"/>
+      <text class="node-text" x="90" y="155" text-anchor="middle">Covariance</text>
+      <text class="node-sub" x="90" y="175" text-anchor="middle">Σ = (1/m)X^T X</text>
+
+      <line class="edge" x1="90" y1="130" x2="90" y2="100"/>
+      <text class="lbl" x="100" y="115">Alt: eigendecomp</text>
+
+      <circle class="node" cx="250" cy="165" r="25"/>
+      <text class="node-text" x="250" y="172" text-anchor="middle">λᵢ</text>
+      <text class="lbl" x="280" y="172">eigenvalues</text>
+
+      <line class="edge" x1="160" y1="160" x2="225" y2="165"/>
+
+      <rect class="node" x="280" y="130" width="100" height="60" rx="4"/>
+      <text class="node-text" x="330" y="155" text-anchor="middle">Low-rank</text>
+      <text class="node-sub" x="330" y="175" text-anchor="middle">X̂ = Uₖ Σₖ V^T</text>
+
+      <line class="edge-hi" x1="300" y1="70" x2="330" y2="130"/>
+      <text class="lbl-hi" x="310" y="100">project</text>
+    </svg>
+  </div>`,
+
+  // 04 Choosing k
+  `<p>Selecting the number of components k requires balancing model complexity against information preservation. The scree plot visualizes eigenvalues (or explained variance per component) in descending order. An "elbow" point—where eigenvalue decrease sharply flattens—heuristically suggests k. A more principled approach uses the explained variance ratio (EVR): the cumulative fraction of total variance captured by the top k components. A common rule is selecting k such that the cumulative EVR exceeds 95%, though domain-specific requirements may demand different thresholds.</p>
+  <p>Cross-validation on downstream tasks (e.g., classification, reconstruction) provides task-specific guidance. For compression, minimize reconstruction error ‖X − X̂‖²_F / ‖X‖²_F; for visualization, use k = 2 or 3. Information-theoretic criteria like Bayesian Information Criterion (BIC) or Akaike Information Criterion (AIC) balance model fit against complexity penalties. Empirically, many datasets show steep drop-offs in the first few components (e.g., 80–90% variance in 5–10 components), enabling significant dimensionality reduction without severe information loss.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 250" style="max-height:220px">
+      <text class="lbl" x="20" y="30" font-size="14" font-weight="500">Scree Plot: Explained Variance</text>
+
+      <line class="edge" x1="60" y1="220" x2="480" y2="220"/>
+      <text class="lbl" x="490" y="225" text-anchor="middle">k</text>
+
+      <line class="edge" x1="60" y1="40" x2="60" y2="220"/>
+      <text class="lbl" x="35" y="130" text-anchor="middle">Variance</text>
+
+      <circle class="node-hi" cx="100" cy="80" r="4" fill="var(--accent)"/>
+      <line class="edge-hi" x1="100" y1="80" x2="135" y2="125"/>
+      <circle class="node-hi" cx="135" cy="125" r="4" fill="var(--accent)"/>
+      <line class="edge-hi" x1="135" y1="125" x2="170" y2="155"/>
+      <circle class="node-hi" cx="170" cy="155" r="4" fill="var(--accent)"/>
+      <line class="edge" x1="170" y1="155" x2="205" y2="175"/>
+      <circle class="node" cx="205" cy="175" r="4"/>
+      <line class="edge" x1="205" y1="175" x2="240" y2="190"/>
+      <circle class="node" cx="240" cy="190" r="4"/>
+      <line class="edge" x1="240" y1="190" x2="275" y2="202"/>
+      <circle class="node" cx="275" cy="202" r="4"/>
+      <line class="edge" x1="275" y1="202" x2="310" y2="210"/>
+
+      <line class="edge" x1="165" y1="155" x2="165" y2="220" stroke-dasharray="4,4" stroke-width="0.8"/>
+      <text class="lbl" x="165" y="235" text-anchor="middle">k*</text>
+      <text class="lbl" x="190" y="140">Elbow</text>
+
+      <text class="lbl" x="320" y="80" font-size="12">Cumulative EVR</text>
+      <text class="lbl" x="320" y="100" font-size="12">95% threshold</text>
+    </svg>
+  </div>`,
+
+  // 05 ICA Problem Setup
+  `<p>Independent Component Analysis solves the source separation problem: given mixed signals s = As, recover both the unknown mixing matrix A and the original independent sources s. The classic example is the "cocktail party problem"—separating overlapping speeches from multiple speakers recorded by multiple microphones. Unlike PCA (which assumes orthogonality and Gaussian noise), ICA assumes sources are statistically independent and non-Gaussian. These assumptions align with many real-world scenarios: speech signals, economic indices, brain activity (fMRI), and sensor data exhibit complex statistical structure beyond second-order moments.</p>
+  <p>ICA formulates the problem as: given observed data x = As (where A is unknown m×n mixing matrix and s is unknown n-dimensional source vector), estimate W = A⁻¹ such that recovered sources ŝ = Wx are mutually independent. Independence is measured via mutual information I(ŝ₁; ŝ₂; ...; ŝₙ) = 0, or equivalently, joint density factors as p(ŝ) = ∏pᵢ(ŝᵢ). This contrasts with PCA's variance-based objective and enables extraction of sources beyond second-order structure—critical for non-Gaussian data.</p>
+  <div class="callout">
+    <h4>Key Difference: PCA vs ICA</h4>
+    <p><strong>PCA:</strong> Orthogonal directions of maximum variance. Assumes Gaussian, additive noise. Uses second-order statistics (covariance). <strong>ICA:</strong> Statistically independent components. Assumes non-Gaussian sources. Uses higher-order statistics (kurtosis, negentropy). Both are unsupervised; ICA is more powerful but requires stronger assumptions.</p>
+  </div>`,
+
+  // 06 ICA Ambiguities
+  `<p>ICA recovery of sources is inherently ambiguous up to three non-uniqueness issues. First, scaling ambiguity: if A and s are a solution, then (A/c)·(c·s) is equally valid for any scalar c > 0. The recovered sources can be scaled arbitrarily; only their relative structure matters. Second, permutation ambiguity: the order of independent components is arbitrary. Swapping columns of A and corresponding entries of s yields an equivalent solution. These ambiguities reflect the fundamental structure of the problem: only statistical independence is preserved, not amplitude or ordering.</p>
+  <p>Third, and most restrictive: at most one source can be Gaussian. If two sources are jointly Gaussian, they cannot be separated using independence criteria—jointly Gaussian random variables with zero mean are characterized entirely by their covariance, which ICA cannot distinguish. This constraint ensures identifiability: for n sources, at most one may be Gaussian. Practically, this means ICA requires sufficiently non-Gaussian data. In applications where data is Gaussian or nearly Gaussian (e.g., whitened PCA components), ICA fails or requires regularization. Preprocessing (whitening, non-linear transformations) mitigates this issue.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Advantages</h4>
+      <ul>
+        <li>Recovers independent, non-Gaussian components.</li>
+        <li>More powerful than PCA for non-linear structure.</li>
+        <li>Applicable to diverse domains (speech, biomedical).</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations & Ambiguities</h4>
+      <ul>
+        <li>Scale and permutation ambiguities; requires domain knowledge to interpret.</li>
+        <li>At most one Gaussian source; fails on nearly-Gaussian data.</li>
+        <li>Requires careful preprocessing and hyperparameter tuning.</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 07 ICA Algorithm
+  `<p>ICA optimization frames source recovery as a maximum likelihood (ML) or maximum entropy problem. The log-likelihood for unknown densities is ∑ log p(ŝᵢ) + log|detW|, where p(ŝᵢ) are marginal source densities and detW is the Jacobian. With non-parametric density estimates (e.g., histograms or kernel methods), ML becomes infeasible. Instead, negentropy—the KL divergence between ŝᵢ and a Gaussian with matching variance—approximates non-Gaussianity. The FastICA algorithm minimizes ∑negentropy(ŝᵢ) via fixed-point iteration on W, achieving rapid convergence (cubic in favorable conditions) compared to gradient descent.</p>
+  <p>Preprocessing is critical: whitening (sphering) the data via X_w = Σ^{-1/2}X ensures spherical covariance, reducing the problem dimensionality and improving numerical stability. After whitening, ICA works on the whitened data, simplifying W to be orthogonal initially, then refined. Initialization matters—poor starting points may converge to local minima. Practical implementations use multiple random initializations and select the solution with highest negentropy. Extensions handle noisy mixing (ŝ = Ax + noise) and nonlinear mixing via kernel ICA, though complexity increases significantly.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 300" style="max-height:280px">
+      <text class="lbl" x="20" y="25" font-size="14" font-weight="500">ICA Pipeline: Source Separation</text>
+
+      <g>
+        <rect class="node" x="20" y="50" width="100" height="50" rx="4"/>
+        <text class="node-text" x="70" y="82" text-anchor="middle">Observed Mix</text>
+        <text class="node-sub" x="70" y="95" text-anchor="middle">x = As</text>
+      </g>
+
+      <line class="edge-hi" x1="120" y1="75" x2="150" y2="75"/>
+      <text class="lbl-hi" x="130" y="65">Whiten</text>
+
+      <g>
+        <rect class="node-hi" x="150" y="50" width="100" height="50" rx="4"/>
+        <text class="node-text" x="200" y="82" text-anchor="middle">Whitened</text>
+        <text class="node-sub" x="200" y="95" text-anchor="middle">X_w = Σ^{-1/2}X</text>
+      </g>
+
+      <line class="edge-hi" x1="250" y1="75" x2="280" y2="75"/>
+      <text class="lbl-hi" x="260" y="65">ICA</text>
+
+      <g>
+        <rect class="node-hi" x="280" y="50" width="100" height="50" rx="4"/>
+        <text class="node-text" x="330" y="82" text-anchor="middle">Unmix: W</text>
+        <text class="node-sub" x="330" y="95" text-anchor="middle">ŝ = W X_w</text>
+      </g>
+
+      <line class="edge" x1="330" y1="100" x2="330" y2="130"/>
+
+      <g>
+        <rect class="node" x="280" y="130" width="100" height="50" rx="4"/>
+        <text class="node-text" x="330" y="162" text-anchor="middle">Independent</text>
+        <text class="node-sub" x="330" y="175" text-anchor="middle">Components ŝ</text>
+      </g>
+
+      <g>
+        <rect class="node" x="40" y="150" width="120" height="80" rx="4"/>
+        <text class="node-text" x="100" y="170" text-anchor="middle">FastICA</text>
+        <text class="node-sub" x="100" y="190" text-anchor="middle">Negentropy</text>
+        <text class="node-sub" x="100" y="210" text-anchor="middle">minimization</text>
+        <text class="node-sub" x="100" y="220" text-anchor="middle">Fixed-point</text>
+      </g>
+
+      <line class="edge" x1="160" y1="185" x2="280" y2="75"/>
+
+      <line class="edge" x1="200" y1="200" x2="280" y2="140"/>
+      <text class="lbl" x="235" y="165">Iterate</text>
+    </svg>
+  </div>`,
+
+  // 08 Self-Supervised & Foundation Models
+  `<p>Self-supervised learning leverages unlabeled data to learn useful representations via pretext tasks. Autoencoders—neural networks that encode input x into latent code z = f(x) then reconstruct x̂ = g(z)—perform learned dimensionality reduction. Variational Autoencoders (VAE) add a probabilistic structure, minimizing reconstruction loss plus a KL divergence regularizer on the latent distribution. Contrastive methods (e.g., SimCLR, BYOL) learn representations by pulling similar examples together and pushing dissimilar examples apart in latent space.</p>
+  <p>Foundation models (e.g., BERT, GPT, Vision Transformers) scale self-supervised pretraining to massive unlabeled corpora. Vision pretraining learns rich image representations via masked image modeling or contrastive objectives; language pretraining learns from next-token prediction. These pretrained representations transfer exceptionally well to downstream tasks—fine-tuning on minimal labeled data often outperforms training from scratch. Zero-shot capability emerges: models generalize to unseen classes via text descriptions (CLIP) or few-shot examples without any task-specific training. This paradigm shift—learning once, adapting widely—represents the frontier of modern dimensionality reduction and representation learning.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Autoencoders</h4>
+      <p>Neural encoder-decoder networks learning nonlinear dimensionality reduction via reconstruction loss.</p>
+    </div>
+    <div class="feat">
+      <h4>Variational Autoencoders</h4>
+      <p>Probabilistic variant enforcing latent distribution structure; useful for generation and interpolation.</p>
+    </div>
+    <div class="feat">
+      <h4>Contrastive Learning</h4>
+      <p>Learn similarity structure without labels; powers foundation models and transfer learning.</p>
+    </div>
+    <div class="feat">
+      <h4>Foundation Models</h4>
+      <p>Large-scale pretrained models (BERT, GPT, ViT) learn universal representations transferable to diverse downstream tasks.</p>
+    </div>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Dimensionality Reduction</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">Principal Component Analysis - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Independent_component_analysis" target="_blank">Independent Component Analysis - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 14)</a></li>
+  <li><a href="https://arxiv.org/abs/math/0012127" target="_blank">ICA: Algorithms and Applications</a></li>
+</ul>`];
+
+const details = [
+  // Detail 01: Dimensionality Reduction
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 01</div>
+    <h2><em>Dimensionality</em> Reduction</h2>
+  </div>
+  <p>The curse of dimensionality arises as feature count n increases: sample complexity grows exponentially (O(exp(n)) in worst case), pairwise distances become nearly uniform, and overfitting becomes severe. A dataset of size m = 1000 in d = 10 dimensions may be adequate, but the same dataset in d = 100 dimensions is sparse. Intuition fails in high dimensions—concentration of measure, empty space, and the concentration of mass near the periphery all degrade statistical inference.</p>
+  <p>Dimensionality reduction combats these pathologies by projecting onto a k-dimensional subspace (k << n). Two objectives emerge naturally: (1) <strong>compression</strong> reduces computational cost of downstream algorithms (distance computations, training) and storage overhead, enabling algorithms scaled to large n, and (2) <strong>denoising</strong> improves generalization by removing noise-dominated directions, recovering signal in the low-rank structure of data. PCA and ICA instantiate these principles differently.</p>
+  <h3>Why Reduction Matters</h3>
+  <p>Consider a dataset with n = 500 features (e.g., pixels in images), but true data lies near a 5-dimensional manifold. Operating in ℝ^500 requires O(500m) memory and O(500² m) computation for basic operations. Reducing to ℝ^5 yields 100× speedup and 99% memory savings. More subtly, learning algorithms trained on high-dimensional sparse data overfit easily; reducing to intrinsic dimensionality prevents spurious patterns. Visualization is enabled: humans interpret 2D or 3D projections intuitively, whereas n = 100 features defy visualization.</p>
+  <p>Trade-offs exist: loss of information, interpretability challenges, and parameter tuning overhead (selecting k). Yet modern pipelines routinely employ dimensionality reduction—feature selection/extraction is a key preprocessing step. The choice between PCA (variance-based, linear) and ICA (independence-based, nonlinear approximations) depends on problem structure and domain knowledge.</p>
+  <h3>Mathematical Foundations</h3>
+  <p>Formally, dimensionality reduction solves: given X ∈ ℝ^(m×n), find projection P ∈ ℝ^(n×k) such that X̂ = XP ∈ ℝ^(m×k) minimizes some loss (e.g., reconstruction error) subject to constraints (e.g., orthogonality). For PCA: min ‖X − X̂‖_F subject to P^T P = I. For ICA, the objective is different—maximize statistical independence of recovered components. Both are solved via linear algebra (eigendecomposition, SVD) or optimization algorithms (gradient descent, fixed-point iteration).</p>`,
+
+  // Detail 02: PCA Formulation
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 02</div>
+    <h2><em>PCA</em> Formulation</h2>
+  </div>
+  <p>Principal Component Analysis is an elegant solution to the projection problem: find orthonormal directions that maximize variance of the projected data. Given centered data matrix X ∈ ℝ^(m×n) with zero mean (X := X − mean(X)), the sample covariance matrix is Σ = (1/m)X^T X. The objective is: max_{u: ‖u‖=1} u^T Σ u. Setting the gradient to zero via Lagrange multipliers yields Σu = λu, the eigenvalue equation. Thus, the optimal direction u is an eigenvector of Σ, and the maximum variance is the corresponding eigenvalue λ.</p>
+  <p>The second principal component maximizes variance orthogonal to the first, yielding the second-largest eigenvector. Continuing this process yields a complete orthonormal basis {v₁, v₂, ..., vₙ} sorted by decreasing eigenvalue λ₁ ≥ λ₂ ≥ ... ≥ λₙ ≥ 0. Retaining the top k components yields the best k-dimensional approximation in a least-squares sense. The reconstruction error is the sum of discarded eigenvalues: ∑_{i=k+1}^n λᵢ. Thus, eigenvalues directly quantify information retained and lost, enabling principled selection of k.</p>
+  <h3>Geometric Interpretation</h3>
+  <p>PCA rotates the coordinate system to align with data variation: the first principal axis points in the direction of greatest spread, the second in the direction of second-greatest spread (orthogonal to the first), and so on. In 2D, imagine an ellipse of scattered points; PCA aligns axes to the ellipse's major and minor axes. In high dimensions, this extends to the ellipsoid's principal axes—the directions that best explain data structure.</p>
+  <h3>Connection to SVD</h3>
+  <p>The Singular Value Decomposition X = UΣV^T yields an alternative path: the right singular vectors V directly are principal component directions. The singular values σᵢ relate to eigenvalues via λᵢ = σᵢ²/(m−1), avoiding explicit covariance matrix computation. For m << n (more features than samples), this is computationally superior and numerically more stable. The reduced SVD (retaining top k singular vectors) gives X̂ = Uₖ Σₖ Vₖ^T, the best k-rank approximation by Eckart-Young theorem.</p>`,
+
+  // Detail 03: PCA Algorithm
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 03</div>
+    <h2><em>PCA</em> Algorithm</h2>
+  </div>
+  <p>The PCA algorithm is straightforward: (1) Center: X := X − mean(X). (2) Compute SVD: X = UΣV^T via a library routine (e.g., scipy.linalg.svd, numpy.linalg.svd). (3) Extract principal components: the columns of V are the directions, singular values σᵢ are the scales. (4) Project: Z = XVₖ yields the k-dimensional representation where Vₖ contains the top-k columns of V.</p>
+  <p>Implementation notes: For small to moderate n, direct eigendecomposition of the covariance Σ = (1/m)X^T X followed by eigensort works. For large n (e.g., n = 10,000+), SVD is faster and more stable—it avoids forming X^T X, which squares the condition number and amplifies numerical error. Modern libraries (scikit-learn's PCA, TensorFlow) use SVD by default. Truncated SVD (computing only the top k singular components) saves memory and computation, reducing complexity from O(mn²) to O(mnk).</p>
+  <h3>Computational Complexity</h3>
+  <p>Full SVD: O(mn·min(m,n)). Truncated SVD (top k components): O(mnk) or O(mk²) with iterative methods. Covariance eigendecomposition: O(n³) after forming X^T X (O(mn²)). For m >> n or n >> m, SVD is asymptotically faster. Memory: full SVD requires O(mn) storage; iterative methods work with O(mk) buffers.</p>
+  <h3>Numerical Stability</h3>
+  <p>SVD is numerically backward stable: small perturbations in X cause small perturbations in U, Σ, V. Covariance-based eigendecomposition is not: the conditioning of X^T X is κ(X^T X) = κ(X)², degrading stability. For ill-conditioned X, this matters. SVD also correctly handles the case m < n (more features than samples), where X^T X is singular; standard eigendecomposition fails. Thus, SVD is the preferred method in practice.</p>`,
+
+  // Detail 04: Choosing k
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 04</div>
+    <h2><em>Choosing</em> k</h2>
+  </div>
+  <p>Selecting the intrinsic dimensionality k is a central question in dimensionality reduction. The <strong>scree plot</strong> is a heuristic: plot eigenvalues λ₁, λ₂, ..., λₙ in decreasing order. An "elbow"—a sharp drop followed by slow decay—suggests the optimal k. The reasoning: the "rock scree" at the base represents noise (small, flat eigenvalues), while the steep "mountain" represents signal. The elbow marks the transition. However, elbows are often subjective; datasets vary in their spectral decay.</p>
+  <p>The <strong>explained variance ratio (EVR)</strong is objective: EVR(k) = (∑_{i=1}^k λᵢ) / (∑_{i=1}^n λᵢ). Select k such that EVR(k) ≥ threshold (commonly 0.95, i.e., 95% variance retained). This trades off compression (small k) against information loss (1 − EVR). For compression, lower thresholds (e.g., 0.90) are acceptable; for scientific analysis, higher thresholds (e.g., 0.99) ensure fidelity.</p>
+  <h3>Information-Theoretic Criteria</h3>
+  <p>Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC) score models by fit + complexity penalty: BIC = −2log L + k log m, AIC = −2log L + 2k. Minimizing these over k yields a principled choice balancing reconstruction quality against dimensionality. These assume a generative model (e.g., Gaussian), which may not hold for data.</p>
+  <h3>Cross-Validation Approach</h3>
+  <p>For supervised downstream tasks, use cross-validation on the target task: reduce dimensionality to various k, train a classifier/regressor, measure validation performance. The k yielding best generalization is optimal for that task. This is task-specific, ideal but computationally expensive. For unsupervised tasks (clustering, visualization), alternative metrics (silhouette score, isolation forest) guide k selection.</p>
+  <h3>Practical Guidelines</h3>
+  <p>Most datasets have steep spectral decay: 80–90% of variance concentrated in the first 5–10 components. Starting with k such that EVR(k) ≥ 0.95 is reasonable; adjust based on downstream performance and interpretability. For visualization, always use k = 2 or 3 regardless of total variance—human perception leverages 2D/3D structure. Avoid k = 1; single-component projections risk losing essential structure.</p>`,
+
+  // Detail 05: ICA Problem Setup
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 05</div>
+    <h2><em>ICA</em> Problem Setup</h2>
+  </div>
+  <p>Independent Component Analysis addresses a fundamentally different problem than PCA: source separation. The generative model is x = As, where A ∈ ℝ^(m×n) is an unknown mixing matrix (m ≥ n), s ∈ ℝ^n are unknown independent sources, and x ∈ ℝ^m are observed mixtures. The goal: estimate W = A⁻¹ (or a scaled/permuted version) such that ŝ = Wx recovers the sources. Key assumption: sources are statistically independent, i.e., p(s) = ∏ᵢ p(sᵢ). This is far stronger than PCA's orthogonality requirement, yet it enables recovery of non-orthogonal sources.</p>
+  <p>The celebrated cocktail party problem exemplifies ICA: speakers talk simultaneously, microphones record mixtures of all speakers. Goal: isolate each speaker's voice. In medical imaging (fMRI), mixtures of brain signals from different regions are recorded; ICA separates these into independent neural components. In econometrics, latent economic factors generate observed market variables; ICA recovers factors. These problems are impossible to solve with PCA alone, which assumes orthogonal structure.</p>
+  <h3>Independence vs Orthogonality</h3>
+  <p>Orthogonal (uncorrelated) does not imply independent. Example: let s₁ ~ Uniform[-1, 1], s₂ = s₁² − E[s₁²]. Then s₁ and s₂ are uncorrelated (orthogonal in ℝ²) but clearly dependent: s₂ is a deterministic function of s₁. ICA exploits higher-order statistical moments (kurtosis, skewness) to distinguish independence from mere uncorrelatedness. This requires non-Gaussian source distributions; Gaussian sources have all higher moments determined by covariance alone.</p>
+  <h3>Linear vs Nonlinear Mixing</h3>
+  <p>Standard ICA assumes linear mixing: x = As. Nonlinear ICA addresses x = f(s) for unknown nonlinear f, dramatically harder. Kernel ICA extends methodology using kernel methods, but convergence is slower and interpretability decreases. Most practical applications use linear ICA, which is computationally tractable and achieves strong results on real data.</p>`,
+
+  // Detail 06: ICA Ambiguities
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 06</div>
+    <h2><em>ICA</em> Ambiguities</h2>
+  </div>
+  <p>ICA recovery is fundamentally non-unique in three ways. <strong>Scaling ambiguity:</strong> if (W, s) is a solution, so is (W/c, cs) for any c > 0. The recovered sources can be scaled by arbitrary positive constants; only their relative structure is identified. This is unavoidable from the generative model: x = As = A(c⁻¹)(cs) = (Ac⁻¹)·(cs). In practice, we typically normalize recovered components to unit variance, choosing a canonical scaling.</p>
+  <p><strong>Permutation ambiguity:</strong> the order of sources is arbitrary. If (W, s) is a solution, so is (WP, Ps) for any permutation matrix P. This reflects the symmetry in the independence assumption: p(s₁, s₂) = p(s₁)p(s₂) doesn't prescribe which source is "first." Recovering the true ordering requires domain knowledge or additional constraints (e.g., expected spectrum or sparsity patterns in speech processing).</p>
+  <p><strong>Non-Gaussianity constraint:</strong> at most one source can be Gaussian. Proof sketch: if s₁ and s₂ are jointly Gaussian, then they are characterized entirely by their covariance; higher moments convey no information. ICA uses higher-order moments for identification; losing them eliminates identifiability. Practically, this means ICA requires sufficiently non-Gaussian data. Whitened PCA components are approximately Gaussian, making them poor ICA inputs—preprocessing via nonlinear transformations (e.g., exponential, sigmoid) or using higher-order statistics is necessary.</p>
+  <h3>Identifiability Conditions</h3>
+  <p>Under these constraints—at most one Gaussian source, distinct sources, invertible A—ICA solutions are unique up to scaling and permutation. This is formalized as identifiability "up to a permutation and scaling" or "up to equivalence." The theorem (Comon, 1994) is foundational: recovery is possible and unique (identifiability) when sufficient non-Gaussianity and rank conditions hold.</p>`,
+
+  // Detail 07: ICA Algorithm
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 07</div>
+    <h2><em>ICA</em> Algorithm</h2>
+  </div>
+  <p>ICA optimization centers on maximum likelihood (ML) or maximum entropy. The log-likelihood for sources with densities {pᵢ(sᵢ)} is L = ∑ᵢ log pᵢ(Wᵢ·x) + log|det W|, where Wᵢ is the i-th row of W. Maximizing L over W recovers A. However, source densities are unknown; density estimation is hard in high dimensions. Instead, negentropy—the KL divergence from Gaussianity—serves as a proxy for non-Gaussianity: Negentropy(Y) = KL(Y, Gaussian) = H(Gaussian) − H(Y) ≈ E[G(Y)] − E[G(Gaussian)], where G is a nonlinearity (e.g., G(u) = u³ or G(u) = −exp(−u²/2)).</p>
+  <p><strong>FastICA algorithm:</strong> (1) Whiten the data: X_w = Σ^{−1/2}X where Σ is the covariance. Whitening ensures spherical covariance, simplifying the problem: W becomes orthogonal after whitening. (2) For each component i, initialize wᵢ randomly (unit norm). (3) Fixed-point iteration: wᵢ := E[X_w · G'(w_i^T X_w)] − E[G''(w_i^T X_w)] · wᵢ, where G is the chosen nonlinearity. This is a Newton-Raphson step on the negentropy objective. (4) Orthogonalize wᵢ against previously computed {w₁, ..., w_{i−1}} via Gram-Schmidt. (5) Repeat until convergence (typically 10–50 iterations). (6) De-whiten: W_final = Σ^{−1/2} W.</p>
+  <h3>Whitening Step</h3>
+  <p>Whitening (sphering) is crucial: it reduces dimensionality from fitting W ∈ ℝ^(n×n) to fitting W on whitened data where W becomes orthogonal (much smaller parameter space after rotation). Whitening also stabilizes numerical computation and accelerates convergence. The whitening transform X_w = Σ^{−1/2}X is computed via eigendecomposition (Σ = VΛV^T, so Σ^{−1/2} = VΛ^{−1/2}V^T) or SVD.</p>
+  <h3>Nonlinearity Selection</h3>
+  <p>Common choices for G: (1) G(u) = u³ (kurtosis-based, suitable for super-Gaussian sources with heavy tails). (2) G(u) = −exp(−u²/2) (negentropy-based, general-purpose, robust). (3) G(u) = (1/(1+e^{−u})) − 0.5 (logistic, intermediate). Different choices suit different source distributions; the algorithm is robust across choices but convergence speed varies.</p>`,
+
+  // Detail 08: Self-Supervised & Foundation Models
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 08</div>
+    <h2><em>Self-Supervised</em> & Foundation Models</h2>
+  </div>
+  <p>Traditional dimensionality reduction (PCA, ICA) assumes fixed, hand-crafted objectives (variance maximization, independence). Self-supervised learning inverts this: leverage unlabeled data to learn task-agnostic representations via pretext tasks. <strong>Autoencoders</strong> exemplify this: an encoder network φ(x) maps input x to latent code z ∈ ℝ^k, and a decoder ψ(z) reconstructs x̂ = ψ(φ(x)). Minimizing reconstruction loss ‖x − x̂‖² forces φ to encode essential information. Deep autoencoders learn nonlinear dimensionality reduction, far more expressive than linear PCA.</p>
+  <p><strong>Variational Autoencoders (VAE)</strong> add probabilistic structure: the encoder outputs parameters of a distribution over z (e.g., mean and variance of a Gaussian), and reconstruction is stochastic. A KL divergence regularizer on z's distribution ensures the latent space is well-behaved, enabling smooth interpolation and generation. <strong>Contrastive learning</strong> (SimCLR, MoCo, BYOL) learns representations by maximizing agreement between augmented views of the same sample and minimizing agreement with other samples. This leverages the intuition that perceptual similarity should correspond to representation similarity—no reconstruction target needed.</p>
+  <h3>Foundation Models & Transfer Learning</h3>
+  <p><strong>Foundation models</strong>—large neural networks pretrained on massive unlabeled data—have revolutionized machine learning. Vision Transformers (ViT) pretrained on billions of images via masked image modeling learn powerful visual representations. BERT and GPT, pretrained on text via masked language modeling and next-token prediction, capture semantic structure of language. These models are then fine-tuned on downstream tasks with modest labeled data. Fine-tuning often outperforms training from scratch, even with only hundreds of labeled examples—a dramatic transfer learning gain.</p>
+  <p><strong>Zero-shot learning</strong> extends this: CLIP aligns vision and language representations, enabling classification of unseen classes given text descriptions. Prompt-based few-shot learning (GPT-3, GPT-4) demonstrates models can solve novel tasks from a handful of examples without gradient updates. This paradigm—learn a universal representation, adapt to any task—represents the cutting edge of dimensionality reduction and representation learning, moving beyond fixed objectives toward flexible, data-driven learned structure.</p>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — PCA, ICA, and dimensionality reduction for feature learning and visualization</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://www.springer.com/gp/book/9780387252576" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Jolliffe — Principal Component Analysis</a> — Comprehensive reference on PCA theory, applications, and interpretation</p>
+<p><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Principal Component Analysis</a> — Introduction to PCA, variance explanation, and dimensionality reduction</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">PCA & <em>ICA</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Part IV · Dimensionality Reduction & Source Separation</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

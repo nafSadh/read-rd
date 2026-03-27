@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Problem Sets — Classical ML Algorithms</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* LIGHT THEME */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);--right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);--right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent 60%),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}
+.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}
+.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}
+.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}
+.security-box p:last-child{margin-bottom:0}
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+  </style>
+</head>
+<body data-theme="light">
+<script>
+const sections = [
+  { num: '01', label: 'Generative vs Discriminative', title: '<em>Generative</em> vs Discriminative' },
+  { num: '02', label: 'Gaussian Discriminant Analysis', title: '<em>Gaussian</em> Discriminant Analysis' },
+  { num: '03', label: 'Logistic Regression', title: '<em>Logistic</em> Regression' },
+  { num: '04', label: 'Naive Bayes', title: '<em>Naive</em> Bayes' },
+  { num: '05', label: 'Support Vector Machines', title: '<em>Support</em> Vector Machines' },
+  { num: '06', label: 'Softmax & Multiclass', title: '<em>Softmax</em> & Multiclass' },
+  { num: '07', label: 'Decision Boundaries', title: '<em>Decision</em> Boundaries' },
+  { num: '08', label: 'When to Use What', title: '<em>When</em> to Use What' },
+  { num: '09', short: 'Sources', label: 'Sources', title: '<em>Sources</em> & References' }
+];
+
+const summaries = [
+  '<p>The fundamental divide in classification algorithms: generative models learn P(x|y) and P(y), while discriminative models learn P(y|x). This drives the asymptotic error vs. sample efficiency tradeoff.</p>',
+  '<p>Assumes data within each class follows a multivariate Gaussian. Estimates mean and covariance per class via MLE. Produces linear boundaries (LDA) or quadratic boundaries (QDA) depending on shared covariance.</p>',
+  '<p>Models P(y|x) directly with sigmoid σ(w·x + b). Uses cross-entropy loss and gradient descent. Regularization (L1/L2) prevents overfitting and provides interpretable feature weights.</p>',
+  '<p>Generative model with strong conditional independence assumption. Laplace smoothing prevents zero probabilities. Excels in high-dimensional sparse data (text classification, spam filtering).</p>',
+  '<p>Maximizes margin between classes via hinge loss. Dual form + kernel trick enables nonlinear boundaries. Soft margin (C parameter) balances misclassification vs. margin width.</p>',
+  '<p>Generalizes logistic regression to K classes. Softmax function produces K-dimensional probability distribution. Cross-entropy loss sums distances between labels and output distributions.</p>',
+  '<p>Side-by-side comparison of how each algorithm partitions feature space. GDA produces elliptical contours, SVM creates max-margin hyperplanes, Naive Bayes builds axis-aligned boundaries.</p>',
+  '<p>Decision grid: dataset size, dimensionality, interpretability, training speed, assumptions. Fast heuristics for choosing the right algorithm for your problem.</p>'
+];
+
+const details = [
+  `<div class="detail-header"><div class="num">01</div><h2><em>Generative</em> vs Discriminative</h2></div>
+<p>The choice between generative and discriminative models fundamentally affects how algorithms learn from data. Ng & Jordan (2001) showed there are two distinct regimes: generative classifiers learn faster with small data, discriminative classifiers have lower asymptotic error with large data.</p>
+<h3>Generative Approach</h3>
+<p><strong>Models:</strong> P(x, y) = P(y) · P(x|y). Learns class-conditional distributions and class priors.</p>
+<p><strong>Examples:</strong> Gaussian Discriminant Analysis, Naive Bayes.</p>
+<p><strong>Decision rule:</strong> argmax P(y|x) = argmax P(x|y)P(y) / P(x). Can sample new x from P(x|y).</p>
+<p><strong>Sample efficiency:</strong> Requires fewer samples to reach asymptotic error (faster convergence rate).</p>
+<p><strong>Assumption burden:</strong> Makes strong assumptions about P(x|y) (e.g., Gaussian, conditional independence).</p>
+<h3>Discriminative Approach</h3>
+<p><strong>Models:</strong> P(y|x) directly. Learns decision boundary.</p>
+<p><strong>Examples:</strong> Logistic Regression, Support Vector Machines.</p>
+<p><strong>Decision rule:</strong> argmax P(y|x). Directly optimizes what we care about.</p>
+<p><strong>Lower asymptotic error:</strong> Fewer modeling assumptions → lower asymptotic error with infinite data.</p>
+<p><strong>Flexibility:</strong> Makes no assumptions about P(x), only P(y|x).</p>
+<h3>The Tradeoff</h3>
+<div class="feat-grid">
+<div class="feat"><h4 style="color:var(--green)">Generative Wins When:</h4><p>• Small datasets (n &lt; 1000)<br>• High-dimensional sparse data (text, NLP)<br>• Missing data (can impute via P(x|y))<br>• Interpretability of class distributions matters</p></div>
+<div class="feat"><h4 style="color:var(--cyan)">Discriminative Wins When:</h4><p>• Large datasets (n &gt; 10,000)<br>• Dense features<br>• Asymptotic performance critical<br>• Direct P(y|x) fit is flexible</p></div>
+</div>
+<p>The convergence rate is O(1/m) for generative (m = sample size), but asymptotic error is higher. Discriminative has slower convergence O(1/√m) but lower asymptotic error. They cross over around m ≈ 1-5K samples depending on problem.</p>`,
+
+  `<div class="detail-header"><div class="num">02</div><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
+<p>Gaussian Discriminant Analysis (GDA) models class-conditional distributions as multivariate Gaussians. It is a generative model: we learn P(y) and P(x|y), then use Bayes rule to compute P(y|x).</p>
+<h3>Model Formulation</h3>
+<p><strong>Class prior:</strong> P(y) = φ^y(1-φ)^(1-y) for y ∈ {0, 1}.</p>
+<p><strong>Class-conditional:</strong> P(x|y=k) = N(μ_k, Σ_k). Gaussian with mean μ_k and covariance Σ_k.</p>
+<p><strong>Posterior (Bayes rule):</strong> P(y|x) = P(x|y)P(y) / P(x).</p>
+<h3>MLE Parameter Estimates</h3>
+<pre>φ = (1/m) Σ 1{y^(i)=1}
+μ_k = Σ_{i: y^(i)=k} x^(i) / |{i: y^(i)=k}|
+Σ_k = Σ_{i: y^(i)=k} (x^(i) - μ_k)(x^(i) - μ_k)^T / |{i: y^(i)=k}|
+</pre>
+<p>Each class has its own covariance matrix Σ_k. This is Quadratic Discriminant Analysis (QDA).</p>
+<h3>Linear Discriminant Analysis (LDA)</h3>
+<p>If we assume all classes share the same covariance Σ_k = Σ ∀k, the decision boundary becomes linear in x.</p>
+<p><strong>Shared covariance estimate:</strong> Σ = (1/m) Σ_{i=1}^m (x^(i) - μ_{y^(i)})(x^(i) - μ_{y^(i)})^T</p>
+<p>With shared Σ, the log-odds log P(y=1|x)/P(y=0|x) is linear in x, producing a hyperplane decision boundary.</p>
+<h3>Decision Boundary Geometry</h3>
+<p><strong>QDA (separate covariances):</strong> Decision boundary is a quadratic surface. In 2D, it is a conic section (ellipse, hyperbola, parabola).</p>
+<p><strong>LDA (shared covariance):</strong> Decision boundary is a line (in 2D) or hyperplane (in d dimensions). Simpler model, fewer parameters.</p>
+<div class="diagram-wrap">
+<svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<ellipse id="class0" cx="120" cy="160" rx="50" ry="35" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-dasharray="4,4"/>
+<ellipse id="class1" cx="380" cy="160" rx="50" ry="45" fill="none" stroke="url(#grad2)" stroke-width="2" stroke-dasharray="4,4"/>
+<linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2e6ab4;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#2e6ab4;stop-opacity:0.2"/></linearGradient>
+<linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#9b7aed;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#9b7aed;stop-opacity:0.2"/></linearGradient>
+</defs>
+<text x="250" y="30" class="node-text" text-anchor="middle">GDA Decision Boundary (2D)</text>
+<ellipse cx="120" cy="160" rx="50" ry="35" fill="none" stroke="#2e6ab4" stroke-width="2" opacity="0.5"/>
+<ellipse cx="120" cy="160" rx="75" ry="53" fill="none" stroke="#2e6ab4" stroke-width="1" opacity="0.3" stroke-dasharray="3,3"/>
+<ellipse cx="380" cy="160" rx="50" ry="45" fill="none" stroke="#9b7aed" stroke-width="2" opacity="0.5"/>
+<ellipse cx="380" cy="160" rx="75" ry="68" fill="none" stroke="#9b7aed" stroke-width="1" opacity="0.3" stroke-dasharray="3,3"/>
+<circle cx="120" cy="160" r="4" fill="#2e6ab4"/>
+<circle cx="380" cy="160" r="4" fill="#9b7aed"/>
+<text x="120" y="220" class="lbl" text-anchor="middle">μ₀</text>
+<text x="380" y="220" class="lbl" text-anchor="middle">μ₁</text>
+<path d="M 200 120 Q 250 80 300 140" stroke="#8b2020" stroke-width="2" fill="none"/>
+<text x="250" y="70" class="lbl-hi" text-anchor="middle">Decision Boundary (QDA)</text>
+<text x="250" y="300" class="lbl" text-anchor="middle">Class 0 (blue) vs Class 1 (purple) — Quadratic boundary when Σ₀ ≠ Σ₁</text>
+</svg>
+</div>
+<h3>When to Use GDA</h3>
+<ul class="s-list pro">
+<li>Small-to-medium datasets (Gaussian assumption is strong)</li>
+<li>When interpretable class distributions help understanding</li>
+<li>Dense features (not sparse high-dimensional data)</li>
+<li>LDA as baseline: simple, linear, fewer parameters</li>
+</ul>`,
+
+  `<div class="detail-header"><div class="num">03</div><h2><em>Logistic</em> Regression</h2></div>
+<p>Logistic Regression directly models P(y|x) using the sigmoid function. It is a discriminative classifier, making no assumptions about the feature distribution P(x).</p>
+<h3>The Sigmoid Function</h3>
+<p><strong>Definition:</strong> σ(z) = 1 / (1 + e^(-z)). Maps R → (0, 1).</p>
+<p><strong>Properties:</strong> σ(0) = 0.5, σ'(z) = σ(z)(1 - σ(z)), lim_{z→∞} σ(z) = 1, lim_{z→-∞} σ(z) = 0.</p>
+<h3>Model</h3>
+<p><strong>Hypothesis:</strong> h_θ(x) = σ(w^T x + b) = 1 / (1 + e^(-(w^T x + b)))</p>
+<p><strong>Interpretation:</strong> h_θ(x) is the probability P(y=1|x; w, b).</p>
+<h3>Loss Function: Cross-Entropy</h3>
+<pre>L(ŷ, y) = -y log(ŷ) - (1-y) log(1-ŷ)
+         = -y log(σ(w^T x + b)) - (1-y) log(1 - σ(w^T x + b))
+</pre>
+<p><strong>Why cross-entropy?</strong> It is the negative log-likelihood under Bernoulli distribution. Convex in w and b, guarantees global optimum.</p>
+<p><strong>Empirical loss:</strong> J(w, b) = (1/m) Σ_{i=1}^m L(h_θ(x^(i)), y^(i))</p>
+<h3>Optimization: Gradient Descent</h3>
+<p><strong>Gradient of sigmoid:</strong> ∂σ(z)/∂z = σ(z)(1 - σ(z))</p>
+<p><strong>Gradient of cross-entropy:</strong> ∂J/∂w = (1/m) Σ_{i=1}^m (σ(w^T x^(i) + b) - y^(i)) x^(i)</p>
+<p><strong>Update rule (batch GD):</strong> w := w - α (∂J/∂w), b := b - α (∂J/∂b)</p>
+<p><strong>α (learning rate):</strong> Typical values 0.001 to 0.1. Smaller → slower but safer convergence.</p>
+<p><strong>Newton's method:</strong> Faster convergence (quadratic) if Hessian is tractable. θ := θ - H^(-1) ∇J.</p>
+<h3>Regularization</h3>
+<p><strong>L2 (Ridge):</strong> J_L2 = J + (λ/2m) ||w||^2. Shrinks weights, reduces complexity.</p>
+<p><strong>L1 (Lasso):</strong> J_L1 = J + (λ/m) ||w||_1. Produces sparse weights (feature selection).</p>
+<div class="feat-grid">
+<div class="feat"><h4>L2 Regularization</h4><p>• Smooth penalty on all weights<br>• Weights approach 0 gradually<br>• All features retained (smaller)<br>• Faster, smoother gradient</p></div>
+<div class="feat"><h4>L1 Regularization</h4><p>• Sharp corners at 0<br>• Drives some weights to exactly 0<br>• Automatic feature selection<br>• Less sensitive to scale</p></div>
+</div>
+<h3>Feature Engineering Matters</h3>
+<p>Logistic Regression is linear in the feature space. Add polynomial features (x₁², x₁x₂, etc.) to capture nonlinear relationships. This increases model capacity but risks overfitting.</p>`,
+
+  `<div class="detail-header"><div class="num">04</div><h2><em>Naive</em> Bayes</h2></div>
+<p>Naive Bayes is a generative classifier that applies Bayes theorem with a strong conditional independence assumption: given the class y, all features x_j are independent.</p>
+<h3>The Naive Independence Assumption</h3>
+<p><strong>Bayes rule:</strong> P(y|x) = P(x|y)P(y) / P(x)</p>
+<p><strong>Naive assumption:</strong> P(x|y) = P(x_1|y) P(x_2|y) ... P(x_d|y)</p>
+<p><strong>Why "naive"?</strong> In reality, features are often correlated. But empirically, Naive Bayes often performs well despite this violation.</p>
+<h3>Parameter Estimation</h3>
+<p><strong>Class prior:</strong> P(y=k) = count(y^(i)=k) / m</p>
+<p><strong>Feature likelihood:</strong> P(x_j|y=k) depends on feature type (Bernoulli, Multinomial, Gaussian).</p>
+<pre>Bernoulli NB: P(x_j|y) ∈ {0, 1} binary feature
+Multinomial NB: x_j ∈ {1,...,V} categorical
+Gaussian NB: P(x_j|y) = N(μ_{jk}, σ²_{jk})
+</pre>
+<h3>Laplace Smoothing</h3>
+<p><strong>Problem:</strong> If feature j never appears with class k in training data, P(x_j|y=k) = 0, making the entire P(y|x) = 0 due to multiplication.</p>
+<p><strong>Solution:</strong> Add pseudocount α (usually α=1 for Laplace smoothing):</p>
+<pre>P(x_j=v|y=k) = (count(x_j=v, y=k) + α) / (count(y=k) + α·|V_j|)
+</pre>
+<p>where |V_j| is the number of unique values of feature j.</p>
+<h3>Text Classification Example</h3>
+<p><strong>Task:</strong> Classify email as spam (y=1) or ham (y=0).</p>
+<p><strong>Features:</strong> Word indicators (binary). x_j = 1 if word j appears, 0 otherwise.</p>
+<p><strong>Training:</strong> Count word frequencies in spam vs. ham emails. Estimate P(word_j|spam) and P(word_j|ham).</p>
+<p><strong>Prediction:</strong> P(spam|email) ∝ P(email|spam)P(spam) = P(spam) ∏ P(word_j|spam)^{x_j}</p>
+<p><strong>Log-odds trick:</strong> Avoid underflow by computing log-probabilities: log P(y=1|x) = log P(y=1) + Σ log P(x_j|y=1)</p>
+<h3>Naive Bayes vs. Logistic Regression</h3>
+<div class="feat-grid">
+<div class="feat"><h4>Naive Bayes</h4><p>• Generative (learns P(x|y))<br>• Fast training (just count)<br>• Works with small data<br>• Clear probability estimates<br>• Less flexible decision boundary</p></div>
+<div class="feat"><h4>Logistic Regression</h4><p>• Discriminative (learns P(y|x))<br>• Gradient-based optimization<br>• Needs more data for good fit<br>• No explicit P(x) model<br>• More flexible, can fit better</p></div>
+</div>
+<p>Naive Bayes learns faster with small data (O(n) samples), but logistic regression has lower asymptotic error as n → ∞ (both converge, but LR has lower limit).</p>`,
+
+  `<div class="detail-header"><div class="num">05</div><h2><em>Support</em> Vector Machines</h2></div>
+<p>Support Vector Machines (SVMs) find the hyperplane that maximizes the margin between classes. They use hinge loss and can employ the kernel trick for nonlinear classification.</p>
+<h3>The Margin and Hard-Margin SVM</h3>
+<p><strong>Geometric margin:</strong> Distance from point x to hyperplane w^T x + b = 0 is |w^T x + b| / ||w||.</p>
+<p><strong>Margin γ:</strong> Minimum distance of any training point to the hyperplane. We want to maximize γ.</p>
+<p><strong>Hard-margin SVM (linearly separable):</strong></p>
+<pre>min   (1/2) ||w||²
+ w,b
+s.t.  y^(i)(w^T x^(i) + b) ≥ 1  ∀i
+</pre>
+<p>The constraint ensures points are at least distance 1/||w|| from the hyperplane. Minimizing ||w|| maximizes margin.</p>
+<h3>Soft-Margin SVM (Non-separable Data)</h3>
+<p>Introduce slack variables ξ_i ≥ 0 to allow violations:</p>
+<pre>min   (1/2) ||w||² + C Σ ξ_i
+ w,b,ξ
+s.t.  y^(i)(w^T x^(i) + b) ≥ 1 - ξ_i  ∀i
+      ξ_i ≥ 0
+</pre>
+<p><strong>Parameter C:</strong> Regularization trade-off. Large C → favor margin, allow few violations. Small C → allow more misclassifications.</p>
+<h3>Hinge Loss Formulation</h3>
+<p>Soft-margin SVM minimizes:</p>
+<pre>J(w, b) = (1/2) ||w||² + C Σ max(0, 1 - y^(i)(w^T x^(i) + b))
+</pre>
+<p>The term max(0, 1 - y·f(x)) is hinge loss. It is 0 when the point is correctly classified with margin ≥ 1.</p>
+<h3>Dual Form and Kernel Trick</h3>
+<p><strong>Primal:</strong> Find w, b. Hard to solve for large d (# features).</p>
+<p><strong>Dual (Lagrangian):</strong></p>
+<pre>max  Σ α_i - (1/2) Σ α_i α_j y^(i) y^(j) (x^(i) · x^(j))
+α
+s.t. 0 ≤ α_i ≤ C,  Σ α_i y^(i) = 0
+</pre>
+<p><strong>Kernel trick:</strong> Replace inner products x^(i) · x^(j) with K(x^(i), x^(j)) = φ(x^(i)) · φ(x^(j)) without computing φ explicitly.</p>
+<h3>Common Kernels</h3>
+<ul class="s-list">
+<li><code>Linear:</code> K(x,x') = x · x'</li>
+<li><code>Polynomial:</code> K(x,x') = (γ x·x' + r)^d</li>
+<li><code>RBF (Gaussian):</code> K(x,x') = exp(-γ ||x - x'||²)</li>
+<li><code>Sigmoid:</code> K(x,x') = tanh(γ x·x' + r)</li>
+</ul>
+<div class="diagram-wrap">
+<svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+<text x="250" y="25" class="node-text" text-anchor="middle">SVM Max-Margin Hyperplane</text>
+<circle cx="80" cy="150" r="5" fill="#2e6ab4" stroke="#2e6ab4" stroke-width="2"/>
+<circle cx="100" cy="120" r="5" fill="#2e6ab4" stroke="#2e6ab4" stroke-width="2"/>
+<circle cx="110" cy="180" r="5" fill="#2e6ab4" stroke="#2e6ab4" stroke-width="2"/>
+<circle cx="420" cy="150" r="5" fill="#9b7aed" stroke="#9b7aed" stroke-width="2"/>
+<circle cx="400" cy="130" r="5" fill="#9b7aed" stroke="#9b7aed" stroke-width="2"/>
+<circle cx="410" cy="170" r="5" fill="#9b7aed" stroke="#9b7aed" stroke-width="2"/>
+<circle cx="150" cy="150" r="6" fill="none" stroke="#2e6ab4" stroke-width="2.5"/>
+<circle cx="350" cy="150" r="6" fill="none" stroke="#9b7aed" stroke-width="2.5"/>
+<line x1="50" y1="80" x2="450" y2="220" stroke="#8b2020" stroke-width="2.5"/>
+<line x1="130" y1="100" x2="130" y2="200" stroke="#8b2020" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+<line x1="370" y1="100" x2="370" y2="200" stroke="#8b2020" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+<path d="M 130 150 L 370 150" stroke="#8b2020" stroke-width="2" stroke-dasharray="2,2"/>
+<text x="250" y="165" class="lbl-hi" text-anchor="middle">Margin</text>
+<text x="250" y="280" class="lbl" text-anchor="middle">Maximum margin separates classes. Support vectors (circled) lie on margin boundaries.</text>
+</svg>
+</div>
+<h3>SVM vs. Logistic Regression</h3>
+<ul class="s-list pro"><li>SVMs: Better for small-medium datasets, clearer geometric interpretation</li><li>Logistic Reg: Probabilistic outputs, scales to large data, more interpretable weights</li><li>SVMs with RBF kernel: Nonlinear, but slow to predict. Logistic with kernel: Slow to train</li></ul>`,
+
+  `<div class="detail-header"><div class="num">06</div><h2><em>Softmax</em> & Multiclass</h2></div>
+<p>Softmax Regression generalizes logistic regression from binary to K-class classification. It models P(y|x) as a categorical distribution using the softmax function.</p>
+<h3>The Softmax Function</h3>
+<p><strong>Definition:</strong> σ_k(z) = e^(z_k) / Σ_j e^(z_j)</p>
+<p><strong>Input:</strong> z ∈ R^K (K logits, one per class).</p>
+<p><strong>Output:</strong> Vector of K probabilities that sum to 1.</p>
+<p><strong>Properties:</strong> Differentiable, maintains probability interpretation, generalizes sigmoid (K=2 case).</p>
+<h3>Model</h3>
+<pre>z_k = w_k^T x + b_k   for k = 1,...,K
+P(y=k|x) = e^(z_k) / Σ_j e^(z_j) = softmax(z)_k
+</pre>
+<p>Parameters: w_1,...,w_K ∈ R^d and b_1,...,b_K ∈ R (total (d+1)K parameters).</p>
+<h3>Cross-Entropy Loss</h3>
+<p><strong>For one sample:</strong> L(y, ŷ) = -Σ_k 1{y=k} log ŷ_k = -log ŷ_y</p>
+<p>If y=2 and ŷ = [0.1, 0.7, 0.2], loss = -log(0.7) ≈ 0.357.</p>
+<p><strong>Batch loss:</strong> J(W, b) = (1/m) Σ_i L(y^(i), softmax(W^T x^(i) + b))</p>
+<h3>Optimization</h3>
+<p><strong>Gradient:</strong> ∂J/∂w_k = (1/m) Σ_i (σ_k(z^(i)) - 1{y^(i)=k}) x^(i)</p>
+<p><strong>Gradient update:</strong> w_k := w_k - α ∂J/∂w_k (standard gradient descent)</p>
+<p>Softmax is convex, so gradient descent converges to global optimum.</p>
+<h3>One-vs-All (OVA) vs. Softmax</h3>
+<div class="feat-grid">
+<div class="feat"><h4>One-vs-All</h4><p>• Train K binary classifiers<br>• Class k vs. all others<br>• Takes max confidence<br>• Simple but less unified<br>• K independent models</p></div>
+<div class="feat"><h4>Softmax</h4><p>• Single K-class model<br>• Directly optimizes joint distribution<br>• Probabilities sum to 1<br>• More principled (MLE)<br>• Shared representation</p></div>
+</div>
+<h3>Connection to Neural Networks</h3>
+<p>Softmax is the standard output layer in neural networks for multiclass classification. Hidden layers learn nonlinear features, softmax outputs class probabilities. Logistic regression is the single-layer version (no hidden layers).</p>`,
+
+  `<div class="detail-header"><div class="num">07</div><h2><em>Decision</em> Boundaries Compared</h2></div>
+<p>The shape of the decision boundary reveals each algorithm's implicit assumptions about the data. Here we compare them on a 2D synthetic dataset.</p>
+<h3>Theoretical Decision Surfaces</h3>
+<ul class="s-list">
+<li><code>Linear (Logistic, LDA):</code> Straight line or hyperplane. Models P(y|x) or P(x|y) with shared covariance.</li>
+<li><code>Quadratic (QDA):</code> Conic sections (ellipse, parabola). Each class has own Gaussian covariance.</li>
+<li><code>Nonlinear (SVM + kernel):</code> Complex curved boundary. Kernel trick maps to higher-dimensional space.</li>
+<li><code>Axis-aligned (Naive Bayes):</code> Rectangular regions. Independence assumption creates orthogonal splits.</li>
+</ul>
+<div class="diagram-wrap">
+<svg viewBox="0 0 580 400" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="#8b2020"/></marker>
+</defs>
+<text x="290" y="25" class="node-text" text-anchor="middle">Decision Boundaries: Four Algorithms on Same Data</text>
+<rect x="20" y="50" width="130" height="130" fill="none" stroke="#bfb8a8" stroke-width="1" opacity="0.5"/>
+<rect x="180" y="50" width="130" height="130" fill="none" stroke="#bfb8a8" stroke-width="1" opacity="0.5"/>
+<rect x="340" y="50" width="130" height="130" fill="none" stroke="#bfb8a8" stroke-width="1" opacity="0.5"/>
+<rect x="20" y="210" width="130" height="130" fill="none" stroke="#bfb8a8" stroke-width="1" opacity="0.5"/>
+<circle cx="45" cy="80" r="3" fill="#2e6ab4"/>
+<circle cx="55" cy="90" r="3" fill="#2e6ab4"/>
+<circle cx="65" cy="100" r="3" fill="#2e6ab4"/>
+<circle cx="120" cy="160" r="3" fill="#9b7aed"/>
+<circle cx="110" cy="150" r="3" fill="#9b7aed"/>
+<circle cx="130" cy="155" r="3" fill="#9b7aed"/>
+<line x1="85" y1="50" x2="95" y2="180" stroke="#8b2020" stroke-width="2"/>
+<text x="85" y="200" class="lbl" text-anchor="middle" font-size="11">Logistic / LDA</text>
+<circle cx="205" cy="80" r="3" fill="#2e6ab4"/>
+<circle cx="215" cy="90" r="3" fill="#2e6ab4"/>
+<circle cx="225" cy="100" r="3" fill="#2e6ab4"/>
+<circle cx="280" cy="160" r="3" fill="#9b7aed"/>
+<circle cx="270" cy="150" r="3" fill="#9b7aed"/>
+<circle cx="290" cy="155" r="3" fill="#9b7aed"/>
+<path d="M 210 60 Q 245 80 240 180" stroke="#8b2020" stroke-width="2" fill="none"/>
+<text x="245" y="200" class="lbl" text-anchor="middle" font-size="11">QDA</text>
+<circle cx="365" cy="80" r="3" fill="#2e6ab4"/>
+<circle cx="375" cy="90" r="3" fill="#2e6ab4"/>
+<circle cx="385" cy="100" r="3" fill="#2e6ab4"/>
+<circle cx="440" cy="160" r="3" fill="#9b7aed"/>
+<circle cx="430" cy="150" r="3" fill="#9b7aed"/>
+<circle cx="450" cy="155" r="3" fill="#9b7aed"/>
+<path d="M 380 55 Q 395 90 405 185" stroke="#8b2020" stroke-width="2" fill="none"/>
+<path d="M 390 55 Q 410 100 420 185" stroke="#8b2020" stroke-width="1" stroke-dasharray="3,3" opacity="0.5" fill="none"/>
+<text x="405" y="200" class="lbl" text-anchor="middle" font-size="11">SVM + RBF</text>
+<rect x="35" y="60" width="90" height="120" fill="none" stroke="#8b2020" stroke-width="2"/>
+<rect x="50" y="75" width="60" height="90" fill="none" stroke="#8b2020" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>
+<circle cx="65" cy="240" r="3" fill="#2e6ab4"/>
+<circle cx="75" cy="250" r="3" fill="#2e6ab4"/>
+<circle cx="85" cy="260" r="3" fill="#2e6ab4"/>
+<circle cx="140" cy="310" r="3" fill="#9b7aed"/>
+<circle cx="130" cy="300" r="3" fill="#9b7aed"/>
+<circle cx="150" cy="305" r="3" fill="#9b7aed"/>
+<text x="85" y="360" class="lbl" text-anchor="middle" font-size="11">Naive Bayes</text>
+<text x="290" y="380" class="lbl" text-anchor="middle" font-size="12">Blue = Class 0, Purple = Class 1. Each algorithm partitions space differently.</text>
+</svg>
+</div>
+<h3>Bias-Variance Perspective</h3>
+<p><strong>High bias, low variance:</strong> Logistic regression / LDA. Simple linear model, stable but may underfit.</p>
+<p><strong>Low bias, high variance:</strong> SVM with RBF, QDA. Flexible models, fit the data well but may overfit on small n.</p>
+<p><strong>Middle ground:</strong> Naive Bayes. Makes strong independence assumptions but learns quickly from small data.</p>
+<h3>Regularization Shapes Decision Boundaries</h3>
+<p>In logistic regression, increasing λ (L2 penalty) pushes weights toward 0, tilting the boundary closer to the origin and making the decision surface more conservative. Decreasing λ allows the boundary to fit the training data more tightly.</p>
+<p>In SVMs, smaller C (penalty for margin violations) allows more slack, softening the boundary. Larger C hardens the boundary to fit training data precisely.</p>`,
+
+  `<div class="detail-header"><div class="num">08</div><h2><em>When</em> to Use What</h2></div>
+<p>This section provides a practical flowchart for selecting the right algorithm. No single algorithm is best—context matters.</p>
+<h3>Quick Decision Grid</h3>
+<div class="feat-grid">
+<div class="feat"><h4>Small Dataset (n &lt; 1K)</h4><p><strong>First choice:</strong> Naive Bayes or LDA.<br>Generative models converge faster. Low parameter count, don't need much data to estimate Gaussian.</p></div>
+<div class="feat"><h4>Large Dataset (n &gt; 10K)</h4><p><strong>First choice:</strong> Logistic Regression or SVM.<br>Discriminative models have lower asymptotic error. Scale well with good solvers (SGD).</p></div>
+</div>
+<div class="feat-grid">
+<div class="feat"><h4>High Dimensions (d &gt; 1000)</h4><p><strong>Best:</strong> Logistic Regression.<br>L2 regularization handles many features. Linear models scale. Avoid dense covariance matrices.</p></div>
+<div class="feat"><h4>Sparse Features (text, NLP)</h4><p><strong>Best:</strong> Naive Bayes or Logistic Reg + L1.<br>NB excels with conditional independence. L1 does automatic feature selection.</p></div>
+</div>
+<div class="feat-grid">
+<div class="feat"><h4>Interpretability Critical</h4><p><strong>Best:</strong> Logistic Regression or LDA.<br>Weights/means directly show feature importance. Clear probability estimates. SVM margins are geometric but less intuitive.</p></div>
+<div class="feat"><h4>Training Speed Matters</h4><p><strong>Fastest:</strong> Naive Bayes (just count frequencies).<br>Logistic Reg (convex, fast convergence). SVM slower due to quadratic solver. QDA medium.</p></div>
+</div>
+<div class="feat-grid">
+<div class="feat"><h4>Nonlinear Separation</h4><p><strong>Best:</strong> SVM + kernel or Neural Networks.<br>Logistic Reg + polynomial features works but manual feature engineering. Kernels are automatic.</p></div>
+<div class="feat"><h4>Class Imbalance</h4><p><strong>Strategies:</strong> Use class_weight=balanced in SVM/LR. Oversample minority. Adjust C or cost parameters.</p></div>
+</div>
+<h3>Algorithm Verdict Matrix</h3>
+<div class="verdict">
+<div class="v-col pro">
+<h4>Logistic Regression</h4>
+<ul>
+<li>Interpretable weights</li>
+<li>Fast training + prediction</li>
+<li>Probabilistic outputs</li>
+<li>Scales to huge data (SGD)</li>
+<li>L1/L2 regularization clear</li>
+</ul>
+</div>
+<div class="v-col con">
+<h4>Logistic Regression</h4>
+<ul>
+<li>Linear boundaries only</li>
+<li>Polynomial features manual</li>
+<li>Needs feature scaling</li>
+<li>Assumes independence</li>
+<li>No built-in kernel trick</li>
+</ul>
+</div>
+</div>
+<div class="verdict">
+<div class="v-col pro">
+<h4>Naive Bayes</h4>
+<ul>
+<li>Extremely fast training</li>
+<li>Works with small n</li>
+<li>Text/NLP gold standard</li>
+<li>Handles missing data</li>
+<li>Generates P(x|y) samples</li>
+</ul>
+</div>
+<div class="v-col con">
+<h4>Naive Bayes</h4>
+<ul>
+<li>Violates independence often</li>
+<li>Lower asymptotic performance</li>
+<li>Feature scaling doesnt help</li>
+<li>Limited nonlinearity</li>
+<li>Hard to tune hyperparams</li>
+</ul>
+</div>
+</div>
+<div class="verdict">
+<div class="v-col pro">
+<h4>Gaussian Discriminant Analysis</h4>
+<ul>
+<li>Elegant probabilistic model</li>
+<li>Learns class distributions</li>
+<li>LDA is simple baseline</li>
+<li>Works with small data</li>
+<li>Fast prediction (distance)</li>
+</ul>
+</div>
+<div class="v-col con">
+<h4>Gaussian Discriminant Analysis</h4>
+<ul>
+<li>Gaussian assumption often wrong</li>
+<li>QDA: many parameters</li>
+<li>High-dimensional failure</li>
+<li>Covariance estimation hard (n &lt; d)</li>
+<li>Less flexible than SVM</li>
+</ul>
+</div>
+</div>
+<div class="verdict">
+<div class="v-col pro">
+<h4>Support Vector Machines</h4>
+<ul>
+<li>Excellent at margins</li>
+<li>Kernel trick → nonlinear</li>
+<li>Works well on medium data</li>
+<li>Sparse solutions possible</li>
+<li>Strong theoretical foundation</li>
+</ul>
+</div>
+<div class="v-col con">
+<h4>Support Vector Machines</h4>
+<ul>
+<li>Slow on huge datasets</li>
+<li>Hard to interpret (kernels)</li>
+<li>Hyperparameter tuning (C, γ)</li>
+<li>No probability outputs (custom)</li>
+<li>Memory: n² in dual form</li>
+</ul>
+</div>
+</div>
+<h3>Classical Flowchart</h3>
+<ol class="s-list">
+<li><strong>Is data linearly separable?</strong> Yes → Logistic Reg or SVM (linear kernel). No → Continue.</li>
+<li><strong>Is n small (&lt;1K) or sparse?</strong> Yes → Naive Bayes. No → Continue.</li>
+<li><strong>Is interpretability critical?</strong> Yes → LDA or Logistic Reg. No → Continue.</li>
+<li><strong>Willing to engineer polynomial features?</strong> Yes → Logistic + poly. No → Continue.</li>
+<li><strong>Use SVM + RBF kernel:</strong> Flexible, strong regularization via C.</li>
+</ol>`,
+  `<p>References and sources for further study on the topics covered in this deep dive.</p>`,
+  `<div class="detail-header"><div class="num">09 · Sources</div><h2><em>Sources</em> & References</h2></div>
+<h3>Stanford XCS229 Course</h3>
+<p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course homepage with all problem sets, lecture notes, and supplementary materials.</p>
+<p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Comprehensive lecture notes covering all topics tested in the problem sets: supervised learning, unsupervised learning, regularization, and evaluation.</p>
+<h3>Recommended Textbooks</h3>
+<p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie, Tibshirani & Friedman — The Elements of Statistical Learning</a> — Gold standard reference for statistical learning theory and practical machine learning algorithms. Covers all major topics in depth.</p>
+<p><a href="https://www.deeplearningbook.org/" target="_blank">Goodfellow, Bengio & Courville — Deep Learning</a> — MIT Press textbook providing rigorous treatment of neural networks and deep learning methods.</p>
+<h3>Online Learning Platforms</h3>
+<p><a href="https://www.3blue1brown.com/" target="_blank">3Blue1Brown</a> — Exceptional visual explanations of linear algebra, calculus, and neural networks.</p>
+<p><a href="https://en.wikipedia.org/wiki/Machine_learning" target="_blank">Wikipedia: Machine Learning</a> — Comprehensive reference for key concepts, algorithms, and applications.
+`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head"><div class="sidebar-logo">P<em>S</em></div></div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SCPD ML Course</div>
+        <div class="hero-title">ML <em>Problem Sets</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>GDA · Logistic Regression · Naive Bayes · SVMs · Decision Boundaries</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((s, i) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (i === 0 ? ' active' : '');
+  item.onclick = () => selectSection(i);
+  item.setAttribute('data-label', s.label);
+  item.innerHTML = `<span class="sidebar-num">${s.num}</span><span class="sidebar-label">${s.label}</span>`;
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+sections.forEach((s, i) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.dataset.section = i;
+
+  let btn = `<button class="s-detail-btn" onclick="selectSection(${i})"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="6 2 14 2 14 14 6 14"/><polyline points="2 14 2 4 8 4"/></svg></button>`;
+
+  block.innerHTML = `
+    <div class="s-num">${s.num} <span style="opacity:.5">/</span> 08 ${btn}</div>
+    <h2>${s.title || s.label}</h2>
+    ${summaries[i]}
+  `;
+  mainScroll.appendChild(block);
+});
+
+// Build right panel
+const right = document.getElementById('right');
+const rightInner = document.getElementById('right-inner');
+sections.forEach((s, i) => {
+  const det = document.createElement('div');
+  det.className = 'detail';
+  det.dataset.section = i;
+  det.innerHTML = details[i];
+  rightInner.appendChild(det);
+});
+
+// Main functions
+window.toggleTheme = function() {
+  const body = document.body;
+  const newTheme = body.dataset.theme === 'light' ? 'dark' : 'light';
+  body.dataset.theme = newTheme;
+  localStorage.setItem('theme', newTheme);
+};
+
+window.toggleDetail = function() {
+  document.body.classList.toggle('detail-open');
+  const mainHead = document.querySelector('.main-head');
+  mainHead.classList.toggle('compact');
+};
+
+window.selectSection = function(idx) {
+  document.querySelectorAll('.sidebar-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.section-block').forEach((el, i) => {
+    if (i === idx) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+  document.querySelectorAll('.detail').forEach((el, i) => {
+    el.style.display = i === idx ? 'block' : 'none';
+  });
+  document.getElementById('right-sticky-title').textContent = sections[idx].label;
+  document.getElementById('right-sticky-title').classList.add('visible');
+};
+
+// Scroll spy
+document.getElementById('main-scroll').addEventListener('scroll', function() {
+  const blocks = document.querySelectorAll('.section-block');
+  let current = 0;
+  blocks.forEach((block, i) => {
+    const rect = block.getBoundingClientRect();
+    if (rect.top < 200) current = i;
+  });
+  document.querySelectorAll('.sidebar-item').forEach((el, i) => {
+    el.classList.toggle('active', i === current);
+  });
+  document.querySelectorAll('.detail').forEach((el, i) => {
+    el.style.display = i === current ? 'block' : 'none';
+  });
+  document.getElementById('right-sticky-title').textContent = sections[current].label;
+  document.getElementById('right-sticky-title').classList.add('visible');
+});
+
+// Right panel scroll listener
+document.getElementById('right').addEventListener('scroll', function() {
+  const topbar = document.querySelector('.right-topbar');
+  if (this.scrollTop > 0) {
+    topbar.classList.add('scrolled');
+  } else {
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// Theme persistence
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.dataset.theme = savedTheme;
+
+// Close detail on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.body.classList.remove('detail-open');
+    document.querySelector('.main-head').classList.remove('compact');
+  }
+});
+</script>
+</body>
+</html>

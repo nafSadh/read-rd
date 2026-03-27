@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Blog — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'\2713';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'\2717';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'The Blog Project', title: 'The <em>Blog</em> Project' },
+  { num: '02', short: 'Writing as Learning', title: '<em>Writing</em> as Learning' },
+  { num: '03', short: 'Blog Topics', title: 'Key <em>Blog</em> Topics' },
+  { num: '04', short: 'Technical Writing', title: '<em>Technical</em> Craft' },
+  { num: '05', short: 'Pipeline to Understanding', title: '<em>Blog</em> to Understanding' },
+  { num: '06', short: 'Lessons Learned', title: '<em>Lessons</em> Learned' },
+  { num: '07', short: 'Future Directions', title: '<em>Future</em> Directions' },
+  { num: '08', short: 'Sources & References', title: '<em>Sources</em> & References' }
+];
+
+const summaries = [
+  // 01 - The Blog Project
+  `<p>A comprehensive timeline of ML blog development exploring foundational research, extensive naming brainstorms, and actual content creation across 9 conversations and 187 messages spanning May\u2013September 2024. Demonstrates careful attention to planning, branding, and technical education.</p>
+  <h4>Foundation Phase (6 messages)</h4>
+  <ul class="s-list">
+    <li><a href="https://online.stanford.edu/courses/scpd-mlxray-machine-learning-design-engineers" target="_blank">Stanford ML Course Comparison</a> \u2014 2 messages, May 2024</li>
+    <li><a href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank">Linear Algebra Foundations for ML</a> \u2014 4 messages, May 2024</li>
+  </ul>
+  <h4>Blog Naming Phase (151 messages)</h4>
+  <ul class="s-list">
+    <li>Machine Learning Mastery Blog \u2014 38 messages, July</li>
+    <li>Augmented Insights: Scholastic ML \u2014 34 messages, July</li>
+    <li>Mathemagical Labyrinth \u2014 73 messages, July</li>
+    <li>Whimsical Blog Titles \u2014 4 messages, July</li>
+  </ul>
+  <h4>Content Creation (30 messages)</h4>
+  <ul class="s-list">
+    <li><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank">Gradient Descent & Optimization</a> \u2014 20 messages</li>
+    <li><a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation" target="_blank">Latent Spaces & Dimensionality</a> \u2014 8 messages</li>
+    <li><a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank">Autoencoder Architecture</a> \u2014 2 messages</li>
+  </ul>
+  <div class="s-stat">
+    <div class="st"><div class="sv">9</div><div class="sl">Conversations</div></div>
+    <div class="st"><div class="sv">187</div><div class="sl">Messages</div></div>
+    <div class="st"><div class="sv">5</div><div class="sl">Months</div></div>
+    <div class="st"><div class="sv">ML</div><div class="sl">Focus</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">education</span>
+    <span class="s-chip">technical-writing</span>
+    <span class="s-chip">ml-concepts</span>
+    <span class="s-chip">blog-strategy</span>
+  </div>`,
+
+  // 02 - Writing as Learning
+  `<p>Writing about machine learning isn't just communication\u2014it's a mechanism for understanding. Using principles of the Feynman Technique applied to ML, the blog project treated writing as a learning tool.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>The Feynman Principle</h4>
+      <p>Simplify complex concepts to fundamental ideas. To write about gradient descent clearly requires understanding every component of the algorithm and why it works.</p>
+    </div>
+    <div class="feat">
+      <h4>Concept Crystallization</h4>
+      <p>Writing forces precision. Vague understanding becomes obvious when you try to explain autoencoders to an imagined reader unfamiliar with neural networks.</p>
+    </div>
+    <div class="feat">
+      <h4>Teaching & Learning</h4>
+      <p>The best way to learn ML is to teach it. Blog writing converts passive understanding into active knowledge through the discipline of clear explanation.</p>
+    </div>
+    <div class="feat">
+      <h4>Iterative Refinement</h4>
+      <p>First drafts reveal gaps. Each rewrite of a gradient descent explanation deepens understanding of optimization landscapes and convergence properties.</p>
+    </div>
+    <div class="feat">
+      <h4>Building Mental Models</h4>
+      <p>Analogies work only when deeply understood. Comparing neurons to logical gates requires fluency in both domains and probability.</p>
+    </div>
+    <div class="feat">
+      <h4>Knowledge Integration</h4>
+      <p>Blog writing connects discrete concepts. Linking linear algebra to optimization to loss functions creates unified understanding.</p>
+    </div>
+  </div>`,
+
+  // 03 - Key Blog Topics
+  `<div class="feat-grid">
+    <div class="feat">
+      <h4>Gradient Descent</h4>
+      <p>The optimization backbone of deep learning. Exploration of how models navigate loss landscapes, stochastic variants, and convergence conditions. Fundamental to all modern ML.</p>
+    </div>
+    <div class="feat">
+      <h4>Latent Spaces</h4>
+      <p>How neural networks compress high-dimensional data into lower-dimensional representations. Core concept in autoencoders, VAEs, and dimensionality reduction techniques.</p>
+    </div>
+    <div class="feat">
+      <h4>Autoencoders</h4>
+      <p>Unsupervised learning architecture for representation learning and data compression. Key architectural pattern in modern generative models and feature extraction.</p>
+    </div>
+    <div class="feat">
+      <h4>Backpropagation</h4>
+      <p>The algorithm enabling neural networks to learn. Chain rule applied to compute gradients through network layers\u2014the foundation of training.</p>
+    </div>
+    <div class="feat">
+      <h4>Attention Mechanisms</h4>
+      <p>How models learn to focus on relevant information. Transforms sequence processing and enables modern transformer architectures in NLP and beyond.</p>
+    </div>
+    <div class="feat">
+      <h4>Generative Models</h4>
+      <p>From GANs to diffusion models. How neural networks learn to generate realistic new data from training distributions.</p>
+    </div>
+  </div>`,
+
+  // 04 - Technical Craft
+  `<p>Technical writing about ML demands a special craft: making mathematics accessible without oversimplifying, using analogies that illuminate rather than mislead, and building visual intuition for abstract concepts.</p>
+  <h3>Mathematical Exposition</h3>
+  <p>Explaining equations requires more than stating them. A strong ML blog post breaks down notation, provides intuition before formalism, and shows worked examples. The equation \u03C3(x) = 1/(1+e^-x) means nothing without understanding sigmoid's role in bounding outputs.</p>
+  <h3>Analogies as Bridges</h3>
+  <p>Effective analogies connect unknown concepts to familiar ones. Gradient descent as "blindfolded descent down a mountain" provides spatial intuition. But analogies break\u2014the mountain analogy fails for high-dimensional spaces, requiring careful qualification.</p>
+  <h3>Visual Aids</h3>
+  <p>Diagrams of neural network architectures, loss landscape visualizations, and computational graphs transform understanding. An autoencoder's encoder-decoder structure becomes intuitive with clear visual representation.</p>
+  <h3>Code as Explanation</h3>
+  <p>Pseudocode snippets bridge theory and implementation. Showing the gradient update step as a concrete algorithm makes backpropagation tangible rather than abstract.</p>
+  <h3>Progressive Complexity</h3>
+  <p>Layer concepts carefully. Start with intuitive explanations, then formalize. Build from scalar calculus to vector calculus to matrix differentiation. Each layer deepens understanding.</p>`,
+
+  // 05 - Blog to Understanding
+  `<p>A blog-to-understanding pipeline converts research reading into published explanations, which crystallize personal understanding and benefit broader audiences. This creates a virtuous cycle: reading \u2192 writing \u2192 teaching \u2192 deeper understanding \u2192 better writing.</p>
+  <h3>Research Phase</h3>
+  <p>Engage with primary sources: papers, textbooks, online courses. Understand not just the "what" but the "why"\u2014the motivation, the problem being solved, the design choices made.</p>
+  <h3>Drafting Phase</h3>
+  <p>Write as if explaining to your past self\u2014the version before understanding this concept. What would have helped then? What confusion did you have? This drives clarity.</p>
+  <h3>Explanation Testing</h3>
+  <p>Share early drafts with others learning ML. Where do they get confused? Those moments reveal unclear explanations. Revise until understanding becomes possible.</p>
+  <h3>Publishing & Feedback</h3>
+  <p>Publishing creates accountability for clarity. Comments and discussions reveal what landed and what didn't. Public writing sharpens more than private notes.</p>
+  <h3>Knowledge Integration</h3>
+  <p>Writing about new concepts forces integration with existing knowledge. How does gradient descent relate to linear regression? How do autoencoders connect to information theory? The blog becomes a knowledge graph.</p>`,
+
+  // 06 - Lessons Learned
+  `<p>A multi-month ML blog project revealed patterns about learning, creativity, and project execution. Several lessons emerged from the 187-message conversation arc spanning May through September 2024.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>What Worked</h4>
+      <ul>
+        <li>Genuine passion for demystifying ML concepts</li>
+        <li>Creative and thorough naming exploration</li>
+        <li>Actual technical content created and drafted</li>
+        <li>Thoughtful curation of educational resources</li>
+        <li>Willingness to explore multiple directions</li>
+        <li>Understanding that writing clarifies thinking</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Challenges</h4>
+      <ul>
+        <li>Naming process consumed time without closure</li>
+        <li>Activity concentrated heavily in July</li>
+        <li>No evidence blog launched publicly</li>
+        <li>Perfectionism became a potential blocker</li>
+        <li>Content created but not integrated</li>
+        <li>Minimal follow-up after initial burst</li>
+      </ul>
+    </div>
+  </div>
+  <h3>The Naming Trap</h3>
+  <p>The 73-message "Mathemagical Labyrinth" session reveals something important: branding matters less than shipping. Perfect naming doesn't trump getting content in front of readers. Future iterations should launch with "good enough" branding, refine through practice.</p>
+  <h3>Momentum & Consistency</h3>
+  <p>The May-to-July progression shows energy naturally concentrated, then silence. Sustainable learning requires consistent rhythms\u2014weekly posts, scheduled writing, external accountability through publication.</p>`,
+
+  // 07 - Future Directions
+  `<p>A mature ML blog would evolve in several directions, building on what worked in the initial phase.</p>
+  <h3>Expanded Topic Coverage</h3>
+  <p>Beyond foundations, explore: modern architectures (transformers, diffusion models), practical engineering (training tricks, optimization tuning), historical perspectives on ML evolution, and interviews with practitioners.</p>
+  <h3>Reader Feedback Loop</h3>
+  <p>Build community through comments, discussion threads, and reader questions. The best blog improvements come from understanding where readers struggle. Create space for that dialogue.</p>
+  <h3>Multi-Format Content</h3>
+  <p>Extend beyond written posts: interactive Jupyter notebooks demonstrating concepts, video explanations for visual learners, podcasts discussing papers, code repositories showing implementations.</p>
+  <h3>Depth-First Deep Dives</h3>
+  <p>Move beyond introductions. Create 5,000-word explorations that assume foundational knowledge. Serve intermediate and advanced practitioners, not only beginners.</p>
+  <h3>Narrative Arc</h3>
+  <p>Structure the blog around storylines, not isolated posts. "The journey from linear regression to deep learning" as a narrative arc. "How neural networks solve optimization problems" as a thread through multiple posts.</p>`,
+
+  // 08 - Sources & References
+  `<h4>Educational Resources</h4>
+  <ul class="s-list">
+    <li><a href="https://www.3blue1brown.com/topics/neural-networks" target="_blank">3Blue1Brown: Neural Networks Intuition</a> \u2014 Exceptional visual explanation of neural networks and calculus</li>
+    <li><a href="https://www.deeplearningbook.org/" target="_blank">Deep Learning Book (Goodfellow, Bengio, Courville)</a> \u2014 Comprehensive technical reference on modern deep learning</li>
+    <li><a href="https://arxiv.org/" target="_blank">arXiv: Preprint Repository</a> \u2014 Latest ML research papers before peer review</li>
+    <li><a href="https://online.stanford.edu/courses/scpd-mlxray-machine-learning-design-engineers" target="_blank">Stanford ML Courses</a> \u2014 Rigorous academic ML education</li>
+    <li><a href="https://www.coursera.org/specializations/deep-learning" target="_blank">Andrew Ng Deep Learning Specialization</a> \u2014 Industry-oriented ML curriculum</li>
+  </ul>
+  <h4>Technical References</h4>
+  <ul class="s-list">
+    <li><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank">Wikipedia: Gradient Descent</a> \u2014 Foundational optimization algorithm overview</li>
+    <li><a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank">Wikipedia: Autoencoders</a> \u2014 Unsupervised learning and representation learning</li>
+    <li><a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation" target="_blank">Wikipedia: Latent Space Concepts</a> \u2014 Dimensionality reduction fundamentals</li>
+    <li><a href="https://pytorch.org/docs" target="_blank">PyTorch Documentation</a> \u2014 Deep learning framework reference</li>
+    <li><a href="https://www.tensorflow.org/" target="_blank">TensorFlow & Keras</a> \u2014 Alternative deep learning platforms</li>
+  </ul>
+  <h4>Craft & Communication</h4>
+  <ul class="s-list">
+    <li><a href="https://www.nngroup.com/articles/plain-language/" target="_blank">NN Group: Plain Language Guidelines</a> \u2014 Writing clarity principles applicable to technical documentation</li>
+    <li><a href="https://www.paulgraham.com/essay.html" target="_blank">Paul Graham: The Age of the Essay</a> \u2014 On exploratory writing as thinking tool</li>
+    <li><a href="https://www.oreilly.com/" target="_blank">O'Reilly: Technical Publishing</a> \u2014 Industry leader in technical education</li>
+    <li><a href="https://www.markdownguide.org/" target="_blank">Markdown Guide</a> \u2014 Universal technical writing format</li>
+  </ul>`
+];
+
+const details = [
+  // 01 - The Blog Project
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 01 \u2014 The Blog Project
+    </div>
+    <h2>The <em>Blog</em> Project</h2>
+  </div>
+  <p>A comprehensive timeline documenting ML blog development from foundational research through extensive naming brainstorms to actual content creation. This arc spans 9 conversations and 187 messages across five months (May\u2013September 2024), revealing patterns about learning, creativity, and the gap between planning and execution.</p>
+  <h3>Foundation & Research Phase</h3>
+  <p><strong><a href="https://online.stanford.edu/courses/scpd-mlxray-machine-learning-design-engineers" target="_blank">Comparative Table of Stanford AI Courses</a></strong> (2 messages, May 2024) \u2014 Initial course comparison work laying groundwork for educational content structure. Establishes reference materials for curriculum design and scope.</p>
+  <p><strong><a href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank">Mastering Linear Algebra for ML</a></strong> (4 messages, May 2024) \u2014 Focused exploration of foundational mathematics essential for understanding ML from first principles. Recognizing that strong fundamentals enable better explanations.</p>
+  <h3>Blog Naming Phase (151 messages)</h3>
+  <p>Four distinct naming sessions, each exploring different positioning and brand identities:</p>
+  <p><strong>Machine Learning Mastery Blog</strong> (38 messages, July 2024) \u2014 Straightforward, authoritative positioning emphasizing competence and expertise accumulation. Explores naming around core concept of mastery.</p>
+  <p><strong>Augmented Insights: Scholastic ML Blog</strong> (34 messages, July 2024) \u2014 Academic and scholarly angle, emphasizing intellectual depth and rigorous treatment. Positions blog in educational tradition.</p>
+  <p><strong>Mathemagical Labyrinth</strong> (73 messages, July 2024) \u2014 Longest conversation! Extensive creative brainstorm with whimsical, imaginative, and sophisticated naming approaches. Represents creative apex of naming exploration.</p>
+  <p><strong>Whimsical ML Blog Titles</strong> (4 messages, July 2024) \u2014 Continued playful title exploration, generating additional creative options for blog identity.</p>
+  <h3>Content Creation Phase (30 messages)</h3>
+  <p><strong><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank">Gradient Descent: The Optimization Backbone of AI</a></strong> (20 messages, July 2024) \u2014 Substantive technical content on optimization theory. Demonstrates ability to create sophisticated ML education pieces explaining how models learn.</p>
+  <p><strong><a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation" target="_blank">Latent Manifolds and Mappings</a></strong> (8 messages, July 2024) \u2014 Advanced topic in dimensionality reduction and representation learning. Shows engagement with sophisticated concepts in unsupervised learning.</p>
+  <p><strong><a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank">Autoencoder Fundamentals</a></strong> (2 messages, September 2024) \u2014 Technical definition piece on autoencoders and their role in unsupervised learning and feature extraction.</p>`,
+
+  // 02 - Writing as Learning
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 02 \u2014 Writing as Learning
+    </div>
+    <h2><em>Writing</em> as Learning</h2>
+  </div>
+  <p>At its core, the ML blog project treats writing as a mechanism for learning, not just communication. This applies the Feynman Technique\u2014explaining concepts in simple language\u2014to machine learning education.</p>
+  <h3>The Feynman Technique Applied</h3>
+  <p>Named after physicist Richard Feynman, this method has four steps: choose a concept, explain it in simple language, identify gaps, and refine. For ML, this becomes: select an algorithm \u2192 explain it without jargon \u2192 clarify where your understanding breaks down \u2192 write a better explanation.</p>
+  <p>Writing about gradient descent requires understanding every component: loss functions, derivatives, learning rates, update rules, convergence properties, and failure modes. Vague understanding becomes obvious when attempting explanation.</p>
+  <h3>Concept Crystallization Through Writing</h3>
+  <p>The act of writing forces precision. You cannot hand-wave about autoencoders when writing for readers unfamiliar with neural networks. Every step must follow logically. Every term must be defined. Every leap of faith must be explained.</p>
+  <p>This precision is where learning happens. The gaps between "I understand this" and "I can explain this" are where real comprehension lives. Writing exposes those gaps.</p>
+  <h3>Teaching as Learning</h3>
+  <p>There is no better way to learn machine learning than to teach it. A blog forces you into the teacher role. Your imagined reader\u2014smart but unfamiliar with your topic\u2014requires clarity and completeness that solo study often skips.</p>
+  <p>This changes how you learn. Instead of passively reading papers, you actively translate their insights into explanations. Instead of executing code, you articulate why each line matters. Instead of memorizing facts, you build understanding.</p>
+  <h3>Iterative Refinement of Understanding</h3>
+  <p>The first draft of a gradient descent explanation will be incomplete. Rewriting it reveals what you didn't fully understand. The second draft clarifies convergence concepts. The third incorporates adaptive learning rates. Each revision deepens understanding.</p>
+  <p>This is fundamentally different from one-off learning. Revisiting a concept multiple times, each time explaining it more precisely, builds sturdy understanding that lasts.</p>`,
+
+  // 03 - Key Blog Topics
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 03 \u2014 Key Blog Topics
+    </div>
+    <h2>Key <em>Blog</em> Topics</h2>
+  </div>
+  <p>The ML blog project explored several foundational and advanced topics, each carefully selected to build comprehensive understanding of modern machine learning.</p>
+  <h3>Gradient Descent</h3>
+  <p>The optimization backbone of all neural networks. Gradient descent is how models learn: iteratively adjusting parameters to minimize loss. The blog explores the intuition (moving downhill in parameter space), the mathematics (partial derivatives and chain rule), and practical variants (batch vs. stochastic vs. mini-batch).</p>
+  <p>Understanding gradient descent deeply is prerequisite for everything else in deep learning. It connects calculus, linear algebra, and practical optimization. A strong explanation here creates foundation for backpropagation and all subsequent learning algorithms.</p>
+  <h3>Latent Spaces</h3>
+  <p>How neural networks compress high-dimensional data into lower-dimensional representations. A latent space is a learned compressed representation\u201410,000 pixel values compressed to 50-dimensional vector. This enables dimensionality reduction, feature extraction, and generative modeling.</p>
+  <p>Exploring latent spaces reveals how networks discover structure in data. Autoencoders force data through bottleneck, learning efficient representations. Variational autoencoders add probabilistic structure. Diffusion models reverse this process, generating from noise.</p>
+  <h3>Autoencoders</h3>
+  <p>Unsupervised learning architecture for representation learning and data compression. An autoencoder has encoder (input \u2192 latent) and decoder (latent \u2192 output), trained to reconstruct inputs. This forces the latent representation to capture essential data structure.</p>
+  <p>Autoencoders are gateway concept connecting multiple domains: dimensionality reduction, generative modeling, anomaly detection (unusual inputs reconstruct poorly), and pretraining for supervised tasks.</p>
+  <h3>Backpropagation</h3>
+  <p>The algorithm enabling neural networks to learn efficiently. Chain rule applied through layers to compute how loss changes with each parameter. This is the foundation enabling deep learning at scale.</p>
+  <p>Understanding backpropagation requires calculus (derivatives), computation graphs (how to represent the computation), and care about implementation (numerical stability, efficient computation).</p>
+  <h3>Attention Mechanisms</h3>
+  <p>How models learn to focus on relevant information. Rather than processing all inputs equally, attention weights important parts highly and less relevant parts lightly. Transforms sequence processing and enables transformer architectures dominant in modern NLP.</p>
+  <h3>Generative Models</h3>
+  <p>Networks that learn to generate realistic new data. GANs pit generator against discriminator. Diffusion models gradually add noise then learn to reverse it. VAEs combine autoencoder with probabilistic modeling. Each approach has different tradeoffs and applications.</p>`,
+
+  // 04 - Technical Craft
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 04 \u2014 Technical Craft
+    </div>
+    <h2><em>Technical</em> Craft</h2>
+  </div>
+  <p>Writing about machine learning is a craft requiring special skills. You must bridge mathematics and intuition, use analogies carefully, provide visual understanding for abstract concepts, and explain algorithms in ways that illuminate rather than obscure.</p>
+  <h3>Mathematical Exposition</h3>
+  <p>Equations in isolation mean nothing. The sigmoid function \u03C3(x) = 1/(1+e^-x) is meaningless without context: its role in neural networks (bounding outputs to 0-1), its historical use, its relationship to logistic regression, its gradient properties enabling backpropagation.</p>
+  <p>Strong mathematical writing: (1) introduces the problem the equation solves, (2) provides intuition before formalism, (3) shows worked examples with concrete numbers, (4) explains notation clearly, (5) connects to broader concepts.</p>
+  <h3>Analogies as Bridges</h3>
+  <p>Effective analogies connect unknown concepts to familiar territory. "Gradient descent as blindfolded descent down a mountain" provides spatial intuition for parameter optimization. But analogies are fragile\u2014the mountain breaks down in high-dimensional spaces where all directions can simultaneously have negative gradients.</p>
+  <p>Careful technical writing acknowledges where analogies break and why. "This analogy works for understanding learning rate, but fails here..." shows intellectual honesty and prevents false understanding.</p>
+  <h3>Visual Aids and Diagrams</h3>
+  <p>Some concepts are impossible to grasp without visualization. Neural network architecture diagrams show information flow. Loss landscape visualizations show why learning rates matter. Computational graphs make backpropagation concrete.</p>
+  <p>An autoencoder's encoder-decoder structure becomes intuitive with clear visual representation. A convolution operation is mysterious until you see it animated. Attention mechanisms are incomprehensible without showing how weights distribute across inputs.</p>
+  <h3>Code as Explanation</h3>
+  <p>Pseudocode and concrete implementations bridge theory and practice. A gradient descent step written as: <code>weights = weights - learning_rate * gradients</code> makes the abstraction tangible. Seeing matrix shapes in PyTorch reveals hidden assumptions about data organization.</p>
+  <h3>Progressive Disclosure of Complexity</h3>
+  <p>Layer concepts carefully. Start with intuitive explanations, then formalize. Build from scalar calculus to vector calculus to matrix differentiation. Don't jump from "learning rate" directly to "adaptive learning rates with momentum"\u2014scaffold the understanding.</p>
+  <p>Expert writers reveal complexity progressively, allowing readers to build mental models incrementally rather than overwhelming them with comprehensive rigor.</p>`,
+
+  // 05 - Blog to Understanding
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 05 \u2014 Blog to Understanding
+    </div>
+    <h2><em>Blog</em> to Understanding</h2>
+  </div>
+  <p>A mature ML blog creates a virtuous cycle: research \u2192 writing \u2192 teaching \u2192 understanding \u2192 better writing. This pipeline converts scattered research into coherent knowledge that benefits both author and readers.</p>
+  <h3>The Research Phase</h3>
+  <p>Deep learning begins with primary sources: research papers, textbooks, online courses, implementations. But passive reading doesn't produce understanding. The blog writer reads actively, asking: What problem is this solving? Why this approach? What are the tradeoffs?</p>
+  <p>Research for blog writing is different from research for exams. You're not memorizing details\u2014you're building mental models that you can explain to others. This changes what you notice and what you remember.</p>
+  <h3>Drafting and Explanation</h3>
+  <p>The first draft is rarely the first draft. It's the product of sustained thinking. Write as if explaining to your past self\u2014the version before understanding this concept. What would have helped then? What confusion did you have? This empathy drives clarity.</p>
+  <p>The draft should flow logically, each paragraph building on the previous. Terms should be defined before use. Concepts should be motivated before presentation. Examples should illuminate, not obscure.</p>
+  <h3>Testing Explanation Quality</h3>
+  <p>Share early drafts with others learning ML. Where do they get confused? When do they ask questions that suggest you missed something obvious? Those moments reveal unclear explanations. Revision cycles improve clarity more than solo writing.</p>
+  <h3>Publishing & Community Feedback</h3>
+  <p>Publishing creates accountability for clarity. Comments and discussion reveal what landed and what didn't. A reader's struggle with backpropagation means your explanation lacks something. Iterate based on feedback.</p>
+  <p>The public blog becomes documentation of your learning journey. Future learners see your misconceptions and corrections, learning from your path.</p>
+  <h3>Knowledge Integration</h3>
+  <p>Writing about new concepts forces integration with existing knowledge. How does gradient descent relate to linear regression? How do autoencoders connect to information theory? How do attention mechanisms generalize to vision? The blog becomes a knowledge graph showing relationships.</p>
+  <p>This integration is the deepest form of learning. It converts fragmented facts into cohesive understanding where each new concept extends and enriches what came before.</p>`,
+
+  // 06 - Lessons Learned
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 06 \u2014 Lessons Learned
+    </div>
+    <h2><em>Lessons</em> Learned</h2>
+  </div>
+  <p>A multi-month ML blog project revealed important patterns about learning, creativity, project execution, and the gap between planning and shipping. Several clear lessons emerged from the arc of 187 messages across five months.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>What Worked</h4>
+      <ul>
+        <li>Genuine passion for making ML accessible and understandable</li>
+        <li>Creative and thorough naming exploration process</li>
+        <li>Actual substantive technical content created and drafted</li>
+        <li>Thoughtful curation of educational resources and references</li>
+        <li>Willingness to explore multiple directions and approaches</li>
+        <li>Recognition that writing clarifies and deepens thinking</li>
+        <li>Quality-focused attention to both content and branding</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Challenges Faced</h4>
+      <ul>
+        <li>Naming process consumed significant time with no final decision</li>
+        <li>Activity heavily concentrated in July 2024, then declined</li>
+        <li>No evidence blog actually launched publicly</li>
+        <li>Perfectionism may have become a blocker to shipping</li>
+        <li>Content created but not integrated into live publication</li>
+        <li>Minimal follow-up activity after initial creative burst</li>
+        <li>Gap between planning energy and execution persistence</li>
+      </ul>
+    </div>
+  </div>
+  <h3>The Naming Trap</h3>
+  <p>The 73-message "Mathemagical Labyrinth" session reveals something crucial about creative projects: perfect branding is less valuable than shipping. The pursuit of ideal naming can indefinitely delay launch. "Mathemagical Labyrinth" is creative but no more valuable than "ML Learning Journal" if the blog never publishes.</p>
+  <p>Lesson: Choose a "good enough" name quickly, launch with imperfect branding, and refine through practice. The blog's reputation comes from content quality, not naming creativity.</p>
+  <h3>Momentum & Consistency</h3>
+  <p>The May-to-July progression shows energy naturally concentrated in time, then silence. July had 151 messages on naming plus content creation. Then nothing. This pattern\u2014intense burst followed by quiet\u2014suggests that sustainable learning requires consistent rhythms rather than heroic sprints.</p>
+  <p>Lesson: Weekly publication beats sporadic content dumps. Scheduled writing time beats inspiration-dependent bursts. External accountability (publishing) beats private learning. Build systems that work on bad days, not just good ones.</p>
+  <h3>Shipping Over Perfection</h3>
+  <p>The project shows genuine capability\u2014187 messages of thoughtful engagement with ML education. But the gap between capability and publication is real. Imperfect published content beats perfect unpublished content every time.</p>
+  <p>Lesson: Recognize perfectionism as a form of procrastination. MVP (minimum viable product) thinking applies to blogs: publish early, iterate based on feedback, improve in public. The audience doesn't exist until you launch.</p>`,
+
+  // 07 - Future Directions
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 07 \u2014 Future Directions
+    </div>
+    <h2><em>Future</em> Directions</h2>
+  </div>
+  <p>A mature ML blog would evolve in several directions, building on foundations established during initial conception and content creation phases. Growth would come through expanding scope, deepening engagement, and diversifying formats.</p>
+  <h3>Expanded Topic Coverage</h3>
+  <p>Beyond foundational concepts like gradient descent and autoencoders, mature coverage would explore: modern architectures (transformers, diffusion models, large language models), practical engineering (training tricks, optimization tuning, hardware considerations), historical perspectives on how ML evolved, and interviews with practitioners working on cutting-edge problems.</p>
+  <p>The blog would become a comprehensive resource covering ML across multiple dimensions: theory, practice, history, and human stories.</p>
+  <h3>Building Reader Community</h3>
+  <p>Create mechanisms for engagement beyond passive reading. Comment sections with thoughtful moderation. Discussion threads exploring open questions. Reader questions driving new posts. Emails from people saying "your explanation finally made this concept click."</p>
+  <p>The best blog improvements come from understanding where readers struggle. Create space for that dialogue. Turn readers into collaborators in the learning process.</p>
+  <h3>Multi-Format Content</h3>
+  <p>Extend beyond written posts: interactive Jupyter notebooks demonstrating concepts with runnable code, video explanations for visual learners, podcast episodes discussing papers and ideas, code repositories showing implementations, and interactive visualizations of complex concepts.</p>
+  <p>Different learners prefer different formats. Some understand through text, others through video, others through hands-on coding. A mature blog serves diverse learning styles.</p>
+  <h3>Depth-First Deep Dives</h3>
+  <p>Move beyond gentle introductions for beginners. Create 5,000-10,000 word explorations assuming foundational knowledge. Serve intermediate and advanced practitioners. Show implementations of paper ideas. Compare approaches across frameworks.</p>
+  <p>The blog becomes a resource for people serious about ML, not just curious.</p>
+  <h3>Narrative Structure</h3>
+  <p>Organize the blog around storylines rather than isolated posts. "The journey from linear regression to deep learning" as a narrative arc spanning multiple posts. "How neural networks solve optimization problems" as a thread appearing throughout content. Build knowledge cumulatively.</p>
+  <p>Narrative creates engagement and reinforces learning better than encyclopedic completeness.</p>`,
+
+  // 08 - Sources & References
+  `<div class="detail-header">
+    <div class="num">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>
+      Section 08 \u2014 Sources & References
+    </div>
+    <h2><em>Sources</em> & References</h2>
+  </div>
+  <h3>Educational Platforms & Courses</h3>
+  <ul class="s-list">
+    <li><a href="https://www.3blue1brown.com/topics/neural-networks" target="_blank">3Blue1Brown: Neural Networks & Deep Learning</a> \u2014 Exceptional visual explanations of neural network fundamentals and mathematical intuition</li>
+    <li><a href="https://www.deeplearningbook.org/" target="_blank">Deep Learning Book</a> \u2014 Comprehensive technical reference by Goodfellow, Bengio, and Courville, spanning theory and practice</li>
+    <li><a href="https://online.stanford.edu/courses/scpd-mlxray-machine-learning-design-engineers" target="_blank">Stanford Online ML Courses</a> \u2014 Rigorous academic machine learning education and computer vision</li>
+    <li><a href="https://www.coursera.org/specializations/deep-learning" target="_blank">Andrew Ng Deep Learning Specialization</a> \u2014 Industry-oriented applied deep learning curriculum</li>
+    <li><a href="https://cs231n.github.io/" target="_blank">Stanford CS231N: Convolutional Neural Networks</a> \u2014 In-depth course on computer vision and CNNs</li>
+  </ul>
+  <h3>Technical References & Implementation</h3>
+  <ul class="s-list">
+    <li><a href="https://arxiv.org/" target="_blank">arXiv: Preprint Repository</a> \u2014 Access to latest research papers before peer review publication</li>
+    <li><a href="https://pytorch.org/docs" target="_blank">PyTorch Documentation</a> \u2014 Deep learning framework with strong educational resources</li>
+    <li><a href="https://www.tensorflow.org/" target="_blank">TensorFlow & Keras</a> \u2014 Alternative deep learning platforms with comprehensive tutorials</li>
+    <li><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank">Wikipedia: Gradient Descent</a> \u2014 Clear overview of foundational optimization algorithm</li>
+    <li><a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank">Wikipedia: Autoencoders</a> \u2014 Introduction to unsupervised learning and representation learning</li>
+    <li><a href="https://colah.github.io/" target="_blank">Chris Olah's Blog</a> \u2014 Exceptional visual explanations of neural network concepts</li>
+  </ul>
+  <h3>Writing & Technical Communication</h3>
+  <ul class="s-list">
+    <li><a href="https://www.nngroup.com/articles/plain-language/" target="_blank">Nielsen Norman Group: Plain Language Guidelines</a> \u2014 Principles for clear writing applicable to technical documentation</li>
+    <li><a href="https://www.paulgraham.com/essay.html" target="_blank">Paul Graham: The Age of the Essay</a> \u2014 On the essay as thinking tool and exploratory writing</li>
+    <li><a href="https://www.oreilly.com/" target="_blank">O'Reilly Media</a> \u2014 Industry leader in technical books and educational resources</li>
+    <li><a href="https://www.markdownguide.org/" target="_blank">Markdown Guide</a> \u2014 Universal format for technical writing across platforms</li>
+    <li><a href="https://www.feynnman.com/" target="_blank">Richard Feynman: Learning Principle</a> \u2014 The technique of explaining concepts simply to reveal gaps in understanding</li>
+  </ul>`
+];
+
+/* ============================================
+   BUILD THE SHELL
+   ============================================ */
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" onclick="toggleDetail()"><svg class="icon-open" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="5" height="12" rx="1"/><rect x="9" y="2" width="5" height="12" rx="1"/></svg><svg class="icon-close" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L5 11M5 5l6 6"/></svg></button>
+  </div>
+  <nav class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">M<em>L</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> AI/ML \u00b7 Educational Writing</div>
+        <div class="hero-title">ML Blog <em>Deep-Dive</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>8 Sections \u00b7 187 Messages \u00b7 May\u2013September 2024</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+/* ============================================
+   BUILD SIDEBAR
+   ============================================ */
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = '<span class="sidebar-num">' + sec.num + '</span><span class="sidebar-label">' + sec.short + '</span>';
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+/* ============================================
+   SIDEBAR HOVER TOOLTIP
+   ============================================ */
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+/* ============================================
+   BUILD MAIN SCROLL
+   ============================================ */
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = '<div class="s-num"><span>' + sec.num + '</span><button class="s-detail-btn" onclick="openDetail(' + idx + ')"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div><h2>' + sec.title + '</h2>' + summaries[idx];
+  mainInner.appendChild(block);
+});
+
+/* ============================================
+   BUILD DETAILS
+   ============================================ */
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = 'detail-' + idx;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+/* ============================================
+   FUNCTIONS
+   ============================================ */
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+/* ============================================
+   COMPACT MAIN HEADER + SIDEBAR SCROLL SPY
+   ============================================ */
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+/* ============================================
+   STICKY HEADER IN RIGHT PANEL
+   ============================================ */
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+<script>
+(function(){
+  var MP3 = 'ml-blog.mp3';
+
+  // 1. Inject CSS
+  var css = document.createElement('style');
+  css.textContent = `
+    .audio-bar{display:flex;align-items:center;gap:10px;padding:10px 0 4px;margin-top:6px;max-height:50px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+    .main-head.compact .audio-bar{max-height:0;padding:0;opacity:0;margin:0;pointer-events:none}
+    .audio-bar audio{height:32px;flex:1;min-width:0;border-radius:0;filter:contrast(.9)}
+    [data-theme="dark"] .audio-bar audio{filter:invert(1) contrast(.85) hue-rotate(180deg)}
+    .ctrl-btn.audio-ctrl{display:none;position:relative}
+    .ctrl-btn.audio-ctrl.playing{color:var(--accent)}
+    .ctrl-btn.audio-ctrl.playing::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+    .audio-bottom{position:fixed;bottom:0;left:0;right:0;z-index:500;display:flex;align-items:center;gap:12px;padding:6px 24px;background:color-mix(in srgb,var(--bg2) 85%,transparent);border-top:1px solid var(--border);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 -2px 12px #00000010;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none}
+    .audio-bottom.visible{transform:translateY(0);pointer-events:auto}
+    .audio-bottom audio{height:32px;flex:1;min-width:0;border-radius:0;filter:contrast(.9)}
+    .audio-bottom .audio-dismiss{cursor:pointer;color:var(--dim);font-size:13px;padding:4px 8px;border:none;background:none;font-family:var(--sans);letter-spacing:.5px;transition:color .2s}
+    .audio-bottom .audio-dismiss:hover{color:var(--accent)}
+    [data-theme="dark"] .audio-bottom audio{filter:invert(1) contrast(.85) hue-rotate(180deg)}
+  `;
+  document.head.appendChild(css);
+
+  // 2. Inline audio bar — insert after masthead-sub
+  var bar = document.createElement('div');
+  bar.className = 'audio-bar';
+  bar.innerHTML = '<audio id="audio-main" controls preload="none" src="'+MP3+'"></audio>';
+  var sub = document.querySelector('.masthead-sub');
+  if(!sub) sub = document.querySelector('.masthead-rule');
+  if(sub) sub.parentNode.insertBefore(bar, sub.nextSibling);
+
+  // 3. Mini button in ctrl-group
+  var miniBtn = document.createElement('button');
+  miniBtn.className = 'ctrl-btn audio-ctrl';
+  miniBtn.title = 'Play audio';
+  miniBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+  var ctrlGroup = document.querySelector('.ctrl-group');
+  if(ctrlGroup) ctrlGroup.insertBefore(miniBtn, ctrlGroup.firstChild);
+
+  // 4. Sticky bottom bar
+  var bottomBar = document.createElement('div');
+  bottomBar.className = 'audio-bottom';
+  bottomBar.innerHTML = '<audio id="audio-bottom-el" controls preload="none" src="'+MP3+'"></audio><button class="audio-dismiss" id="audio-bottom-dismiss">\u2715</button>';
+  document.body.appendChild(bottomBar);
+
+  var mainAudio = document.getElementById('audio-main');
+  var bottomAudio = document.getElementById('audio-bottom-el');
+  var bottomDismiss = document.getElementById('audio-bottom-dismiss');
+  if(!mainAudio||!bottomAudio) return;
+
+  var isCompact = false, dismissed = false;
+  var head = document.querySelector('.main-head');
+
+  if(head){
+    new MutationObserver(function(){
+      isCompact = head.classList.contains('compact');
+      miniBtn.style.display = isCompact ? 'flex' : 'none';
+      if(isCompact && !bottomAudio.paused && !dismissed) bottomBar.classList.add('visible');
+      if(!isCompact){
+        if(!bottomAudio.paused){
+          mainAudio.currentTime = bottomAudio.currentTime;
+          bottomAudio.pause();
+          mainAudio.play();
+        }
+        bottomBar.classList.remove('visible');
+      }
+    }).observe(head, {attributes:true, attributeFilter:['class']});
+  }
+
+  mainAudio.addEventListener('play', function(){
+    miniBtn.classList.add('playing'); dismissed = false;
+    if(isCompact){
+      bottomAudio.currentTime = mainAudio.currentTime;
+      mainAudio.pause(); bottomAudio.play();
+      bottomBar.classList.add('visible');
+    }
+  });
+  mainAudio.addEventListener('pause', function(){ miniBtn.classList.remove('playing'); });
+  mainAudio.addEventListener('ended', function(){ miniBtn.classList.remove('playing'); });
+
+  bottomAudio.addEventListener('play', function(){ miniBtn.classList.add('playing'); });
+  bottomAudio.addEventListener('pause', function(){ miniBtn.classList.remove('playing'); });
+  bottomAudio.addEventListener('ended', function(){ miniBtn.classList.remove('playing'); bottomBar.classList.remove('visible'); });
+
+  miniBtn.addEventListener('click', function(){
+    dismissed = false;
+    if(bottomAudio.paused && mainAudio.paused){ bottomAudio.play(); bottomBar.classList.add('visible'); }
+    else if(!bottomAudio.paused) bottomAudio.pause();
+    else if(!mainAudio.paused) mainAudio.pause();
+  });
+
+  bottomDismiss.addEventListener('click', function(){
+    bottomAudio.pause(); bottomBar.classList.remove('visible'); dismissed = true;
+  });
+})();
+</script>
+</body>
+</html>

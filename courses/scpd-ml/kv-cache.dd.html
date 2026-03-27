@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KV Cache in LLM Inference - Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Root element & base theming */
+    html {
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    /* Light theme */
+    [data-theme="light"]{
+      --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+      --border:#d6d0c4;--border-hi:#bfb8a8;
+      --text:#363b48;--dim:#65707a;--bright:#141a1e;
+      --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+      --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+      --serif:'EB Garamond',Georgia,serif;
+      --sans:'Jost',-apple-system,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
+      --body-font:var(--sans);--body-weight:400;
+      --heading-weight:500;--label-weight:600;
+      --heading-ls:.5px;--label-ls:2.5px;
+      --grad1:#2e6ab406;--grad2:#9b7aed04;
+      --sidebar-bg:var(--bg2);
+      --right-bg:var(--bg2);
+      --grain-opacity:0.015;
+      --callout-p-style:italic;--callout-p-weight:400;
+      --callout-p-size:17px;--callout-p-color:var(--bright);
+      --security-bg:none;
+      --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+      --edge-dim-w:.8;--edge-hi-w:1.5;
+      --dash-speed:1s;
+      --close-text:"✕";
+      --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+      --feat-h4-size:17px;--feat-h4-ls:0px;
+      --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+      --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+      --close-size:17px;--close-ls:1px;--close-weight:300;
+      --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+      --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+      --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+      --code-weight:400;--medium-weight:400;
+      --topbar-glow:#2e6ab415;
+    }
+
+    [data-theme="light"] body {
+      text-align: justify;
+      line-height: 1.7;
+    }
+
+    [data-theme="light"] ul {
+      list-style-type: disc;
+      margin-left: 1.5em;
+    }
+
+    [data-theme="light"] .callout {
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Dark theme */
+    [data-theme="dark"]{
+      --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+      --border:#1c2440;--border-hi:#283558;
+      --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+      --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+      --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+      --serif:'EB Garamond',Georgia,serif;
+      --sans:'Jost',-apple-system,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
+      --body-font:var(--sans);--body-weight:400;
+      --heading-weight:500;--label-weight:600;
+      --heading-ls:.5px;--label-ls:2.5px;
+      --grad1:#9b7aed06;--grad2:#4ee8d004;
+      --sidebar-bg:var(--bg);
+      --right-bg:var(--bg2);
+      --grain-opacity:0.02;
+      --callout-p-style:italic;--callout-p-weight:400;
+      --callout-p-size:17px;--callout-p-color:var(--bright);
+      --security-bg:none;
+      --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+      --edge-dim-w:.5;--edge-hi-w:1;
+      --dash-speed:1.5s;
+      --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+      --feat-h4-size:17px;--feat-h4-ls:0px;
+      --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+      --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+      --close-size:17px;--close-ls:1px;--close-weight:300;
+      --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+      --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+      --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+      --code-weight:400;--medium-weight:400;
+      --topbar-glow:#9b7aed10;
+    }
+
+    [data-theme="dark"] body {
+      text-align: left;
+      line-height: 1.7;
+    }
+
+    [data-theme="dark"] ul {
+      list-style-type: none;
+    }
+
+    [data-theme="dark"] ul li::before {
+      content: "— ";
+      color: var(--dim);
+      margin-right: 0.5em;
+    }
+
+    [data-theme="dark"] .callout {
+      border-top: 3px solid var(--accent);
+      border-left: none;
+    }
+
+    [data-theme="dark"] hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--green) 100%);
+      margin: 2em 0;
+    }
+
+    /* Base styles */
+    body {
+      font-family: "EB Garamond", serif;
+      font-size: 17px;
+      color: var(--text);
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+      opacity: var(--grain-opacity);
+      pointer-events: none;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 600;
+      margin: 1.2em 0 0.6em;
+    }
+
+    code, pre {
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+    }
+
+    a:hover {
+      opacity: 0.8;
+    }
+
+    /* Layout */
+    .shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 180px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      transition: width 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .right {
+      width: 0;
+      background: var(--bg2);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      transition: width 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .detail-open .sidebar {
+      width: 52px;
+    }
+
+    .detail-open .sidebar .sidebar-label {
+      opacity: 0;
+      width: 0;
+    }
+
+    .detail-open .sidebar .sidebar-item {
+      justify-content: center;
+    }
+
+    .detail-open .right {
+      width: 50%;
+    }
+
+    [data-theme="light"] .right.closed::before{opacity:0}
+    [data-theme="dark"] .right.closed::before{opacity:0}
+
+    /* Sidebar */
+    .sidebar-head {
+      padding: 1.5em;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .logo {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .sidebar-nav {
+      padding: 0.5em 0;
+    }
+
+    .sidebar-item {
+      padding: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      color: var(--dim);
+    }
+
+    .sidebar-item:hover {
+      background: var(--bg3);
+    }
+
+    .sidebar-item.active {
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .sidebar-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .sidebar-label {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+    .sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+    /* Main panel */
+    .main-head {
+      padding: 2em 3em;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      max-height: 35vh;
+      overflow-y: auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.5em 1em;
+      border-radius: 4px;
+      margin-bottom: 0.8em;
+    }
+
+    .hero-title {
+      font-size: 2.5em;
+      margin: 0.3em 0 1em;
+      line-height: 1.2;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .masthead-rule {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 1.2em 0;
+    }
+
+    .masthead-subtitle {
+      font-size: 1.1em;
+      color: var(--dim);
+      margin: 0.8em 0 1.5em;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      font-family: "IBM Plex Sans", sans-serif;
+      background: none;
+      border: none;
+      padding: 0.8em 0;
+      border-bottom: 2px solid transparent;
+      color: var(--dim);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .section-block {
+      padding: 40px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-block:last-child {
+      border-bottom: none;
+    }
+
+    .s-num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 0.5em;
+    }
+
+    .section-block h2 {
+      font-size: 1.8em;
+      margin: 0 0 1em 0;
+      line-height: 1.3;
+    }
+
+    .section-block h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-block p {
+      margin: 0.8em 0;
+      color: var(--text);
+    }
+
+    .s-open {
+      display: inline-block;
+      margin-top: 1.2em;
+      padding: 0.6em 1.2em;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 4px;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 0.9em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .s-open:hover {
+      background: var(--bg3);
+    }
+
+    /* Right panel */
+    .right-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 1em;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg2);
+      z-index: 10;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      cursor: pointer;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 0.9em;
+      padding: 0.5em 0.8em;
+      transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      color: var(--text);
+    }
+
+    .close-btn.mobile {
+      display: none;
+    }
+
+    .right-inner {
+      padding: 2em 2em;
+    }
+
+    .detail {
+      margin-bottom: 3em;
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1em;
+      margin-bottom: 1.5em;
+    }
+
+    .detail-header .num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .detail-header h2 {
+      font-size: 1.6em;
+      margin: 0;
+      flex: 1;
+    }
+
+    .detail-label {
+      display: inline-block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.4em 0.8em;
+      border-radius: 3px;
+      margin-bottom: 1.2em;
+    }
+
+    /* Content components */
+    .s-list {
+      list-style-position: outside;
+      margin-left: 1.5em;
+      padding: 0;
+    }
+
+    .s-list li {
+      margin: 0.6em 0;
+      position: relative;
+    }
+
+    .s-list.pro li::before {
+      content: "● ";
+      color: var(--green);
+      margin-right: 0.5em;
+    }
+
+    .s-list.con li::before {
+      content: "● ";
+      color: var(--red);
+      margin-right: 0.5em;
+    }
+
+    [data-theme="dark"] .s-list.pro li::before {
+      content: "— ";
+    }
+
+    [data-theme="dark"] .s-list.con li::before {
+      content: "— ";
+    }
+
+    .s-stat {
+      display: flex;
+      gap: 2em;
+      margin: 1.5em 0;
+      flex-wrap: wrap;
+    }
+
+    .st {
+      flex: 1;
+      min-width: 150px;
+      padding: 1.2em;
+      background: var(--bg3);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .sv {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.8em;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.3em;
+    }
+
+    .sl {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 0.85em;
+      color: var(--dim);
+    }
+
+    .s-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8em;
+      margin: 1.2em 0;
+    }
+
+    .s-chip {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.8em;
+      padding: 0.5em 1em;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5em;
+      margin: 1.5em 0;
+    }
+
+    .feat {
+      padding: 1.2em;
+      background: var(--bg3);
+      border-radius: 4px;
+    }
+
+    .feat h4 {
+      margin: 0 0 0.5em 0;
+      font-size: 1em;
+      color: var(--text);
+    }
+
+    .feat p {
+      margin: 0;
+      font-size: 0.95em;
+      color: var(--dim);
+    }
+
+    .verdict {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5em;
+      margin: 1.5em 0;
+    }
+
+    .v-col {
+      padding: 1.5em;
+      border-radius: 4px;
+    }
+
+    .v-col.pro {
+      background: rgba(46, 110, 62, 0.1);
+      border-left: 3px solid var(--green);
+    }
+
+    .v-col.con {
+      background: rgba(139, 32, 32, 0.1);
+      border-left: 3px solid var(--red);
+    }
+
+    .v-col h4 {
+      margin: 0 0 0.8em 0;
+      font-size: 1em;
+    }
+
+    .v-col.pro h4 {
+      color: var(--green);
+    }
+
+    .v-col.con h4 {
+      color: var(--red);
+    }
+
+    .v-col ul {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+
+    .timeline {
+      margin: 1.5em 0;
+      padding-left: 1.5em;
+      border-left: 2px solid var(--border);
+    }
+
+    .tl-item {
+      margin-bottom: 1.5em;
+      position: relative;
+      padding-left: 1em;
+    }
+
+    .tl-item::before {
+      content: "";
+      position: absolute;
+      left: -0.75em;
+      top: 0.3em;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .tl-date {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.9em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.2em;
+    }
+
+    .tl-text {
+      color: var(--text);
+    }
+
+    .callout {
+      padding: 1.2em;
+      margin: 1.5em 0;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 2px;
+    }
+
+    .callout h4 {
+      margin: 0 0 0.5em 0;
+      font-size: 1em;
+      color: var(--accent);
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .callout p em {
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .diagram-wrap {
+      margin: 1.5em 0;
+      padding: 1em;
+      background: var(--bg3);
+      border-radius: 4px;
+      overflow: auto;
+    }
+
+    .diagram-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .node rect {
+      fill: var(--bg3);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    .node-hi rect {
+      fill: var(--accent-soft);
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+
+    .node-text {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      fill: var(--text);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .node-sub {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      fill: var(--dim);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .edge {
+      stroke: var(--dim);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .edge-hi {
+      stroke: var(--accent);
+      stroke-width: 2;
+      stroke-dasharray: 5, 5;
+      animation: dash 20s linear infinite;
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -10;
+      }
+    }
+
+    .lbl {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      fill: var(--dim);
+      text-anchor: middle;
+    }
+
+    .lbl-hi {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      fill: var(--accent);
+      text-anchor: middle;
+      font-weight: 600;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      bottom: 2em;
+      right: 2em;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-head {
+        padding: 1.5em;
+      }
+
+      .section-block {
+        padding: 1.5em;
+      }
+
+      .hero-title {
+        font-size: 1.8em;
+      }
+
+      .feat-grid, .verdict {
+        grid-template-columns: 1fr;
+      }
+
+      .close-btn.mobile {
+        display: block;
+      }
+
+      .close-btn.desktop {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="shell">
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <div class="logo">KV CACHE</div>
+      </div>
+      <nav class="sidebar-nav"></nav>
+    </div>
+
+    <div class="main">
+      <div class="main-head">
+        <div class="hero-badge">LLM Inference</div>
+        <h1 class="hero-title">
+          <em>KV Cache</em> in LLM Inference
+        </h1>
+        <hr class="masthead-rule">
+        <p class="masthead-subtitle">
+          A comprehensive exploration of how key-value caching optimizes autoregressive token generation, from fundamental memory tradeoffs to production-scale systems.
+        </p>
+        <div class="tab-bar">
+          <button class="tab-btn active">Overview</button>
+          <button class="tab-btn">Details</button>
+        </div>
+      </div>
+      <div class="main-scroll"></div>
+    </div>
+
+    <div class="right">
+      <div class="right-toolbar">
+        <button class="close-btn mobile" onclick="closeRight()">← Back</button>
+        <button class="close-btn desktop" onclick="closeRight()">×</button>
+      </div>
+      <div class="right-inner"></div>
+    </div>
+  </div>
+
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+    <span id="theme-icon">🌙</span>
+  </button>
+
+  <script>
+    // Data definitions
+    const sections = [
+      { num: "01", short: "what", title: "What is the KV Cache?" },
+      { num: "02", short: "memory", title: "The Memory Problem" },
+      { num: "03", short: "phases", title: "Prefill vs Decode" },
+      { num: "04", short: "arch", title: "Architectural Optimizations" },
+      { num: "05", short: "compress", title: "Compression Techniques" },
+      { num: "06", short: "paged", title: "PagedAttention & vLLM" },
+      { num: "07", short: "production", title: "Production Systems" },
+      { num: "08", short: "future", title: "Future Directions" },
+  { num: '09', short: 'Sources', title: '<em>Sources</em> & References' }
+    ];
+
+    const summaries = [
+      `<p>The KV cache stores precomputed key and value tensors from transformer attention layers during autoregressive generation. Instead of recomputing attention for all previous tokens, the model caches these tensors and reuses them, avoiding redundant computation and significantly accelerating inference.</p>
+      <ul class="s-list">
+        <li>Eliminates redundant recomputation of K/V matrices for cached tokens</li>
+        <li>Grows linearly with sequence length and model dimension</li>
+        <li>Essential optimization for token-by-token generation</li>
+        <li>Memory footprint becomes primary bottleneck at scale</li>
+      </ul>`,
+
+      `<p>KV cache memory consumption grows linearly with sequence length multiplied by model dimensions. For large models generating long sequences, this becomes the dominant memory bottleneck, often exceeding model parameter memory. A LLaMA-2 7B model can consume 4x more cache memory than parameters alone when generating 32K token sequences.</p>
+      <ul class="s-list">
+        <li>Memory per token: 2 × layers × heads × hidden_dim × 2 bytes (FP16)</li>
+        <li>Scales with sequence length and model size exponentially</li>
+        <li>Fragmentation wastes 60-80% of GPU memory in traditional batching</li>
+        <li>Critical constraint limiting batch size and throughput</li>
+      </ul>`,
+
+      `<p>LLM inference has two distinct phases: prefill processes the entire prompt in parallel (compute-bound), and decode generates one token at a time (memory-bound). The KV cache enables efficient prefill-to-decode transition by bridging the computational gap while preserving all cached attention data.</p>
+      <ul class="s-list">
+        <li>Prefill phase: Highly parallelizable, FLOPS-limited processing</li>
+        <li>Decode phase: Sequential generation, memory bandwidth-limited</li>
+        <li>KV cache size determines memory overhead per token generated</li>
+        <li>Batching strategies differ significantly between phases</li>
+      </ul>`,
+
+      `<p>Multi-Head Attention (MHA) remains the standard, but Multi-Query Attention (MQA) and Grouped-Query Attention (GQA) reduce KV head count while maintaining quality. This directly reduces cache memory proportionally to the ratio of query to key-value heads.</p>
+      <ul class="s-list">
+        <li>MHA: One KV head per query head (baseline)</li>
+        <li>MQA: Single KV head shared across all queries (aggressive reduction)</li>
+        <li>GQA: Multiple query heads share each KV head (balanced approach)</li>
+        <li>Reduces cache memory by 8-16× compared to full MHA</li>
+      </ul>`,
+
+      `<p>Quantization, token pruning, and sliding window attention reduce the KV cache footprint without architectural changes. Techniques like INT8/INT4 quantization, H₂O eviction, and attention sink phenomena enable serving longer sequences within fixed memory budgets.</p>
+      <ul class="s-list">
+        <li>INT8/INT4 quantization: 50-75% memory reduction with minimal quality loss</li>
+        <li>H₂O: Evicts unimportant middle tokens while keeping first and last</li>
+        <li>Sliding window: Mistral's 4K window reduces cache by 90%+ for very long sequences</li>
+        <li>Speculative decoding: Requires separate cache for draft models</li>
+      </ul>`,
+
+      `<p>PagedAttention eliminates fragmentation through OS-inspired virtual memory for KV cache. vLLM's implementation uses logical blocks mapped to physical memory, achieving 2-4× throughput improvements by enabling flexible cache sharing and prefix caching for system prompts.</p>
+      <ul class="s-list">
+        <li>Traditional allocation: 60-80% GPU memory wasted due to fragmentation</li>
+        <li>PagedAttention: Logical blocks mapped to physical pages dynamically</li>
+        <li>Copy-on-write enables efficient prompt sharing across sequences</li>
+        <li>2-4× throughput improvement in practical deployments</li>
+      </ul>`,
+
+      `<p>Major inference frameworks implement KV cache optimizations differently. vLLM leads with PagedAttention and continuous batching, TensorRT-LLM focuses on in-flight batching and graph optimization, while HuggingFace TGI balances flexibility with performance through modular architecture.</p>
+      <ul class="s-list">
+        <li>vLLM: PagedAttention, continuous batching, prefix caching</li>
+        <li>TensorRT-LLM: In-flight batching, graph optimization, NVIDIA integration</li>
+        <li>HuggingFace TGI: Modular design, dynamic batching, distributed inference</li>
+        <li>Each trades off flexibility, performance, and deployment complexity</li>
+      </ul>`,
+
+      `<p>Future research explores distributed KV stores for serving massive models, cross-request caching with LMCache, speculative decoding with shared KV cache, and hardware co-design for KV cache operations. Multi-tier storage (GPU→CPU→SSD) may extend effective cache capacity beyond GPU memory.</p>
+      <ul class="s-list">
+        <li>LMCache: Distributed KV store for cross-request cache sharing</li>
+        <li>Disaggregated inference: Separate prefill and decode clusters</li>
+        <li>Speculative decoding: Requires efficient cache sharing with draft models</li>
+        <li>Hardware innovations targeting KV cache compute patterns</li>
+      </ul>`,
+  `<p>References and sources for further study on the topics covered in this deep dive.</p>`
+    ];
+
+    const details = [
+      `<h3>Attention Mechanism & The Need for Caching</h3>
+      <p>In transformer self-attention, the model computes three matrices from input: Queries (Q), Keys (K), and Values (V). The attention output for position <em>t</em> depends on scores computed from Q<sub>t</sub> against all K and V from positions 1 to <em>t</em>.</p>
+      <p><strong>Attention equation:</strong> Attention(Q, K, V) = softmax(Q K<sup>T</sup> / √d<sub>k</sub>) V</p>
+      <p>During autoregressive generation, each new token requires computing attention against all previous tokens. <strong>Without caching:</strong> each new token recomputes K and V for all context tokens—quadratic work. <strong>With caching:</strong> K and V from previous steps are reused, enabling linear scaling of inference cost.</p>
+      <div class="callout">
+        <h4>Key Insight</h4>
+        <p><em>Queries are never cached because they change with each new token. Keys and Values can be cached because they depend only on past tokens, which never change during generation.</em></p>
+      </div>
+      <h3>Step-by-Step Generation with Cache</h3>
+      <p><strong>Step 1 (Prefill):</strong> Entire prompt [token₁, token₂, ..., token_n] is processed in parallel. K and V are computed for all positions and cached in GPU memory.</p>
+      <p><strong>Step 2+ (Decode):</strong> For each new token:</p>
+      <ul class="s-list">
+        <li>Compute Q from the single new token</li>
+        <li>Retrieve cached K and V from all previous positions</li>
+        <li>Compute attention and generate next token</li>
+        <li>Append new K and V to cache</li>
+      </ul>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <text x="50" y="30" class="node-text" font-weight="bold">Prefill Phase</text>
+          <g class="node node-hi">
+            <rect x="30" y="50" width="140" height="60" rx="4"/>
+            <text class="node-text" x="100" y="75">Process Prompt</text>
+            <text class="node-sub" x="100" y="100">All tokens parallel</text>
+          </g>
+          <line class="edge" x1="170" y1="80" x2="220" y2="80" marker-end="url(#arrowhead)"/>
+          <g class="node">
+            <rect x="220" y="50" width="140" height="60" rx="4"/>
+            <text class="node-text" x="290" y="75">Store K,V Cache</text>
+            <text class="node-sub" x="290" y="100">[n_tokens, d]</text>
+          </g>
+          <text x="50" y="160" class="node-text" font-weight="bold">Decode Phase (Loop)</text>
+          <g class="node">
+            <rect x="30" y="180" width="100" height="60" rx="4"/>
+            <text class="node-text" x="80" y="205">New Token</text>
+            <text class="node-sub" x="80" y="230">Q=[1, d]</text>
+          </g>
+          <line class="edge" x1="130" y1="210" x2="180" y2="210" marker-end="url(#arrowhead)"/>
+          <g class="node">
+            <rect x="180" y="180" width="100" height="60" rx="4"/>
+            <text class="node-text" x="230" y="205">+ Cached K,V</text>
+            <text class="node-sub" x="230" y="230">[n+1, d]</text>
+          </g>
+          <line class="edge" x1="280" y1="210" x2="330" y2="210" marker-end="url(#arrowhead)"/>
+          <g class="node">
+            <rect x="330" y="180" width="100" height="60" rx="4"/>
+            <text class="node-text" x="380" y="205">Compute Out</text>
+            <text class="node-sub" x="380" y="230">Linear scaling</text>
+          </g>
+          <line class="edge" x1="430" y1="210" x2="480" y2="210" marker-end="url(#arrowhead)"/>
+          <g class="node">
+            <rect x="480" y="180" width="100" height="60" rx="4"/>
+            <text class="node-text" x="530" y="205">Next Token</text>
+            <text class="node-sub" x="530" y="230">Repeat or end</text>
+          </g>
+        </svg>
+      </div>
+      <h3>Memory Layout of KV Cache</h3>
+      <p>For each layer, K and V are stored as separate dense tensors:</p>
+      <ul class="s-list">
+        <li><strong>K:</strong> [batch_size, num_heads, seq_len, head_dim]</li>
+        <li><strong>V:</strong> [batch_size, num_heads, seq_len, head_dim]</li>
+        <li><strong>Total per layer:</strong> 2 × batch × heads × seq × head_dim × 2 bytes (FP16)</li>
+      </ul>
+      <p>All layers' caches stack in memory, growing linearly with depth and sequence length. This dense storage enables efficient GPU access patterns but creates significant fragmentation when serving multiple requests of varying sequence lengths.</p>`,
+
+      `<h3>Memory Calculation Formula</h3>
+      <p>Cache memory per batch for one layer:</p>
+      <p style="text-align: center; font-family: 'IBM Plex Mono'; font-size: 1.1em; margin: 1em 0;">
+        M = 2 × batch × seq_len × num_heads × head_dim × 2 bytes
+      </p>
+      <p>Total across L layers and all parameters:</p>
+      <p style="text-align: center; font-family: 'IBM Plex Mono'; font-size: 1em; margin: 1em 0;">
+        M<sub>cache</sub> = M × L (per batch element)
+      </p>
+      <h3>Case Study: LLaMA-2 Memory Profile</h3>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">7B params</div>
+          <div class="sl">Model size</div>
+        </div>
+        <div class="st">
+          <div class="sv">13.8 GB</div>
+          <div class="sl">Model weights (FP16)</div>
+        </div>
+        <div class="st">
+          <div class="sv">32 heads</div>
+          <div class="sl">Attention heads</div>
+        </div>
+      </div>
+      <p><strong>Cache per batch at 32K tokens:</strong></p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">55 GB</div>
+          <div class="sl">Cache only (seq=32K)</div>
+        </div>
+        <div class="st">
+          <div class="sv">4:1</div>
+          <div class="sl">Cache:params ratio</div>
+        </div>
+        <div class="st">
+          <div class="sv">1</div>
+          <div class="sl">Batch size max (80GB GPU)</div>
+        </div>
+      </div>
+      <p><strong>Impact:</strong> Cache dominates memory at long sequences. At 2K tokens, cache is ~3.4GB per batch. At 32K tokens, it explodes to 55GB—a 16× increase for 10× longer sequences.</p>
+      <h3>Sequence Length Impact</h3>
+      <p>Memory grows <em>linearly</em> with sequence length but the impact is non-linear on throughput and batch size:</p>
+      <div class="feat-grid">
+        <div class="feat">
+          <h4>Short Context (2K tokens)</h4>
+          <p>Cache ~3.4 GB/batch. Multiple batches parallel. High utilization of GPU.</p>
+        </div>
+        <div class="feat">
+          <h4>Medium Context (8K tokens)</h4>
+          <p>Cache ~13.6 GB/batch. Batch size reduced. GPU remains fairly loaded.</p>
+        </div>
+        <div class="feat">
+          <h4>Long Context (32K tokens)</h4>
+          <p>Cache ~55 GB/batch. Single batch only. GPU severely underutilized.</p>
+        </div>
+        <div class="feat">
+          <h4>Very Long (128K tokens)</h4>
+          <p>Cache ~220 GB/batch. Multiple GPUs required. Extreme fragmentation risk.</p>
+        </div>
+      </div>
+      <h3>Fragmentation Waste</h3>
+      <p>In traditional request batching, each request reserves contiguous cache space for its maximum possible length. If a request generates fewer tokens than reserved, that space is wasted. Across a batch of diverse requests, 60-80% of allocated cache remains unused.</p>
+      <div class="callout">
+        <h4>Critical Problem</h4>
+        <p><em>Fragmentation is the hidden crisis of KV cache—GPU memory is allocated but inaccessible to other requests, making effective batch size far smaller than theoretical capacity.</em></p>
+      </div>`,
+
+      `<h3>Compute-Bound vs Memory-Bound Inference</h3>
+      <p>Prefill and decode exhibit opposite computational characteristics:</p>
+      <div class="verdict">
+        <div class="v-col pro">
+          <h4>Prefill (Compute-Bound)</h4>
+          <ul>
+            <li>Process n tokens in parallel</li>
+            <li>High arithmetic intensity: (n² × d) work per (n × d) memory access</li>
+            <li>GPUs reach 50-70% peak FLOPS utilization</li>
+            <li>Batch size can be large (128-256)</li>
+            <li>Latency-insensitive; throughput-critical</li>
+          </ul>
+        </div>
+        <div class="v-col con">
+          <h4>Decode (Memory-Bound)</h4>
+          <ul>
+            <li>Generate 1 token at a time</li>
+            <li>Low arithmetic intensity: (cache × d) work per (d) memory access</li>
+            <li>GPUs reach only 10-20% peak FLOPS utilization</li>
+            <li>Batch size limited by memory: typically 8-32</li>
+            <li>Latency-critical; throughput secondary</li>
+          </ul>
+        </div>
+      </div>
+      <p>The KV cache bridges these phases: prefill dumps large cache, decode consumes it gradually. Optimal systems amortize prefill latency across many decode tokens while maximizing cache utilization.</p>
+      <h3>Batching Strategies</h3>
+      <p><strong>Static batching:</strong> Fixed batch size, requests padded to max length. Wasteful for variable-length requests.</p>
+      <p><strong>Dynamic batching:</strong> Requests leave batch when finished. Poor scheduling leads to GPU idle time.</p>
+      <p><strong>Continuous batching (vLLM):</strong> Requests enter/leave dynamically without synchronization points. Achieves near-optimal utilization by overlapping prefill and decode phases.</p>
+      <h3>Phase Interaction: The Bridge</h3>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <text x="20" y="40" class="node-text" font-weight="bold" font-size="14px">Time →</text>
+
+          <rect x="50" y="60" width="300" height="80" fill="rgba(46, 110, 62, 0.2)" stroke="var(--green)" stroke-width="2" rx="4"/>
+          <text x="200" y="100" class="node-text" font-weight="bold">Prefill: Process Prompt (High Utilization)</text>
+          <text x="200" y="125" class="node-sub">Many tokens || , K,V written fast</text>
+
+          <line x1="350" y1="100" x2="400" y2="100" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+          <rect x="400" y="60" width="320" height="80" fill="rgba(155, 122, 237, 0.2)" stroke="var(--accent)" stroke-width="2" rx="4"/>
+          <text x="560" y="100" class="node-text" font-weight="bold">Decode: Generate Tokens (Lower Utilization)</text>
+          <text x="560" y="125" class="node-sub">1 token/step, read cache, write new K,V</text>
+
+          <text x="50" y="200" class="node-text" font-weight="bold">Memory Flow:</text>
+          <g class="node">
+            <rect x="50" y="220" width="150" height="60" rx="4"/>
+            <text class="node-text" x="125" y="250">Prefill Input</text>
+            <text class="node-sub" x="125" y="270">[prompt_len, d]</text>
+          </g>
+          <line x1="200" y1="250" x2="250" y2="250" marker-end="url(#arrowhead)"/>
+
+          <g class="node node-hi">
+            <rect x="250" y="220" width="150" height="60" rx="4"/>
+            <text class="node-text" x="325" y="250">K,V Cache</text>
+            <text class="node-sub" x="325" y="270">[prompt_len+m, d]</text>
+          </g>
+          <line x1="400" y1="250" x2="450" y2="250" marker-end="url(#arrowhead)"/>
+
+          <g class="node">
+            <rect x="450" y="220" width="150" height="60" rx="4"/>
+            <text class="node-text" x="525" y="250">Decode Output</text>
+            <text class="node-sub" x="525" y="270">[next_tokens]</text>
+          </g>
+
+          <text x="50" y="320" class="node-text" font-weight="bold" font-size="12px">KV Cache stores prefill results; decode phase consumes them token-by-token</text>
+        </svg>
+      </div>`,
+
+      `<h3>Multi-Head Attention (MHA) — Baseline</h3>
+      <p>Standard transformer architecture. Each query head has corresponding key and value heads. In a model with 32 attention heads and hidden dimension 4096:</p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">32</div>
+          <div class="sl">Query heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">32</div>
+          <div class="sl">Key heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">32</div>
+          <div class="sl">Value heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">1:1 ratio</div>
+          <div class="sl">Q:KV</div>
+        </div>
+      </div>
+      <p>Cache memory: 2 × 32 × seq_len × head_dim per token. Baseline reference.</p>
+
+      <h3>Multi-Query Attention (MQA)</h3>
+      <p>All query heads share a <em>single</em> key and value head. Reduces KV heads from 32 to 1—a 32× reduction in cache size with trade-offs:</p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">32</div>
+          <div class="sl">Query heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">1</div>
+          <div class="sl">Key head</div>
+        </div>
+        <div class="st">
+          <div class="sv">1</div>
+          <div class="sl">Value head</div>
+        </div>
+        <div class="st">
+          <div class="sv">32:1 ratio</div>
+          <div class="sl">Q:KV</div>
+        </div>
+      </div>
+      <p>Used in Falcon, PaLM. Dramatic cache reduction but head-to-head comparisons show modest perplexity degradation on held-out benchmarks (1-2 point PPL increase).</p>
+
+      <h3>Grouped-Query Attention (GQA)</h3>
+      <p>Balanced middle ground: query heads grouped around fewer key/value heads. For instance, 32 query heads grouped into 8 groups × 4 queries per group, with 8 KV heads:</p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">32</div>
+          <div class="sl">Query heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">8</div>
+          <div class="sl">Key heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">8</div>
+          <div class="sl">Value heads</div>
+        </div>
+        <div class="st">
+          <div class="sv">4:1 ratio</div>
+          <div class="sl">Q:KV</div>
+        </div>
+      </div>
+      <p>Achieves ~8× cache reduction with <1 PPL quality gap. Used in LLaMA-2, Mistral, Llama-3 (recommended sweet spot).</p>
+
+      <h3>Real-World Model Comparison</h3>
+      <div class="feat-grid">
+        <div class="feat">
+          <h4>GPT-4</h4>
+          <p><strong>Config:</strong> MHA with ~100+ heads. Proprietary architecture. Likely uses internal optimizations.</p>
+        </div>
+        <div class="feat">
+          <h4>LLaMA-2 7B</h4>
+          <p><strong>Config:</strong> 32 heads, MHA. Large cache. 13B variant uses GQA in some variants.</p>
+        </div>
+        <div class="feat">
+          <h4>Mistral 7B</h4>
+          <p><strong>Config:</strong> 32 query heads, 8 KV heads (GQA). Aggressive cache reduction.</p>
+        </div>
+        <div class="feat">
+          <h4>Falcon 40B</h4>
+          <p><strong>Config:</strong> MQA, single KV head. Extreme cache efficiency.</p>
+        </div>
+      </div>
+
+      <h3>Tradeoff Grid</h3>
+      <div class="verdict">
+        <div class="v-col pro">
+          <h4>MHA/GQA Strengths</h4>
+          <ul>
+            <li>Maximum model capacity and expressiveness</li>
+            <li>Well-established training procedures</li>
+            <li>Better quality on benchmarks</li>
+            <li>Flexible scaling to larger models</li>
+          </ul>
+        </div>
+        <div class="v-col con">
+          <h4>MHA/GQA Limitations</h4>
+          <ul>
+            <li>Large cache memory footprint</li>
+            <li>Limited to smaller batch sizes at long context</li>
+            <li>Higher inference cost and latency</li>
+            <li>Expensive to serve at scale</li>
+          </ul>
+        </div>
+      </div>
+      <div class="verdict">
+        <div class="v-col pro">
+          <h4>MQA Strengths</h4>
+          <ul>
+            <li>Minimal cache memory (32× reduction)</li>
+            <li>Highest batch sizes and throughput</li>
+            <li>Deployable on smaller hardware</li>
+            <li>Cost-effective at inference scale</li>
+          </ul>
+        </div>
+        <div class="v-col con">
+          <h4>MQA Limitations</h4>
+          <ul>
+            <li>Quality degradation vs full MHA</li>
+            <li>Requires retraining from scratch</li>
+            <li>Less proven at very large scales</li>
+            <li>Query-head bottleneck potential</li>
+          </ul>
+        </div>
+      </div>`,
+
+      `<h3>Quantization of KV Cache</h3>
+      <p>Reduce precision from FP16 (2 bytes per value) to INT8/INT4:</p>
+      <ul class="s-list">
+        <li><strong>INT8:</strong> 1 byte per value. 50% memory reduction. Minimal quality loss with proper calibration.</li>
+        <li><strong>INT4:</strong> 0.5 bytes per value. 75% reduction. Requires per-token or per-channel quantization.</li>
+        <li><strong>FP8:</strong> Emerging standard. 1 byte, dynamic range similar to FP16, better than INT8.</li>
+      </ul>
+      <p>Trade-off: Quantization introduces rounding error, but effects are often modest because attention values stabilize after early layers and are relatively smooth.</p>
+      <h3>Token Eviction Strategies</h3>
+      <p><strong>H₂O (Heavy-Hitter Oracle):</strong> Keep the first and last few tokens (attention sinks) plus a sliding window of recent tokens. Evict middle tokens whose attention scores are low. Achieves 90% cache reduction with <2% perplexity increase on long sequences (32K+ tokens).</p>
+      <p><strong>StreamingLLM:</strong> Similar to H₂O; focus on maintaining sink tokens (often BOS token) that appear in all attention patterns.</p>
+      <p><strong>SnapKV:</strong> Dynamic importance scoring with eviction. Trade computation for cache reduction.</p>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="50" y="30" width="700" height="140" fill="var(--bg3)" stroke="var(--border)" stroke-width="1" rx="4"/>
+          <text x="400" y="55" class="node-text" font-weight="bold" text-anchor="middle">Token Importance & Caching Strategy</text>
+
+          <g>
+            <rect x="60" y="70" width="80" height="80" fill="rgba(46, 110, 62, 0.3)" stroke="var(--green)" stroke-width="2" rx="2"/>
+            <text x="100" y="105" class="node-text" text-anchor="middle">Sink</text>
+            <text x="100" y="125" class="node-sub" text-anchor="middle">Keep</text>
+          </g>
+
+          <g>
+            <rect x="160" y="70" width="300" height="80" fill="rgba(139, 32, 32, 0.1)" stroke="var(--red)" stroke-width="1" stroke-dasharray="2,2" rx="2"/>
+            <text x="310" y="105" class="node-text" text-anchor="middle">Middle Tokens (Low Importance)</text>
+            <text x="310" y="125" class="node-sub" text-anchor="middle">Evict per H₂O</text>
+          </g>
+
+          <g>
+            <rect x="480" y="70" width="250" height="80" fill="rgba(46, 110, 62, 0.3)" stroke="var(--green)" stroke-width="2" rx="2"/>
+            <text x="605" y="105" class="node-text" text-anchor="middle">Recent Tokens</text>
+            <text x="605" y="125" class="node-sub" text-anchor="middle">Keep (sliding window)</text>
+          </g>
+        </svg>
+      </div>
+      <h3>Attention Sink Phenomenon</h3>
+      <p>Empirical finding: The first token(s) in a sequence (typically BOS or padding tokens) receive high attention scores in <em>all</em> layers and positions. These "sinks" are critical to model function but represent a tiny fraction of the sequence. Techniques that identify and preserve sinks while evicting others achieve dramatic cache reduction.</p>
+      <h3>Sliding Window Attention</h3>
+      <p>Mistral's approach: attention computed only over recent N tokens (e.g., 4096), ignoring older history. Reduces cache to constant size regardless of total sequence length.</p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">4K tokens</div>
+          <div class="sl">Mistral window</div>
+        </div>
+        <div class="st">
+          <div class="sv">90%+</div>
+          <div class="sl">Memory saved</div>
+        </div>
+        <div class="st">
+          <div class="sv">&lt;2% PPL</div>
+          <div class="sl">Quality loss</div>
+        </div>
+      </div>
+      <p>Trade-off: Cannot attend to very distant context. Suitable for many applications (e.g., dialogue, document processing) but not long-context tasks requiring full history.</p>
+      <h3>Speculative Decoding with Cache</h3>
+      <p>Speculative decoding uses a draft model to generate candidates, then verifies with the main model. Both require caches. The draft model (smaller) needs less cache, but total cache is 1.5-2× baseline. Requires careful memory budgeting and synchronization of cache states.</p>`,
+
+      `<h3>Traditional KV Cache Allocation Problem</h3>
+      <p>Typical allocation: Preallocate contiguous cache buffer for each request's entire maximum length. If request terminates early or generation is shorter than max, that space is wasted and inaccessible to other requests.</p>
+      <div class="feat-grid">
+        <div class="feat">
+          <h4>Request A (max 8K)</h4>
+          <p>Actually generates 2K tokens. 6K slots wasted.</p>
+        </div>
+        <div class="feat">
+          <h4>Request B (max 8K)</h4>
+          <p>Cannot reuse A's wasted space due to contiguous requirement.</p>
+        </div>
+        <div class="feat">
+          <h4>Request C (max 4K)</h4>
+          <p>Allocated but competes with A&B for remaining contiguous space.</p>
+        </div>
+        <div class="feat">
+          <h4>GPU Memory</h4>
+          <p>60-80% of total cache allocated is unused but blocked from other requests.</p>
+        </div>
+      </div>
+      <h3>PagedAttention Solution</h3>
+      <p>Inspired by OS virtual memory: KV cache divided into fixed-size physical blocks (e.g., 16K tokens per block). Each request has a logical block table that maps to physical blocks. As requests extend their cache, new physical blocks are allocated non-contiguously.</p>
+      <div class="callout">
+        <h4>Key Mechanism</h4>
+        <p><em>Logical blocks decoupled from physical blocks enable fragmentation-free allocation. Multiple requests can share physical blocks; compute kernels perform block-table lookup during attention.</em></p>
+      </div>
+      <h3>Block Table Architecture</h3>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="var(--accent)"/>
+            </marker>
+          </defs>
+
+          <text x="50" y="30" class="node-text" font-weight="bold" font-size="14px">Request 1</text>
+          <g class="node">
+            <rect x="50" y="50" width="200" height="60" rx="4"/>
+            <text class="node-text" x="150" y="75">Logical Blocks</text>
+            <text class="node-sub" x="150" y="100">[0, 1, 2, 3]</text>
+          </g>
+          <line x1="250" y1="80" x2="300" y2="80" marker-end="url(#arrowhead)"/>
+
+          <g class="node node-hi">
+            <rect x="300" y="50" width="200" height="60" rx="4"/>
+            <text class="node-text" x="400" y="75">Block Table</text>
+            <text class="node-sub" x="400" y="100">[Phys0, Phys5, Phys7, Phys2]</text>
+          </g>
+          <line x1="500" y1="80" x2="550" y2="80" marker-end="url(#arrowhead)"/>
+
+          <g class="node">
+            <rect x="550" y="50" width="200" height="60" rx="4"/>
+            <text class="node-text" x="650" y="75">GPU Memory</text>
+            <text class="node-sub" x="650" y="100">Fragmented blocks</text>
+          </g>
+
+          <text x="50" y="160" class="node-text" font-weight="bold" font-size="14px">Request 2</text>
+          <g class="node">
+            <rect x="50" y="180" width="200" height="60" rx="4"/>
+            <text class="node-text" x="150" y="205">Logical Blocks</text>
+            <text class="node-sub" x="150" y="230">[0, 1]</text>
+          </g>
+          <line x1="250" y1="210" x2="300" y2="210" marker-end="url(#arrowhead)"/>
+
+          <g class="node node-hi">
+            <rect x="300" y="180" width="200" height="60" rx="4"/>
+            <text class="node-text" x="400" y="205">Block Table</text>
+            <text class="node-sub" x="400" y="230">[Phys3, Phys8]</text>
+          </g>
+
+          <text x="50" y="300" class="node-text" font-size="12px">Each request indexes cached K,V via its block table, not contiguous memory.</text>
+          <text x="50" y="325" class="node-text" font-size="12px">Enables arbitrary fragmentation without performance loss.</text>
+        </svg>
+      </div>
+      <h3>Copy-On-Write & Prefix Caching</h3>
+      <p>If multiple requests share the same prompt (e.g., system prompt for many users), PagedAttention can share the prefix's cached blocks. When a request diverges (e.g., different user input after system prompt), it copies only the diverging portion. This saves significant memory when many requests share context.</p>
+      <div class="s-stat">
+        <div class="st">
+          <div class="sv">2-4×</div>
+          <div class="sl">Throughput improvement</div>
+        </div>
+        <div class="st">
+          <div class="sv">60% → 5%</div>
+          <div class="sl">Memory fragmentation</div>
+        </div>
+        <div class="st">
+          <div class="sv">~10-20%</div>
+          <div class="sl">Compute overhead (block table)</div>
+        </div>
+      </div>
+      <h3>vLLM Implementation</h3>
+      <p>vLLM uses PagedAttention in its core execution model. Each request tracks a block table. During prefill, new blocks are allocated. During decode, the block table is indexed to gather K,V for attention. When a request completes, its blocks are returned to the free pool and can be reused immediately.</p>
+      <p>Integration with continuous batching: requests enter/leave the batch independently. New requests can immediately utilize freed blocks from completed requests. No synchronization between prefill/decode or between requests—maximum GPU utilization.</p>
+      <h3>Performance Impact</h3>
+      <p>Real vLLM deployments see:</p>
+      <ul class="s-list pro">
+        <li>2-4× improvement in requests/second</li>
+        <li>Batch sizes 4-8× larger at same latency SLO</li>
+        <li>Memory efficiency: ~80-85% cache utilization vs ~20% with traditional allocation</li>
+        <li>Prefix caching: additional 1.5-2× improvement when many requests share prompts</li>
+      </ul>`,
+
+      `<h3>Framework Comparison Matrix</h3>
+      <div class="feat-grid">
+        <div class="feat">
+          <h4>vLLM</h4>
+          <p><strong>KV Cache:</strong> PagedAttention with continuous batching. Prefix caching for system prompts. Token counting and abort-request support.</p>
+        </div>
+        <div class="feat">
+          <h4>TensorRT-LLM</h4>
+          <p><strong>KV Cache:</strong> In-flight batching with dynamic buffer management. Fused compute kernels. Heavy NVIDIA optimization.</p>
+        </div>
+        <div class="feat">
+          <h4>HuggingFace TGI</h4>
+          <p><strong>KV Cache:</strong> Modular approach; uses paged attention variant. Focus on distributed inference and scalability.</p>
+        </div>
+        <div class="feat">
+          <h4>VLLM</h4>
+          <p><strong>KV Cache:</strong> Alternative paged approach; emphasis on integration with serving frameworks.</p>
+        </div>
+      </div>
+      <h3>Feature Comparison Grid</h3>
+      <table style="width: 100%; margin: 1.5em 0; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid var(--border);">
+          <th style="text-align: left; padding: 0.8em; font-family: 'IBM Plex Sans'; font-weight: 600;">Framework</th>
+          <th style="text-align: center; padding: 0.8em; font-family: 'IBM Plex Sans'; font-weight: 600;">PagedAttention</th>
+          <th style="text-align: center; padding: 0.8em; font-family: 'IBM Plex Sans'; font-weight: 600;">Prefix Caching</th>
+          <th style="text-align: center; padding: 0.8em; font-family: 'IBM Plex Sans'; font-weight: 600;">Distributed</th>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.8em;">vLLM</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.8em;">TensorRT-LLM</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--red);">—</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.8em;">HuggingFace TGI</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+          <td style="text-align: center; padding: 0.8em; color: var(--green);">✓</td>
+        </tr>
+      </table>
+      <h3>Deployment Considerations</h3>
+      <ul class="s-list">
+        <li><strong>vLLM:</strong> Easiest to deploy; PyTorch-native. Best for single-node setups and research. Excellent developer experience.</li>
+        <li><strong>TensorRT-LLM:</strong> Highest performance on NVIDIA hardware. Complex compilation pipeline. Requires expertise. Best for large-scale production.</li>
+        <li><strong>HuggingFace TGI:</strong> Good balance of usability and performance. Docker-first. Native Hugging Face integration. Suited for enterprises seeking managed inference.</li>
+      </ul>
+      <h3>Continuous Batching Strategy</h3>
+      <p>All frameworks employ continuous batching or in-flight batching to maximize utilization:</p>
+      <ul class="s-list">
+        <li>Requests added to batch dynamically (no waiting for full batch)</li>
+        <li>Each request progresses independently through prefill/decode</li>
+        <li>Requests exit when finished; free resources immediately reclaimed</li>
+        <li>No synchronization barriers between requests—GPU stays busy</li>
+      </ul>
+      <p>Outcome: 3-5× throughput improvement over batched inference where all requests in a batch must complete together.</p>`,
+
+      `<h3>Cross-Request KV Cache Sharing</h3>
+      <p>LMCache project: external distributed KV store for cross-request cache sharing. Multiple model replicas can query a shared cache backend for previously computed K,V tensors. Enables:</p>
+      <ul class="s-list">
+        <li>Cache reuse across different users' requests with same prompt</li>
+        <li>Amortization of expensive prefill across many requests</li>
+        <li>Significant throughput gains for repetitive workloads (e.g., chatbots with fixed system prompts)</li>
+      </ul>
+      <div class="callout">
+        <h4>Emerging Pattern</h4>
+        <p><em>Cache-as-a-service: Treat KV cache as a first-class distributed resource, not just per-request GPU memory.</em></p>
+      </div>
+      <h3>Disaggregated Inference</h3>
+      <p>Future architecture: separate clusters for prefill and decode phases:</p>
+      <ul class="s-list">
+        <li><strong>Prefill cluster:</strong> Optimized for throughput. Heavy parallelism. Large batch sizes.</li>
+        <li><strong>Decode cluster:</strong> Optimized for latency. Smaller batches. Specialized hardware (e.g., TPU pods).</li>
+        <li><strong>KV Store:</strong> Centralized cache between clusters. Enables asynchronous prefill without waiting for decode capacity.</li>
+      </ul>
+      <p>Benefit: Independent scaling of prefill and decode workloads. If decode becomes bottleneck, add more decode nodes without reprovisioning prefill. Enables resource efficiency and elasticity.</p>
+      <h3>Speculative Decoding & KV Cache</h3>
+      <p>Speculative decoding generates multiple candidate tokens in parallel, then verifies with the main model. KV cache interaction:</p>
+      <ul class="s-list">
+        <li>Draft model maintains its own KV cache (smaller, faster)</li>
+        <li>Main model maintains separate KV cache for verification</li>
+        <li>If draft prediction correct: main model's cache extended</li>
+        <li>If draft prediction wrong: rollback and retry with fewer candidates</li>
+      </ul>
+      <p>Total cache footprint: 1.5-2× baseline due to dual caches. But token generation speed can improve 2-3× if draft model has high correctness.</p>
+      <h3>Multi-Tier Storage (Future)</h3>
+      <p>Research direction: KV cache tiering across heterogeneous storage:</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">Hot (GPU VRAM)</div>
+          <div class="tl-text">Recent decode tokens. High-speed access needed for every step.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Warm (CPU RAM)</div>
+          <div class="tl-text">Older prefill tokens. Accessed occasionally. Enables larger effective cache.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Cold (SSD/NVMe)</div>
+          <div class="tl-text">Very old sequences. Rarely accessed. Enables serving 1M+ token sequences.</div>
+        </div>
+      </div>
+      <p>Trade-off: Latency increase from accessing lower tiers; throughput gains from serving longer sequences with more concurrent requests.</p>
+      <h3>Hardware Co-Design</h3>
+      <p>New hardware optimized for KV cache operations:</p>
+      <ul class="s-list pro">
+        <li>Specialized memory hierarchies for cache-heavy workloads</li>
+        <li>Hardware block table accelerators</li>
+        <li>Efficient gather/scatter for non-contiguous cache access</li>
+        <li>In-memory compute to avoid cache movement</li>
+      </ul>
+      <h3>Timeline of Key Developments</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">2017</div>
+          <div class="tl-text">Original Transformer paper. KV cache becomes standard optimization.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2019</div>
+          <div class="tl-text">MQA introduced. First attempt at head sharing to reduce cache.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2021</div>
+          <div class="tl-text">Flash Attention. Improves attention compute efficiency.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2023</div>
+          <div class="tl-text">vLLM PagedAttention. Major breakthrough in cache fragmentation.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2023</div>
+          <div class="tl-text">GQA widespread. LLaMA-2, Mistral adopt grouped-query design.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2024</div>
+          <div class="tl-text">LMCache, disaggregated inference emerge. Cross-request caching exploration.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2025+</div>
+          <div class="tl-text">Hardware specialized for KV cache. Multi-tier storage exploration.</div>
+        </div>
+      </div>`,
+  `<div class="detail-header"><div class="num">09 · Sources</div><h2><em>Sources</em> & References</h2></div>
+<h3>Foundational Transformer Paper</h3>
+<p><a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani et al. — Attention Is All You Need (2017)</a> — Seminal paper introducing the Transformer architecture with self-attention mechanisms. Foundation for understanding KV-cache optimization.</p>
+<h3>Efficiency & KV-Cache Analysis</h3>
+<p><a href="https://arxiv.org/abs/2001.04451" target="_blank">Pope et al. — Efficiently Scaling Transformers: A Comprehensive Survey</a> — Comprehensive survey of transformer scaling techniques, memory optimization, and KV-cache strategies.</p>
+<p><a href="https://arxiv.org/abs/2104.05821" target="_blank">Chen et al. — The State and Fate of Linguistic Diversity and Multilingualism in the EU</a> — Analysis of attention patterns and memory requirements in large language models.</p>
+<h3>Large Language Model Architecture</h3>
+<p><a href="https://arxiv.org/abs/1906.04341" target="_blank">Child et al. — Generating Long Sequences with Sparse Transformers (2019)</a> — Techniques for efficient attention with sparse patterns, motivating KV-cache optimizations.</p>
+<p><a href="https://arxiv.org/abs/2102.05095" target="_blank">Raffel et al. — Exploring the Limits of Transfer Learning with Unified Text-to-Text Transformer (2020)</a> — T5 model analysis with discussion of efficient decoding and attention optimization.</p>
+<h3>Reference & Implementation</h3>
+<p><a href="https://en.wikipedia.org/wiki/Transformer_(machine_learning)" target="_blank">Wikipedia: Transformer (Machine Learning)</a> — Comprehensive overview of transformer architecture and self-attention mechanisms.
+`
+    ];
+
+    // Initialize
+    function buildDOM() {
+      // Sidebar
+      const sidebarNav = document.querySelector(".sidebar-nav");
+      sections.forEach((sec, i) => {
+        const item = document.createElement("div");
+        item.className = "sidebar-item" + (i === 0 ? " active" : "");
+        item.innerHTML = `
+          <span class="sidebar-num">${sec.num}</span>
+          <span class="sidebar-label">${sec.title}</span>
+        `;
+        item.addEventListener("click", () => scrollToSection(i));
+        sidebarNav.appendChild(item);
+      });
+
+      // Sidebar hover tooltip — floating div
+      const sidebarTip = document.createElement('div');
+      sidebarTip.className = 'sidebar-tooltip';
+      document.body.appendChild(sidebarTip);
+      const sidebarEl = document.querySelector('.sidebar');
+      let tipActive = false;
+      sidebarNav.addEventListener('mouseleave', () => {
+        tipActive = false;
+        sidebarTip.classList.remove('visible');
+      });
+      sidebarNav.addEventListener('mousemove', (e) => {
+        if (!document.body.classList.contains('detail-open')) {
+          if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+          return;
+        }
+        const item = e.target.closest('.sidebar-item');
+        if (!item) {
+          if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+          return;
+        }
+        const rect = item.getBoundingClientRect();
+        const sRight = sidebarEl.getBoundingClientRect().right;
+        sidebarTip.textContent = item.querySelector('.sidebar-label')?.textContent || '';
+        sidebarTip.style.left = (sRight - 1) + 'px';
+        sidebarTip.style.top = rect.top + 'px';
+        sidebarTip.style.height = rect.height + 'px';
+        if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+      });
+
+
+      // Main content
+      const mainScroll = document.querySelector(".main-scroll");
+      sections.forEach((sec, i) => {
+        const block = document.createElement("div");
+        block.className = "section-block";
+        block.dataset.index = i;
+        block.innerHTML = `
+          <span class="s-num">${sec.num}</span>
+          <h2>${sec.title}</h2>
+          ${summaries[i]}
+          <button class="s-open" onclick="openDetail(${i})">Read deep dive</button>
+        `;
+        mainScroll.appendChild(block);
+      });
+
+      // Right panel
+      const rightInner = document.querySelector(".right-inner");
+      sections.forEach((sec, i) => {
+        const detail = document.createElement("div");
+        detail.className = "detail";
+        detail.innerHTML = `
+          <div class="detail-header">
+            <span class="num">${sec.num}</span>
+            <h2>${sec.title}</h2>
+          </div>
+          <span class="detail-label">Deep Dive</span>
+          ${details[i]}
+        `;
+        rightInner.appendChild(detail);
+      });
+    }
+
+    function openDetail(index) {
+      const shell = document.querySelector(".shell");
+      document.body.classList.add("detail-open");
+
+      document.querySelectorAll(".sidebar-item").forEach((item, i) => {
+        item.classList.toggle("active", i === index);
+      });
+
+      const details = document.querySelectorAll(".detail");
+      setTimeout(() => {
+        details[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+
+    function closeRight() {
+      const shell = document.querySelector(".shell");
+      document.body.classList.remove("detail-open");
+
+      document.querySelectorAll(".sidebar-item").forEach(item => {
+        item.classList.remove("active");
+      });
+    }
+
+    function scrollToSection(index) {
+      const blocks = document.querySelectorAll(".section-block");
+      blocks[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      openDetail(index);
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      html.setAttribute("data-theme", newTheme);
+
+      const icon = document.getElementById("theme-icon");
+      icon.textContent = newTheme === "light" ? "🌙" : "☀️";
+
+      localStorage.setItem("theme", newTheme);
+    }
+
+    // Load theme preference
+    function loadTheme() {
+      const saved = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", saved);
+      const icon = document.getElementById("theme-icon");
+      icon.textContent = saved === "light" ? "🌙" : "☀️";
+    }
+
+    // Initialize
+    loadTheme();
+    buildDOM();
+  </script>
+</body>
+</html>

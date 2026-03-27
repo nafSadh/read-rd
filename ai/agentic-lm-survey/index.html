@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic LLMs in the Wild — Survey Literature Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule {
+      height: 1px; background: var(--border); margin: 32px 0;
+    }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip {
+      color: var(--border); border-bottom-color: transparent; cursor: default;
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> SURVEY &middot; LITERATURE COLLECTION</div>
+    <h1>Agentic LLMs <em>in the Wild</em></h1>
+    <div class="subtitle">Reasoning, Acting, Interacting, and Operating &mdash; a survey update for 2026</div>
+    <div class="rule"></div>
+    <div class="meta">
+      Extending Plaat et al. (arXiv:2503.23037, JAIR 2025) with a fourth taxonomy axis: <strong>Operate</strong><br>
+      85 sources collected &middot; <strong>28 papers read from PDFs</strong> (~460pp) &middot; 57 entries cataloged but unread<br>
+      Each section: markdown (for agent consumption) + interactive HTML (for human reading)<br>
+      Reading depth: first-pass extraction (abstracts + intros + key results), not full reads &middot; <a href=".project/changelog.md">Changelog</a> &middot; <a href=".project/todo.md">TODO</a>
+    </div>
+
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">01</div>
+        <div class="section-body">
+          <div class="section-title">REASON &mdash; Model-Native <em>Reasoning</em> &amp; Agentic RL <span class="status done">done</span></div>
+          <div class="section-desc">7 papers (~300pp read) &middot; 7 cited sources: ARL Landscape Survey (TMLR, 95pp), Agent-R1 (MDP formalization), Scaling Laws (63 models, power-law), Agent-Omit (efficiency via omission), Demystifying RL (practitioner recipes), OpenClaw-RL (async training), RL for LRMs (120pp reference).</div>
+          <div class="section-links">
+            <a href="s1-reason.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/01-reason.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">02</div>
+        <div class="section-body">
+          <div class="section-title">ACT &mdash; Agentic <em>Coding</em> &amp; Tool Use <span class="status done">done</span></div>
+          <div class="section-desc">7 papers + industry sources &middot; 5 cited sources: SWE-Bench Pro/EVO/Live/UTBoost, Saving SWE-Bench, Live-SWE-agent (77.4% SOTA), RepoNavigator. Coding tools (Claude Code, Antigravity, Codex, Gemini CLI, Cursor, OpenClaw). Anthropic 2026 Trends Report.</div>
+          <div class="section-links">
+            <a href="s2-act.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/02-act.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">03</div>
+        <div class="section-body">
+          <div class="section-title">INTERACT &mdash; <em>Protocols</em> &amp; Multi-Agent Systems <span class="status done">done</span></div>
+          <div class="section-desc">5 papers + protocol specs &middot; 5 cited sources: Agent Interoperability Protocols (MCP/A2A/ACP/ANP), Multi-Agent Collaboration (5-dim framework), Multi-Agent Orchestration (100% vs 1.7% actionable), DAAO difficulty-aware routing, Agentic Architectures (CLASSic eval). AAIF governance.</div>
+          <div class="section-links">
+            <a href="s3-interact.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/03-interact.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">04</div>
+        <div class="section-body">
+          <div class="section-title">OPERATE &mdash; Safety, <em>Security</em>, Reliability <span class="status done">done</span></div>
+          <div class="section-desc">3 papers + industry sources &middot; 3 cited sources: Breaking the Protocol (MCP amplifies attacks 23&ndash;41%, AttestMCP defense), SMCP (19 threats, 5 security layers), Prompt Injection SoK (78 studies, 42 techniques, all defenses bypassed at 78%+). OpenClaw case study. Platform vulnerability assessment.</div>
+          <div class="section-links">
+            <a href="s4-operate.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/04-operate.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">05</div>
+        <div class="section-body">
+          <div class="section-title">Cross-Cutting &mdash; <em>Skills</em> &amp; Configuration Standards <span class="status done">done</span></div>
+          <div class="section-desc">Web research + community sources &middot; 3 cited sources: SKILL.md format (1,300+ cross-tool skills), CLAUDE.md / AGENTS.md project config, Antigravity Awesome Skills (22K+ stars), Pi&rsquo;s self-extension philosophy, the five configuration layers, progressive disclosure.</div>
+          <div class="section-links">
+            <a href="s5-cross-cutting.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/05-cross-cutting.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+
+    <h2>Papers &amp; Presentations</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+          <div class="section-desc">&ldquo;Agentic LLMs in the Wild&rdquo; &mdash; ~6,300 words, 11 sections, 35 references. Four-axis taxonomy (Reason, Act, Interact, Operate) + cross-cutting Skills layer.</div>
+          <div class="section-links">
+            <a href="survey-paper.html">Paper (HTML) &rarr;</a>
+            <a href="survey-paper.md">Paper (Markdown) &rarr;</a>
+            <a href="survey.slides.html">Slides (20) &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Resources</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Literature <em>Collection</em></div>
+          <div class="section-desc">85 entries organized by taxonomy section. 28 read from PDFs (~460pp), 57 cataloged but unread.</div>
+          <div class="section-links">
+            <a href="literature-collection.md">Collection &rarr;</a>
+            <a href="notes/00-literature-deep-dives.md">Papers Read &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Project <em>Management</em></div>
+          <div class="section-desc">Methodology, changelog, TODO, and proposal versions.</div>
+          <div class="section-links">
+            <a href=".project/methodology.md">Methodology &rarr;</a>
+            <a href=".project/changelog.md">Changelog &rarr;</a>
+            <a href=".project/todo.md">TODO &rarr;</a>
+            <a href="agentic-llm-survey-proposal.v1.md">Proposal v1 &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      Based on <a href="https://arxiv.org/abs/2503.23037">Plaat et al. &ldquo;Agentic Large Language Models, a survey&rdquo;</a> (JAIR 2025)<br>
+      Part of <a href="../">nafsadh/read-rd</a> research collection &middot;
+      See also: <a href="../genai-2026-outlook/">GenAI 2026 Outlook</a><br>
+      Literature collection and deep-dive generation assisted by Claude
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">◐</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system'; // system, dark, light
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '◐';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '☀' : '☽';
+    }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'system') state = sys === 'dark' ? 'light' : 'dark';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+})();
+</script>
+</body>
+</html>

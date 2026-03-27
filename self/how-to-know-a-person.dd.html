@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Know a Person — Deep Dive | David Brooks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);--right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);--right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}
+.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}
+.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}
+.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}
+.security-box p:last-child{margin-bottom:0}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}
+.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+@media(max-width:1000px){
+  .sidebar{display:none}.ctrl-group{top:10px;right:10px}.ctrl-btn{width:32px;height:32px;font-size:14px}.shell{display:block;position:relative}.main{height:100vh;width:100%}.main-head{padding:20px 20px 0}.hero-title{font-size:28px!important;letter-spacing:0!important}.masthead-sub{flex-direction:column;gap:2px}.main-head.compact{padding:0 20px;height:44px}.main-head.compact .hero-title{font-size:18px!important}.main-scroll{padding:0 20px 80px}.section-block{padding:28px 8px}.right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}.right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}.right:not(.closed){transform:translateX(0)}.right-inner{padding:0 20px 80px}.right-topbar{padding:10px 20px 0;height:44px}.detail-header h2{font-size:26px!important}.feat-grid,.verdict,.price-grid{grid-template-columns:1fr}.feat{border-left:none!important;padding-left:0!important}.feat:nth-child(2n){padding-left:0}.v-col{padding:16px 0!important}.v-col:last-child{border-left:none!important;padding-left:0!important}.price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}.tl-item{flex-direction:column!important;gap:4px}.tl-date{min-width:unset!important}.detail p{font-size:16px}.detail pre{font-size:12px;padding:14px 16px}.section-block .s-stat{flex-wrap:wrap}.section-block .s-stat .st{min-width:45%}
+}
+  </style>
+</head>
+<body data-theme="light">
+  <script>
+const sections = [
+  { num: '01', title: '<em>Illuminators</em> & Diminishers', key: 'illuminators' },
+  { num: '02', title: 'The <em>Art</em> of Attention', key: 'attention' },
+  { num: '03', title: '<em>Conversation</em> as Connection', key: 'conversation' },
+  { num: '04', title: '<em>Life</em> Stories & Narrative Identity', key: 'stories' },
+  { num: '05', title: '<em>Hard</em> Conversations', key: 'hard' },
+  { num: '06', title: '<em>Character</em> & Culture', key: 'character' },
+  { num: '07', title: '<em>Practical</em> Toolkit', key: 'toolkit' },
+  { num: '08', title: '<em>Assessment</em> & Critique', key: 'assessment' },
+  { num: '09', short: 'Sources', title: '<em>Sources</em> & References' }
+];
+
+const summaries = [
+  `<div class="feat-grid">
+    <div class="feat">
+      <h4>Illuminators</h4>
+      <p>Make people feel seen, heard, valued. They have persistent curiosity and shine their care on others, making them feel bigger and respected.</p>
+    </div>
+    <div class="feat">
+      <h4>Diminishers</h4>
+      <p>Are absorbed in themselves, making others feel insignificant. They stereotype and assume, turning conversations into redirects toward their own agenda.</p>
+    </div>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:0">
+    <h4>The Core Illuminator Behaviors</h4>
+    <ul class="s-list">
+      <li><strong>Active Curiosity:</strong> Imagination working hard to see through different eyes</li>
+      <li><strong>Affection:</strong> Acting helpfully, connecting with intellect and heart</li>
+      <li><strong>Generosity:</strong> Seeing beyond societal norms to uplift others</li>
+      <li><strong>Holistic Sight:</strong> Seeing the whole person, resisting stereotypes</li>
+      <li><strong>Receptivity:</strong> Opening to others' experience without judgment</li>
+      <li><strong>Tenderness:</strong> Deep emotional concern for another human being</li>
+    </ul>
+  </div>
+  <div class="callout">
+    <h4>The Posture Principle</h4>
+    <p>Most people can determine how you feel about them from your eyes, facial expressions, and body posture. These micro-signals communicate interest, compassion, judgment, or boredom before you speak.</p>
+  </div>`,
+
+  `<p>Most people live with the experience of being unseen. The epidemic of not being known creates loneliness, polarization, and disconnection. Brooks argues that attention itself is a moral act—the foundation of ethical life.</p>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>The Two Modes of Attention</h4>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Dim Attention</h4>
+      <p>Checking your phone while listening. Dividing focus. Performing the appearance of listening without genuine presence.</p>
+    </div>
+    <div class="feat">
+      <h4>Full Attention</h4>
+      <p>An on/off switch, not a dimmer. 100% or 0%. Complete focus on the person in front of you—observing verbal and nonverbal cues, suspending judgment.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <h4>Deep Attention</h4>
+    <p>Involves unwavering focus, genuine curiosity, observing what's said and what's not, listening attentively, and suspending your own agenda and reactions.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>The Cost of Inattention</h4>
+    <ul class="s-list">
+      <li>People feel reduced to a label or category</li>
+      <li>Partial presence signals low value</li>
+      <li>The receiver internalizes their insignificance</li>
+      <li>Relationships become transactional, not transformational</li>
+    </ul>
+  </div>`,
+
+  `<p>Good conversation is a craft. It requires letting go of debate-to-win and moving toward understanding-first. Brooks introduces the "loud listener" concept: listeners who are audibly, visibly engaged.</p>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>The Loud Listener</h4>
+  </div>
+  <p style="font-size:15px;margin:10px 0">Someone who nods with enthusiasm, follows every inflection, responds facially to what's shared. Some are loud with voices; others with faces. Both signal genuine receipt.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Midwife Model</h4>
+      <p>Draw out rather than insert. Ask questions that help someone birth their own insights, not plant your answers.</p>
+    </div>
+    <div class="feat">
+      <h4>Story Questions</h4>
+      <p>Ask for narratives, not just facts or opinions. "Tell me about..." invites depth. "Do you think..." invites positions.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <h4>The SLANT Method</h4>
+    <p><strong>S</strong>it up, <strong>L</strong>ean forward, <strong>A</strong>sk questions, <strong>N</strong>od, <strong>T</strong>rack the speaker. Physical and verbal engagement signals presence.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Levels of Conversation</h4>
+  </div>
+  <ul class="s-list">
+    <li><strong>Surface:</strong> Weather, logistics, small talk</li>
+    <li><strong>Mid-Level:</strong> Thoughts, opinions, ideas, positions</li>
+    <li><strong>Deep:</strong> Stories, values, fears, meaning, identity</li>
+  </ul>`,
+
+  `<p>Everyone is living inside a narrative. Understanding someone means understanding their story: the themes, turning points, failures, rebirths, and meanings they've assigned to their life.</p>
+  <div class="callout">
+    <h4>The Narrative Brain</h4>
+    <p>Our identities are formed as our brains make sense of memories and experiences, formatting them to fit the life narrative we construct. As we age, we build more accurate and compelling stories.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Key Story Elements</h4>
+  </div>
+  <ul class="s-list">
+    <li><strong>Origin Scenes:</strong> Formative memories that shaped you</li>
+    <li><strong>Turning Points:</strong> Moments when direction changed</li>
+    <li><strong>Crisis & Redemption:</strong> How you faced difficulty and grew</li>
+    <li><strong>Themes:</strong> Patterns that repeat across your life</li>
+    <li><strong>Assigned Meaning:</strong> What you decided difficult experiences meant</li>
+  </ul>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Why Stories Matter More Than Facts</h4>
+  </div>
+  <p style="font-size:15px;margin:10px 0">Stories capture the unique presence of a person's character and how they change over time. They show how thousands of influences—culture, relationships, environment—come together to shape an identity. To truly know someone, know their story.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Memory Shifts</h4>
+      <p>When asked to identify the ten key scenes in their life, university students recalled only 22% of the same stories three years later. Stories evolve as we do.</p>
+    </div>
+    <div class="feat">
+      <h4>Story as Identity</h4>
+      <p>Your life story is not discovery but construction. You're continuously re-narrating to make sense of who you are and why things matter.</p>
+    </div>
+  </div>`,
+
+  `<p>Hard conversations—about grief, shame, failure, loss—require a different skill set. The goal is not to fix or resolve, but to accompany. To witness. To be present without the urgency to heal.</p>
+  <div class="callout">
+    <h4>Accompaniment</h4>
+    <p>An antidote to the loneliness epidemic. Sitting with someone in their darkness. Understanding that some pain cannot be rushed, and presence itself is the gift.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>The Difference: Helper vs. Accompanier</h4>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>The Helper</h4>
+      <p>Focuses on solutions. "Have you tried...?" "You should..." Wants the pain to end so normal can resume.</p>
+    </div>
+    <div class="feat">
+      <h4>The Accompanier</h4>
+      <p>Focuses on presence. Sits in the dark. Asks, "How are you carrying this?" Respects the timeline of grief.</p>
+    </div>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Techniques for Hard Conversations</h4>
+  </div>
+  <ul class="s-list pro">
+    <li>Listen without the impulse to problem-solve</li>
+    <li>Name what you observe: "I see you're struggling"</li>
+    <li>Ask what they need, don't assume</li>
+    <li>Validate the difficulty without minimizing</li>
+    <li>Share stories of your own struggle (carefully)</li>
+    <li>Be willing to sit in silence</li>
+    <li>Follow their pace, not your urgency</li>
+  </ul>
+  <div class="callout">
+    <h4>The Gift of Witnessing</h4>
+    <p>Being truly seen in our difficulty is transformative. It signals that we are not alone, not broken beyond care, not defined by our worst moment. Accompaniment is the deepest gift of recognition.</p>
+  </div>`,
+
+  `<p>Character is not formed in isolation. It's shaped by relationships, environments, cultural contexts, and the responses you develop to life's challenges. Understanding someone means understanding the ecology in which they became themselves.</p>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>The Ecology of Character</h4>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Early Relationships</h4>
+      <p>Childhood attachment, parental modeling, peer experiences shape emotional templates that last a lifetime.</p>
+    </div>
+    <div class="feat">
+      <h4>Cultural Context</h4>
+      <p>Values, norms, and identities available to you in your culture shape what you believe is possible or acceptable.</p>
+    </div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Life Tasks</h4>
+      <p>Developmental psychology suggests we face specific tasks: imperial (assertion), interpersonal (connection), career, generative (contributing), integrity.</p>
+    </div>
+    <div class="feat">
+      <h4>Environmental Pressures</h4>
+      <p>Geography, wealth, health, opportunity, and scarcity all influence the person you become and the choices you feel you can make.</p>
+    </div>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Moral Imagination</h4>
+  </div>
+  <div class="callout">
+    <h4>Seeing Through Different Eyes</h4>
+    <p>The capacity to step into another person's shoes and experience the world through their eyes. This is what breaks down prejudice and misunderstanding. It requires suspending your own narrative and genuinely entering theirs.</p>
+  </div>
+  <p style="font-size:15px;margin:20px 0">Character as a pattern of responses emerges across time. Good character is honed through skillful social interactions and recognition from others. It's not solitary—it's relational.</p>`,
+
+  `<div class="section-block" style="border:none;padding:0;margin:0">
+    <h4>Practical Technique: The Looping Method</h4>
+    <p style="font-size:15px;margin:10px 0">Paraphrase what you heard back to the speaker, checking for accuracy and signaling receipt. "So what I'm hearing is... Is that right?" This simple move deepens trust and catches misunderstandings.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Practical Technique: The Paraphrase and Pivot</h4>
+    <p style="font-size:15px;margin:10px 0">Acknowledge what someone shared, then ask a deeper follow-up. "I hear that the job loss was difficult. How did that experience change your sense of who you are?" This validates and deepens.</p>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Reading a Room</h4>
+  </div>
+  <ul class="s-list">
+    <li>Look for the person being overlooked—speak to them</li>
+    <li>Notice who's talking and who's quiet—invite the quiet one</li>
+    <li>Feel the energy: strained, joyful, exhausted—match and acknowledge it</li>
+    <li>See the alliances and tensions—don't ignore them</li>
+  </ul>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Asking Better Questions</h4>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Avoid</h4>
+      <p>"What do you think?" (invites position). "How many?" (facts). "Do you like...?" (yes/no).</p>
+    </div>
+    <div class="feat">
+      <h4>Ask Instead</h4>
+      <p>"Tell me about..." (story). "What was it like..." (experience). "How did that change you..." (meaning).</p>
+    </div>
+  </div>
+  <div class="callout">
+    <h4>The Illuminator's Habit</h4>
+    <p>Treat attention as a discipline. Make a practice of seeing people fully—their contradictions, their growth, their fears, their beauty. It takes effort. It's worth everything.</p>
+  </div>`,
+
+  `<div class="verdict">
+    <div class="v-col pro">
+      <h4>What the Book Gets Right</h4>
+      <ul>
+        <li>Urgent diagnosis of loneliness epidemic</li>
+        <li>Clear, memorable frameworks (illuminators/diminishers)</li>
+        <li>Practical, immediately applicable techniques</li>
+        <li>Warm, human voice that models empathy</li>
+        <li>Deep integration of psychology and philosophy</li>
+        <li>Attention to narrative as identity-shaping</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations and Critiques</h4>
+      <ul>
+        <li>Illuminator ideal may be culturally specific</li>
+        <li>Less on systemic barriers to connection</li>
+        <li>Can feel prescriptive at times</li>
+        <li>Limited discussion of power dynamics</li>
+        <li>Best suited to privileged audiences with time</li>
+      </ul>
+    </div>
+  </div>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Related Work</h4>
+  </div>
+  <ul class="s-list">
+    <li><strong>Carl Rogers:</strong> The conditions for genuine change—congruence, unconditional positive regard, empathy</li>
+    <li><strong>Brené Brown:</strong> Vulnerability and shame resilience as foundations of connection</li>
+    <li><strong>Alain de Botton:</strong> Philosophy's role in understanding human nature and kindness</li>
+    <li><strong>Attachment Theory:</strong> How early relationships shape our capacity for connection</li>
+  </ul>
+  <div class="section-block" style="border:none;padding:0;margin:20px 0 0">
+    <h4>Who Should Read This</h4>
+  </div>
+  <p style="font-size:15px;margin:10px 0 20px">Therapists, coaches, teachers, leaders, parents, and anyone who wants to become a better listener, conversationalist, and human connector. Anyone studying interpersonal understanding and the art of seeing others. Anyone feeling the epidemic of loneliness and wanting to be part of the antidote.</p>
+  <div class="callout">
+    <h4>The Central Truth</h4>
+    <p>We are living through an epidemic of not being known. This is not a small problem. It shapes mental health, politics, relationships, and meaning. Learning to see others deeply is both an art and an act of moral courage. It's also the most human thing we can do.</p>
+  </div>`,
+  `<p>References and sources for further study on the topics covered in this deep dive.</p>`
+];
+
+const details = [
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 01</span>
+    <h2><em>Illuminators</em> & Diminishers</h2>
+  </div>
+  <p>The central metaphor of Brooks' book is illumination vs. diminishment. Every interaction we have either brings out the best in someone or shrinks them. Most of us are sometimes one, sometimes the other. But illuminators have cultivated a way of being.</p>
+  <h3>What Diminishers Do</h3>
+  <p>Diminishers are absorbed in themselves. They listen to reply, not to understand. They redirect conversations toward their own agenda. When you mention something, they immediately compare it to their own experience—but bigger, worse, or more impressive. They stereotype: learn one fact about you, and they assume the rest. They communicate, through body language and attention, that you're not worth full focus.</p>
+  <p>The subtlest diminishers are those with unconscious bias. They don't mean harm, but they see through a limited lens and can't imagine why the world might look different from their vantage point.</p>
+  <h3>What Illuminators Do</h3>
+  <p>Illuminators have trained themselves in the craft of seeing others. They look at you and light up—not because they know you yet, but because they're genuinely curious. They ask questions to understand, not to lead. They observe your full self: your contradictions, your growth edges, your strengths. They remember what you said last month. They notice when something's different. They make people feel bigger.</p>
+  <p>The physical posture of an illuminator is distinctive. Eyes engaged. Leaning in slightly. Face responsive to what's being said. They nod not mechanically but with genuine receipt. You can tell from their bearing that they think you're worth 100% of their attention.</p>
+  <h3>The Six Core Illuminator Qualities</h3>
+  <p><strong>Active Curiosity.</strong> A genuine desire to understand how the world looks from inside someone else's skin. This isn't nosiness—it's humility. It's admitting that your view is limited and theirs is needed.</p>
+  <p><strong>Affection.</strong> A warm regard. The sense that you care about this person's wellbeing, not just their utility to you. This comes through in tone, consistency, and genuine delight in who they are.</p>
+  <p><strong>Generosity.</strong> A willingness to see beyond societal categories and lift people up. Not feeling threatened by others' success. Wanting to draw out their gifts.</p>
+  <p><strong>Holistic Sight.</strong> Resisting the urge to reduce people to a label or category. Seeing the whole person—their complexity, their growth, their contradictions. Refusing to stereotype.</p>
+  <p><strong>Receptivity.</strong> Open to being changed by what you hear. Not defensive. Willing to be surprised. Genuinely taking in another's perspective without your walls up.</p>
+  <p><strong>Tenderness.</strong> A deep emotional concern for another human being. Care that goes beyond professionalism or obligation. Real investment in their flourishing.</p>
+  <h3>The Posture Principle</h3>
+  <p>Research shows that most people can tell how you feel about them from how you look at them. Your eyes communicate interest, compassion, judgment, or boredom before you speak a word. Your body posture signals welcome or distance. Your pace of breathing affects theirs. These micro-signals are the first language of seeing.</p>
+  <p>Illuminators have trained their bodies to communicate genuine attention. This doesn't mean performing interest—it means actually being interested, and letting your body express what's true.</p>
+  <h3>The Spectrum</h3>
+  <p>No one is a pure illuminator or diminisher. Most of us are context-dependent. You might be a brilliant listener with a close friend but distracted with a colleague. You might be present with your children but absorbed in your phone with your partner. The path is noticing your default, then choosing differently. Over time, illumination becomes habit.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 02</span>
+    <h2>The <em>Art</em> of Attention</h2>
+  </div>
+  <p>Brooks argues that attention is a moral act. In a world of competing stimuli and algorithmic hijacking, genuine attention to another person is an increasingly rare gift. And it's the foundation of being truly seen.</p>
+  <h3>The Crisis of Attention</h3>
+  <p>Most people live with the experience of being unseen. Not invisible—they're present. But unseen. Parents scroll while children speak. Partners divide attention between conversation and screens. Colleagues check email during meetings. We're physically present but mentally scattered.</p>
+  <p>This creates a specific kind of loneliness. You can be in a room full of people and feel profoundly alone if no one is truly looking at you. And over time, you internalize the message: I'm not worth full focus. My experience is not valuable enough to command undivided attention.</p>
+  <h3>The Two Modes</h3>
+  <p><strong>Dim Attention.</strong> You're listening to part of what someone says while formulating your reply, checking your phone, thinking about your to-do list. You're dividing your cognitive load. The person senses this, even if unconsciously. It feels like conditional presence. They shrink.</p>
+  <p><strong>Full Attention.</strong> An on/off switch, not a dimmer. When you're with someone, you're with them. Phone away. Internal rehearsals quiet. Ego on the shelf. You observe verbal content, tone, pace, body language, emotion. You notice what's said and what's not said. You're fully present to the aliveness in front of you.</p>
+  <h3>Why It Matters</h3>
+  <p>Deep attention requires effort. It's not passive—it's active. You're working to understand, to suspend judgment, to resist the urge to interrupt or correct. You're holding the space for their truth even if it differs from yours.</p>
+  <p>But this work is the antidote to loneliness. When someone gives you their full attention, you feel it. You feel valued. You feel permitted to take up space. You feel alive.</p>
+  <h3>Attention as Ethics</h3>
+  <p>In a consumer culture that treats attention as a commodity to be extracted and sold, choosing to give full attention to another person is a radical act. It's saying: Your existence is enough. I don't need you to entertain me or be productive or serve my interests. You matter as you are.</p>
+  <h3>Practical Exercise: The Attention Audit</h3>
+  <p>For one day, notice your attention patterns. With whom do you give full focus? With whom do you divide? Notice when you're tempted to check your phone. Notice the moment when someone realizes you're not fully present—see their energy shift. This awareness is the first step toward change.</p>
+  <p>Over the next week, choose one relationship. Commit to one conversation where you give 100% attention. Phone in another room. No internal rehearsing your reply. Just listen. Notice what changes.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 03</span>
+    <h2><em>Conversation</em> as Connection</h2>
+  </div>
+  <p>Good conversation is a craft, not a gift. It can be learned. And at its heart is a shift from debate-to-win toward understanding-first. From inserting your wisdom toward midwifing theirs.</p>
+  <h3>The Loud Listener</h3>
+  <p>Brooks introduces the concept of the loud listener. This is someone who nods with genuine enthusiasm. Who follows every inflection in the speaker's voice. Who reacts facially to what's shared. Whose engagement is audible and visible.</p>
+  <p>Some loud listeners are loud with their voices—affirmations, laughter, responses. Others are loud with their faces—eyebrows raised in surprise, a smile of recognition, a nod of understanding. Both communicate the same message: I receive you. I'm here.</p>
+  <h3>The SLANT Method</h3>
+  <p><strong>Sit up.</strong> Posture matters. Slouching or leaning back communicates low engagement. Sitting up straight communicates readiness.</p>
+  <p><strong>Lean forward.</strong> A subtle forward tilt signals interest and respect. You're moving toward them, not away.</p>
+  <p><strong>Ask questions.</strong> The architecture of curiosity. Questions invite the speaker to go deeper, to clarify, to elaborate. They signal that you want to understand.</p>
+  <p><strong>Nod.</strong> Audible, visible receipt. Not mechanical—genuine. Timing matters. You nod when you understand or when you want to encourage them to continue.</p>
+  <p><strong>Track the speaker.</strong> Your eyes follow them. You don't look away to the room. You don't glance at your phone. You're tracking their face, their gestures, their energy.</p>
+  <h3>The Midwife Model of Conversation</h3>
+  <p>In obstetrics, a midwife doesn't force the birth. She creates conditions and draws out what's already there. Similarly, in conversation, the goal is to help someone birth their own insights, not to plant your answers in their mind.</p>
+  <p>This is harder than it sounds. Our default is to fix, advise, correct. A question like "What would happen if you...?" or "How might that look?" draws thinking out. A statement like "You should..." inserts thinking in.</p>
+  <h3>Story Questions vs. Opinion Questions</h3>
+  <p><strong>Opinion questions.</strong> "Do you think that's a good idea?" "What's your take on...?" These invite positions, judgments, quick answers.</p>
+  <p><strong>Story questions.</strong> "Tell me about..." "What was it like when...?" "How did that change you...?" These invite narrative, detail, experience. They open doors rather than close them.</p>
+  <p>When you ask for someone's story instead of their opinion, you get their humanity. You get context. You get meaning. You get them.</p>
+  <h3>The Three Levels of Conversation</h3>
+  <p><strong>Surface.</strong> Weather. Logistics. Small talk. These are fine—they're the door into connection. But they're not the destination.</p>
+  <p><strong>Mid-Level.</strong> Thoughts, opinions, ideas, positions. What people believe about politics, parenting, work. More substantial than surface, but still not intimate.</p>
+  <p><strong>Deep.</strong> Stories, values, fears, meaning, identity. Why certain things matter. How you've changed. What you're struggling with. What you believe your life means. Not everyone needs to go this deep with everyone. But the capacity matters.</p>
+  <h3>The Paraphrase and Pivot</h3>
+  <p>A practical technique: Paraphrase back what you heard—"So what I'm understanding is..."—then pivot deeper. "And how did that affect your sense of...?" This accomplishes three things. It checks for accuracy. It signals that you're truly listening. And it honors what was shared while inviting deeper truth.</p>
+  <h3>Reading a Room</h3>
+  <p>In group settings, an illuminator doesn't just focus on the loudest person. They notice who's quiet. Who's been overlooked. Who looks like they have something to say but aren't finding space. They invite that person in. They sense the room's energy—strained, joyful, exhausted—and acknowledge it. They see the alliances and tensions and refuse to pretend they're not there. This reading is a form of love.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 04</span>
+    <h2><em>Life</em> Stories & Narrative Identity</h2>
+  </div>
+  <p>Everyone is living inside a narrative. Your life story shapes how you interpret events, what you believe about yourself, what feels possible. To truly know someone, you must know their story.</p>
+  <h3>The Narrative Brain</h3>
+  <p>Our identities are not discovered—they're constructed. Your brain continuously makes sense of your memories and experiences, formatting them to fit the narrative you've created about who you are. This narrative evolves. As you age, you build more accurate and compelling stories. You understand context. You forgive yourself. You assign new meanings to old pain.</p>
+  <p>Interestingly, when university students list the ten key scenes in their lives and you ask them again three years later, they recall only 22% of the same stories. Your life story is alive. It shifts as you do. New experiences throw old memories into relief. New understanding reframes old suffering.</p>
+  <h3>The Key Story Elements</h3>
+  <p><strong>Origin Scenes.</strong> The earliest memories that shaped you. The story about your family, your culture, your place in the world that you absorbed before you could question it. These become the foundation.</p>
+  <p><strong>Turning Points.</strong> Moments when direction changed. A loss that cracked you open. A success that reframed your possibilities. A conversation that shifted perspective. These are the hinge moments where before and after are distinct.</p>
+  <p><strong>Crisis and Redemption.</strong> How you faced difficulty and what you learned. Whether you came through it stronger or broken. Whether you forgave yourself. Whether you saw growth in the pain or only loss. This narrative matters more than the fact of suffering itself.</p>
+  <p><strong>Themes.</strong> Patterns that repeat. The ways you respond to challenge. The roles you play. Your gifts and your wounds. What calls you and what frightens you. Themes reveal character—the deep patterns that persist across situations.</p>
+  <p><strong>Assigned Meaning.</strong> What you decided your experiences meant about you and the world. Failure meant I'm not enough. Or: Failure is how I learn. These assignments are acts of interpretation, not facts. And they can be revised.</p>
+  <h3>Why Stories Capture What Facts Cannot</h3>
+  <p>Facts tell you what happened. Stories tell you what it meant and how it changed someone. Stories show character not in the abstract but in motion—how someone responded to pressure, loss, opportunity. Stories reveal the ecology of a person: the influences, relationships, contexts that shaped them. Narrative captures what psychology calls "the unique presence of a person's character and how they change over time."</p>
+  <h3>The Practice of Story Asking</h3>
+  <p>To know someone's story, you ask for it. "Tell me about growing up." "What was a pivotal moment for you?" "How did you come to believe that?" "When did you realize...?" You listen for the narrative arc, not just facts. You notice which stories they tell easily and which require hesitation—these are clues to what matters most and what still carries pain.</p>
+  <p>As someone tells their story, you're listening for themes. You're noticing how they assign meaning. You're seeing the person as they see themselves, which is different from how you might see them. This gap is where real understanding happens.</p>
+  <h3>The Story Revision Exercise</h3>
+  <p>An advanced practice: Tell someone your life story in twenty minutes. Notice which scenes you include and which you omit. Notice the narrative arc. Are you a protagonist or a victim? Do you see growth through difficulty or only loss? Then, with the other person's curiosity, revise. Add a new scene. Reframe an old narrative. See how different the story becomes when you're witnessed in the telling.</p>
+  <h3>The Living Story</h3>
+  <p>Your story isn't finished. You're still writing it. Each day adds new experience, new understanding. The past stays the same, but its meaning evolves. The person you're becoming might reinterpret everything you thought you knew about yourself. This is not instability—this is growth. And it's the reason why understanding someone's story is never final. You have to keep asking, keep listening, keep being surprised.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 05</span>
+    <h2><em>Hard</em> Conversations</h2>
+  </div>
+  <p>Not all conversations are light. Some of the most important ones happen in the dark—in grief, shame, failure, loss. These conversations require a different skill set. Not problem-solving. Accompaniment.</p>
+  <h3>The Difference: Helper vs. Accompanier</h3>
+  <p><strong>The Helper</strong> comes in with solutions. "Have you tried...?" "What you should do is..." They have a timeline. They want the pain to end so normal can resume. They're uncomfortable with the darkness and want to exit it. This energy, while well-intentioned, can make the suffering person feel rushed, misunderstood, or like their pain is too much.</p>
+  <p><strong>The Accompanier</strong> comes in with presence. They sit in the dark without needing to turn on the lights. They don't have a timeline. They ask, "How are you carrying this?" They validate the difficulty. They respect that some journeys cannot be rushed. Their presence says: You're not alone. I'm here for the duration.</p>
+  <h3>Accompaniment as Antidote</h3>
+  <p>Brooks argues that accompaniment is an antidote to loneliness and the epidemic of not being known. In grief or shame, isolation is the default. You withdraw. You assume no one could possibly understand. Accompaniment—genuine, sustained presence—breaks that isolation. It communicates that you're not too much, not broken beyond care, not defined by your worst moment.</p>
+  <h3>Techniques for Hard Conversations</h3>
+  <p><strong>Listen without the impulse to fix.</strong> The hardest part. Your instinct is to ease suffering. But you can't. Pain isn't a puzzle to solve. It's a passage to move through. Your job is to be present, not to speed the process.</p>
+  <p><strong>Name what you observe.</strong> Not judgment, just reality. "I see you're struggling." "This is clearly heavy." Your naming communicates that you're not pretending everything's fine. You see. You acknowledge.</p>
+  <p><strong>Ask what they need, don't assume.</strong> "How can I support you?" is better than "You need..." because it honors their agency and knowledge of themselves. Some people need company. Others need solitude. Some need food brought. Others need to not be touched. Ask.</p>
+  <p><strong>Validate the difficulty without minimizing.</strong> "This is genuinely hard" is different from "It could be worse" or "You're so strong, you'll get through this." The second versions are true, but they can feel like dismissal. Lead with validation.</p>
+  <p><strong>Share stories of your own struggle carefully.</strong> If you've been through something similar, you can say so. But the focus should return to them. "I've experienced loss too. It taught me..." can be connecting. But it's not about your experience. It's about theirs.</p>
+  <p><strong>Be willing to sit in silence.</strong> Not all hard moments need words. Sometimes you're just present. You're there. That's enough.</p>
+  <p><strong>Follow their pace, not your urgency.</strong> Grief has its own timeline. So does processing shame. Don't try to accelerate it. Don't ask "Are you over it yet?" Accept the time it takes.</p>
+  <h3>The Gift of Witnessing</h3>
+  <p>Being truly seen in your difficulty is transformative. It disrupts the narrative of shame. Shame thrives in silence and isolation. When you're witnessed—when someone sees you in your struggle and doesn't flinch, doesn't try to fix, doesn't judge—something breaks open. You realize you're not defined by your worst moment. You realize you're not alone. You realize your burden, though heavy, can be borne.</p>
+  <p>This is why accompaniment matters. It's not about making someone feel better. It's about seeing them truly, over time, as they move through difficulty. And that seeing changes everything.</p>
+  <h3>Brooks' Personal Example</h3>
+  <p>Brooks writes movingly about his friend Peter Marks, who struggled with depression and died by suicide. He explores the limits of understanding—how even with love and attention, you cannot fully comprehend another person's internal darkness. But accompaniment still matters. Showing up, bearing witness, refusing to abandon someone even when you can't fix them—this is the deepest human gesture.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 06</span>
+    <h2><em>Character</em> & Culture</h2>
+  </div>
+  <p>Character is not formed in isolation. You don't develop your identity in a vacuum. It's shaped by relationships, environments, cultural contexts, and the repeated responses you develop to life's challenges. To truly know someone, understand the ecology in which they became themselves.</p>
+  <h3>The Ecology of Human Development</h3>
+  <p>Your character is a product of countless influences:</p>
+  <p><strong>Early Relationships.</strong> How you were held, spoken to, valued as a child. Whether your needs were met or neglected. Whether you learned the world was safe or dangerous. These early attachments create emotional templates that persist into adulthood. They shape your capacity for trust, your fear responses, your sense of belonging.</p>
+  <p><strong>Cultural Context.</strong> The values, norms, and identities available to you in your culture. What you're taught is possible, impossible, acceptable, shameful. These shape what you believe you can become. Culture is the water you swim in—so pervasive you barely notice it, yet shaping everything.</p>
+  <p><strong>Environmental Pressures.</strong> Geography, wealth, health, opportunity, scarcity. Someone raised in abundance has different pressures than someone raised in shortage. Someone with good health moves through the world differently than someone chronically ill. These pressures shape the person you become.</p>
+  <p><strong>Life Tasks.</strong> Developmental psychology describes life tasks we all must face: the imperial task (learning to assert yourself), the interpersonal task (learning to connect), the career task (finding meaningful work), the generative task (contributing beyond yourself), and the integrity task (making peace with your life). How you navigate these shapes your character.</p>
+  <h3>Good Character as Relational</h3>
+  <p>Traditionally, character was seen as something you cultivated alone—discipline, virtue, stoicism. But Brooks argues that good character is honed through skillful social interactions and genuine recognition from others. Character emerges in relationship. You can't know your own gifts without someone who sees them. You can't develop integrity without a community that demands it. You can't become yourself in isolation.</p>
+  <h3>Moral Imagination</h3>
+  <p>Understanding someone's character ecology requires what Brooks calls moral imagination—the capacity to step into another person's shoes and experience the world through their eyes. This is not empathy alone (feeling what they feel) but imagination (genuinely trying to see what they see, believe what constraints they face, understand what options appear available to them).</p>
+  <p>Moral imagination breaks down prejudice. It's what allows you to understand a political opponent, a cultural stranger, a person whose choices seem incomprehensible to you. Because you realize: They're not evil or stupid. They're operating from a different ecology. They've been shaped by different influences. They see different possibilities.</p>
+  <h3>The Ecology as Character</h3>
+  <p>Brooks illustrates this with Emmanuel Carrère's experience during the 2004 tsunami. Carrère was in Indonesia when the disaster struck. His perspective on what happened was shaped by his specific location, his specific relationships, his specific history. Someone in Europe experienced the same event completely differently. Character and meaning-making are always contextual.</p>
+  <h3>Seeing the Whole Ecology</h3>
+  <p>To know someone deeply is to understand their ecology. Their family patterns, their cultural inheritance, their economic constraints, their opportunities, their wounds, their gifts. Not as excuses, but as context. Not as determinism, but as the landscape in which they're becoming.</p>
+  <p>When you see someone's full ecology, you stop judging and start understanding. You see the courage it took to become themselves. You see the limitations they worked within. You see the extraordinary effort it took to be as functional and beautiful as they are.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 07</span>
+    <h2><em>Practical</em> Toolkit</h2>
+  </div>
+  <p>Knowledge is fine, but application is everything. Here are concrete techniques you can practice today to become an illuminator, a better listener, a person who truly sees others.</p>
+  <h3>Technique 1: The Looping Method</h3>
+  <p><strong>What it is:</strong> After someone shares something, paraphrase back what you heard, checking for accuracy and signaling receipt.</p>
+  <p><strong>The formula:</strong> "So what I'm hearing is... Is that right?" or "Let me see if I understand—you felt...?" This simple move deepens trust instantly. It catches misunderstandings before they become conflicts. It communicates that you're genuinely listening, not just waiting for your turn to talk.</p>
+  <p><strong>When to use it:</strong> In important conversations. When emotions are high. When stakes feel uncertain. When you want to ensure you've understood correctly.</p>
+  <p><strong>The practice:</strong> For one day, try looping once per conversation with three different people. Notice how it changes the quality of connection.</p>
+  <h3>Technique 2: The Paraphrase and Pivot</h3>
+  <p><strong>What it is:</strong> Acknowledge what someone shared, then ask a deeper follow-up.</p>
+  <p><strong>The formula:</strong> "I hear that [situation]. How did that change your sense of [bigger theme]?" or "So you experienced [event]. What did that teach you about...?" This validates their experience while deepening the conversation.</p>
+  <p><strong>Why it works:</strong> It's the marriage of acknowledgment and curiosity. You're saying: Your experience matters, and I want to understand its meaning to you.</p>
+  <p><strong>Example:</strong> "I hear the job loss was difficult. How did that experience change your sense of who you are?" or "So the relationship ended. How did that shift your trust in others?"</p>
+  <h3>Technique 3: Reading a Room</h3>
+  <p><strong>What it is:</strong> Using your perceptual skills to understand group dynamics and bring out the unseen.</p>
+  <p><strong>The practice:</strong> When you enter a space, pause. Look for the person being overlooked—speak to them. Notice who's talking and who's quiet—invite the quiet one in. Feel the room's energy (strained, joyful, exhausted)—acknowledge it. See the alliances and tensions—don't pretend they're not there.</p>
+  <p><strong>Why it matters:</strong> Many people feel unseen in groups. One person's attention can change that. You're using your powers of perception for love.</p>
+  <h3>Technique 4: Asking Better Questions</h3>
+  <p><strong>Avoid:</strong></p>
+  <ul class="s-list con" style="margin:10px 0">
+    <li>"What do you think?" (invites position, not experience)</li>
+    <li>"How many?" or "When?" (facts, not meaning)</li>
+    <li>"Do you like...?" (yes/no closes conversation)</li>
+    <li>"Isn't that..." (leading, assumes agreement)</li>
+  </ul>
+  <p><strong>Ask instead:</strong></p>
+  <ul class="s-list pro" style="margin:10px 0">
+    <li>"Tell me about..." (invites narrative, detail, story)</li>
+    <li>"What was it like when...?" (invites experience, texture, feeling)</li>
+    <li>"How did that change you...?" (invites meaning-making and growth)</li>
+    <li>"What surprised you about...?" (invites reflection and discovery)</li>
+    <li>"Who was someone who..." (invites stories, not abstractions)</li>
+  </ul>
+  <h3>Technique 5: The Attention Switch</h3>
+  <p><strong>What it is:</strong> Treating attention as a switch (on/off), not a dimmer (60% here, 40% there).</p>
+  <p><strong>The practice:</strong> Choose one person. One conversation. Phone in another room. No internal rehearsing your next comment. No thoughts about your to-do list. 100% presence or honest distance.</p>
+  <p><strong>The result:</strong> Most people can tell the difference in three seconds. You'll see the shift in their energy, the opening in their expression. This is what it feels like to be truly received.</p>
+  <h3>Technique 6: The Body Inventory</h3>
+  <p><strong>What it is:</strong> Noticing your physical presence in conversation and adjusting it toward openness.</p>
+  <p><strong>The practice:</strong> Before an important conversation, check in. Are your arms crossed? Open them. Are you leaning back? Lean slightly forward. Are your eyes focused? Let your face be responsive. Are you smiling? Sometimes. Are you breathing? Yes—consciously, slowly.</p>
+  <p><strong>Why it matters:</strong> Your body communicates before your words do. Openness attracts openness. Closure invites closure.</p>
+  <h3>Technique 7: The Life Story Interview</h3>
+  <p><strong>What it is:</strong> A structured practice for truly knowing someone through their narrative.</p>
+  <p><strong>The structure:</strong> Ask someone to tell you their life story in 20-30 minutes. You listen. You don't interrupt. Then you ask follow-up questions that show you were listening. "You mentioned your move when you were twelve—what was that like?" "Who was someone influential in that chapter?" "How did that experience shape you?"</p>
+  <p><strong>The gift:</strong> Most people rarely get to tell their whole story to someone who's fully listening. This is profound. It says: Your life matters. Your experience is valuable. You are worth three hours of undivided attention.</p>
+  <h3>Technique 8: The Slowdown Practice</h3>
+  <p><strong>What it is:</strong> Intentionally slowing down conversation to allow depth.</p>
+  <p><strong>The practice:</strong> When someone shares something significant, pause before responding. Let silence breathe. Count to three. Then ask: "Say more about that?" or "What else?" This pause creates space for them to go deeper—and for you to fully absorb what they said.</p>
+  <p><strong>Why it works:</strong> In a culture of speed, slowness is radical. It communicates: I'm not rushing you. You're not boring me. Take the time you need.</p>
+  <h3>Technique 9: The Vulnerability Signal</h3>
+  <p><strong>What it is:</strong> Showing a small piece of your own struggle to make room for theirs.</p>
+  <p><strong>The practice:</strong> If someone's sharing something hard, occasionally share a brief moment of your own difficulty. Not to center yourself—but to say: I know what struggle feels like too. You're not alone. You're not broken. This is human.</p>
+  <p><strong>The balance:</strong> 80/20 at least. 80% focus on them, 20% you. Never center yourself. But a touch of vulnerability makes the other person feel less alone.</p>
+  <h3>Technique 10: The Practice of Noticing</h3>
+  <p><strong>What it is:</strong> Training yourself to see the small things that reveal character.</p>
+  <p><strong>The practice:</strong> For one week, notice three things about someone you're close to. Not big things—small things. How they light up talking about something they love. How their shoulders tense when they're worried. How they treat people with less power than them. What they notice about others. How they handle being wrong.</p>
+  <p><strong>Why it matters:</strong> These small observations are how illuminators know people. Not through big conversations alone, but through sustained attention to the details of how they move through the world.</p>`,
+
+  `<div class="detail-header">
+    <span class="num"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6"/></svg> Section 08</span>
+    <h2><em>Assessment</em> & Critique</h2>
+  </div>
+  <p>No book is perfect, and the strongest way to honor a work is to engage critically with it. "How to Know a Person" has much to offer, and also some blind spots worth examining.</p>
+  <h3>What the Book Gets Right</h3>
+  <p><strong>The urgency of the diagnosis.</strong> The epidemic of not being known is real. Mental health crises, political polarization, loneliness—all are exacerbated by profound disconnection. Brooks names something we feel but rarely articulate.</p>
+  <p><strong>Clear, memorable frameworks.</strong> Illuminators and diminishers is simple, memorable, and true. It sticks. And it's actionable—you can assess yourself and others against it immediately.</p>
+  <p><strong>Practical, immediately applicable techniques.</strong> The book is not abstract. It gives concrete methods: SLANT, looping, paraphrase and pivot, asking for stories. You can try them today.</p>
+  <p><strong>A warm, human voice that models empathy.</strong> Brooks writes as a human, not an expert. He admits his own diminisher moments. He shares his failures. This modeling is powerful. He's not performing illumination from a distance—he's practicing it in front of you.</p>
+  <p><strong>Deep integration of psychology and philosophy.</strong> The book weaves together developmental psychology, attachment theory, narrative psychology, and philosophy. It's intellectually solid while remaining accessible.</p>
+  <p><strong>Attention to narrative as identity-shaping.</strong> The insight that we live inside stories, and that understanding someone means understanding their narrative, is profound and well-developed. This is the heart of the book.</p>
+  <h3>Limitations and Critique</h3>
+  <p><strong>The illuminator ideal may be culturally specific.</strong> The constellation of qualities Brooks describes—active curiosity, affection, generosity, receptivity—are values of a particular cultural moment (contemporary Western educated culture). In other contexts, such emotional expressiveness or relational intensity might be less valued or even inappropriate. The universality of the ideal deserves questioning.</p>
+  <p><strong>Less on systemic barriers to connection.</strong> The book focuses on individual practice—what you can do to be a better listener. But it says less about systemic barriers: technology designed to fragment attention, economic inequality that creates distance, trauma that makes trust impossible, cultural trauma that makes vulnerability feel dangerous. Some people face steeper obstacles to illumination.</p>
+  <p><strong>Can feel prescriptive at times.</strong> There's an implicit ideal person here—the illuminator. While Brooks acknowledges that we're all sometimes diminishers, the direction is clear: become more like this. Some readers might feel judged if they're naturally more reserved, introverted, or focused on their own work than on relational connection.</p>
+  <p><strong>Limited discussion of power dynamics.</strong> Illumination assumes some equality. But what does attention look like across power differences? A boss's attention to an employee carries different weight. A therapist's attention to a client has different dynamics. A teacher's attention to a student. These aren't failures of illumination, but they're different from peer connection. The book could say more.</p>
+  <p><strong>Best suited to privileged audiences with time.</strong> Full attention, slow conversation, extended listening—these require time. They require not being in survival mode. Someone working three jobs doesn't have the same capacity as someone with leisure. This isn't a critique of the book's vision, but a recognition of its limited accessibility.</p>
+  <h3>What Brooks Aligns With</h3>
+  <p><strong>Carl Rogers.</strong> The conditions for genuine change and psychological growth: congruence (being yourself), unconditional positive regard (accepting the person), and empathic understanding. Brooks is operating in this tradition—the belief that being fully seen by another is transformative.</p>
+  <p><strong>Brené Brown.</strong> The importance of vulnerability and shame resilience. Brown argues that we can't be wholly seen without the courage to be vulnerable. Brooks assumes something similar—that illuminators are willing to be moved, surprised, changed by others.</p>
+  <p><strong>Alain de Botton.</strong> Philosophy's role in understanding human nature and cultivating kindness. De Botton writes about how literature and philosophy help us understand ourselves and others. Brooks similarly uses psychology and narrative to build empathy.</p>
+  <p><strong>Attachment Theory.</strong> The insight that early relationships shape our capacity for connection. Brooks builds on this, suggesting that understanding someone's relational history is key to understanding them.</p>
+  <h3>Who Should Read This</h3>
+  <p>Therapists and coaches seeking to deepen their practice. Teachers wanting to see their students more fully. Parents trying to understand their children beyond behavior. Leaders looking to build trust and connection. Anyone who feels they're not listening well enough, not paying enough attention, not really knowing the people they love.</p>
+  <p>Anyone studying interpersonal understanding, the psychology of relationships, or the art of presence. Anyone feeling the epidemic of loneliness and wanting to be part of the antidote. Anyone who wants to become someone who makes others feel bigger, heard, valued.</p>
+  <h3>The Lasting Impact</h3>
+  <p>What will stay with you after reading is not a technique—it's a question: Am I an illuminator or diminisher in this moment? This question, once asked, becomes a practice. And over time, illumination becomes less performative and more natural. You become someone who sees others. You become someone who makes people feel alive.</p>
+  <p>That's the real gift of this book. Not the techniques themselves, but the permission and the challenge to become the kind of human who lights up the people around you simply by truly seeing them.</p>`,
+  `<div class="detail-header"><div class="num">09 · Sources</div><h2><em>Sources</em> & References</h2></div>
+<h3>Primary Reference</h3>
+<p><a href="https://davidbrooksbooks.com/" target="_blank">David Brooks — How to Know a Person</a> — The book this deep dive is based on, offering practical techniques for deeper human connection and understanding.</p>
+<p><a href="https://www.nytimes.com/2024/01/09/books/how-to-know-a-person-david-brooks.html" target="_blank">New York Times Review — How to Know a Person</a> — Review and discussion of Brooks' approach to human understanding and connection.</p>
+<h3>Related Works by David Brooks</h3>
+<p><a href="https://davidbrooksbooks.com/the-social-animal" target="_blank">David Brooks — The Social Animal</a> — Earlier work exploring human behavior, relationships, and social dynamics.</p>
+<p><a href="https://davidbrooksbooks.com/the-second-mountain" target="_blank">David Brooks — The Second Mountain</a> — Exploration of meaning, purpose, and human fulfillment.</p>
+<h3>Psychology & Human Connection</h3>
+<p><a href="https://en.wikipedia.org/wiki/Empathy" target="_blank">Wikipedia: Empathy</a> — Comprehensive overview of empathy and emotional understanding.</p>
+<p><a href="https://en.wikipedia.org/wiki/Active_listening" target="_blank">Wikipedia: Active Listening</a> — Communication technique essential to understanding others deeply.
+`
+];
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head"><div class="sidebar-logo">H<em>K</em></div></div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Understanding People</div>
+        <div class="hero-title">How to Know a <em>Person</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>David Brooks · The Art of Seeing Others Deeply</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((section, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', section.title.replace(/<em>/g,'').replace(/<\/em>/g,''));
+  item.innerHTML = `<span class="sidebar-num">${section.num}</span><span class="sidebar-label">${section.title.replace(/<em>/g,'').replace(/<\/em>/g,'')}</span>`;
+  item.onclick = () => showSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main content
+const mainScroll = document.getElementById('main-scroll');
+sections.forEach((section, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num">
+      <span>${section.num}</span>
+      <button class="s-detail-btn" onclick="showDetail(${idx})" title="View full details">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M 5 7 L 9 7 M 7 5 L 7 9" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <h2>${section.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainScroll.appendChild(block);
+});
+
+// Build right panel details
+const rightInner = document.getElementById('right-inner');
+details.forEach((detail, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.innerHTML = detail;
+  rightInner.appendChild(detailDiv);
+});
+
+// State and functions
+let currentDetail = -1;
+const mainHead = document.querySelector('.main-head');
+const rightPanel = document.getElementById('right');
+const detailBtn = document.getElementById('detail-btn');
+const rightTopbar = document.querySelector('.right-topbar');
+const stickyTitle = document.getElementById('right-sticky-title');
+const mainScrollEl = document.getElementById('main-scroll');
+let scrolled = false;
+
+function showSection(idx) {
+  document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+    item.classList.toggle('active', i === idx);
+  });
+  mainScrollEl.scrollTop = 0;
+  mainHead.classList.remove('compact');
+  if (currentDetail >= 0) closeDetail();
+}
+
+function showDetail(idx) {
+  currentDetail = idx;
+  document.body.classList.add('detail-open');
+  rightPanel.classList.remove('closed');
+  detailBtn.classList.add('detail-open');
+  document.querySelectorAll('.detail').forEach((d, i) => d.style.display = i === idx ? 'block' : 'none');
+  const title = sections[idx].title.replace(/<em>/g,'').replace(/<\/em>/g,'');
+  stickyTitle.textContent = title;
+  document.querySelector('.right-inner').scrollTop = 0;
+}
+
+function closeDetail() {
+  currentDetail = -1;
+  document.body.classList.remove('detail-open');
+  rightPanel.classList.add('closed');
+  detailBtn.classList.remove('detail-open');
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  stickyTitle.textContent = '';
+}
+
+function toggleDetail() {
+  if (currentDetail >= 0) closeDetail();
+  else showDetail(0);
+}
+
+function toggleTheme() {
+  const theme = document.body.getAttribute('data-theme');
+  document.body.setAttribute('data-theme', theme === 'light' ? 'dark' : 'light');
+}
+
+// Scroll spy
+mainScrollEl.addEventListener('scroll', () => {
+  const hasScrolled = mainScrollEl.scrollTop > 20;
+  if (hasScrolled !== scrolled) {
+    scrolled = hasScrolled;
+    mainHead.classList.toggle('compact', scrolled);
+  }
+});
+
+// Right panel scroll handling
+document.querySelector('.right-inner').addEventListener('scroll', function() {
+  const hasScrolled = this.scrollTop > 0;
+  rightTopbar.classList.toggle('scrolled', hasScrolled);
+  stickyTitle.classList.toggle('visible', hasScrolled);
+});
+
+// ESC to close detail
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && currentDetail >= 0) closeDetail();
+});
+  </script>
+</body>
+</html>

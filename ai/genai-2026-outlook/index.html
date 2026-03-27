@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI 2026 &amp; After — Technology, Adoption, and Societal Impact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip {
+      color: var(--border); border-bottom-color: transparent; cursor: default;
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> DISCOURSE SURVEY &middot; MARCH 2026</div>
+    <h1>GenAI 2026 <em>&amp; After</em></h1>
+    <div class="subtitle">A literature survey of what informed observers are saying about the state and trajectory of generative AI &mdash; across technology, adoption, employment, trust, regulation, and economics.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>Generative AI in early 2026 is defined by a paradox. The technology has never been better: models that score 72% on SWE-bench (up from 4% a year ago), inference costs collapsing 10&times; per year, multimodal systems that speak, see, and simulate physics. And yet the gap between what AI <em>can do</em> and what organizations <em>actually get from it</em> has never been wider. 78&ndash;88% of companies deploy AI. Only 10&ndash;39% report enterprise-level value. 56% of CEOs captured neither revenue nor cost savings.</p>
+      <p>This survey maps the landscape across <strong>8 dimensions</strong> and <strong>53+ sources</strong> &mdash; industry surveys (McKinsey, Deloitte, PwC, KPMG), economic analysis (Goldman Sachs, Dallas Fed, Brookings, Yale), regulatory coverage (EU AI Act, US state laws), and technology assessment (Stanford AI Index, Epoch AI). Each section is built only after assessing whether sources are sufficient to support its claims. The most interesting findings are not the consensus points but the <em>tensions</em> &mdash; the places where credible sources directly contradict each other.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href=".project/paper-drive-methodology.md">Methodology</a> &middot;
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Overview</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">GenAI 2026 <em>Overview</em> <span class="status done">done</span></div>
+          <div class="section-desc">9-section overview deep-dive covering all dimensions: LLMs, multimodal, agents, workplace, employment, trust, regulation, economics, and cross-cutting tensions.</div>
+          <div class="section-links">
+            <a href="genai-2026-overview.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/00-synthesis.md">Synthesis Notes &rarr;</a>
+            <a href="literature-collection.md">Literature Collection &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">LLMs &amp; Foundation <em>Models</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Benchmark acceleration (SWE-bench 4%&rarr;72%), cost deflation (280&times; in 18 months), compute infrastructure (gigawatt ceiling), context window plateau, Chinese open-source geopolitics, LWM transition thesis, efficiency counter-narrative.</div>
+          <div class="section-links">
+            <a href="s1-llms.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/01-llms.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">Multimodal &amp; Diffusion <em>Models</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Video generation (Veo 3.1 at 96% share, Kling 3.0 native 4K, native audio table stakes), Sora shutdown (Mar 24 &mdash; today), image gen maturity, AI music (Suno $2.45B), world models race (LeCun/Fei-Fei Li/DeepMind), deepfake regulation.</div>
+          <div class="section-links">
+            <a href="s2-multimodal.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/02-multimodal.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">AI <em>Agents</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Gartner 40% cancellation, production reality (10-step limit, 85% custom-built), CB Insights 5 markets, MCP ecosystem (1000+ servers, security gap), competing timelines (18mo vs 5yr vs 10yr), agent washing, integration bottleneck.</div>
+          <div class="section-links">
+            <a href="s3-agents.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/03-agents.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Workplace Adoption &amp; <em>Productivity</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. The adoption-value gap: 78-88% deploy AI, only 10-39% get enterprise value. PwC: 56% of CEOs no gains. Coding strongest use case (+67% PRs). Junior workers +20-30%. Skills, not technology, as #1 barrier.</div>
+          <div class="section-links">
+            <a href="s4-workplace.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/04-workplace.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Employment &amp; <em>Labor</em> Market <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. No broad disruption yet (Yale), but young tech workers +3pp (Goldman). Career ladder breaking (Dallas Fed). 6.1M clerical workers vulnerable (Brookings). 79% of women in high-risk jobs. WEF: 92M displaced, 170M created.</div>
+          <div class="section-links">
+            <a href="s5-employment.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/05-employment.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Public Perception &amp; <em>Trust</em> <span class="status done">done</span></div>
+          <div class="section-desc">5 sources. KPMG 48K study: 66% use AI, only 46% trust it, 56% made mistakes. Excitement correlates with economic optimism. 70% want regulation. Trust-use gap stable and unprecedented.</div>
+          <div class="section-links">
+            <a href="s6-trust.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/06-trust.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Regulation, Governance &amp; <em>Sovereignty</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. EU AI Act enforcement Aug 2026 (possible 1yr delay). US: 45+ state patchwork, Trump EO signals preemption. 2,000+ "death by AI" claims. 35% countries locked into regional AI platforms by 2027.</div>
+          <div class="section-links">
+            <a href="s7-regulation.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/07-regulation.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S8</div>
+        <div class="section-body">
+          <div class="section-title">Economics &amp; <em>Infrastructure</em> <span class="status done">done</span></div>
+          <div class="section-desc">5 sources. $500B+ hyperscaler capex. $252B corporate AI investment. 9&times; revenue growth. 10&times;/yr cost deflation. 42% project abandonment. The bubble question: both sides cite valid evidence.</div>
+          <div class="section-links">
+            <a href="s8-economics.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/08-economics.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Papers &amp; Presentations</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+          <div class="section-desc">&ldquo;GenAI 2026: Technology, Adoption, and Societal Impact&rdquo; &mdash; comprehensive survey synthesizing all 8 sections. ~4,000 words.</div>
+          <div class="section-links">
+            <a href="survey-paper.html">Paper &rarr;</a>
+            <a href="survey-paper.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Tensions <em>Paper</em> <span class="status done">done</span></div>
+          <div class="section-desc">&ldquo;Six Contradictions in the GenAI Discourse&rdquo; &mdash; where credible sources reach opposite conclusions and what it means. ~3,500 words.</div>
+          <div class="section-links">
+            <a href="tensions-paper.html">Paper &rarr;</a>
+            <a href="tensions-paper.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Scenarios <em>Paper</em> <span class="status done">done</span></div>
+          <div class="section-desc">&ldquo;Three Scenarios for AI in 2027&rdquo; &mdash; acceleration, plateau, or reckoning? Each grounded in survey evidence, with a signal dashboard for tracking. ~3,500 words.</div>
+          <div class="section-links">
+            <a href="scenarios-paper.html">Paper &rarr;</a>
+            <a href="scenarios-paper.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Slide <em>Deck</em> <span class="status done">done</span></div>
+          <div class="section-desc">17-slide overview presentation covering all 8 sections, the central paradox, and six tensions.</div>
+          <div class="section-links">
+            <a href="survey-slides.html">Slides &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Six Tensions</h2>
+    <div style="padding: 0 0 12px;">
+      <div class="section-desc">The most valuable findings in any survey are the contradictions &mdash; places where credible sources, looking at the same evidence, reach opposite conclusions. These six tensions define the GenAI discourse in 2026. Each links to the relevant section deep-dive.</div>
+    </div>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">T1</span> <strong>Adoption vs. value</strong> &mdash; 78&ndash;88% of organizations deploy AI, but only 10&ndash;39% report enterprise-level impact. PwC: 56% of CEOs captured neither revenue nor cost savings. The technology works; the organization doesn&rsquo;t &mdash; yet. <a href="s4-workplace.dd.html">[S4]</a></li>
+      <li class="tension-item"><span class="tension-num">T2</span> <strong>No disruption yet vs. undertow</strong> &mdash; Yale finds &ldquo;no discernible disruption&rdquo; 33 months post-ChatGPT. Goldman finds young tech workers&rsquo; unemployment up 3pp. Both are true &mdash; the aggregate is fine while specific demographics are already hurting. <a href="s5-employment.dd.html">[S5]</a></li>
+      <li class="tension-item"><span class="tension-num">T3</span> <strong>Use vs. trust</strong> &mdash; KPMG (48K people, 47 countries): 66% use AI regularly, only 46% trust it, 56% made mistakes. The first major technology to achieve mass adoption while being actively distrusted by most of its users. <a href="s6-trust.dd.html">[S6]</a></li>
+      <li class="tension-item"><span class="tension-num">T4</span> <strong>Scale vs. efficiency</strong> &mdash; Bigger compute clusters (9 GW by 2030) vs NVIDIA&rsquo;s own paper arguing 7B models are 10&ndash;30&times; more efficient for most tasks. Both camps work at the same company. <a href="s1-llms.dd.html">[S1]</a></li>
+      <li class="tension-item"><span class="tension-num">T5</span> <strong>Bubble vs. boom</strong> &mdash; $500B+ capex and 42% project abandonment look like a bubble. 9&times; revenue growth and $15B at OpenAI look like a boom. Both cite valid evidence because both are partially true simultaneously. <a href="s8-economics.dd.html">[S8]</a></li>
+      <li class="tension-item"><span class="tension-num">T6</span> <strong>Autonomy timelines</strong> &mdash; When do agents achieve real autonomy? AI 2027 says 18 months. Davenport says 5 years. Karpathy says 10 years. A 6&times; spread from sources with access to the same evidence. <a href="s3-agents.dd.html">[S3]</a></li>
+    </ul>
+
+    <div class="footer">
+      Part of <a href="../">nafsadh/read-rd</a> research collection &middot;
+      See also: <a href="../agentic-lm-survey/">Agentic LLM Survey</a><br>
+      Literature collection and deep-dive generation assisted by Claude
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">◐</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system';
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '◐';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '☀' : '☽';
+    }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'system') state = sys === 'dark' ? 'light' : 'dark';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S2: Tolkien &mdash; The Philologist's Art &mdash; Deep Dive</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#2e6ab406;--grad2:#9b7aed04;--sidebar-bg:var(--bg2);--right-bg:var(--bg2);--grain-opacity:0.015;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);--edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#9b7aed06;--grad2:#4ee8d004;--sidebar-bg:var(--bg);--right-bg:var(--bg2);--grain-opacity:0.02;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--bg3);--edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent),radial-gradient(ellipse 40% 40% at 50% 10%,var(--grad1),transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}.ctrl-btn:last-child{border-right:none}.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}.ctrl-btn svg{display:block}[data-theme="light"] .ctrl-btn.theme-btn::after{content:'\263D'}[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'\2600'}.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}.ctrl-btn.detail-btn .icon-open{display:block}.detail-open .ctrl-btn.detail-btn .icon-open{display:none}.detail-open .ctrl-btn.detail-btn .icon-close{display:block}.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%)}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}.detail-open .sidebar{width:52px;min-width:52px}.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}[data-theme="dark"] .sidebar-item{border-left-width:1px}.sidebar-item:hover{background:var(--bg3)}.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}.sidebar-item.active .sidebar-num{color:var(--accent)}.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}.detail-open .sidebar-label{opacity:0;width:0}.detail-open .sidebar-item{justify-content:center}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}.main-head-inner{max-width:860px;margin:0 auto}.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,var(--grad1),transparent 60%);pointer-events:none}.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight)}[data-theme="light"] .hero-badge{color:var(--dim)}.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}.hero-title em{font-style:italic;color:var(--accent);font-weight:400}[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;width:50%;opacity:.6}.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}.main-head.compact .hero-badge,.main-head.compact .masthead-rule{display:none}.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}.main-scroll-inner{max-width:860px;margin:0 auto}.main-scroll::-webkit-scrollbar{width:4px}.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}.section-block:last-child{border-bottom:none}.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}.section-block h2 em{font-style:italic;color:var(--accent)}.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}.section-block .s-list{margin:8px 0;padding:0;list-style:none}.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}.section-block .s-list li:last-child{border-bottom:none}.section-block .s-list.pro li{padding-left:20px}.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}.section-block .s-list.con li{padding-left:20px}.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}.section-block .s-stat .st:last-child{border-right:none}.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight)}.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}.right::-webkit-scrollbar{width:4px}.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end}.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.detail-header{margin-bottom:32px}.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border)}.detail-header h2 em{font-style:italic;color:var(--accent)}.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400}.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);padding-bottom:6px;border-bottom:1px solid var(--border)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border)}.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic}.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}@keyframes dash{to{stroke-dashoffset:-9}}.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}.tl-item:last-child{border-bottom:none}.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0}.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+@media(max-width:1000px){.sidebar{display:none}.ctrl-group{top:10px;right:10px}.ctrl-btn{width:32px;height:32px;font-size:14px}.shell{display:block}.main{height:100vh;width:100%}.main-head{padding:20px 20px 0}.hero-title{font-size:28px!important}.main-head.compact{padding:0 20px;height:44px}.main-head.compact .hero-title{font-size:18px!important}.main-scroll{padding:0 20px 80px}.section-block{padding:28px 8px}.right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}.right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}.right:not(.closed){transform:translateX(0)}.right-inner{padding:0 20px 80px}.right-topbar{padding:10px 20px 0;height:44px}.detail-header h2{font-size:26px!important}.feat-grid{grid-template-columns:1fr}.feat{border-left:none!important;padding-left:0!important}.feat:nth-child(2n){padding-left:0}.section-block .s-stat{flex-wrap:wrap}.section-block .s-stat .st{min-width:45%}}
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Languages First', title: 'Languages <em>First</em>, Stories Second' },
+  { num: '02', short: 'Quenya', title: '<em>Quenya</em>: The Finnish Connection' },
+  { num: '03', short: 'Sindarin', title: '<em>Sindarin</em>: The Welsh Inspiration' },
+  { num: '04', short: 'Family Tree', title: 'The <em>Family</em> Tree' },
+  { num: '05', short: 'Scripts', title: 'Tengwar &amp; <em>Cirth</em>' },
+  { num: '06', short: 'Depth', title: '<em>Depth</em> Without Limit' },
+  { num: '07', short: 'Legacy', title: 'The Lesson for <em>Conlanging</em>' },
+  { num: '08', short: 'Consensus', title: 'Agreement &amp; <em>Debate</em>' }
+];
+
+const summaries = [
+  `<p>The single most important fact about Tolkien&rsquo;s creative process: the languages came first.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Languages_constructed_by_J._R._R._Tolkien">[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Languages_constructed_by_J._R._R._Tolkien" target="_blank">Wikipedia: Languages constructed by Tolkien &rarr;</a></span></sup> Middle-earth exists <em>because of</em> the languages. Quenya and Sindarin required speakers, history, migrations, wars, and cultural divisions to explain why they diverged from a common ancestor.</p>
+  <p>Tolkien began inventing languages as a child, inspired by encountering Gothic, Finnish, and Welsh.<sup class="fn"><a href="https://www.multilingualmagazine.com/j-r-r-tolkiens-life-in-languages/">[2]</a><span class="tip"><a href="https://www.multilingualmagazine.com/j-r-r-tolkiens-life-in-languages/" target="_blank">Multilingual Magazine: J.R.R. Tolkien&rsquo;s Life in Languages &rarr;</a></span></sup> He was a professional philologist &mdash; a specialist in Old English at Oxford &mdash; and brought his professional tools to his hobby.</p>
+  <div class="callout"><h4>Tension T1: Art vs. Utility</h4><p>Tolkien&rsquo;s languages represent the purest art end of the conlang spectrum. They were never meant to be spoken by real communities. They existed for their beauty and for the narrative world they generated.</p></div>`,
+
+  `<p>Quenya, the High Elvish language, draws its aesthetic inspiration from Finnish.<sup class="fn"><a href="https://www.oxfordopenlearning.com/how-j-r-r-tolkien-built-a-language/">[3]</a><span class="tip"><a href="https://www.oxfordopenlearning.com/how-j-r-r-tolkien-built-a-language/" target="_blank">Oxford Open Learning: How Tolkien Built a Language &rarr;</a></span></sup> Key parallels: agglutinative morphology, vowel harmony aesthetics, and prevalence of liquid consonants.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">10</div><div class="sl">grammatical cases</div></div>
+    <div class="st"><div class="sv">Finnish</div><div class="sl">primary inspiration</div></div>
+    <div class="st"><div class="sv">Archaic</div><div class="sl">register in Middle-earth</div></div>
+  </div>
+  <p>Quenya functions as an archaic, literary language in Middle-earth &mdash; analogous to Latin in medieval Europe. It is the language of lore, ceremony, and high poetry.</p>`,
+
+  `<p>Sindarin, the language of the Grey Elves, takes its phonological character from Welsh.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Elvish_languages_of_Middle-earth">[4]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Elvish_languages_of_Middle-earth" target="_blank">Wikipedia: Elvish languages &mdash; Sindarin from Common Telerin &rarr;</a></span></sup> Key features include consonant mutation (directly inspired by Welsh lenition), distinctive dh/th/ch sounds, and fusional morphology.</p>
+  <p>Sindarin is the &ldquo;living&rdquo; Elvish language of the Third Age &mdash; what elves actually speak day to day. Its relationship to Quenya mirrors the historical relationship of Welsh to Latin.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Consonant Mutation</h4><p>Initial consonants change depending on grammatical context: soft, nasal, and mixed mutation &mdash; directly from Welsh.</p></div>
+    <div class="feat"><h4>Fusional Morphology</h4><p>Unlike Quenya&rsquo;s agglutination, Sindarin changes word forms through internal modification.</p></div>
+  </div>`,
+
+  `<p>Tolkien used the tools of real comparative philology to construct his language family.<sup class="fn"><a href="https://www.tolkienestate.com/writing/languages-scripts/">[5]</a><span class="tip"><a href="https://www.tolkienestate.com/writing/languages-scripts/" target="_blank">Tolkien Estate: Hostetter on Tolkien&rsquo;s linguistic methodology &rarr;</a></span></sup> From Primitive Quendian through Common Eldarin to Quenya, Sindarin, Telerin, and Avarin &mdash; for each branch, Tolkien specified sound changes, morphological innovations, borrowings, and dialectal variation.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <text x="200" y="18" text-anchor="middle" font-size="10" class="lbl" letter-spacing="1.5" style="font-size:10px">TOLKIEN&rsquo;S LANGUAGE FAMILY TREE</text>
+    <rect x="140" y="30" width="120" height="24" rx="3" class="node-hi"/><text x="200" y="46" text-anchor="middle" class="node-text" style="font-size:11px">Primitive Quendian</text>
+    <line x1="170" y1="54" x2="120" y2="80" class="edge-hi"/><line x1="230" y1="54" x2="280" y2="80" class="edge"/>
+    <rect x="60" y="80" width="120" height="24" rx="3" class="node-hi"/><text x="120" y="96" text-anchor="middle" class="node-text" style="font-size:11px">Common Eldarin</text>
+    <rect x="240" y="80" width="80" height="24" rx="3" class="node"/><text x="280" y="96" text-anchor="middle" class="node-text" style="font-size:11px">Avarin</text>
+    <line x1="90" y1="104" x2="60" y2="130" class="edge-hi"/><line x1="120" y1="104" x2="170" y2="130" class="edge"/><line x1="150" y1="104" x2="260" y2="130" class="edge"/>
+    <rect x="20" y="130" width="80" height="24" rx="3" class="node-hi"/><text x="60" y="146" text-anchor="middle" class="node-text" style="font-size:11px">Quenya</text>
+    <rect x="130" y="130" width="80" height="24" rx="3" class="node"/><text x="170" y="146" text-anchor="middle" class="node-text" style="font-size:11px">Telerin</text>
+    <rect x="220" y="130" width="80" height="24" rx="3" class="node-hi"/><text x="260" y="146" text-anchor="middle" class="node-text" style="font-size:11px">Sindarin</text>
+    <text x="60" y="170" text-anchor="middle" class="node-sub" style="font-size:9px">Finnish-inspired</text>
+    <text x="260" y="170" text-anchor="middle" class="node-sub" style="font-size:9px">Welsh-inspired</text>
+  </svg></div>`,
+
+  `<p><strong>Tengwar</strong> is a featural writing system where the shape of each letter encodes phonetic information.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Tengwar">[6]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Tengwar" target="_blank">Wikipedia: Tengwar &mdash; featural script by fictional F&euml;anor &rarr;</a></span></sup> Letters for dental sounds share one shape family, velars another. The system has multiple &ldquo;modes&rdquo; for different languages.</p>
+  <p><strong>Cirth</strong> (the Runic script) was designed for carving in stone or wood, as historical runes were.<sup class="fn"><a href="https://www.tolkienestate.com/writing/languages-scripts/">[7]</a><span class="tip"><a href="https://www.tolkienestate.com/writing/languages-scripts/" target="_blank">Tolkien Estate: Arden Smith on Writing Systems &rarr;</a></span></sup> More angular than Tengwar, with simpler strokes. Used primarily by Dwarves.</p>`,
+
+  `<p>What distinguishes Tolkien&rsquo;s languages from other conlangs is depth.<sup class="fn"><a href="https://www.academia.edu/tolkiens-linguistics-artificial-languages-quenya">[8]</a><span class="tip"><a href="https://www.academia.edu/tolkiens-linguistics-artificial-languages-quenya" target="_blank">Coker (NCUR): Tolkien&rsquo;s Linguistics &mdash; full morphological paradigms &rarr;</a></span></sup> Most constructed languages create enough grammar for their purpose. Tolkien created full etymological histories, dialectal variation, register differences, poetry in multiple meters, and internal documents written <em>in</em> the languages.</p>
+  <p>His languages were never &ldquo;finished&rdquo; because he kept revising them. New ideas about phonology would cascade through the entire system. The languages were, like natural languages, always in flux.</p>`,
+
+  `<p>Tolkien demonstrated that a constructed language could have the depth, beauty, and internal consistency of a natural language. His key innovations:</p>
+  <ul class="s-list pro">
+    <li><strong>Diachronic construction:</strong> Building not just a language but its <em>history</em> &mdash; sound changes, borrowings, dialectal splits</li>
+    <li><strong>Narrative integration:</strong> Language and story reinforcing each other</li>
+    <li><strong>Aesthetic primacy:</strong> The sound and feel of a language mattering as much as its grammar</li>
+    <li><strong>Professional rigor:</strong> Applying real linguistic methods, not amateur improvisation</li>
+  </ul>
+  <p>No conlanger since has matched Tolkien&rsquo;s depth. Peterson and Frommer create excellent languages for media, but they work under deadlines and budgets. Tolkien worked for fifty years.</p>`,
+
+  `<div class="verdict">
+    <div class="v-col pro"><h4>Sources Agree</h4><ul>
+      <li>Tolkien&rsquo;s languages preceded and generated his fiction</li>
+      <li>Finnish inspired Quenya; Welsh inspired Sindarin</li>
+      <li>Professional philological training was essential</li>
+      <li>The depth is unprecedented in conlang history</li>
+      <li>Tengwar is a genuinely innovative writing system</li>
+    </ul></div>
+    <div class="v-col con"><h4>Sources Disagree</h4><ul>
+      <li>Whether Tolkien&rsquo;s languages are &ldquo;complete&rdquo; enough for real conversation</li>
+      <li>Whether constant revision was a feature or limitation</li>
+      <li>How much unpublished material represents final intent vs. abandoned experiments</li>
+    </ul></div>
+  </div>`
+];
+
+const details = summaries.map(function(s, i) { return '<div class="detail-header"><div class="num">SECTION ' + sections[i].num + '</div><h2>' + sections[i].title + '</h2></div>' + s; });
+
+document.addEventListener('DOMContentLoaded', function() {
+  var sidebarNav = document.querySelector('.sidebar-nav');
+  var mainScroll = document.querySelector('.main-scroll');
+  var right = document.querySelector('.right');
+  var rightInner = document.querySelector('.right-inner');
+  var mainHead = document.querySelector('.main-head');
+
+  sections.forEach(function(sec, idx) {
+    var item = document.createElement('div');
+    item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+    item.innerHTML = '<div class="sidebar-num">' + sec.num + '</div><div class="sidebar-label">' + sec.short + '</div>';
+    item.addEventListener('click', function() { selectSection(idx); });
+    sidebarNav.appendChild(item);
+  });
+
+  function selectSection(idx) {
+    document.querySelectorAll('.sidebar-item').forEach(function(it) { it.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-item')[idx].classList.add('active');
+    var sec = sections[idx];
+    mainHead.innerHTML = '<div class="main-head-inner"><div class="hero-badge"><span class="dot"></span>SECTION ' + sec.num + '</div><h1 class="hero-title">' + sec.title + '</h1><div class="masthead-rule"></div></div>';
+    mainScroll.innerHTML = '<div class="main-scroll-inner">' + summaries[idx] + '</div>';
+  }
+
+  function showDetail(idx) {
+    rightInner.innerHTML = details[idx];
+    right.classList.remove('closed');
+    document.body.classList.add('detail-open');
+  }
+
+  document.querySelector('.detail-btn').addEventListener('click', function() {
+    if (document.body.classList.contains('detail-open')) {
+      right.classList.add('closed');
+      document.body.classList.remove('detail-open');
+    } else {
+      var activeIdx = Array.from(document.querySelectorAll('.sidebar-item')).findIndex(function(it) { return it.classList.contains('active'); });
+      showDetail(activeIdx);
+    }
+  });
+
+  document.querySelector('.theme-btn').addEventListener('click', function() {
+    var current = document.body.getAttribute('data-theme') || 'light';
+    document.body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+  });
+
+  mainScroll.addEventListener('scroll', function() {
+    mainHead.classList.toggle('compact', this.scrollTop > 20);
+  });
+
+  selectSection(0);
+});
+</script>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="sidebar-head"><div class="sidebar-logo">S<em>2</em></div></div>
+    <div class="sidebar-nav"></div>
+  </div>
+  <div class="main">
+    <div class="main-head"><div class="main-head-inner">
+      <div class="hero-badge"><span class="dot"></span>S2 &middot; TOLKIEN &middot; 8 SOURCES</div>
+      <h1 class="hero-title">Tolkien: The Philologist's <em>Art</em></h1>
+      <div class="masthead-rule"></div>
+    </div></div>
+    <div class="main-scroll"><div class="main-scroll-inner"></div></div>
+  </div>
+  <div class="right closed"><div class="right-topbar"><div class="sticky-title"></div></div><div class="right-inner"></div></div>
+  <div class="ctrl-group">
+    <button class="ctrl-btn detail-btn"><svg class="icon-open" width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg><svg class="icon-close" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button>
+    <button class="ctrl-btn theme-btn"></button>
+  </div>
+</div>
+
+</body>
+</html>

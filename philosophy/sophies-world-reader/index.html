@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sophie's World Reader — Interactive Philosophy Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+    --border: #d6d0c4; --border-hi: #bfb8a8;
+    --text: #363b48; --dim: #65707a; --bright: #141a1e;
+    --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    --cyan: #9b7aed; --green: #2e6e3e; --red: #8b2020; --amber: #8a6e1e;
+    --serif: 'EB Garamond', Georgia, serif;
+    --sans: 'Jost', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --border-hi: #283558;
+      --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      --cyan: #4ee8d0; --green: #4ee8a8; --red: #e87090; --amber: #e8c870;
+    }
+  }
+  [data-theme="dark"] {
+    --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+    --border: #1c2440; --border-hi: #283558;
+    --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+    --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    --cyan: #4ee8d0; --green: #4ee8a8; --red: #e87090; --amber: #e8c870;
+  }
+  [data-theme="light"] {
+    --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+    --border: #d6d0c4; --border-hi: #bfb8a8;
+    --text: #363b48; --dim: #65707a; --bright: #141a1e;
+    --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    --cyan: #9b7aed; --green: #2e6e3e; --red: #8b2020; --amber: #8a6e1e;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); font-weight: 400;
+    -webkit-font-smoothing: antialiased; font-size: 16px;
+    transition: background .5s, color .4s;
+    min-height: 100vh;
+  }
+  body::after {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 9999;
+  }
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 20%, #2e6ab406, transparent),
+      radial-gradient(ellipse 60% 50% at 85% 75%, #9b7aed04, transparent);
+  }
+  [data-theme="dark"] body::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 20%, #9b7aed06, transparent),
+      radial-gradient(ellipse 60% 50% at 85% 75%, #4ee8d004, transparent);
+  }
+
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 200;
+    width: 36px; height: 36px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--dim); background: var(--bg2);
+    border: 1px solid var(--border); transition: all .2s;
+  }
+  .theme-toggle:hover { color: var(--accent); background: var(--accent-soft); }
+  [data-theme="light"] .theme-toggle::after { content: '\263D'; }
+  [data-theme="dark"] .theme-toggle::after { content: '\2600'; }
+
+  .container {
+    max-width: 860px; margin: 0 auto; padding: 80px 40px 120px;
+    position: relative; z-index: 1;
+  }
+
+  .hero-badge {
+    font-family: var(--sans); font-size: 10px; color: var(--accent);
+    letter-spacing: 2.5px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 7px; margin-bottom: 16px;
+    font-weight: 600;
+  }
+  [data-theme="light"] .hero-badge { color: var(--dim); }
+  .hero-badge .dot {
+    width: 5px; height: 5px; background: var(--accent);
+    border-radius: 50%; animation: pulse 2.5s infinite;
+  }
+  [data-theme="dark"] .hero-badge .dot { box-shadow: 0 0 8px var(--accent); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  .hero-title {
+    font-family: var(--serif); font-size: 52px; font-weight: 500;
+    color: var(--bright); line-height: 1.1; letter-spacing: .5px;
+    margin-bottom: 8px;
+  }
+  .hero-title em { font-style: italic; color: var(--accent); font-weight: 400; }
+  [data-theme="dark"] .hero-title em { text-shadow: 0 0 40px #9b7aed20; }
+
+  .hero-sub {
+    font-family: var(--serif); font-size: 20px; color: var(--dim);
+    font-style: italic; line-height: 1.6; margin-bottom: 8px;
+  }
+  .hero-meta {
+    font-family: var(--mono); font-size: 9px; color: var(--dim);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .masthead-rule {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan), transparent);
+    margin: 20px 0 0; width: 50%; opacity: .6;
+  }
+
+  .intro {
+    margin-top: 40px; font-size: 16px; line-height: 1.9;
+    color: var(--text); letter-spacing: .2px;
+  }
+  .intro p { margin-bottom: 14px; }
+
+  .section-grid {
+    display: grid; grid-template-columns: 1fr; gap: 0;
+    margin-top: 48px; border-top: 1px solid var(--border);
+  }
+
+  .section-card {
+    display: grid; grid-template-columns: 60px 1fr auto; gap: 0;
+    align-items: center; padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: all .25s; position: relative;
+  }
+  .section-card:hover { background: var(--accent-soft); padding-left: 12px; padding-right: 12px; }
+  [data-theme="dark"] .section-card:hover { background: #9b7aed08; }
+
+  .section-card .num {
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+    letter-spacing: 1px;
+  }
+  .section-card:hover .num { color: var(--accent); }
+
+  .section-card .info h3 {
+    font-family: var(--serif); font-size: 22px; font-weight: 500;
+    color: var(--bright); line-height: 1.3; letter-spacing: .3px;
+    margin-bottom: 4px;
+  }
+  .section-card .info h3 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .section-card .info .desc {
+    font-size: 13.5px; color: var(--dim); line-height: 1.6;
+  }
+  .section-card .info .period {
+    font-family: var(--mono); font-size: 10px; color: var(--dim);
+    letter-spacing: .8px; margin-top: 6px; text-transform: uppercase;
+  }
+  .section-card .info .chips {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px;
+  }
+  .section-card .info .chip {
+    font-family: var(--mono); font-size: 10px; color: var(--dim);
+    border: 1px solid var(--border); padding: 2px 8px; letter-spacing: .3px;
+  }
+
+  .section-card .arrow {
+    font-size: 18px; color: var(--border-hi); transition: all .25s;
+    padding-left: 16px;
+  }
+  .section-card:hover .arrow { color: var(--accent); transform: translateX(4px); }
+
+  .methodology {
+    margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--border);
+  }
+  .methodology h2 {
+    font-family: var(--serif); font-size: 28px; font-weight: 500;
+    color: var(--bright); margin-bottom: 20px; letter-spacing: .3px;
+  }
+  .methodology h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .methodology p {
+    font-size: 15px; line-height: 1.9; margin-bottom: 14px; letter-spacing: .2px;
+  }
+  .methodology .stat-row {
+    display: flex; gap: 0; margin: 20px 0; border: 1px solid var(--border);
+  }
+  .methodology .stat {
+    flex: 1; padding: 14px 8px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .methodology .stat:last-child { border-right: none; }
+  [data-theme="dark"] .methodology .stat:first-child { border-left: 1px solid var(--accent); }
+  .methodology .stat .sv {
+    font-family: var(--mono); font-size: 16px; color: var(--bright);
+    font-weight: 500;
+  }
+  .methodology .stat .sl {
+    font-size: 9px; color: var(--dim); margin-top: 3px;
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+
+  .footer {
+    margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border);
+    font-family: var(--mono); font-size: 10px; color: var(--dim);
+    letter-spacing: .8px; text-transform: uppercase; line-height: 2;
+  }
+  .footer a { color: var(--dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+  .footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+  @media(max-width: 700px) {
+    .container { padding: 40px 20px 80px; }
+    .hero-title { font-size: 36px; }
+    .section-card { grid-template-columns: 40px 1fr auto; padding: 20px 0; }
+    .section-card .info h3 { font-size: 18px; }
+    .methodology .stat-row { flex-wrap: wrap; }
+    .methodology .stat { min-width: 45%; }
+  }
+</style>
+</head>
+<body data-theme="light">
+  <button class="theme-toggle" onclick="toggleTheme()"></button>
+  <div class="container">
+
+    <div class="hero-badge"><span class="dot"></span> PHILOSOPHY &middot; READING COMPANION</div>
+    <div class="hero-title">Sophie's World <em>Reader</em></div>
+    <div class="hero-sub">An interactive deep-dive companion for Jostein Gaarder's novel &mdash; exploring 2,500 years of Western philosophy from the Pre-Socratics through the Middle Ages</div>
+    <div class="hero-meta">
+      <span>Based on Jostein Gaarder's novel (1991) &middot; Pages 3&ndash;177</span>
+    </div>
+    <div class="masthead-rule"></div>
+
+    <div class="intro">
+      <p>This reader follows Sophie Amundsen through the first half of her philosophical journey &mdash; from the mysterious letters in the mailbox through the Pre-Socratics, the Athenian golden age, Plato's Forms, Aristotle's system, the Hellenistic schools, and the Medieval synthesis of faith and reason. Each section maps directly to chapters of the novel, providing both a reading guide and an interactive deep-dive into the philosophy.</p>
+    </div>
+
+    <div class="section-grid">
+      <a class="section-card" href="01-awakening.dd.html">
+        <div class="num">01</div>
+        <div class="info">
+          <h3>The <em>Awakening</em></h3>
+          <div class="desc">Wonder, identity, and the big questions &mdash; Sophie receives mysterious letters and the white rabbit metaphor reframes what it means to think philosophically.</div>
+          <div class="period">Chapters: Garden of Eden &middot; The Top Hat</div>
+          <div class="chips">
+            <span class="chip">pp 3&ndash;21</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="02-myth-to-matter.dd.html">
+        <div class="num">02</div>
+        <div class="info">
+          <h3>From Myth to <em>Matter</em></h3>
+          <div class="desc">The birth of philosophy: how humanity moved from mythological stories to rational inquiry. Thales, Parmenides, Heraclitus, Empedocles, and Democritus wrestle with the basic substance question.</div>
+          <div class="period">Chapters: The Myths &middot; Natural Philosophers &middot; Democritus</div>
+          <div class="chips">
+            <span class="chip">Thales</span>
+            <span class="chip">Heraclitus</span>
+            <span class="chip">Democritus</span>
+            <span class="chip">pp 22&ndash;46</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="03-athens.dd.html">
+        <div class="num">03</div>
+        <div class="info">
+          <h3>Athens &amp; the Good <em>Life</em></h3>
+          <div class="desc">Philosophy turns from nature to humanity. The Sophists sell rhetoric, Socrates insists on universal truth through dialogue, and pays the ultimate price for his convictions.</div>
+          <div class="period">Chapters: Fate &middot; Socrates &middot; Athens</div>
+          <div class="chips">
+            <span class="chip">Socrates</span>
+            <span class="chip">Sophists</span>
+            <span class="chip">pp 47&ndash;76</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="04-world-of-ideas.dd.html">
+        <div class="num">04</div>
+        <div class="info">
+          <h3>The World of <em>Ideas</em></h3>
+          <div class="desc">Plato's dazzling vision: an eternal realm of perfect Forms behind the changing physical world. The cookie mold analogy, the allegory of the cave, and the philosopher king.</div>
+          <div class="period">Chapters: Plato &middot; The Major's Cabin</div>
+          <div class="chips">
+            <span class="chip">Plato</span>
+            <span class="chip">The Forms</span>
+            <span class="chip">pp 77&ndash;100</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="05-system-builder.dd.html">
+        <div class="num">05</div>
+        <div class="info">
+          <h3>The System <em>Builder</em></h3>
+          <div class="desc">Aristotle brings philosophy back to earth. Forms exist within things, knowledge comes from experience, and virtue lies in the Golden Mean.</div>
+          <div class="period">Chapter: Aristotle</div>
+          <div class="chips">
+            <span class="chip">Aristotle</span>
+            <span class="chip">pp 101&ndash;116</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="06-twilight-crossroads.dd.html">
+        <div class="num">06</div>
+        <div class="info">
+          <h3>Twilight &amp; <em>Crossroads</em></h3>
+          <div class="desc">After Aristotle, philosophy scatters: Cynics reject the world, Stoics accept fate, Epicureans seek wise pleasure. Then two great cultural streams &mdash; Greek and Hebrew &mdash; begin to merge.</div>
+          <div class="period">Chapters: Hellenism &middot; The Postcards &middot; Two Cultures</div>
+          <div class="chips">
+            <span class="chip">Stoics</span>
+            <span class="chip">Epicureans</span>
+            <span class="chip">pp 117&ndash;157</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+
+      <a class="section-card" href="07-faith-meets-reason.dd.html">
+        <div class="num">07</div>
+        <div class="info">
+          <h3>Faith Meets <em>Reason</em></h3>
+          <div class="desc">The Middle Ages through the 24-hour clock metaphor. St. Augustine Christianizes Plato, St. Thomas Aquinas Christianizes Aristotle, and Sophie discovers that her name means wisdom.</div>
+          <div class="period">Chapter: The Middle Ages</div>
+          <div class="chips">
+            <span class="chip">Augustine</span>
+            <span class="chip">Aquinas</span>
+            <span class="chip">pp 158&ndash;177</span>
+          </div>
+        </div>
+        <div class="arrow">&rarr;</div>
+      </a>
+    </div>
+
+    <div class="methodology">
+      <h2>About This <em>Project</em></h2>
+      <p>This reader follows the methodology established in the <a href="../../ai/agentic-lm-survey/">Agentic LLMs Survey</a>: start from an existing work, read the primary source iteratively, take structured notes, supplement with web research, then synthesize into interactive deep-dives.</p>
+
+      <div class="stat-row">
+        <div class="stat"><div class="sv">177</div><div class="sl">Pages Read</div></div>
+        <div class="stat"><div class="sv">7</div><div class="sl">Deep Dives</div></div>
+        <div class="stat"><div class="sv">15</div><div class="sl">Chapters</div></div>
+        <div class="stat"><div class="sv">~20</div><div class="sl">Philosophers</div></div>
+      </div>
+
+      <p>The source material was Gaarder's novel (pages 3&ndash;177 of the English translation), covering the Garden of Eden through the Middle Ages. Each chapter was extracted via PyMuPDF, read, and annotated with structured notes capturing: philosophers covered, key concepts, questions posed, what Gaarder does well, what he omits, and connections to later philosophy. These notes drove the deep-dive content.</p>
+    </div>
+
+    <div class="footer">
+      <div>Sophie's World Reader &middot; March 2026</div>
+      <div>Built with <a href="https://claude.ai" target="_blank">Claude</a> &middot; See also: <a href="../sophies-world-companion/">Companion Guide</a></div>
+      <div>Source: <a href="https://en.wikipedia.org/wiki/Sophie%27s_World" target="_blank">Sophie's World</a> by Jostein Gaarder (1991)</div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+  </script>
+</body>
+</html>

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paradoxes: From Zeno to Gödel — Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Ancient', title: '<em>Ancient</em> Paradoxes' },
+  { num: '02', short: 'Logical', title: '<em>Logical</em> Paradoxes' },
+  { num: '03', short: 'Mathematical', title: '<em>Mathematical</em> Paradoxes' },
+  { num: '04', short: 'Physics', title: '<em>Physics</em> Paradoxes' },
+  { num: '05', short: 'Decision', title: '<em>Decision</em> &amp; Game Theory' },
+  { num: '06', short: 'Identity', title: '<em>Identity</em> &amp; Persistence' },
+  { num: '07', short: 'Visual', title: '<em>Visual</em> &amp; Self-Reference' }
+];
+
+const summaries = [
+  // 01 — Ancient
+  `<p>Zeno of Elea (c. 490&ndash;430 BCE) constructed paradoxes so powerful they haunted mathematics for two millennia.<sup class="fn"><a href="https://plato.stanford.edu/entries/paradox-zeno/">[1]</a><span class="tip"><a href="https://plato.stanford.edu/entries/paradox-zeno/" target="_blank">Zeno's Paradoxes &mdash; Stanford Encyclopedia of Philosophy &rarr;</a></span></sup> Achilles can never catch the tortoise because he must first reach each point the tortoise has passed&mdash;an infinite sequence. The Arrow is motionless at every instant, so motion is impossible. The Dichotomy says you can never start moving. These weren't puzzles; they were arguments that motion itself is an illusion, supporting Parmenides' monism.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">~450 BCE</div><div class="sl">Zeno's paradoxes</div></div>
+    <div class="st"><div class="sv">~380 BCE</div><div class="sl">Eubulides' Sorites</div></div>
+    <div class="st"><div class="sv">~600 BCE</div><div class="sl">Epimenides</div></div>
+    <div class="st"><div class="sv">2,400 yr</div><div class="sl">Until resolution</div></div>
+  </div>
+  <h4>Key paradoxes</h4>
+  <ul class="s-list">
+    <li><strong>Achilles &amp; the Tortoise</strong> &mdash; Infinite subdivisions of space prevent the faster runner from overtaking the slower</li>
+    <li><strong>The Arrow</strong> &mdash; At each instant an arrow occupies a space equal to itself, so it is at rest; therefore motion is impossible</li>
+    <li><strong>The Sorites (Heap)</strong> &mdash; Remove grains one by one from a heap: when does it stop being a heap? Vagueness breaks classical logic</li>
+    <li><strong>Epimenides the Cretan</strong> &mdash; "All Cretans are liars" &mdash; the ancestor of every self-referential paradox</li>
+  </ul>`,
+
+  // 02 — Logical
+  `<p>The Liar Paradox&mdash;"This sentence is false"&mdash;seems like a parlor trick until you realize it nearly destroyed the foundations of mathematics. When Bertrand Russell showed that naive set theory contains a fatal contradiction (the set of all sets that don't contain themselves),<sup class="fn"><a href="https://plato.stanford.edu/entries/russell-paradox/">[2]</a><span class="tip"><a href="https://plato.stanford.edu/entries/russell-paradox/" target="_blank">Russell's Paradox &mdash; Stanford Encyclopedia of Philosophy &rarr;</a></span></sup> Gottlob Frege's life work collapsed overnight. The ensuing foundational crisis drove Russell and Whitehead to spend a decade on Principia Mathematica, only for Kurt G&ouml;del to prove in 1931 that any sufficiently powerful formal system is either incomplete or inconsistent.<sup class="fn"><a href="https://tomrocksmaths.com/2023/11/08/mathematical-philosophy-russell-godel-and-incompleteness/">[3]</a><span class="tip"><a href="https://tomrocksmaths.com/2023/11/08/mathematical-philosophy-russell-godel-and-incompleteness/" target="_blank">Mathematical Philosophy: Russell, G&ouml;del and Incompleteness &mdash; Tom Rocks Maths &rarr;</a></span></sup></p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1901</div><div class="sl">Russell's paradox</div></div>
+    <div class="st"><div class="sv">1910&ndash;13</div><div class="sl">Principia Mathematica</div></div>
+    <div class="st"><div class="sv">1931</div><div class="sl">G&ouml;del's theorems</div></div>
+    <div class="st"><div class="sv">1936</div><div class="sl">Turing's halting</div></div>
+  </div>
+  <h4>The cascade</h4>
+  <ul class="s-list">
+    <li><strong>The Liar Paradox</strong> &mdash; Self-referential sentences that can be neither true nor false</li>
+    <li><strong>Russell's Paradox</strong> &mdash; The set of all sets that don't contain themselves: contains itself iff it doesn't</li>
+    <li><strong>Curry's Paradox</strong> &mdash; "If this sentence is true, then anything follows" &mdash; proves any statement</li>
+    <li><strong>Grelling-Nelson</strong> &mdash; Is "heterological" (not self-describing) itself heterological?</li>
+    <li><strong>Berry's Paradox</strong> &mdash; "The smallest number not definable in under sixty letters" is defined in under sixty letters</li>
+  </ul>`,
+
+  // 03 — Mathematical
+  `<p>Mathematics is supposed to be the domain of certainty, which makes mathematical paradoxes especially unsettling. The Banach-Tarski theorem proves you can decompose a sphere into finitely many pieces and reassemble them into two spheres identical to the original<sup class="fn"><a href="https://www.quantamagazine.org/how-a-mathematical-paradox-allows-infinite-cloning-20210826/">[4]</a><span class="tip"><a href="https://www.quantamagazine.org/how-a-mathematical-paradox-allows-infinite-cloning-20210826/" target="_blank">Banach-Tarski and the Paradox of Infinite Cloning &mdash; Quanta Magazine &rarr;</a></span></sup>&mdash;a result that follows rigorously from the Axiom of Choice. Gabriel's Horn has infinite surface area but finite volume. And the Monty Hall problem famously stumped thousands of PhD mathematicians who wrote angry letters insisting the correct answer was wrong.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">[5]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Monty_Hall_problem" target="_blank">Monty Hall Problem &mdash; Wikipedia &rarr;</a></span></sup></p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1924</div><div class="sl">Banach-Tarski</div></div>
+    <div class="st"><div class="sv">1643</div><div class="sl">Gabriel's Horn</div></div>
+    <div class="st"><div class="sv">1924</div><div class="sl">Hilbert's Hotel</div></div>
+    <div class="st"><div class="sv">2/3</div><div class="sl">Monty Hall switch</div></div>
+  </div>
+  <h4>The counterintuitive</h4>
+  <ul class="s-list">
+    <li><strong>Banach-Tarski</strong> &mdash; One sphere becomes two identical spheres through decomposition and rigid motion</li>
+    <li><strong>Hilbert's Hotel</strong> &mdash; A hotel with infinitely many occupied rooms can always accommodate more guests</li>
+    <li><strong>The Birthday Paradox</strong> &mdash; Only 23 people needed for a 50% chance of a shared birthday (not 183)</li>
+    <li><strong>Monty Hall</strong> &mdash; Switching doors gives you 2/3 probability; Paul Erd&odblac;s himself refused to believe it until shown a simulation</li>
+    <li><strong>Simpson's Paradox</strong> &mdash; A trend present in subgroups reverses when the groups are combined</li>
+  </ul>`,
+
+  // 04 — Physics
+  `<p>Physics paradoxes are different from logical ones: they tend to get resolved, and the resolution typically reveals something profound about reality. Schr&ouml;dinger's Cat was designed to show that quantum mechanics leads to absurd conclusions<sup class="fn"><a href="https://en.wikipedia.org/wiki/Schr%C3%B6dinger%27s_cat">[6]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Schr%C3%B6dinger%27s_cat" target="_blank">Schr&ouml;dinger's Cat &mdash; Wikipedia &rarr;</a></span></sup>&mdash;but quantum mechanics turned out to be correct. The EPR paradox, meant to prove quantum mechanics was incomplete, led to Bell's theorem and the experimental proof of nonlocality.<sup class="fn"><a href="https://plato.stanford.edu/entries/qt-epr/">[7]</a><span class="tip"><a href="https://plato.stanford.edu/entries/qt-epr/" target="_blank">EPR Paradox &mdash; Stanford Encyclopedia of Philosophy &rarr;</a></span></sup> Maxwell's Demon, which seemed to violate thermodynamics, was resolved by discovering the deep connection between information and entropy.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Maxwell%27s_demon">[8]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Maxwell%27s_demon" target="_blank">Maxwell's Demon &mdash; Wikipedia &rarr;</a></span></sup></p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1867</div><div class="sl">Maxwell's Demon</div></div>
+    <div class="st"><div class="sv">1905</div><div class="sl">Twin Paradox</div></div>
+    <div class="st"><div class="sv">1935</div><div class="sl">EPR &amp; Cat</div></div>
+    <div class="st"><div class="sv">1964</div><div class="sl">Bell's Theorem</div></div>
+  </div>
+  <h4>Discovery engines</h4>
+  <ul class="s-list">
+    <li><strong>Schr&ouml;dinger's Cat</strong> &mdash; A cat simultaneously alive and dead; superposition at macroscopic scale</li>
+    <li><strong>EPR Paradox</strong> &mdash; Entangled particles seem to communicate instantly; "spooky action at a distance"</li>
+    <li><strong>Maxwell's Demon</strong> &mdash; A being that sorts molecules by speed, seemingly violating the second law</li>
+    <li><strong>The Twin Paradox</strong> &mdash; One twin ages slower during relativistic travel; resolved by acceleration asymmetry</li>
+    <li><strong>Olbers' Paradox</strong> &mdash; If the universe is infinite and static, why is the sky dark? Answer: it isn't static</li>
+  </ul>`,
+
+  // 05 — Decision & Game Theory
+  `<p>Decision theory paradoxes strike at the heart of rationality. The Prisoner's Dilemma shows that individually rational choices lead to collectively irrational outcomes. Newcomb's Problem&mdash;where a near-perfect predictor has placed money based on what you will choose&mdash;has divided philosophers for 50 years with no resolution.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Newcomb%27s_problem">[9]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Newcomb%27s_problem" target="_blank">Newcomb's Problem &mdash; Wikipedia &rarr;</a></span></sup> Arrow's impossibility theorem proves that no ranked voting system can satisfy a small set of reasonable fairness criteria.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Arrow%27s_impossibility_theorem">[10]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Arrow%27s_impossibility_theorem" target="_blank">Arrow's Impossibility Theorem &mdash; Wikipedia &rarr;</a></span></sup> These paradoxes suggest that our concept of rational choice is fundamentally flawed or at least incomplete.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1713</div><div class="sl">St. Petersburg</div></div>
+    <div class="st"><div class="sv">1950</div><div class="sl">Prisoner's Dilemma</div></div>
+    <div class="st"><div class="sv">1951</div><div class="sl">Arrow's theorem</div></div>
+    <div class="st"><div class="sv">1969</div><div class="sl">Newcomb's Problem</div></div>
+  </div>
+  <h4>Rationality failures</h4>
+  <ul class="s-list">
+    <li><strong>Prisoner's Dilemma</strong> &mdash; Mutual cooperation beats mutual defection, but defection dominates individually</li>
+    <li><strong>Newcomb's Problem</strong> &mdash; One box or two? Causal and evidential decision theory give opposite answers</li>
+    <li><strong>Arrow's Impossibility</strong> &mdash; No ranked voting system satisfies all fairness criteria simultaneously</li>
+    <li><strong>Braess's Paradox</strong> &mdash; Adding a road to a network can make everyone's commute worse</li>
+    <li><strong>St. Petersburg Paradox</strong> &mdash; A game with infinite expected value that nobody would pay much to play</li>
+  </ul>`,
+
+  // 06 — Identity & Persistence
+  `<p>The Ship of Theseus asks whether an object that has had every component replaced is still the same object. Derek Parfit's teletransporter asks whether a perfect copy of you is you.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Teletransportation_paradox">[11]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Teletransportation_paradox" target="_blank">Teletransportation Paradox &mdash; Wikipedia &rarr;</a></span></sup> Donald Davidson's Swampman asks whether a molecule-for-molecule duplicate, created by lightning, has thoughts and beliefs. John Searle's Chinese Room asks whether a system that perfectly simulates understanding actually understands anything.<sup class="fn"><a href="https://plato.stanford.edu/entries/chinese-room/">[12]</a><span class="tip"><a href="https://plato.stanford.edu/entries/chinese-room/" target="_blank">Chinese Room Argument &mdash; Stanford Encyclopedia of Philosophy &rarr;</a></span></sup> These aren't academic games&mdash;they bear directly on questions about AI consciousness, brain uploading, and what it means to be a person.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1st c.</div><div class="sl">Ship of Theseus</div></div>
+    <div class="st"><div class="sv">1980</div><div class="sl">Chinese Room</div></div>
+    <div class="st"><div class="sv">1984</div><div class="sl">Teletransporter</div></div>
+    <div class="st"><div class="sv">1987</div><div class="sl">Swampman</div></div>
+  </div>
+  <h4>What are you?</h4>
+  <ul class="s-list">
+    <li><strong>Ship of Theseus</strong> &mdash; Replace every plank: is it the same ship? What if you build another from the old planks?</li>
+    <li><strong>Teletransporter</strong> &mdash; Destroyed on Earth, rebuilt on Mars from a scan. Is the person on Mars you?</li>
+    <li><strong>Swampman</strong> &mdash; Lightning creates a molecular duplicate of Davidson. Does Swampman have beliefs?</li>
+    <li><strong>Chinese Room</strong> &mdash; A person follows rules to produce Chinese responses. Does the room understand Chinese?</li>
+  </ul>`,
+
+  // 07 — Visual & Self-Reference
+  `<p>Some paradoxes can be seen rather than argued. M.C. Escher's staircases ascend forever. Roger Penrose's triangle exists in 2D but is impossible in 3D.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Penrose_triangle">[13]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Penrose_triangle" target="_blank">Penrose Triangle &mdash; Wikipedia &rarr;</a></span></sup> Magritte paints a pipe and writes "This is not a pipe"&mdash;and he's right: it's a painting of a pipe.<sup class="fn"><a href="https://en.wikipedia.org/wiki/The_Treachery_of_Images">[14]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/The_Treachery_of_Images" target="_blank">The Treachery of Images &mdash; Wikipedia &rarr;</a></span></sup> Douglas Hofstadter argues in G&ouml;del, Escher, Bach that these visual paradoxes share a deep structure with G&ouml;del's incompleteness theorems: they are all strange loops,<sup class="fn"><a href="https://en.wikipedia.org/wiki/Strange_loop">[15]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Strange_loop" target="_blank">Strange Loop &mdash; Wikipedia &rarr;</a></span></sup> systems that refer to themselves in ways that create tangled hierarchies.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1929</div><div class="sl">Magritte's pipe</div></div>
+    <div class="st"><div class="sv">1958</div><div class="sl">Penrose triangle</div></div>
+    <div class="st"><div class="sv">1961</div><div class="sl">Escher's Waterfall</div></div>
+    <div class="st"><div class="sv">1979</div><div class="sl">G&ouml;del, Escher, Bach</div></div>
+  </div>
+  <h4>Seeing the impossible</h4>
+  <ul class="s-list">
+    <li><strong>Penrose Triangle</strong> &mdash; Three bars connected at right angles forming an impossible closed figure</li>
+    <li><strong>Escher's Waterfalls &amp; Staircases</strong> &mdash; Water flows uphill; monks ascend stairs forever</li>
+    <li><strong>Magritte's Pipe</strong> &mdash; "Ceci n'est pas une pipe" &mdash; the image is not the thing</li>
+    <li><strong>Droste Effect</strong> &mdash; A picture containing a smaller version of itself, infinitely recursive</li>
+    <li><strong>Hofstadter's Strange Loops</strong> &mdash; Systems that loop back through hierarchical levels to their own starting point</li>
+  </ul>`
+];
+
+const details = [
+  // 01 — Ancient Paradoxes
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div>
+    <h2><em>Ancient</em> Paradoxes</h2>
+  </div>
+  <p>Zeno constructed at least eight paradoxes, of which four survive in detail through Aristotle's <em>Physics</em>.<sup class="fn"><a href="https://iep.utm.edu/zenos-paradoxes/">[1]</a><span class="tip"><a href="https://iep.utm.edu/zenos-paradoxes/" target="_blank">Zeno's Paradoxes &mdash; Internet Encyclopedia of Philosophy &rarr;</a></span></sup> They were not mathematical puzzles but philosophical weapons, designed to support Parmenides' claim that reality is a single, unchanging whole, and that motion, plurality, and change are illusions of the senses.</p>
+  <h3>Achilles and the Tortoise</h3>
+  <p>The tortoise has a head start. Achilles must first reach the tortoise's starting point; by then the tortoise has moved. He must reach that new point; the tortoise moves again. The sequence is infinite. Aristotle distinguished "potential" from "actual" infinity but couldn't formalize the solution. Only with the 19th-century development of convergent series (1/2 + 1/4 + 1/8 + ... = 1) did mathematicians show that an infinite number of steps can sum to a finite distance and time.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="100" x2="560" y2="100" class="edge" stroke-width="1"/>
+      <circle cx="60" cy="85" r="8" class="node-hi"/>
+      <text x="60" y="75" text-anchor="middle" class="lbl-hi" font-size="9">Achilles</text>
+      <circle cx="200" cy="85" r="6" class="node"/>
+      <text x="200" y="75" text-anchor="middle" class="lbl" font-size="9">T start</text>
+      <circle cx="300" cy="85" r="5" class="node"/>
+      <text x="300" y="75" text-anchor="middle" class="lbl" font-size="8">T moved</text>
+      <circle cx="370" cy="85" r="4" class="node"/>
+      <circle cx="415" cy="85" r="3" class="node"/>
+      <circle cx="442" cy="85" r="2.5" class="node"/>
+      <circle cx="458" cy="85" r="2" class="node"/>
+      <text x="500" y="88" class="lbl-hi" font-size="10">...</text>
+      <line x1="60" y1="100" x2="200" y2="100" class="edge-hi" stroke-width="1.5"/>
+      <line x1="200" y1="100" x2="300" y2="100" class="edge-hi" stroke-width="1.2"/>
+      <line x1="300" y1="100" x2="370" y2="100" class="edge-hi" stroke-width="1"/>
+      <text x="300" y="125" text-anchor="middle" class="lbl" font-size="10">Each segment shrinks: sum converges to finite distance</text>
+    </svg>
+  </div>
+  <h3>The Arrow Paradox</h3>
+  <p>Consider an arrow in flight. At any single instant, it occupies a space exactly equal to its length&mdash;it is, at that instant, motionless. If at every instant the arrow is at rest, then it is always at rest. Motion is impossible. The resolution required the modern concept of instantaneous velocity as the limit of average velocity over shrinking intervals&mdash;a concept that wouldn't exist until Newton and Leibniz invented calculus.</p>
+  <h3>The Sorites Paradox</h3>
+  <p>A heap of 10,000 grains of sand is a heap. Remove one grain: still a heap. Remove another: still a heap. Continue. One grain is not a heap. Where did the heap stop being a heap? The paradox exposes the problem of vague predicates&mdash;words like "tall," "rich," "bald"&mdash;and has spawned entire research programs in fuzzy logic, supervaluationism, and epistemicism.</p>
+  <h3>Why They Lasted</h3>
+  <p>Zeno's paradoxes persisted because they targeted genuine gaps in Greek mathematics: the lack of a theory of limits, the absence of a rigorous treatment of infinity, and the conflation of continuous and discrete models of space and time. Aristotle's qualitative answer was philosophically insightful but mathematically insufficient. It took Cauchy, Weierstrass, Dedekind, and Cantor&mdash;the architects of modern analysis&mdash;to provide the mathematical framework that makes Achilles actually catch the tortoise.</p>`,
+
+  // 02 — Logical Paradoxes
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div>
+    <h2><em>Logical</em> Paradoxes</h2>
+  </div>
+  <p>The foundational crisis of mathematics began with a letter. In June 1902, Bertrand Russell wrote to Gottlob Frege, who was about to publish the second volume of his <em>Grundgesetze der Arithmetik</em>&mdash;his life's work formalizing arithmetic from pure logic.<sup class="fn"><a href="https://lawrencecpaulson.github.io/2024/01/31/Russells_Paradox.html">[2]</a><span class="tip"><a href="https://lawrencecpaulson.github.io/2024/01/31/Russells_Paradox.html" target="_blank">Russell's Paradox: Myth and Fact &mdash; Lawrence Paulson &rarr;</a></span></sup> Russell pointed out that Frege's system allowed the construction of the set of all sets that do not contain themselves. Does this set contain itself? If yes, then by definition it doesn't. If no, then by definition it does. Frege, in a remarkably honest appendix, wrote that the discovery had left the foundations of his work shaken.</p>
+  <h3>The Cascade of Self-Reference</h3>
+  <p>Russell's paradox is the set-theoretic twin of the Liar. Both exploit self-reference: a sentence that talks about its own truth, a set that talks about its own membership. The family includes Curry's paradox (a conditional that proves anything), the Grelling-Nelson paradox (is "heterological" heterological?), and Berry's paradox (the smallest number not definable in under sixty letters). Each exploits the same structural pattern&mdash;diagonal self-reference&mdash;that G&ouml;del would later formalize.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg">
+      <rect x="50" y="20" width="140" height="40" rx="4" class="node-hi"/>
+      <text x="120" y="44" text-anchor="middle" class="node-text" font-size="11">Liar Paradox</text>
+      <rect x="230" y="20" width="140" height="40" rx="4" class="node-hi"/>
+      <text x="300" y="44" text-anchor="middle" class="node-text" font-size="11">Russell's Paradox</text>
+      <rect x="410" y="20" width="140" height="40" rx="4" class="node-hi"/>
+      <text x="480" y="44" text-anchor="middle" class="node-text" font-size="11">G&ouml;del's Theorems</text>
+      <path d="M190 40 L230 40" class="edge-hi" marker-end="none"/>
+      <path d="M370 40 L410 40" class="edge-hi" marker-end="none"/>
+      <rect x="50" y="100" width="110" height="35" rx="3" class="node"/>
+      <text x="105" y="121" text-anchor="middle" class="node-text" font-size="10">Curry's</text>
+      <rect x="180" y="100" width="130" height="35" rx="3" class="node"/>
+      <text x="245" y="121" text-anchor="middle" class="node-text" font-size="10">Grelling-Nelson</text>
+      <rect x="330" y="100" width="100" height="35" rx="3" class="node"/>
+      <text x="380" y="121" text-anchor="middle" class="node-text" font-size="10">Berry's</text>
+      <rect x="450" y="100" width="100" height="35" rx="3" class="node"/>
+      <text x="500" y="121" text-anchor="middle" class="node-text" font-size="10">Halting</text>
+      <text x="300" y="165" text-anchor="middle" class="lbl-hi" font-size="10">All exploit diagonal self-reference</text>
+    </svg>
+  </div>
+  <h3>G&ouml;del's Resolution (and Non-Resolution)</h3>
+  <p>In 1931, Kurt G&ouml;del proved that any consistent formal system powerful enough to express basic arithmetic must contain true statements that cannot be proved within the system (First Incompleteness Theorem), and cannot prove its own consistency (Second Incompleteness Theorem). The method? A formal version of the Liar Paradox&mdash;a sentence that says "I am not provable." If it's provable, the system is inconsistent. If it's not provable, it's true but unprovable. The paradox doesn't destroy the system; it reveals its inherent limits.</p>
+  <h3>The Structural Lesson</h3>
+  <p>The logical paradoxes are not bugs in our reasoning; they are boundary markers. They show where self-reference creates unavoidable tangles. Russell's type theory, Zermelo-Fraenkel set theory, and Tarski's hierarchy of languages are all strategies for living with these limits rather than eliminating them.</p>`,
+
+  // 03 — Mathematical Paradoxes
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div>
+    <h2><em>Mathematical</em> Paradoxes</h2>
+  </div>
+  <p>Mathematical paradoxes are technically not paradoxes&mdash;they are theorems. Every one of them follows rigorously from accepted axioms. What makes them paradoxical is that they violate our intuitions about how the world should work, revealing that mathematical truth and physical intuition can diverge dramatically.</p>
+  <h3>Banach-Tarski: The Pea and the Sun</h3>
+  <p>In 1924, Stefan Banach and Alfred Tarski proved that a solid sphere in three-dimensional space can be decomposed into finitely many non-overlapping pieces, which can then be reassembled using only rotations and translations into two spheres, each identical to the original.<sup class="fn"><a href="https://www.cambridge.org/core/books/banachtarski-paradox/9C1FEAACF5EF6EB51C99F67136C8FCCB">[3]</a><span class="tip"><a href="https://www.cambridge.org/core/books/banachtarski-paradox/9C1FEAACF5EF6EB51C99F67136C8FCCB" target="_blank">The Banach-Tarski Paradox &mdash; Cambridge University Press &rarr;</a></span></sup> The pieces are not ordinary shapes&mdash;they are "non-measurable sets" that exploit the uncountable infinity of points in a sphere. The theorem depends on the Axiom of Choice, and some mathematicians (constructivists) reject it for precisely this reason.</p>
+  <h3>The Monty Hall Problem</h3>
+  <p>Behind one of three doors is a car; behind the other two, goats. You pick a door. The host, who knows what's behind each door, opens another door revealing a goat. Should you switch? The answer&mdash;yes, switching gives you a 2/3 chance&mdash;provoked one of the most intense mathematical controversies of the 20th century. When Marilyn vos Savant published the correct answer in 1990, she received thousands of letters from PhD holders insisting she was wrong. Even Paul Erd&odblac;s was reportedly unconvinced until shown a computer simulation.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="60" y="20" width="100" height="80" rx="6" class="node-hi"/>
+      <text x="110" y="55" text-anchor="middle" class="node-text" font-size="12">Door 1</text>
+      <text x="110" y="75" text-anchor="middle" class="lbl-hi" font-size="10">Your pick</text>
+      <rect x="200" y="20" width="100" height="80" rx="6" class="node"/>
+      <text x="250" y="55" text-anchor="middle" class="node-text" font-size="12">Door 2</text>
+      <text x="250" y="75" text-anchor="middle" class="lbl" font-size="10">Opened: goat</text>
+      <rect x="340" y="20" width="100" height="80" rx="6" class="node"/>
+      <text x="390" y="55" text-anchor="middle" class="node-text" font-size="12">Door 3</text>
+      <text x="390" y="75" text-anchor="middle" class="lbl" font-size="10">Switch here</text>
+      <path d="M160 60 Q200 120 340 60" class="edge-hi" stroke-width="1.5" fill="none" stroke-dasharray="6,3"/>
+      <text x="110" y="125" text-anchor="middle" class="lbl" font-size="11">P = 1/3</text>
+      <text x="390" y="125" text-anchor="middle" class="lbl-hi" font-size="11">P = 2/3</text>
+      <text x="250" y="150" text-anchor="middle" class="lbl" font-size="10">Host's reveal shifts probability; switching wins 2/3 of the time</text>
+    </svg>
+  </div>
+  <h3>Simpson's Paradox</h3>
+  <p>A trend that appears in every subgroup can reverse when the subgroups are combined. The classic example: UC Berkeley's 1973 admissions data appeared to show bias against women overall, but when examined department by department, women were actually admitted at higher rates. The reversal occurs because women applied disproportionately to more competitive departments. Simpson's paradox is not a mathematical curiosity&mdash;it is a practical threat to any data analysis that aggregates across confounding variables.</p>
+  <h3>Hilbert's Grand Hotel</h3>
+  <p>A hotel with infinitely many rooms, all occupied, can still accommodate new guests. Move every guest from room N to room N+1, freeing room 1. Need to accommodate infinitely many new guests? Move everyone from room N to room 2N, freeing all odd rooms. This demonstrates that the infinite behaves nothing like the finite&mdash;a countably infinite set has the same cardinality as one of its proper subsets.</p>`,
+
+  // 04 — Physics
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div>
+    <h2><em>Physics</em> Paradoxes</h2>
+  </div>
+  <p>Physics paradoxes are the most productive kind of paradox. Where logical paradoxes reveal limits and mathematical paradoxes shock intuition, physics paradoxes tend to drive actual discoveries. Nearly every major advance in 20th-century physics was catalyzed by a paradox that forced physicists to rethink their assumptions about reality.</p>
+  <h3>Schr&ouml;dinger's Cat</h3>
+  <p>Erwin Schr&ouml;dinger proposed his famous thought experiment in 1935, not to promote quantum mechanics but to critique it. A cat is sealed in a box with a radioactive atom, a Geiger counter, and a vial of poison. If the atom decays, the poison kills the cat. Quantum mechanics says the atom is in superposition (decayed and not-decayed) until measured. Does this mean the cat is simultaneously alive and dead? Schr&ouml;dinger thought this was absurd. Eighty years later, physicists still debate what "measurement" means and where the quantum-classical boundary lies.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="240" height="100" rx="8" class="node" stroke-dasharray="4,3"/>
+      <text x="150" y="22" text-anchor="middle" class="lbl-hi" font-size="10">SEALED BOX</text>
+      <circle cx="80" cy="80" r="15" class="node-hi"/>
+      <text x="80" y="84" text-anchor="middle" class="node-text" font-size="9">Atom</text>
+      <text x="80" y="115" text-anchor="middle" class="lbl" font-size="8">Superposition</text>
+      <rect x="130" y="60" width="50" height="35" rx="3" class="node"/>
+      <text x="155" y="81" text-anchor="middle" class="node-text" font-size="8">Detector</text>
+      <text x="220" y="75" text-anchor="middle" font-size="28" class="node-text">&#128049;</text>
+      <text x="220" y="100" text-anchor="middle" class="lbl" font-size="8">Alive? Dead?</text>
+      <path d="M95 80 L130 80" class="edge-hi"/>
+      <path d="M180 78 L200 78" class="edge-hi"/>
+      <text x="370" y="55" class="node-text" font-size="11">Before observation:</text>
+      <text x="370" y="75" class="lbl-hi" font-size="11">|alive&rang; + |dead&rang;</text>
+      <text x="370" y="105" class="node-text" font-size="11">After observation:</text>
+      <text x="370" y="125" class="lbl" font-size="11">|alive&rang; or |dead&rang;</text>
+    </svg>
+  </div>
+  <h3>The EPR Paradox and Bell's Theorem</h3>
+  <p>Einstein, Podolsky, and Rosen argued in 1935 that quantum mechanics must be incomplete because it predicted what Einstein called "spooky action at a distance"&mdash;measuring one entangled particle instantly determines the state of the other, regardless of distance. In 1964, John Bell proved that no local hidden variable theory could reproduce the predictions of quantum mechanics. Experimental tests (Aspect 1982, and the 2022 Nobel Prize experiments) confirmed Bell's predictions: nature really is nonlocal. The paradox designed to disprove quantum mechanics ended up confirming it.</p>
+  <h3>Maxwell's Demon</h3>
+  <p>James Clerk Maxwell imagined a tiny being controlling a trapdoor between two gas chambers, allowing only fast molecules through in one direction and slow ones in the other. This would create a temperature difference without work&mdash;violating the second law of thermodynamics. The resolution, worked out over a century by Szilard (1929), Landauer (1961), and Bennett (1982), showed that information is physical: the demon must store information about molecular speeds, and erasing this information necessarily increases entropy. The connection between information and thermodynamics is now foundational to quantum computing.</p>
+  <h3>Olbers' Paradox</h3>
+  <p>If the universe is infinite, eternal, and uniformly filled with stars, then every line of sight should eventually hit a star, and the night sky should be as bright as the surface of the sun. It isn't. The resolution involves several factors: the universe has a finite age (13.8 billion years), it is expanding (redshifting distant light), and stars have finite lifetimes. The dark night sky is evidence that the universe had a beginning.</p>`,
+
+  // 05 — Decision & Game Theory
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div>
+    <h2><em>Decision</em> &amp; Game Theory</h2>
+  </div>
+  <p>The paradoxes of decision theory and game theory reveal that our intuitive concept of "rational choice" is more fragile than we imagine. These aren't abstract puzzles&mdash;they have direct implications for economics, political science, AI alignment, and everyday decision-making.</p>
+  <h3>The Prisoner's Dilemma</h3>
+  <p>Two prisoners, unable to communicate, must each decide whether to cooperate (stay silent) or defect (betray the other). If both cooperate, they get light sentences. If both defect, they get heavy sentences. But if one defects and the other cooperates, the defector goes free. The dominant strategy for each individual is to defect&mdash;but mutual defection is worse for both than mutual cooperation. This structure underlies arms races, climate negotiations, and any situation where individual rationality conflicts with collective welfare.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="300" y="20" text-anchor="middle" class="lbl-hi" font-size="12">PRISONER'S DILEMMA PAYOFF MATRIX</text>
+      <text x="360" y="50" text-anchor="middle" class="node-text" font-size="11">Player B: Cooperate</text>
+      <text x="510" y="50" text-anchor="middle" class="node-text" font-size="11">Player B: Defect</text>
+      <text x="200" y="90" text-anchor="end" class="node-text" font-size="11">Player A: Cooperate</text>
+      <text x="200" y="145" text-anchor="end" class="node-text" font-size="11">Player A: Defect</text>
+      <rect x="280" y="65" width="140" height="40" rx="3" class="node-hi"/>
+      <text x="350" y="89" text-anchor="middle" class="node-text" font-size="12">-1, -1</text>
+      <rect x="440" y="65" width="140" height="40" rx="3" class="node"/>
+      <text x="510" y="89" text-anchor="middle" class="node-text" font-size="12">-10, 0</text>
+      <rect x="280" y="120" width="140" height="40" rx="3" class="node"/>
+      <text x="350" y="144" text-anchor="middle" class="node-text" font-size="12">0, -10</text>
+      <rect x="440" y="120" width="140" height="40" rx="3" class="node"/>
+      <text x="510" y="144" text-anchor="middle" class="node-text" font-size="12">-5, -5</text>
+      <text x="350" y="185" text-anchor="middle" class="lbl-hi" font-size="10">Best mutual outcome</text>
+      <text x="510" y="185" text-anchor="middle" class="lbl" font-size="10">Nash equilibrium</text>
+    </svg>
+  </div>
+  <h3>Newcomb's Problem</h3>
+  <p>A near-perfect predictor has placed money in boxes based on what it predicts you will do. Box A always contains $1,000. Box B contains $1,000,000 if the predictor predicted you'd take only Box B, and nothing if it predicted you'd take both. Two-boxers argue: the money is already placed; taking both can never hurt. One-boxers argue: the predictor is almost always right, so one-boxers almost always get the million. After 50+ years, the philosophical community remains split. Newcomb's Problem may be genuinely undecidable by rational analysis, suggesting that "rationality" itself is ambiguous.</p>
+  <h3>Arrow's Impossibility Theorem</h3>
+  <p>Kenneth Arrow proved in 1951 that no ranked voting system with three or more candidates can simultaneously satisfy all of the following: non-dictatorship (no single voter is decisive), Pareto efficiency (unanimous preferences are respected), and independence of irrelevant alternatives (ranking of A vs B shouldn't depend on C). This isn't a flaw in particular voting systems; it's a mathematical proof that no perfect ranked voting system is possible.</p>
+  <h3>Braess's Paradox</h3>
+  <p>Adding a new road to a traffic network can increase travel time for everyone. When selfish drivers optimize individually, the new route creates congestion that makes the overall system worse. The paradox has been observed in real road networks (Seoul, Stuttgart) and applies more broadly: in some systems, adding capacity or options makes things worse because of the interaction between individual and collective optimization.</p>`,
+
+  // 06 — Identity & Persistence
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div>
+    <h2><em>Identity</em> &amp; Persistence</h2>
+  </div>
+  <p>These paradoxes ask the most personal of questions: what makes you <em>you</em>? They probe whether identity is an objective fact or a useful fiction, whether continuity of body, brain, memory, or psychology is what matters, and whether there is a "further fact" about personal identity beyond the physical and psychological facts.</p>
+  <h3>The Ship of Theseus</h3>
+  <p>Plutarch records the paradox: the Athenians preserved the ship of Theseus, replacing rotten planks over centuries. Is it the same ship? Thomas Hobbes added a twist: if someone collected all the old planks and built a ship from them, which is the "real" Ship of Theseus? The functional continuity ship? Or the material continuity ship? The paradox extends to everything from corporations to national identities to your own body (which replaces most of its atoms every 7&ndash;10 years).</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="80" height="50" rx="3" class="node-hi"/>
+      <text x="70" y="58" text-anchor="middle" class="node-text" font-size="10">Original</text>
+      <rect x="140" y="30" width="80" height="50" rx="3" class="node-hi"/>
+      <text x="180" y="52" text-anchor="middle" class="node-text" font-size="9">25%</text>
+      <text x="180" y="66" text-anchor="middle" class="node-text" font-size="9">replaced</text>
+      <rect x="250" y="30" width="80" height="50" rx="3" class="node-hi"/>
+      <text x="290" y="52" text-anchor="middle" class="node-text" font-size="9">50%</text>
+      <text x="290" y="66" text-anchor="middle" class="node-text" font-size="9">replaced</text>
+      <rect x="360" y="30" width="80" height="50" rx="3" class="node"/>
+      <text x="400" y="52" text-anchor="middle" class="node-text" font-size="9">100%</text>
+      <text x="400" y="66" text-anchor="middle" class="node-text" font-size="9">replaced</text>
+      <path d="M110 55 L140 55" class="edge-hi"/>
+      <path d="M220 55 L250 55" class="edge-hi"/>
+      <path d="M330 55 L360 55" class="edge"/>
+      <text x="400" y="18" text-anchor="middle" class="lbl" font-size="9">Same ship?</text>
+      <rect x="360" y="95" width="80" height="40" rx="3" class="node"/>
+      <text x="400" y="118" text-anchor="middle" class="node-text" font-size="9">Rebuilt from old planks</text>
+      <path d="M180 80 Q180 115 360 115" class="edge" stroke-dasharray="4,3"/>
+      <text x="400" y="145" text-anchor="middle" class="lbl" font-size="9">Or is this one?</text>
+    </svg>
+  </div>
+  <h3>Parfit's Teletransporter</h3>
+  <p>In <em>Reasons and Persons</em> (1984), Derek Parfit asks: a machine scans your body, destroys it, and transmits the information to Mars, where a perfect replica is built. Is the person on Mars you? Most people's intuition says yes. Now consider: the machine malfunctions and doesn't destroy the original. There are now two of you. Which one is you? Parfit's radical conclusion: the question has no answer because personal identity is not what matters. What matters is psychological continuity&mdash;"Relation R"&mdash;and this can hold to degrees and between multiple people.</p>
+  <h3>The Chinese Room</h3>
+  <p>John Searle (1980) imagines being locked in a room with a rulebook for responding to Chinese characters. He follows the rules perfectly, producing appropriate responses, though he understands no Chinese. The system passes the Turing test. But does it understand Chinese? Searle says no: syntax (rule-following) is never sufficient for semantics (understanding). This remains the most debated argument in philosophy of mind and AI. Systems reply: the room as a whole understands. Robot reply: embodiment is needed. Searle's response: these miss the point that computation alone can't produce understanding.</p>
+  <h3>What AI Inherits</h3>
+  <p>These paradoxes are not academic. As large language models produce increasingly sophisticated output, the Chinese Room question becomes urgent: does the model understand anything? The teletransporter paradox bears on brain uploading: would a digital copy of your brain be you? The Ship of Theseus applies to gradual brain-computer integration. The paradoxes of identity are becoming engineering questions.</p>`,
+
+  // 07 — Visual & Self-Reference
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div>
+    <h2><em>Visual</em> &amp; Self-Reference</h2>
+  </div>
+  <p>Paradoxes need not be spoken or proven. Some can be seen. The visual paradoxes of Escher, Penrose, and Magritte share a deep structural kinship with the logical paradoxes of Russell, G&ouml;del, and the Liar&mdash;a kinship that Douglas Hofstadter spent 700 pages exploring in <em>G&ouml;del, Escher, Bach</em>.</p>
+  <h3>The Penrose Triangle</h3>
+  <p>First created by Swedish artist Oscar Reustersv&auml;rd in 1934 and independently devised by Lionel and Roger Penrose in 1958, the Penrose triangle (or "tribar") appears to be a solid three-dimensional object, but no such object can exist. Each corner is locally consistent&mdash;each pair of bars meets at a valid right angle&mdash;but globally impossible. The paradox works because our visual system interprets 2D drawings as 3D objects, and the drawing exploits this assumption to create a coherent-looking impossibility.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Penrose Triangle -->
+      <polygon points="150,30 60,180 240,180" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      <polygon points="150,60 85,170 215,170" fill="none" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="60" y1="180" x2="150" y2="60" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="240" y1="180" x2="85" y2="170" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="150" y1="30" x2="215" y2="170" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <text x="150" y="210" text-anchor="middle" class="lbl-hi" font-size="10">Penrose Triangle: locally valid, globally impossible</text>
+      <!-- Escher-style stairs -->
+      <g transform="translate(350,20)">
+        <polyline points="20,120 20,80 60,60 60,100 100,80 100,120 140,100 140,140 180,120 180,80 20,80" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <polyline points="20,120 60,100 100,120 140,140 180,120" fill="none" stroke="var(--border-hi)" stroke-width="1"/>
+        <text x="100" y="170" text-anchor="middle" class="lbl" font-size="9">Ascending and Descending</text>
+        <text x="100" y="185" text-anchor="middle" class="lbl" font-size="8">Monks climb stairs that loop to the start</text>
+      </g>
+    </svg>
+  </div>
+  <h3>Magritte: The Map and the Territory</h3>
+  <p>Ren&eacute; Magritte's <em>The Treachery of Images</em> (1929) paints a pipe with the caption "Ceci n'est pas une pipe" ("This is not a pipe"). He is, of course, correct: it is a painting of a pipe, not a pipe. The paradox lies in how naturally we confuse representations with the things they represent. Michel Foucault devoted an entire essay to this painting, arguing it exposes the arbitrary relationship between words, images, and things. In the age of deepfakes and AI-generated media, Magritte's point feels more relevant than ever.</p>
+  <h3>Hofstadter's Strange Loops</h3>
+  <p>In <em>G&ouml;del, Escher, Bach</em> (1979) and <em>I Am a Strange Loop</em> (2007), Douglas Hofstadter argues that G&ouml;del's incompleteness theorems, Escher's impossible drawings, and Bach's self-referential canons are all manifestations of the same phenomenon: the strange loop. A strange loop occurs when movement through a hierarchical system unexpectedly returns to the starting level. G&ouml;del's sentence talks about its own provability. Escher's monks ascend stairs that somehow lead back to where they began. Bach's <em>Musical Offering</em> modulates through keys and returns to the original.</p>
+  <p>Hofstadter's deepest claim: consciousness itself is a strange loop. The "I" is a self-referential pattern in the brain&mdash;a symbol that refers to the very system generating it, much like G&ouml;del's sentence refers to the system trying to prove it. If Hofstadter is right, the paradox of self-reference is not a bug in logic but the very mechanism of awareness.</p>
+  <h3>The Droste Effect</h3>
+  <p>The Droste effect&mdash;named after a Dutch cocoa brand whose packaging showed a woman holding the same package&mdash;is visual recursion: an image containing a smaller copy of itself, which contains a smaller copy, ad infinitum. It's the visual cousin of "this sentence refers to itself," and it connects to the mathematical concept of fractals: self-similar structures at every scale. The Droste effect is playful where G&ouml;del is austere, but the underlying structure&mdash;a system containing a representation of itself&mdash;is the same.</p>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo"><em>P</em>aradox</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Philosophy Survey</div>
+        <div class="hero-title">Paradoxes: From Zeno to <em>G&ouml;del</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>A survey of paradoxes across 2,500 years &middot; 7 domains &middot; 54 sources</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

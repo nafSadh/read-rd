@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nonlinear Time in Science Fiction and Physics — Deep Dive</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+/* Grain texture overlay */
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+/* Gradient background blobs */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+/* LAYOUT */
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+/* CONTROL GROUP (top-right, moves to center in detail-open mode) */
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+/* SIDEBAR */
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+
+/* Sidebar tooltip appears on hover in detail-open mode */
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+/* MAIN CONTENT AREA */
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+
+/* Main header (hero section) */
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+
+/* Compact header (when scrolled down) */
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Main scrollable content */
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+/* Section blocks */
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+/* RIGHT PANEL (Details) */
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+
+/* Ghost overlay behind right panel — CRITICAL for both themes */
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Detail header with section number SVG and title */
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+/* Detail prose */
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+/* CONTENT COMPONENTS */
+
+/* Feature grid (2 columns in detail, 1 on mobile) */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+/* Verdict grid (pro/con) */
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}
+.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+/* Diagram wrapper for SVG diagrams */
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}
+.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}
+.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+/* Timeline */
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+/* Callout boxes (italic serif accent border) */
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+/* Security/warning boxes (red accent border) */
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}
+.security-box p:last-child{margin-bottom:0}
+
+/* Price grid (4 columns) */
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}
+.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+/* RESPONSIVE */
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}
+  .price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Origins', title: '<em>Time</em> Travel Origins' },
+  { num: '02', short: 'Relativity', title: '<em>Relativistic</em> Time' },
+  { num: '03', short: 'Loops', title: '<em>Time</em> Loops & Self-Consistency' },
+  { num: '04', short: 'Branching', title: '<em>Branching</em> Timelines' },
+  { num: '05', short: 'Subjective', title: '<em>Subjective</em> Time' },
+  { num: '06', short: 'Block', title: 'The <em>Block</em> Universe' },
+  { num: '07', short: 'Retro', title: '<em>Retrocausality</em> & Destiny' },
+  { num: '08', short: 'Future', title: '<em>Convergence</em> & Future' },
+  { num: '09', short: 'Sources', title: '<em>Sources</em> & References' }
+];
+
+const summaries = [
+  `<p>H.G. Wells' <em>The Time Machine</em> (1895) inaugurated time travel as a concept in Western literature, preceding Einstein's revolution by a decade. Wells imagined what Mark Twain explored in <em>A Connecticut Yankee in King Arthur's Court</em> (1889)—temporal displacement—but mechanized it, giving physicists and audiences alike a vocabulary for the impossible. Before Maxwell, Planck, and Einstein transformed physics, fiction had already asked: what if time were navigable like space?</p><div class="s-stat"><div class="st"><div class="sv">1889</div><div class="sl">Twain's Connecticut Yankee</div></div><div class="st"><div class="sv">1895</div><div class="sl">Wells' Time Machine</div></div><div class="st"><div class="sv">1905</div><div class="sl">Einstein's Special Relativity</div></div><div class="st"><div class="sv">1915</div><div class="sl">General Relativity</div></div></div><h4>The Early Vision</h4><p>These works did not attempt to ground time travel in physics—they were imaginative leaps. Yet they established the conceptual infrastructure: time as a dimension, the machine as means, the journey as philosophical meditation. When Einstein revealed that time is not absolute, that it bends and dilates under gravity and velocity, science fiction had already prepared readers to accept the impossible.</p><div class="chips"><span class="chip">narrative-device</span><span class="chip">dimension-as-space</span><span class="chip">mechanical-time</span></div>`,
+
+  `<p>Einstein's theories of special (1905) and general relativity (1915) fundamentally revealed time as relative—not a universal constant but a property of spacetime woven with matter and motion. In special relativity, time dilation means that an observer in motion experiences time slower than a stationary observer. In general relativity, gravitational fields cause <em>gravitational time dilation</em>: time moves slower in stronger gravitational wells.</p><p><em>Interstellar</em> (Christopher Nolan, 2014) visualizes this with devastating clarity. On Miller's planet, orbiting the black hole Gargantua, one hour equals seven years on Earth—a consequence of the extreme spacetime curvature. Kip Thorne, the film's scientific consultant, used equations from general relativity to ground this in real physics. Astronauts experience normal time locally but age decades slower relative to distant observers.</p><h4>The Forever War & Ender's Game</h4><p>Joe Haldeman's <em>The Forever War</em> (1974) and Orson Scott Card's <em>Ender's Game</em> (1985) both employ relativistic time as engine of narrative tragedy. In Haldeman's work, faster-than-light relativistic travel compresses centuries aboard ship while millenia pass on Earth. In Card's, Ender's battles occur in relativistic time—he ages slowly while Earth ages rapidly, rendering him obsolete upon return. Physics becomes destiny.</p><div class="diagram-wrap"><svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg"><text x="50" y="30" class="lbl-hi">TIME DILATION</text><circle cx="150" cy="100" r="40" class="node"/><text x="150" y="100" text-anchor="middle" dominant-baseline="middle" class="node-text">Observer</text><text x="150" y="155" text-anchor="middle" class="lbl">At Rest</text><line x1="230" y1="100" x2="330" y2="100" class="edge"/><text x="280" y="85" text-anchor="middle" class="lbl">Velocity Increase</text><circle cx="400" cy="100" r="40" class="node-hi"/><text x="400" y="100" text-anchor="middle" dominant-baseline="middle" class="node-text">Time</text><text x="400" y="155" text-anchor="middle" class="lbl-hi">Slows</text><line x1="480" y1="100" x2="580" y2="100" class="edge"/><text x="530" y="85" text-anchor="middle" class="lbl">Gravity Stronger</text><circle cx="650" cy="100" r="40" class="node"/><text x="650" y="100" text-anchor="middle" dominant-baseline="middle" class="node-text">Extreme</text><text x="650" y="155" text-anchor="middle" class="lbl">Time Warping</text></svg></div><div class="chips"><span class="chip">mass-warps-spacetime</span><span class="chip">velocity-effect</span><span class="chip">gravitational-wells</span></div>`,
+
+  `<p>A closed timelike curve (CTC) in general relativity describes a loop through spacetime where an observer returns to their own past. <em>Groundhog Day</em> (1993) isn't strictly a CTC—rather, it's a causally isolated loop where one man repeats the same day eternally, gaining memory across iterations. Physics allows the mathematics of CTCs but forbids their paradox via the Novikov self-consistency principle: only outcomes consistent with history occur.</p><p>Heinlein's "<em>All You Zombies</em>" (1959) and more recently <em>Russian Doll</em> (Netflix, 2019) and <em>Edge of Tomorrow</em> (2014) explore loops with escalating metaphysical weight. Heinlein's story twists time into a causal pretzel where the protagonist is their own grandparent—consistent but mind-bending. Russian Doll subverts the time-loop cliché by showing not liberation but compulsion, not individual agency but cyclical imprisonment.</p><h4>The Logic of Loops</h4><p>These works illustrate the self-consistency principle: you cannot change the past because the timeline you inhabited was always consistent with your actions. Groundhog Day's Bill Murray cannot prevent Rita's rejection; he can only become worthy within the day's fixed boundaries. The loop is not a paradox but a cage of necessity.</p><div class="timeline"><div class="tl-item"><div class="tl-date">1959</div><div class="tl-text">Heinlein's "All You Zombies" — causal loops reach philosophical extremity</div></div><div class="tl-item"><div class="tl-date">1993</div><div class="tl-text">Groundhog Day — the loop as epistemological and moral tool</div></div><div class="tl-item"><div class="tl-date">2014</div><div class="tl-text">Edge of Tomorrow — loops as survival mechanism in alien warfare</div></div><div class="tl-item"><div class="tl-date">2019</div><div class="tl-text">Russian Doll — loops expose addiction, compulsion, determinism</div></div></div><div class="chips"><span class="chip">closed-curves</span><span class="chip">self-consistency</span><span class="chip">paradox-avoidance</span></div>`,
+
+  `<p>Hugh Everett's many-worlds interpretation (1957) proposed that every quantum measurement spawns branching realities. Each outcome actualizes in some branch of a universal wavefunction. This resolves quantum paradox not by hidden variables but by multiplication: all possibilities occur in parallel worlds. Science fiction has seized on this as a metaphor for choice, destiny, and the parallel histories that might have been.</p><p><em>Dark</em> (Netflix, 2017–2020), the German sci-fi epic, doesn't merely invoke many-worlds—it embeds the show's structure in it. Characters navigate not just branching timelines but looping cycles across multiple universes. Each choice splinters reality; each choice also returns to the initial state. The show's ludic, game-like structure mirrors the quantum branching it depicts.</p><p><em>Everything Everywhere All at Once</em> (2022) and <em>The Man in the High Castle</em> (Philip K. Dick, 1962; Amazon series, 2015–2019) explore similar terrain. Dick's protagonist glimpses an alternate timeline where the Axis won World War II; EEAAO's Evelyn Wang navigates infinite selves across infinite branches, finding meaning not in a single timeline but in the network of choices that connects them.</p><h4>Loki & Coherence</h4><p><em>Loki</em> (Marvel, 2021–) and <em>Coherence</em> (2013) address branching's dark side: if every choice creates a new timeline, which one is <em>you</em>? Are you the original or a branch-spawn? <em>Coherence</em>'s dinner party becomes a nightmare of duplicates, each a valid version of the same person. <em>Loki</em> frames the Time Variance Authority as a fascistic force imposing a "sacred timeline"—preventing the proliferation of branches through authoritarian surveillance.</p><div class="feat-grid"><div class="feat"><h4>Many Worlds in Fiction</h4><p>Branching timelines let writers visualize choice as physical—each decision spawns a world where the alternative also happens. This reframes free will: you're not choosing one future but inhabiting one branch of many.</p></div><div class="feat"><h4>Quantum as Narrative</h4><p>Stories like Dark use many-worlds to structure plot: loops reconnect branches; characters are quantum entangled; consciousness spans multiple versions. The show's 33-year cycles echo quantum periodicity.</p></div></div><div class="chips"><span class="chip">everett-interpretation</span><span class="chip">branching-wavefunction</span><span class="chip">parallel-choice</span></div>`,
+
+  `<p>Psychology, neuroscience, and cognitive linguistics suggest time may not be objective but woven from perception. Kurt Vonnegut's Billy Pilgrim in <em>Slaughterhouse-Five</em> (1969) becomes "unstuck in time"—experiencing his life non-sequentially, collapsing past, present, and future into simultaneity. He's neither time-traveling nor looping; rather, his consciousness perceives all moments as equally present, a state the Tralfamadorian aliens embody naturally.</p><p>Ted Chiang's "<em>Story of Your Life</em>" (1998), adapted into <em>Arrival</em> (Denis Villeneuve, 2016), proposes linguistic determinism: learning the heptapods' non-linear written language rewires Louise Banks' perception of time. Heptapod B embeds teleology—seeing all moments as endpoints on a predetermined path—into its grammar. By learning this language, Louise gains precognition of her own future because her mind now works like theirs.</p><h4>Memento & Narrative Sequence</h4><p>Christopher Nolan's <em>Memento</em> (2000) inverts narrative sequence to simulate protagonist Leonard's anterograde amnesia. We experience the film backward, moment by moment, inhabiting his fractured temporality. The audience cannot find causal coherence until the climax's reversal—a structure that embeds psychological time into form.</p><div class="callout"><h4>The Sapir-Whorf Hypothesis</h4><p>Chiang's story rests on linguistic relativity: language shapes thought. If the heptapods' language encodes non-linearity, speakers perceive non-linearly. Louise's adoption of their script doesn't time-travel her; it transforms how her mind carves temporal experience.</p></div><div class="chips"><span class="chip">perception-subjective</span><span class="chip">linguistic-determinism</span><span class="chip">narrative-form</span></div>`,
+
+  `<p>The block universe—or eternalism—asserts that past, present, and future all exist equally in four-dimensional spacetime. Einstein's relativity suggests this: events are fixed points in spacetime fabric, not a moving "now" that sweeps through time. If the block universe is true, time doesn't flow; we perceive flow because consciousness moves through it, but all moments—your birth, your death, this sentence—are equally real and eternal.</p><p>Vonnegut and the Tralfamadorians take this seriously. Tralfamadorians "see" all moments simultaneously: Billy Pilgrim's death in 1976 is as present to them as his birth in 1944. This isn't precognition but perception of a static four-dimensional block. When Billy accepts this view, his trauma about the bombing of Dresden dissolves—"So it goes." Every moment exists; death is merely one moment among infinite others.</p><p><em>Watchmen</em> (Alan Moore, 1986; Zack Snyder film, 2009) presents Dr. Manhattan, a god-like being whose consciousness exists outside time. He perceives past, present, and future simultaneously and cannot act otherwise—his timeline is fixed from his omniscient perspective. His tragedy is seeing humanity's fate while unable to deviate from his own predetermined path.</p><h4>Arrival's Heptapod Language</h4><p><em>Arrival</em>'s heptapods write in concentric circles—no beginning, no end, all moments equally present on the page. Louise's mastery of this language grants her non-linear temporal perception. She foreknows her daughter's death not through time travel but through a mind reconfigured to see time as heptapods do: as eternal, not flowing.</p><div class="diagram-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg"><text x="300" y="25" text-anchor="middle" class="lbl-hi">BLOCK UNIVERSE VS. FLOWING TIME</text><g><text x="80" y="80" class="lbl-hi">Flowing Time</text><line x1="40" y1="120" x2="200" y2="120" class="edge-hi"/><circle cx="50" cy="120" r="5" class="node"/><text x="50" y="145" text-anchor="middle" class="lbl">Past</text><circle cx="125" cy="120" r="5" class="node-hi"/><text x="125" y="145" text-anchor="middle" class="lbl">Now</text><circle cx="200" cy="120" r="5" class="node"/><text x="200" y="145" text-anchor="middle" class="lbl">Future</text><text x="125" y="185" text-anchor="middle" class="node-sub">Observer moves through time</text></g><g><text x="380" y="80" class="lbl-hi">Block Universe</text><rect x="300" y="100" width="150" height="80" class="node" fill="none" stroke="currentColor" stroke-width="2"/><text x="375" y="130" text-anchor="middle" class="node-text">Past</text><text x="375" y="150" text-anchor="middle" class="node-text">Present</text><text x="375" y="170" text-anchor="middle" class="node-text">Future</text><text x="375" y="215" text-anchor="middle" class="node-sub">All moments equally real & eternal</text></g></svg></div><div class="chips"><span class="chip">eternalism</span><span class="chip">4d-spacetime</span><span class="chip">no-flow</span></div>`,
+
+  `<p>Retrocausality—causation flowing backward through time—challenges our intuitive notion that causes precede effects. In physics, it appears in Wheeler-Feynman absorber theory: a particle radiates only if a future absorber "reaches back" to receive the signal. In quantum mechanics, delayed-choice experiments suggest that future measurements can retroactively determine past states. Philosophically, retrocausality undoes the arrow of time.</p><p>Christopher Nolan's <em>Tenet</em> (2020) visualizes retrocausality as "inversion"—objects moving backward through time at 1 second per second, perceived from the future as forward causality. The climax orchestrates a "temporal pincer movement": the protagonist and his future self attack from opposite ends of time, their causal arrows pointing backward and forward simultaneously toward a single moment. Paradox is resolved through self-consistency: the future victory ensures the past investment.</p><p>Philip K. Dick's "<em>The Minority Report</em>" (1956; Steven Spielberg film, 2002) explores precognition—three psychics predict murders before they occur. If precognition is real, is the future already determined? Can prevention alter a prophecy, or does prevention <em>cause</em> the future you tried to prevent? The film's answer: the future is mutable only through choices already predicted, a temporal bootstrap where knowledge of destiny enables its fulfillment.</p><h4>Twelve Monkeys & Causal Loops</h4><p>Terry Gilliam's <em>12 Monkeys</em> (1995) presents a nightmare causal loop: the protagonist travels back to prevent a plague but inadvertently causes it. His action and the disaster are locked in mutual causation—neither precedes the other temporally; they define each other paradoxically. Resolution comes not through changing the past but accepting complicity in a predestined cycle.</p><div class="chips"><span class="chip">backward-causation</span><span class="chip">retro-effects</span><span class="chip">bootstrap-paradox</span></div>`,
+
+  `<p>Physics stands at a frontier where time itself may be emergent—not fundamental but arising from something deeper, like spacetime from quantum entanglement (Juan Maldacena's holographic principle) or time from timeless quantum states (Carlo Rovelli's relational interpretation). If time is not fundamental, our categories dissolve: there's no "before" or "after" at quantum gravity's depths, only correlations between entangled systems.</p><p>Science fiction has only begun to explore this territory. Most works rely on relativity, quantum mechanics, and determinism. Yet emergent time theories open new narrative possibilities: worlds where causality is bidirectional, where past and future are symmetric, where consciousness creates temporal sequence through decoherence.</p><h4>Fiction's Unfinished Conversation with Physics</h4><p>Time travel remains impossible under known physics. Yet each impossibility points toward deeper questions: Is time fundamental or emergent? Are causal loops self-consistent or paradoxical? Can the block universe accommodate free will? These are not yet settled in physics or philosophy. Science fiction reserves space for answers not yet discovered.</p><p>The deepest science fiction on time—Chiang, Vonnegut, Villeneuve—recognizes that our experience of temporal flow may be not a window into time's nature but a window into our minds. Consciousness, linguistic structure, and neurochemistry shape how we inhabit time. Physics reveals time's structure; fiction explores its meaning.</p><div class="verdict"><div class="v-col pro"><h4>Best Captures Physics</h4><ul><li>Interstellar — relativistic time dilation with scientific rigor</li><li>Arrival — linguistic relativity and eternalism elegantly woven</li><li>The Forever War — relativistic aging as tragedy</li><li>Memento — perception and narrative sequence aligned</li></ul></div><div class="v-col con"><h4>Most Speculatively Ambitious</h4><ul><li>Tenet — retrocausality visualized (though confusing)</li><li>Slaughterhouse-Five — block universe as existential philosophy</li><li>Russian Doll — loops as metaphor for compulsion and trauma</li><li>Dark — many-worlds as structural narrative principle</li></ul></div></div><div class="chips"><span class="chip">emergent-time</span><span class="chip">quantum-gravity</span><span class="chip">open-questions</span></div>`,
+  `<p>References and sources for further study on the topics covered in this deep dive.</p>`
+];
+
+const details = [
+  `<div class="detail-header"><div class="num">01</div><h2><em>Time</em> Travel Origins</h2></div><p>Before Einstein, before relativity revolutionized physics, fiction had already imagined time as something you could move through. H.G. Wells' <em>The Time Machine</em> (1895) was not the first work to invoke temporal displacement—Mark Twain's <em>A Connecticut Yankee in King Arthur's Court</em> (1889) sent its protagonist backward, accidentally, via concussion—but Wells mechanized the concept. He invented the <em>time machine</em>, a vehicle for navigating the fourth dimension as one navigates space. The term, coined by Wells, became permanent in English usage.</p><p>Wells wrote quickly and provocatively. His novella emerged from earlier drafts, including "The Chronic Argonauts" (serialized in 1888), which introduced the inventor-built temporal device. By 1895, the concept had crystallized: time is a dimension; technology might permit travel within it. Remarkably, this preceded Einstein's 1905 special relativity by a full decade. Wells had no equations, no physics—only imagination and the audacity to treat time as navigable.</p><h3>Why Fiction Preceded Physics</h3><p>Physics had not yet revealed time's true nature. Newton's absolute time—the same everywhere, for everyone—seemed self-evident. Philosophers and dreamers imagined alternatives unconstrained by experimental evidence or mathematical rigor. Fiction could ask "what if?" without proving the answer possible. When Einstein showed that time dilates, that it curves around massive bodies, that it is woven into spacetime—his revelations confirmed what fiction had already intuited: time is strange, malleable, less fundamental than it appears.</p><h3>The Literary Genealogy</h3><p>Wells' machine spawned countless descendants. Science fiction time travel divides into families: the grandfather paradox (you kill your grandfather before your parent's birth; you cease to exist; contradiction), the bootstrap paradox (information travels back and creates itself), the self-consistency principle (only consistent timelines are possible), and branching timelines (each choice spawns a new world). These narrative categories emerged from fiction first, then found parallels in physics—closed timelike curves, Novikov self-consistency, many-worlds interpretation. Fiction intuited the topology of temporal possibility.</p>`,
+
+  `<div class="detail-header"><div class="num">02</div><h2><em>Relativistic</em> Time</h2></div><p>Einstein's revelation was this: time is not universal. Two observers moving relative to each other measure time's passage differently. This <em>time dilation</em> is not illusion or measurement error—it is real. Clocks aboard a fast spaceship run slower, objectively, than clocks on Earth. If you traveled at 99% light speed for one year (ship time), decades would pass on Earth. Return to find everyone you knew aged and dead, your objective lifespan compressed.</p><p>General relativity added gravity's effect: time runs slower in stronger gravitational fields. An astronaut standing on a neutron star's surface ages slower than an astronaut far from any massive body. GPS satellites must account for both effects—special relativistic motion and general relativistic gravitational potential—or position calculations drift catastrophically.</p><h3>Interstellar's Miller's Planet</h3><p>Christopher Nolan's <em>Interstellar</em> (2014) makes this visceral. The crew approaches Miller's planet, which orbits the black hole Gargantua. Due to extreme spacetime curvature, Miller's planet's time dilation ratio is approximately 1:60,000—one hour on the surface equals roughly 7 Earth years. Kip Thorne, a Nobel laureate in physics and the film's consultant, constructed wormholes and black hole solutions consistent with general relativity. The film's depiction of gravitational time dilation is scientifically grounded, if dramatized for narrative effect.</p><p>This device becomes the film's engine of tragedy: Murph, the protagonist's daughter, ages rapidly while Cooper remains roughly the same age. When he returns decades later, she is older than he is. The relativity is not metaphorical—it is the plot. Time dilation isolates the protagonist from everyone he loves, a consequence not of negligence but of physical law.</p><h3>The Forever War & Generational Conflict</h3><p>Joe Haldeman's <em>The Forever War</em> (1974) weaponizes relativistic time. In an endless interstellar war, soldiers travel at near-light speeds to distant theaters. Ship time compresses, but Earth time expands enormously. Soldiers return from a year-long campaign to find centuries have passed, military technology utterly obsolete, Earth's culture unrecognizable. The protagonist experiences only decades subjectively but is a relic when he returns. The war persists not through continuous battle but through time dilation—each voyage leaves him more alien to home.</p><p>Orson Scott Card's <em>Ender's Game</em> (1985) employs similar physics with darker purpose. Ender's battles occur at relativistic speeds; he ages slowly while Earth ages rapidly. He trains to become humanity's savior, only to return and discover that centuries have passed. His youth is his obsolescence—the person Earth needed is now a historical artifact.</p>`,
+
+  `<div class="detail-header"><div class="num">03</div><h2><em>Time</em> Loops & Self-Consistency</h2></div><p>General relativity permits closed timelike curves (CTCs)—loops through spacetime where a worldline returns to its own past. Mathematically, they exist in certain solutions (Kerr black holes, wormholes). Physically, their realizability and consistency are debated. Stephen Hawking proposed a chronological protection conjecture: perhaps the laws of physics prevent time travel, forbidding causal loops at a fundamental level. Yet no theorem has proven this.</p><p>Igor Novikov proposed self-consistency: if time travel occurs, only consistent timelines manifest. You cannot create paradox because the causal structure locks you into actions that don't contradict history. If you travel to kill your grandfather, you will fail—your gun jams, you miss, you hesitate. The universe enforces consistency, not through destiny or fate in a mystical sense, but through the mathematics of closed curves in spacetime.</p><h3>Groundhog Day's Eternal Recurrence</h3><p><em>Groundhog Day</em> (1993) is not technically a CTC—Bill Murray doesn't travel back in time. Rather, he experiences eternal recurrence of the same day. He retains memories across iterations but cannot change events' outcomes. The film uses this to transform him morally: repeatedly living the same day, he cannot achieve goals through external action, only through internal change. Love cannot be conquered; it must be earned. By the film's end, he has lived the day countless times and become a better person—the only victory available within causal consistency.</p><h3>Heinlein's Ontological Paradox</h3><p>Robert Heinlein's "<em>All You Zombies</em>" (1959) presents the ultimate closed loop: a time traveler, through a series of body-swaps and temporal journeys, becomes their own father, mother, child, and temporal agent. The story has no beginning; it is purely causal—each event causes the others with no external origin. The protagonist bootstrap-travels into existence, creating themselves. The story's brilliance is its logical consistency within temporal mathematics: no paradox, only a strange loop of self-causation.</p><h3>Russian Doll & Psychological Loops</h3><p><em>Russian Doll</em> (Netflix, 2019) subverts time-loop escapism by grounding the loop in psychology: protagonist Nadia dies and returns to her birthday party repeatedly. Initially, she seeks escape through increasingly reckless actions. Eventually, she discovers the loop is not magic but a metaphor for compulsive repetition—her own psychological patterns trapping her. The loop is not a physics problem to solve but a trauma to work through. Breaking free requires not discovering the secret mechanism but confronting why she repeats the same self-destructive patterns.</p>`,
+
+  `<div class="detail-header"><div class="num">04</div><h2><em>Branching</em> Timelines</h2></div><p>Hugh Everett III's many-worlds interpretation (1957) proposed a radical resolution to quantum mechanics' measurement problem. When a quantum system is measured, it does not collapse to a single outcome. Rather, the universal wavefunction branches: every possible outcome actualizes in some branch. The observer doesn't select one reality; the act of observation spawns all realities simultaneously. You exist in countless branches, each following a different timeline.</p><p>Many-worlds resolves paradoxes by multiplication. The grandfather paradox vanishes: you kill your grandfather, but in another branch, you don't. Each branch is equally real. This interpretation, once heterodox, is now seriously entertained by many physicists as a consistent reading of quantum mechanics. It suggests a vast multiverse of branching possibilities, most of which we will never observe.</p><h3>Dark's Quantum-Looping Multiverse</h3><p><em>Dark</em> (Netflix, 2017–2020) embeds many-worlds into its narrative structure. The German series depicts not merely branching timelines but looping cycles: two alternate universes separated by 33 years, each generating the other through causal loops that span both worlds. The show's ludic architecture—its game-like presentation of branching paths—mirrors Everett's interpretation. Characters navigate choices that split timelines; choices also circle back to re-initiate cycles. The series' resolution reveals that multiple universes exist in superposition, each with its own history and future, all interconnected through causal loops.</p><h3>Everything Everywhere All at Once</h3><p><em>Everything Everywhere All at Once</em> (2022, Daniel Kwan and Daniel Scheinert) takes many-worlds as its explicit premise. Protagonist Evelyn Wang, a laundromat owner, suddenly perceives herself across infinite alternate realities where she made different choices—scholar, actor, martial artist, billionaire, mother, exile. Each timeline is equally real and inhabited by a version of her consciousness. The film's genius is its emotional core: meaning arises not from identifying the "right" timeline but from recognizing connection across all timelines, from understanding that every version of you is real and every choice matters, even the ones unmade in other worlds.</p><h3>The Man in the High Castle & Loki</h3><p>Philip K. Dick's <em>The Man in the High Castle</em> (1962) and the Amazon adaptation (2015–2019) depict a world where the Axis won WWII. The protagonist glimpses a parallel timeline where the Allies won, destabilizing his reality's certainty. Marvel's <em>Loki</em> (2021–) frames the Time Variance Authority as an oppressive regime imposing a "sacred timeline," preventing branching through authoritarian surveillance and pruning of variants. The series questions whether free will is authentic or merely the illusion of choosing between predetermined branches.</p>`,
+
+  `<div class="detail-header"><div class="num">05</div><h2><em>Subjective</em> Time</h2></div><p>Neuroscience and phenomenology reveal that time is not merely objective—it is woven from perception, memory, and consciousness. The brain constructs temporal experience through memory consolidation, predictive processing, and attention. Drugs alter time perception. Trauma can fragment it. Consciousness does not passively receive time; it actively constructs it.</p><p>Kurt Vonnegut's Billy Pilgrim in <em>Slaughterhouse-Five</em> (1969) becomes "unstuck in time"—his consciousness jumps non-sequentially through moments of his life. The novel presents this as surreal, yet it mirrors how memory actually works: we don't experience life linearly; we retrieve moments associatively, non-chronologically. Vonnegut suggests that Billy's temporality, though strange, might be closer to how consciousness really operates than the illusion of linear flow.</p><h3>Arrival's Linguistic Determinism</h3><p>Ted Chiang's "<em>Story of Your Life</em>" (1998), adapted as <em>Arrival</em> (Denis Villeneuve, 2016), proposes that language structures time perception. The heptapods' written language, Heptapod B, is non-linear—they write concentric circles with no beginning or end, all information simultaneously present on the page. Learning this language rewires the human protagonist Louise's cognition. She begins to perceive time non-linearly, foreseeing her own future not through time travel but through a mind reconfigured to process temporal information the way heptapods do.</p><p>This echoes the Sapir-Whorf hypothesis: language shapes thought. If your language encodes temporal structure, you perceive temporality accordingly. The film's profound insight is that gaining another consciousness's temporal perspective requires becoming that consciousness—learning not just words but an entirely different relationship to time.</p><h3>Memento's Backward Narrative</h3><p>Christopher Nolan's <em>Memento</em> (2000) inverts narrative sequence to embed anterograde amnesia into form. Protagonist Leonard cannot form new memories; he experiences each moment as a first encounter with the world. The film shows scenes backward, with brief forward sequences only within scenes. Viewers experience temporal confusion mirroring Leonard's cognitive state. We cannot resolve causal sequence until the climax's revelation, simulating how Leonard must reconstruct causality through scattered clues and tattoos.</p><p>The film proves that narrative structure <em>is</em> temporal perception. By controlling sequence, Nolan controls understanding. Subjective time is not metaphorical—it is the only time consciousness inhabits.</p>`,
+
+  `<div class="detail-header"><div class="num">06</div><h2>The <em>Block</em> Universe</h2></div><p>Einstein's relativity suggests a profound cosmological hypothesis: the block universe. If spacetime is a unified four-dimensional geometry, then all moments—past, present, future—exist equally, eternally. The "now" is not a special moment but a perspective. You do not travel through time; you are a four-dimensional object extended through time, existing as a permanent structure in spacetime.</p><p>This view, called eternalism, dissolves the distinction between past and future. All events are equally real. Change is an illusion of local perspective. Your birth, life, and death are fixed points in spacetime, no more or less real than your present moment. This is philosophically disturbing: it suggests that free will is illusion, that the future is as immutable as the past.</p><h3>Vonnegut's Tralfamadorians</h3><p>The Tralfamadorians in <em>Slaughterhouse-Five</em> perceive time exactly this way. They see all moments of the universe simultaneously—past, present, and future as a four-dimensional landscape, every death and birth equally present to them. They console Billy about the senselessness of death with the phrase "So it goes"—death is merely one moment among infinite others, no more tragic than birth.</p><p>Vonnegut uses this philosophical position as a coping mechanism for trauma. By adopting the Tralfamadorian view—seeing his life as a fixed four-dimensional structure he cannot alter—Billy Pilgrim finds peace about the bombing of Dresden and his own mortality. The block universe becomes a framework for accepting suffering as permanent but not absolute, eternally present but not active.</p><h3>Watchmen's Dr. Manhattan</h3><p>Dr. Manhattan in <em>Watchmen</em> (Alan Moore, 1986; Zack Snyder, 2009) is a god-like being whose consciousness exists outside time. He perceives past, present, and future simultaneously. He cannot change his timeline because from his omniscient perspective, causality is already fixed. He knows he will leave Earth; he knows he cannot prevent his lover's death; he experiences all moments simultaneously and cannot prefer one outcome.</p><p>His tragedy is eternalism's tragedy: omniscience is paralysis. If the future is as real and immutable as the past, then knowledge of it brings not power but resignation. Dr. Manhattan's famous indifference is not apathy but the logical consequence of perceiving the block universe from within it.</p><h3>Arrival's Heptapod Perspective</h3><p>Louise in <em>Arrival</em> gains a heptapod-like perception through language learning. She foreknows her daughter's life and death not through time travel but through a mind that perceives temporal structure as eternalism suggests. She sees her future, reads it, cannot alter it. Her acceptance of her daughter's fate mirrors Dr. Manhattan's resignation—but Villeneuve frames it as love, not indifference. To choose knowledge of her daughter's brief life, knowing it ends in tragedy, and to choose that life anyway, is perhaps the deepest affirmation possible.</p>`,
+
+  `<div class="detail-header"><div class="num">07</div><h2><em>Retrocausality</em> & Destiny</h2></div><p>Causation flows from past to future—cause precedes effect. This asymmetry is so fundamental we rarely question it. Yet physics permits exceptions. Wheeler-Feynman absorber theory proposes that a particle radiates only if a future absorber "reaches back" to receive the signal—causation flowing both directions through time, forward from emitter and backward from absorber, meeting in the middle. In quantum mechanics, delayed-choice experiments suggest that future measurements retroactively influence past states.</p><p>Retrocausality is not time travel but influence flowing backward. The future can shape the past without paradox if causation is circular: the future event occurs precisely <em>because</em> it retroactively caused the past event. Self-consistency is maintained through circular dependence, not linear sequence.</p><h3>Tenet's Temporal Pincer</h3><p>Christopher Nolan's <em>Tenet</em> (2020) embeds retrocausality in "inversion"—objects traveling backward through time at 1 second per second, perceived from the future as forward causality. The film's climax orchestrates a temporal pincer: the protagonist and his future self attack from opposite temporal directions toward a single moment. Their causal arrows point backward and forward, meeting at a nexus. Victory at this moment, from one temporal direction, ensures the investment in the past, from the other.</p><p>Tenet's metaphysics are notoriously opaque, but its core invokes retrocausality: an effect (the future attack) causes the past investment (the past discovery and preparation). Neither precedes the other; they are locked in mutual causation.</p><h3>The Minority Report's Precognition</h3><p>Philip K. Dick's "<em>The Minority Report</em>" (1956; Steven Spielberg, 2002) explores precognition—three psychics predict murders before they occur. If precognition is accurate, is the future fixed? Can you prevent a predicted murder? Dick's answer is subtle: you can prevent it only <em>because</em> the prevention was already predicted. Your knowledge of the future event enables your action to prevent it, but the prevention is not free—it is already predicted, part of the causal structure.</p><p>Spielberg's film visualizes this as tragedy: the protagonist commits the very murder he sought to prevent, made inevitable by his attempt to prevent it. Causation spirals backward: his future guilt causes his past act.</p><h3>Twelve Monkeys & Bootstrap Paradox</h3><p><em>12 Monkeys</em> (1995, Terry Gilliam) presents an inescapable causal loop: the protagonist travels back to prevent a plague but inadvertently causes it. His action and the disaster are locked in mutual dependence—he causes the plague that sent him back in time to prevent it. The film's genius is its refusal to permit escape: the protagonist cannot change the past because he <em>is</em> the cause of the past he seeks to change.</p>`,
+
+  `<div class="detail-header"><div class="num">08</div><h2><em>Convergence</em> & Future</h2></div><p>Physics has reached a frontier where time itself may not be fundamental. Quantum gravity approaches—loop quantum gravity, string theory, AdS/CFT holography—suggest time emerges from something deeper. Juan Maldacena's holographic principle proposes that three-dimensional spacetime is encoded on a two-dimensional boundary; time and space are epiphenomenal. Carlo Rovelli's relational quantum mechanics suggests that time exists only as correlations between quantum systems; there is no global temporal order, only local causal chains.</p><p>If time is emergent, then at the deepest level, the universe is timeless. Events don't happen in sequence; they correlate. Causation is bidirectional or non-existent. This dissolves classical temporal categories entirely.</p><h3>Fiction's Unfinished Conversation</h3><p>Science fiction has barely begun to explore emergent time. Most works rely on relativity and quantum mechanics, established frameworks. Yet emergent time opens narrative territories unvisited: worlds where causality is symmetric, where past and future are indistinguishable, where consciousness creates temporal sequence through decoherence and observation.</p><p>The deepest science fiction on time—Chiang, Vonnegut, Villeneuve—recognizes that our experience of temporal flow is not a transparent window into time's nature. Rather, it emerges from consciousness, language, and neural architecture. Physics reveals time's structure; fiction explores its meaning and the possibility that meaning and structure are entangled, inseparable.</p><h3>Open Questions</h3><p>Is the block universe true, or does time genuinely flow? Can consciousness exist in a timeless universe? Is free will compatible with determinism? Can language reshape thought, including temporal thought? These questions remain unsettled. Physics and philosophy have not converged. Science fiction reserves space for futures we cannot yet imagine—futures where answers to these questions transform what it means to be human, to remember, to anticipate, to choose.</p><h3>Which Fiction Best Captures Physics?</h3><p><strong>Interstellar</strong> (2014) stands as the most rigorous popular depiction of relativistic time. Kip Thorne's consultation ensured that time dilation's physics is grounded in general relativity. The emotional weight emerges from physical reality, not violated by scientific accuracy.</p><p><strong>Arrival</strong> (2016) elegantly weaves linguistics, perception, and eternalism. Its depiction of language as structure of thought, and thought as structure of temporal experience, reaches toward deepest questions about time's nature. The film suggests that understanding time requires becoming alien to yourself.</p><p><strong>Slaughterhouse-Five</strong> (1969) most profoundly embeds the block universe into existential meaning. Vonnegut's philosophically sophisticated treatment of eternalism—using it not as escapism but as a framework for bearing unbearable suffering—remains unmatched. The novel asks: if time is a fixed four-dimensional block, how do we live ethically within it?</p>`,
+  `<div class="detail-header"><div class="num">09 · Sources</div><h2><em>Sources</em> & References</h2></div>
+<h3>Science Fiction References</h3>
+<p>See individual section references within this deep dive for specific science fiction works exploring nonlinear time narratives and temporal concepts.</p>
+<h3>Physics & Spacetime</h3>
+<p><a href="https://en.wikipedia.org/wiki/Spacetime" target="_blank">Wikipedia: Spacetime</a> — Fundamental concept of spacetime in Einstein's relativity.</p>
+<p><a href="https://en.wikipedia.org/wiki/Time" target="_blank">Wikipedia: Time</a> — Comprehensive overview of physical, philosophical, and psychological perspectives on time.</p>
+<p><a href="https://en.wikipedia.org/wiki/Closed_timelike_curve" target="_blank">Wikipedia: Closed Timelike Curves</a> — Theoretical solutions in general relativity allowing time travel.</p>
+<h3>Philosophy of Time</h3>
+<p><a href="https://en.wikipedia.org/wiki/Philosophy_of_time" target="_blank">Wikipedia: Philosophy of Time</a> — Philosophical theories of time, causality, and the arrow of time.</p>
+<p><a href="https://en.wikipedia.org/wiki/Block_universe" target="_blank">Wikipedia: Block Universe</a> — Static view of spacetime contrasting with temporal flow concepts in science fiction.
+`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">N<em>T</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Physics of Time</div>
+        <div class="hero-title">Nonlinear <em>Time</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Science Fiction · Physics · The Nature of Temporal Experience</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+<script>
+const NB_IMAGES = [
+  { target: 'hero', type: 'hero', file: 'img/nonlinear-time-hero.png', prompt: 'Abstract visualization of branching timelines: a river of light splitting into multiple streams that loop, merge, and branch again, each stream a different color representing different temporal theories, dark background, ethereal glow' }
+];
+</script>
+<script src="../nano-banana.js"></script>
+</body>
+</html>

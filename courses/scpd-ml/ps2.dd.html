@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCS229 Problem Set 2 — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+// DATA: Sections
+const sections = [
+  {num:'01',short:'Overview',title:'PS2 Overview'},
+  {num:'02',short:'Linear Class',title:'Linear Classification'},
+  {num:'03',short:'Boundaries',title:'Decision Boundary Analysis'},
+  {num:'04',short:'PU Learning',title:'Positive-Only Learning'},
+  {num:'05',short:'PU Theory',title:'PU Learning Theory'},
+  {num:'06',short:'Imbalance',title:'Imbalanced Datasets'},
+  {num:'07',short:'Resampling',title:'Resampling & Reweighting'},
+  {num:'08',short:'Takeaways',title:'Key Takeaways'},
+  {num:'09',short:'References',title:'References & <em>Further</em> Reading'},
+];
+
+// DATA: Summary text (shown in main view)
+const summaries = [
+  `<p>Problem Set 2 (35 points) spans linear classifiers, positive-only learning, and imbalanced data—three fundamental challenges in supervised learning. This problem set bridges weeks 2-3 material and prepares you for real-world classification tasks where data is messy.</p><p>Three problems build complementary skills: logistic regression versus Gaussian discriminant analysis, learning from incomplete labels, and handling class imbalance. Together, they form a comprehensive foundation in practical classification.</p>`,
+
+  `<p>Problem 01 compares two core linear classification algorithms on the same dataset. Logistic regression models the conditional probability directly; GDA makes a generative assumption about the class distributions.</p><p>Both produce linear decision boundaries, but their inductive biases differ. Understanding when each shines and when they fail is essential for model selection in practice.</p>`,
+
+  `<p>Decision boundaries are where the classifier changes its prediction. In high dimensions, linear boundaries may be insufficient, requiring feature engineering or nonlinear models. This section explores when linearity works and when you need to augment the feature space.</p><p>Visualizing boundaries reveals classifier behavior, class overlap, and margin structure—intuition that guides algorithm choice and hyperparameter tuning.</p>`,
+
+  `<p>Positive-only (PU) learning handles a realistic scenario: you observe positive labels but cannot distinguish between unlabeled and negative examples. This is common in medical diagnosis, churn prediction, and recommendation systems.</p><p>The key insight is that unlabeled data carries information. By assuming SCAR (selected completely at random), you can estimate p(y=1|x) from observed frequencies and label densities.</p>`,
+
+  `<p>PU learning theory formalizes identifiability. Under SCAR, you can recover the true classifier even from biased labels—provided the unlabeled population is representative. Estimating the class prior π = p(s=1|y=1) is the bottleneck.</p><p>Label frequency and the constant-factor assumption unlock closed-form solutions. Theory validates the intuition that unlabeled data is not wasted.</p>`,
+
+  `<p>Class imbalance occurs when one class vastly outnumbers the other. Standard accuracy is misleading; a majority-class baseline trivializes the problem. Precision, recall, F1, and ROC-AUC reveal true classifier performance.</p><p>Imbalance is rampant in fraud detection, disease screening, and anomaly detection. Addressing it requires both evaluation metrics and training strategies.</p>`,
+
+  `<p>Resampling (over- and undersampling) and reweighting adjust the class distribution seen during training. Oversampling the minority class or undersampling the majority can balance gradients. Cost-sensitive learning directly penalizes minority errors more heavily.</p><p>SMOTE (Synthetic Minority Oversampling) generates synthetic samples, mitigating overfitting to the (small) minority set. Each approach trades off computational cost, variance, and bias.</p>`,
+
+  `<p>This problem set unifies three perspectives: algorithmic (logistic regression vs. GDA), information-theoretic (PU learning's use of unlabeled data), and practical (imbalance handling). Mastering these lays a strong foundation for subsequent classification tasks.</p><p>The real lesson: classification is not monolithic. Your choice of model, loss, metrics, and training strategy must align with data characteristics and business requirements.</p>`,
+
+  `<p>Comprehensive references for classification theory and practice. Stanford CS229 covers logistic regression, GDA, and loss functions. For positive-only learning, see lecture notes on semi-supervised learning and the foundational PU learning papers. The Elements of Statistical Learning provides rigorous treatment of classifiers, evaluation metrics, and imbalance. Scikit-learn and imbalanced-learn documentation offer practical implementation guidance.</p><p>Key Wikipedia articles cover logistic regression, Gaussian discriminant analysis, precision/recall, and ROC curves. For SMOTE and advanced resampling techniques, consult the original papers and modern survey articles on class imbalance.</p>`
+];
+
+// DATA: Detail content (shown in side panel when expanded)
+const details = [
+  `<div class="detail-header"><div class="num">01 — Overview</div><h2>PS2 Overview</h2></div>
+   <p>Problem Set 2 (35 points) contains three complementary problems that deepen your understanding of supervised classification. Each problem targets a different aspect of real-world complexity.</p>
+   <h3>Problem Structure</h3>
+   <p><strong>01—Linear Classification (12 pts):</strong> Compare logistic regression and Gaussian Discriminant Analysis on the same synthetic data. Implement both, analyze decision boundaries, and understand their inductive biases and convergence properties.</p>
+   <p><strong>02—Positive-Only Learning (12 pts):</strong> Train a classifier when you observe positive labels and unlabeled data (no explicit negatives). Estimate the true p(y=1|x) under the SCAR assumption, deriving the relationship between observed and true label frequencies.</p>
+   <p><strong>03—Imbalanced Data (11 pts):</strong> Address a dataset where one class dominates. Implement resampling and reweighting strategies, evaluate using appropriate metrics (F1, ROC-AUC), and justify your approach.</p>
+   <h3>Learning Outcomes</h3>
+   <p>By the end, you will understand linear classifier trade-offs, how to learn from incomplete label information, and practical strategies for imbalanced data. You will also recognize that evaluation metrics must match problem structure.</p>
+   <h3>Recommended Resources</h3>
+   <p>Review lecture notes on logistic regression, GDA, and loss functions. Consult the textbook sections on semi-supervised learning and class imbalance. The sklearn documentation for imbalance handling (imbalanced-learn) is also invaluable.</p>`,
+
+  `<div class="detail-header"><div class="num">02 — Linear Classification</div><h2>Linear Classification</h2></div>
+   <p>Linear classifiers (logistic regression and GDA) form the backbone of supervised learning. Both partition the input space with a hyperplane, but they make different assumptions about the data-generating process.</p>
+   <h3>Logistic Regression</h3>
+   <p>Logistic regression directly models p(y=1|x) = σ(θ^T x). It uses maximum likelihood estimation and empirical risk minimization. The learned boundary is the set where p(y=1|x) = 0.5. Logistic regression is robust and requires fewer assumptions; it works well even when the data does not follow any particular distributional form.</p>
+   <h3>Gaussian Discriminant Analysis</h3>
+   <p>GDA assumes class-conditional distributions p(x|y) are Gaussian with shared covariance. By modeling the joint distribution p(x,y), GDA derives a posterior p(y|x) that is logistic. GDA can be more sample-efficient if the Gaussian assumption holds, but it is sensitive to violating this assumption.</p>
+   <h3>Empirical Comparison</h3>
+   <p>On the same synthetic dataset, plot the learned boundaries for both models. Compare: (1) convergence speed, (2) decision boundary shape, (3) robustness to outliers, and (4) classification accuracy on held-out data. Document your findings in the writeup.</p>
+   <h3>Key Insight</h3>
+   <p>Logistic regression is a discriminative model (learns p(y|x) directly), while GDA is generative (learns the full joint). Generative models can be more data-efficient but are less flexible. Discriminative models are more robust but may require more data.</p>`,
+
+  `<div class="detail-header"><div class="num">03 — Decision Boundary Analysis</div><h2>Decision Boundary Analysis</h2></div>
+   <p>The decision boundary is the set of points where the classifier's prediction changes. Understanding boundary geometry reveals classifier strengths and weaknesses.</p>
+   <h3>Linearity and Feature Space</h3>
+   <p>Both logistic regression and GDA with a diagonal covariance matrix produce linear boundaries in the original feature space. If the data is not linearly separable, you must either augment the feature space (add polynomial or interaction terms) or use a nonlinear model.</p>
+   <h3>Visualization Strategies</h3>
+   <p>For 2D data, plot the boundary as a contour of p(y=1|x) = 0.5. For higher dimensions, use dimensionality reduction (PCA, t-SNE) or plot marginal 2D slices. Color-code training points by true label and mark misclassifications.</p>
+   <h3>Margin and Confidence</h3>
+   <p>The margin is the distance from a point to the decision boundary. Points far from the boundary are classified with high confidence. Margins reveal which regions are well-learned and which are ambiguous. Small margins indicate potential overfitting or overlapping class distributions.</p>
+   <h3>Feature Engineering</h3>
+   <p>If the boundary is nonlinear, engineer features: polynomial terms (x_1^2, x_1 x_2), radial basis functions, or domain-specific transformations. Re-train the linear classifier in the augmented space. Document which features improve the boundary.</p>`,
+
+  `<div class="detail-header"><div class="num">04 — Positive-Only Learning</div><h2>Positive-Only Learning</h2></div>
+   <p>Positive-only (PU) learning addresses a practical scenario: you observe positive examples explicitly, but the unlabeled set contains both positives and negatives. You cannot directly observe the negative class.</p>
+   <h3>Problem Setup</h3>
+   <p>You observe labeled pairs (x, s) where s = 1 indicates a positive label, and s = 0 indicates unlabeled (unknown true label y). The true label y ∈ {0, 1}, and the relationship is s = 1 ⟹ y = 1 (labeled positives are true positives) but y = 0 ⟹ s = 0 (negatives are unlabeled).</p>
+   <h3>SCAR Assumption</h3>
+   <p>Under Selected Completely At Random (SCAR), the probability of observing a label s=1 depends only on the true label y, not on x: p(s=1|x,y) = p(s=1|y). This means the labeling process is uninformative given the true label. SCAR is a strong but often reasonable assumption in applications like crowdsourcing or medical diagnosis.</p>
+   <h3>Core Insight</h3>
+   <p>Observed frequency f(s=1|x) = p(s=1|x) = p(s=1|y=1) · p(y=1|x) = π · p(y=1|x), where π is the label frequency. By estimating π from aggregate statistics, you can recover p(y=1|x) = f(s=1|x) / π.</p>
+   <h3>Practical Steps</h3>
+   <p>Estimate π (the fraction of observed positives among true positives), using methods like label frequency or Elkan-Noto constant-factor assumptions. Then, train a classifier on the observed positives vs. rest, then adjust its scores by π. Finally, evaluate on a held-out set with true labels.</p>`,
+
+  `<div class="detail-header"><div class="num">05 — PU Learning Theory</div><h2>PU Learning Theory</h2></div>
+   <p>PU learning theory formalizes when and how you can recover the true classifier from positive-only observations. The core question: is p(y=1|x) identifiable from p(s=1|x)?</p>
+   <h3>Identifiability</h3>
+   <p>Under SCAR, p(s=1|x) = π · p(y=1|x) where π = p(s=1|y=1) is a constant. This relationship is linear in p(y=1|x), so you can invert it: p(y=1|x) = p(s=1|x) / π. Identifiability holds as long as π > 0 (at least some positives are labeled) and we can estimate π accurately.</p>
+   <h3>Estimating the Class Prior π</h3>
+   <p>π can be estimated using several methods: (1) label frequency (if you trust domain knowledge about the overall prevalence of positives), (2) constant-factor assumption (the labeled positive rate divided by a known or assumed factor), or (3) mixture model fitting (assume the unlabeled set is a mixture of positives and negatives, then infer π via EM).</p>
+   <h3>Error Bounds</h3>
+   <p>Misestimating π introduces systematic bias. If true π = 0.3 but you estimate π = 0.2, your recovered p(y=1|x) will be 1.5× too large. This affects threshold selection and calibration. The problem statement may provide guidance on π estimation.</p>
+   <h3>Practical Robustness</h3>
+   <p>PU learning is robust to moderate π misestimation if you use cross-validation and tuning on a held-out labeled set. Sensitivity analysis (vary π and observe performance) quantifies robustness. Always validate on a separate test set with true labels.</p>`,
+
+  `<div class="detail-header"><div class="num">06 — Imbalanced Datasets</div><h2>Imbalanced Datasets</h2></div>
+   <p>Class imbalance arises when one class is much rarer than the other. Standard accuracy is a poor metric; even a baseline that always predicts the majority class achieves high accuracy.</p>
+   <h3>The Problem</h3>
+   <p>In fraud detection, disease screening, or anomaly detection, the positive class is often 1–5% of the data. Training a standard classifier on raw data biases it toward the majority class; the gradient for the minority class is overwhelmed. The model learns to "mostly predict negative" and achieves high accuracy despite uselessness.</p>
+   <h3>Appropriate Metrics</h3>
+   <p><strong>Precision:</strong> of predicted positives, how many are truly positive? <strong>Recall (Sensitivity):</strong> of true positives, how many did we find? <strong>F1 Score:</strong> harmonic mean of precision and recall; balances both. <strong>ROC-AUC:</strong> area under the receiver operating characteristic curve; threshold-independent measure of rank-ordering quality. <strong>PR-AUC:</strong> precision-recall curve; focuses on the positive class, especially valuable for extreme imbalance.</p>
+   <h3>Why Accuracy Fails</h3>
+   <p>If 99% of data is negative and the model always predicts negative, accuracy = 99% but recall = 0% (catching no true positives). In cost-sensitive settings, missing a positive may be far more expensive than a false alarm.</p>
+   <h3>Evaluation Discipline</h3>
+   <p>Always report multiple metrics. Use stratified k-fold cross-validation to preserve class distribution in each fold. On imbalanced data, random split can lead to leakage (e.g., all positives in test set). Use a held-out test set with the true class distribution.</p>`,
+
+  `<div class="detail-header"><div class="num">07 — Resampling & Reweighting</div><h2>Resampling & Reweighting</h2></div>
+   <p>Resampling and reweighting adjust the training distribution to address imbalance. Each approach has trade-offs in computational cost, variance, and bias.</p>
+   <h3>Oversampling</h3>
+   <p>Replicate minority-class examples until the class distribution is balanced. Pros: no data loss, works with any classifier. Cons: increases dataset size and computational cost; can lead to overfitting if you memorize replicated examples. Mitigation: add small noise to replicated examples (jittering).</p>
+   <h3>Undersampling</h3>
+   <p>Randomly remove majority-class examples to balance the distribution. Pros: reduces dataset size and training time. Cons: information loss (you discard potentially useful majority-class samples); may increase bias. Best used when data is very large or when combined with ensemble methods.</p>
+   <h3>SMOTE (Synthetic Minority Oversampling Technique)</h3>
+   <p>Generate synthetic minority examples by interpolating between existing minority samples. SMOTE creates new examples in the feature space, reducing memorization risk compared to simple replication. Variants exist for edge cases (borderline SMOTE, SVM-SMOTE).</p>
+   <h3>Cost-Sensitive Learning</h3>
+   <p>Assign higher misclassification cost to the minority class. In logistic regression, weight the loss: loss = w+ · (minority errors) + w− · (majority errors). Set w+ > w− to prioritize minority performance. This avoids the data-manipulation of resampling, directly optimizing the imbalanced objective.</p>
+   <h3>Ensemble Methods</h3>
+   <p>Train multiple classifiers on different resampled versions of the data (e.g., balanced random forests). Averaging predictions often reduces variance and improves robustness to resampling artifacts.</p>`,
+
+  `<div class="detail-header"><div class="num">08 — Key Takeaways</div><h2>Key Takeaways</h2></div>
+   <p>Problem Set 2 synthesizes algorithmic, information-theoretic, and practical perspectives on classification. These three problems are not isolated; they interact in real applications.</p>
+   <h3>Algorithmic Perspective: Model Choice</h3>
+   <p>Logistic regression and GDA are both linear classifiers, but they embody different inductive biases. Logistic regression is discriminative and robust; GDA is generative and can be sample-efficient. Neither is universally best; context dictates choice.</p>
+   <h3>Information-Theoretic Perspective: Unlabeled Data</h3>
+   <p>Unlabeled data is not wasted; under SCAR, it carries information about p(y=1|x). PU learning formalizes this insight. Semi-supervised and self-supervised learning build on this principle. Whenever labels are scarce, unlabeled data is your ally.</p>
+   <h3>Practical Perspective: Evaluation and Balance</h3>
+   <p>Accuracy is a red herring for imbalanced data. Precision, recall, F1, and ROC-AUC tell the true story. Addressing imbalance requires a combined strategy: appropriate metrics, resampling/reweighting, and validation discipline.</p>
+   <h3>Integration</h3>
+   <p>A real-world classification task may combine all three themes: you might use logistic regression (linear classifier), adjust for label imbalance (reweighting), and even have some positive-only labels (semi-supervised). Mastery of these fundamentals prepares you for such complexity.</p>
+   <h3>Next Steps</h3>
+   <p>After PS2, deepen your understanding with nonlinear classifiers (neural networks, kernel methods), advanced semi-supervised techniques (consistency regularization, pseudo-labeling), and domain-specific applications (NLP, computer vision, time series). The foundations you build here will anchor everything ahead.</p>`,
+
+  `<div class="detail-header"><div class="num">09 — References</div><h2>References & <em>Further</em> Reading</h2></div>
+   <h3>Stanford CS229 Course Materials</h3>
+   <p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course page with lectures on logistic regression, GDA, and loss functions. See weeks 2-3 lecture notes for material directly relevant to PS2.</p>
+   <h3>Linear Classification Theory</h3>
+   <p><a href="https://en.wikipedia.org/wiki/Logistic_regression" target="_blank">Wikipedia: Logistic Regression</a> — Comprehensive treatment of logistic regression, maximum likelihood, and regularization.</p>
+   <p><a href="https://en.wikipedia.org/wiki/Linear_discriminant_analysis" target="_blank">Wikipedia: Linear Discriminant Analysis</a> — Overview of GDA and discriminant analysis methods. The Gaussian assumption and derivation of linear boundaries are clearly explained.</p>
+   <h3>Positive-Only Learning</h3>
+   <p><a href="https://en.wikipedia.org/wiki/One-class_classification" target="_blank">Wikipedia: Positive and Unlabeled Learning</a> — Foundational overview of PU learning, SCAR assumption, and unlabeled data usage.</p>
+   <h3>Imbalanced Data and Evaluation Metrics</h3>
+   <p><a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank">Wikipedia: Precision and Recall</a> — Detailed explanation of precision, recall, F1-score, and their relationship to confusion matrices.</p>
+   <p><a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic" target="_blank">Wikipedia: ROC Curve</a> — ROC curves, AUC, and threshold-performance trade-offs essential for evaluating imbalanced classifiers.</p>
+   <p><a href="https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis" target="_blank">Wikipedia: Oversampling and Undersampling</a> — Overview of resampling strategies for class imbalance.</p>
+   <h3>Advanced References</h3>
+   <p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Authoritative reference for classification, including logistic regression (Chapter 4), GAM models, and evaluation metrics (Chapter 11). Highly recommended for rigorous treatment of linear classifiers and imbalance.</p>
+   <p><a href="https://imbalanced-learn.org/" target="_blank">imbalanced-learn Documentation</a> — Python library for handling imbalanced datasets. Includes SMOTE, random over/undersampling, and advanced resampling techniques.</p>
+   <div class="callout"><h4>Learning Path</h4><p>Start with Stanford CS229 lectures on logistic regression and GDA. Review Wikipedia articles on precision/recall and ROC curves to understand evaluation metrics. Consult ESL Chapter 4 for rigorous mathematical treatment of linear classifiers. Use imbalanced-learn documentation for practical implementation. For PU learning, search for foundational papers by Elkan & Noto on label bias correction.</p></div>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Problem Set 2</div>
+        <div class="hero-title">PS2: <em>Classification</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>35 Points · Linear Models, PU Learning & Imbalance</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+</body>
+</html>

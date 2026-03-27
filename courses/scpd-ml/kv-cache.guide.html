@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The KV Cache: How LLMs Remember</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       ROOT VARIABLES & RESET
+       ======================================== */
+    :root {
+      /* Backgrounds - Grayscale Depth */
+      --bg-deepest: #0a0a0f;
+      --bg-dark: #10101a;
+      --bg-card: rgba(255, 255, 255, 0.03);
+
+      /* Text - Hierarchical */
+      --text-primary: #e8e6e1;
+      --text-dim: #6b6a7a;
+
+      /* Accents - Vibrant & Paired */
+      --accent-coral: #ff6b3d;
+      --accent-teal: #4ecdc4;
+      --accent-gold: #ffe66d;
+      --accent-purple: #a78bfa;
+      --accent-pink: #f472b6;
+
+      /* Accent 2 (secondary emphasis for hero & titles) */
+      --accent-2: var(--accent-teal);
+
+      /* Glow Effects */
+      --glow-coral: rgba(255, 107, 61, 0.3);
+      --glow-teal: rgba(78, 205, 196, 0.3);
+
+      /* Borders & Dividers */
+      --border-card: 1px solid rgba(255, 255, 255, 0.06);
+
+      /* Spacing (base 16px) */
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 2rem;
+      --spacing-lg: 3rem;
+      --spacing-xl: 6rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-deepest);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ========================================
+       HERO SECTION
+       ======================================== */
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at 30% 20%,
+        rgba(78, 205, 196, 0.08) 0%,
+        rgba(255, 107, 61, 0.04) 40%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 2rem;
+    }
+
+    .hero-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-coral);
+      display: block;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(
+        135deg,
+        var(--text-primary) 0%,
+        var(--accent-2) 50%,
+        var(--accent-2) 100%
+      );
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s ease-out 0.1s both, shimmer 3s ease-in-out 1s infinite;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto;
+      color: var(--text-dim);
+      animation: fadeUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero-sub em {
+      color: var(--accent-2);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      z-index: 2;
+      animation: fadeUp 0.8s ease-out 0.4s both;
+    }
+
+    .scroll-cue .arrow {
+      color: var(--accent-coral);
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 2rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+      }
+
+      .hero-sub {
+        font-size: 1rem;
+      }
+    }
+
+    /* ========================================
+       SECTIONS
+       ======================================== */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-md);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-coral);
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+    }
+
+    .section p {
+      font-size: 1.05rem;
+      max-width: 600px;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .section p strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .section {
+        padding: var(--spacing-lg) var(--spacing-sm);
+      }
+    }
+
+    /* ========================================
+       SVG STAGE
+       ======================================== */
+    .svg-stage {
+      width: 100%;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: var(--border-card);
+      padding: 2rem;
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .svg-stage svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-width: 100%;
+    }
+
+    /* Flow line animation */
+    .flow-line {
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+      animation: flowRight 3s ease-in-out infinite;
+    }
+
+    .flow-line-down {
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      animation: flowDown 3s ease-in-out infinite;
+    }
+
+    /* Node animations */
+    .pulse-node {
+      animation: nodeAppear 0.6s ease-out, pulse 2s ease-in-out 0.6s infinite;
+    }
+
+    .attention-dot {
+      animation: attentionPulse 1.5s ease-in-out infinite;
+    }
+
+    .data-particle {
+      animation: dataFlow 4s linear infinite;
+    }
+
+    .matrix-cell {
+      animation: matrixFade 2s ease-in-out infinite;
+      opacity: 0.3;
+    }
+
+    @media (max-width: 700px) {
+      .svg-stage {
+        padding: 1rem;
+      }
+    }
+
+    /* ========================================
+       STEP NAVIGATION
+       ======================================== */
+    .step-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 2rem 0;
+    }
+
+    .step-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .step-btn:hover {
+      border-color: var(--accent-coral);
+      color: var(--accent-coral);
+    }
+
+    .step-btn.active {
+      background: var(--accent-coral);
+      color: var(--bg-deepest);
+      border-color: var(--accent-coral);
+    }
+
+    @media (max-width: 600px) {
+      .step-nav {
+        gap: 0.5rem;
+      }
+
+      .step-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.65rem;
+      }
+    }
+
+    /* ========================================
+       ARCHITECTURE CARDS GRID
+       ======================================== */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    @media (max-width: 700px) {
+      .arch-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .arch-card {
+      background: var(--bg-card);
+      border: var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.4s ease;
+    }
+
+    .arch-card:hover {
+      border-color: var(--accent-teal);
+      transform: translateY(-4px);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+
+    .arch-card h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-2);
+      margin-bottom: 0.75rem;
+    }
+
+    .arch-card p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       READING LIST & RESOURCES
+       ======================================== */
+    .reading-list {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-md);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .reading-list.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tier {
+      margin-bottom: 3rem;
+    }
+
+    .tier-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .tier-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .tier-1-badge {
+      background: var(--accent-coral);
+      color: var(--bg-deepest);
+    }
+
+    .tier-2-badge {
+      background: var(--accent-teal);
+      color: var(--bg-deepest);
+    }
+
+    .tier-3-badge {
+      background: var(--accent-purple);
+      color: var(--bg-deepest);
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 700px) {
+      .resource-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .resource-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      background: var(--bg-card);
+      border: var(--border-card);
+      border-left: 3px solid var(--accent-coral);
+      border-radius: 8px;
+      padding: 1.25rem;
+      align-items: start;
+      transition: all 0.3s ease;
+    }
+
+    .resource-card:hover {
+      transform: translateX(4px);
+      border-left-color: var(--accent-teal);
+      box-shadow: -6px 0 20px var(--glow-teal);
+    }
+
+    .resource-icon {
+      font-size: 1.5rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .resource-body h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .resource-body .author {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .resource-body p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .resource-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 0.4rem 0.6rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .suggested-path {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border-top: 2px solid;
+      border-image: linear-gradient(90deg, var(--accent-coral), var(--accent-teal)) 1;
+      border-radius: 8px;
+    }
+
+    .suggested-path h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .path-steps {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .path-step {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1.2rem;
+      background: rgba(78, 205, 196, 0.1);
+      border: 1px solid rgba(78, 205, 196, 0.3);
+      border-radius: 6px;
+      color: var(--accent-teal);
+    }
+
+    @media (max-width: 500px) {
+      .path-steps {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .path-steps svg {
+        display: none;
+      }
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .page-footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-md);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+    }
+
+    .page-footer p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-footer em {
+      color: var(--accent-coral);
+    }
+
+    .page-footer strong {
+      color: var(--text-primary);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    @media (max-width: 600px) {
+      .page-footer {
+        padding: var(--spacing-lg) var(--spacing-sm);
+      }
+
+      .page-footer p {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* ========================================
+       KEYFRAME ANIMATIONS
+       ======================================== */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shimmer {
+      0%, 100% {
+        background-position: 0% center;
+      }
+      50% {
+        background-position: 100% center;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(6px);
+      }
+    }
+
+    @keyframes flowRight {
+      from {
+        stroke-dashoffset: 800;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes flowDown {
+      from {
+        stroke-dashoffset: 400;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes nodeAppear {
+      from {
+        r: 0;
+        opacity: 0;
+      }
+      to {
+        r: 20;
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    @keyframes attentionPulse {
+      0%, 100% {
+        r: 5;
+        opacity: 1;
+      }
+      50% {
+        r: 8;
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes dataFlow {
+      0% {
+        offset-distance: 0%;
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        offset-distance: 100%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes matrixFade {
+      0%, 100% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================
+       HERO SECTION
+       ======================================== -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-kicker">How LLMs Remember</span>
+      <h1>The KV Cache</h1>
+      <p class="hero-sub">How transformers trade <em>memory for speed</em> during inference — and why it matters for every token you generate</p>
+    </div>
+    <div class="scroll-cue">
+      <span>Scroll to explore</span>
+      <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 01: THE ATTENTION BOTTLENECK
+       ======================================== -->
+  <section class="section" id="section-01">
+    <div class="section-header">
+      <span class="section-number">01 — The Attention Bottleneck</span>
+      <h2>Why Every Token Matters</h2>
+    </div>
+    <p>In autoregressive generation, each new token must attend to <strong>all previous tokens</strong> in the sequence. This is the fundamental constraint of self-attention: when you generate "mat" in the sequence "The cat sat on the mat", that final token must compute its relationship to every preceding token.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad-coral" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--accent-coral);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:var(--accent-teal);stop-opacity:0.5" />
+          </linearGradient>
+          <filter id="glow-coral">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="glow-teal">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="var(--accent-teal)"/>
+          </marker>
+        </defs>
+
+        <!-- Title -->
+        <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text-primary)" font-family="'JetBrains Mono', monospace">AUTOREGRESSIVE ATTENTION</text>
+
+        <!-- Token sequence -->
+        <g id="tokens">
+          <rect x="80" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="120" y="115" text-anchor="middle" font-size="12" fill="var(--text-primary)">The</text>
+
+          <rect x="200" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="240" y="115" text-anchor="middle" font-size="12" fill="var(--text-primary)">cat</text>
+
+          <rect x="320" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="360" y="115" text-anchor="middle" font-size="12" fill="var(--text-primary)">sat</text>
+
+          <rect x="440" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="480" y="115" text-anchor="middle" font-size="12" fill="var(--text-primary)">on</text>
+
+          <rect x="560" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="600" y="115" text-anchor="middle" font-size="12" fill="var(--text-primary)">the</text>
+
+          <rect x="680" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-teal)" stroke-width="3" rx="4" filter="url(#glow-teal)"/>
+          <text x="720" y="115" text-anchor="middle" font-size="12" fill="var(--accent-teal)" font-weight="600">mat</text>
+        </g>
+
+        <!-- Attention arrows from "mat" back to all previous tokens -->
+        <g id="attention-arrows" stroke="var(--accent-teal)" stroke-width="2" fill="none" marker-end="url(#arrow-teal)" opacity="0.7">
+          <path d="M 680 110 Q 620 150 120 110" class="flow-line"/>
+          <path d="M 680 110 Q 610 160 240 110" class="flow-line"/>
+          <path d="M 680 110 Q 600 170 360 110" class="flow-line"/>
+          <path d="M 680 110 Q 590 180 480 110" class="flow-line"/>
+          <path d="M 680 110 Q 580 190 600 110" class="flow-line"/>
+        </g>
+
+        <!-- O(n²) complexity indicator -->
+        <g id="complexity">
+          <rect x="80" y="260" width="680" height="100" fill="rgba(255, 107, 61, 0.1)" stroke="var(--accent-coral)" stroke-width="1" stroke-dasharray="5,5" rx="6"/>
+          <text x="100" y="285" font-size="11" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">COMPLEXITY COST: O(n²)</text>
+          <text x="100" y="310" font-size="10" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">6 tokens: 36 attention operations</text>
+          <text x="100" y="330" font-size="10" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">1000 tokens: 1,000,000 operations</text>
+          <text x="100" y="350" font-size="10" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">128K tokens: 16 billion operations</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Self-Attention</h3>
+        <p>Each query Q multiplies with all keys K, scaled by dimension, then softmax weights applied to values V. Formula: Attention(Q,K,V) = softmax(Q·K^T/√d)·V</p>
+      </div>
+      <div class="arch-card">
+        <h3>Autoregressive Constraint</h3>
+        <p>During inference, tokens generate left-to-right. Each new token's query must attend to all previous tokens—but cannot look ahead. This creates a causal mask and forces recomputation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 02: CACHE THE KEYS AND VALUES
+       ======================================== -->
+  <section class="section" id="section-02">
+    <div class="section-header">
+      <span class="section-number">02 — Cache the Keys and Values</span>
+      <h2>The Core Insight</h2>
+    </div>
+    <p>Here's the key realization: <strong>K and V matrices for past tokens never change</strong>. Only the new token's Q, K, V need computation. We can cache all previous K and V values, reuse them for every subsequent token, and skip the recomputation entirely.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-slow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="var(--accent-coral)"/>
+          </marker>
+          <marker id="arrow-fast" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="var(--accent-teal)"/>
+          </marker>
+        </defs>
+
+        <!-- LEFT: Without Cache -->
+        <g id="without-cache">
+          <text x="200" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace">WITHOUT CACHE (SLOW)</text>
+          <rect x="80" y="50" width="240" height="300" fill="rgba(255, 107, 61, 0.05)" stroke="var(--accent-coral)" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+
+          <!-- Recompute all -->
+          <text x="100" y="80" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Token 1</text>
+          <circle cx="200" cy="100" r="8" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="215" y="105" font-size="9" fill="var(--text-dim)">Q,K,V</text>
+
+          <text x="100" y="140" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Token 2</text>
+          <circle cx="200" cy="160" r="8" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="215" y="165" font-size="9" fill="var(--text-dim)">Q,K,V</text>
+
+          <text x="100" y="200" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Token 3</text>
+          <circle cx="200" cy="220" r="8" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="215" y="225" font-size="9" fill="var(--text-dim)">Q,K,V</text>
+
+          <text x="100" y="260" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Token N</text>
+          <circle cx="200" cy="280" r="8" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="215" y="285" font-size="9" fill="var(--text-dim)">Q,K,V</text>
+
+          <text x="200" y="330" text-anchor="middle" font-size="10" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">Every token recomputed</text>
+        </g>
+
+        <!-- RIGHT: With Cache -->
+        <g id="with-cache">
+          <text x="700" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace">WITH CACHE (FAST)</text>
+          <rect x="580" y="50" width="240" height="300" fill="rgba(78, 205, 196, 0.05)" stroke="var(--accent-teal)" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+
+          <!-- Cached K,V -->
+          <text x="600" y="80" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Cache</text>
+          <rect x="620" y="100" width="160" height="180" fill="var(--bg-card)" stroke="var(--accent-teal)" stroke-width="1" rx="4"/>
+          <text x="700" y="125" text-anchor="middle" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace">K₁...Kₙ₋₁</text>
+          <text x="700" y="145" text-anchor="middle" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace">V₁...Vₙ₋₁</text>
+          <text x="700" y="240" text-anchor="middle" font-size="8" fill="var(--text-dim)">Stored in GPU/CPU</text>
+
+          <!-- New token -->
+          <text x="600" y="310" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">New Token</text>
+          <circle cx="700" cy="280" r="8" fill="var(--accent-teal)" opacity="0.8" filter="url(#glow-teal)"/>
+          <text x="715" y="285" font-size="9" fill="var(--text-dim)">Q only</text>
+
+          <text x="700" y="345" text-anchor="middle" font-size="10" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">Only new Q computed</text>
+        </g>
+
+        <!-- Visual arrow showing the benefit -->
+        <path d="M 330 200 L 560 200" stroke="var(--accent-gold)" stroke-width="2" marker-end="url(#arrow-fast)" stroke-dasharray="5,5"/>
+        <text x="445" y="195" text-anchor="middle" font-size="10" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">Store & Reuse</text>
+      </svg>
+    </div>
+
+    <div class="step-nav">
+      <button class="step-btn active" data-step="1">Step 1: Compute</button>
+      <button class="step-btn" data-step="2">Step 2: Cache</button>
+      <button class="step-btn" data-step="3">Step 3: Reuse</button>
+      <button class="step-btn" data-step="4">Step 4: Append</button>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Prefill Phase</h3>
+        <p>Process the prompt in parallel (compute-bound). Compute Q, K, V for all tokens at once. High throughput, compute is the bottleneck.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Decode Phase</h3>
+        <p>Generate one token at a time (memory-bound). Compute new Q only, reuse cached K, V. Memory bandwidth becomes the bottleneck.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 03: ANATOMY OF THE CACHE
+       ======================================== -->
+  <section class="section" id="section-03">
+    <div class="section-header">
+      <span class="section-number">03 — Anatomy of the Cache</span>
+      <h2>Memory Layout & Dimensions</h2>
+    </div>
+    <p>The KV cache is a 4D tensor with shape <strong>[batch, num_heads, seq_len, head_dim]</strong>. As the sequence grows, memory consumption grows linearly with sequence length—but compounds across layers.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad-layers" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--accent-teal);stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:var(--accent-purple);stop-opacity:0.8" />
+          </linearGradient>
+        </defs>
+
+        <!-- Title -->
+        <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text-primary)" font-family="'JetBrains Mono', monospace">KV CACHE TENSOR SHAPE</text>
+
+        <!-- 3D-ish tensor representation -->
+        <g id="tensor-3d">
+          <!-- Batch dimension -->
+          <rect x="120" y="80" width="60" height="60" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="4"/>
+          <text x="150" y="115" text-anchor="middle" font-size="11" fill="var(--text-primary)" font-weight="600">Batch</text>
+
+          <!-- Num heads -->
+          <rect x="220" y="80" width="60" height="60" fill="var(--bg-card)" stroke="var(--accent-teal)" stroke-width="2" rx="4"/>
+          <text x="250" y="115" text-anchor="middle" font-size="11" fill="var(--text-primary)" font-weight="600">Heads</text>
+
+          <!-- Seq len -->
+          <rect x="320" y="80" width="80" height="60" fill="var(--bg-card)" stroke="var(--accent-gold)" stroke-width="2" rx="4"/>
+          <text x="360" y="110" text-anchor="middle" font-size="11" fill="var(--text-primary)" font-weight="600">Sequence</text>
+          <text x="360" y="125" text-anchor="middle" font-size="11" fill="var(--text-primary)" font-weight="600">Length</text>
+
+          <!-- Head dim -->
+          <rect x="440" y="80" width="60" height="60" fill="var(--bg-card)" stroke="var(--accent-purple)" stroke-width="2" rx="4"/>
+          <text x="470" y="115" text-anchor="middle" font-size="11" fill="var(--text-primary)" font-weight="600">Dim</text>
+        </g>
+
+        <!-- Example: LLaMA-2 70B -->
+        <g id="example">
+          <rect x="120" y="180" width="380" height="140" fill="rgba(78, 205, 196, 0.08)" stroke="var(--accent-teal)" stroke-width="1" stroke-dasharray="5,5" rx="6"/>
+
+          <text x="140" y="205" font-size="11" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">LLaMA-2 70B Configuration</text>
+
+          <text x="140" y="230" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">80 transformer layers</text>
+          <text x="140" y="250" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">64 attention heads per layer</text>
+          <text x="140" y="270" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">128 dimensions per head</text>
+          <text x="140" y="290" font-size="10" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">= 20.48 MB per token per layer</text>
+          <text x="140" y="310" font-size="10" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">× 80 layers = 1.64 GB per token</text>
+        </g>
+
+        <!-- Growing bar chart -->
+        <g id="growth-chart">
+          <text x="120" y="370" font-size="10" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Cache growth per token:</text>
+
+          <rect x="380" y="355" width="40" height="15" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="430" y="367" font-size="8" fill="var(--text-dim)">1 token = 1.64 GB</text>
+
+          <rect x="380" y="375" width="80" height="15" fill="var(--accent-coral)" opacity="0.6"/>
+          <text x="470" y="387" font-size="8" fill="var(--text-dim)">100 tokens = 164 GB</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Batch Dimension</h3>
+        <p>Number of sequences processed in parallel. Each sequence in a batch maintains its own independent KV cache. Multiplies total memory requirement.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Number of Heads</h3>
+        <p>Multi-head attention. Each head maintains separate K and V projections. LLaMA-2 70B: 64 heads. More heads = more cache per token.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Sequence Length (Growing)</h3>
+        <p>The dimension that grows dynamically. Starts small (1 token), grows as you generate output. This is the primary memory concern in long-context generation.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Head Dimension</h3>
+        <p>Fixed dimensionality of each attention head. LLaMA-2 70B: 128 dimensions per head. Standard formula: model_dim / num_heads.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 04: THE MEMORY WALL
+       ======================================== -->
+  <section class="section" id="section-04">
+    <div class="section-header">
+      <span class="section-number">04 — The Memory Wall</span>
+      <h2>When Cache Becomes Massive</h2>
+    </div>
+    <p>As context length grows, KV cache memory consumption can exceed the model's weights. A 70B parameter model with 128K context can consume <strong>hundreds of gigabytes</strong> of cache—making long-context inference infeasible without optimization.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-right" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="var(--text-dim)"/>
+          </marker>
+        </defs>
+
+        <!-- Title -->
+        <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text-primary)" font-family="'JetBrains Mono', monospace">MEMORY CONSUMPTION vs SEQUENCE LENGTH</text>
+
+        <!-- Axes -->
+        <line x1="80" y1="350" x2="850" y2="350" stroke="var(--text-dim)" stroke-width="1" marker-end="url(#arrow-right)"/>
+        <line x1="80" y1="350" x2="80" y2="50" stroke="var(--text-dim)" stroke-width="1"/>
+        <text x="860" y="355" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Sequence Length</text>
+        <text x="50" y="40" font-size="9" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Memory (GB)</text>
+
+        <!-- Grid lines and labels -->
+        <text x="75" y="365" text-anchor="end" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">0</text>
+        <text x="190" y="365" text-anchor="middle" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">2K</text>
+        <text x="330" y="365" text-anchor="middle" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">8K</text>
+        <text x="510" y="365" text-anchor="middle" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32K</text>
+        <text x="770" y="365" text-anchor="middle" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">128K</text>
+
+        <!-- Legend -->
+        <g id="legend" transform="translate(650, 70)">
+          <rect x="0" y="0" width="5" height="5" fill="var(--accent-coral)"/>
+          <text x="10" y="5" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Model Weights</text>
+
+          <rect x="0" y="20" width="5" height="5" fill="var(--accent-teal)"/>
+          <text x="10" y="25" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">KV Cache</text>
+
+          <rect x="0" y="40" width="5" height="5" fill="var(--accent-gold)"/>
+          <text x="10" y="45" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Activations</text>
+        </g>
+
+        <!-- Model weights line (flat) -->
+        <line x1="80" y1="320" x2="770" y2="320" stroke="var(--accent-coral)" stroke-width="3"/>
+        <text x="800" y="325" font-size="9" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">140 GB</text>
+
+        <!-- KV cache line (steep growth) -->
+        <polyline points="80,300 190,240 330,180 510,120 770,80" stroke="var(--accent-teal)" stroke-width="3" fill="none"/>
+        <polygon points="770,80 770,100 750,90" fill="var(--accent-teal)"/>
+        <text x="780" y="85" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">KV Growth</text>
+
+        <!-- Activations line (small) -->
+        <polyline points="80,330 190,320 330,310 510,300 770,290" stroke="var(--accent-gold)" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+
+        <!-- Crossing point annotation -->
+        <circle cx="510" cy="120" r="8" fill="none" stroke="var(--accent-gold)" stroke-width="2" stroke-dasharray="3,3"/>
+        <text x="510" y="65" text-anchor="middle" font-size="9" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">Cache exceeds</text>
+        <text x="510" y="80" text-anchor="middle" font-size="9" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">model weights</text>
+      </svg>
+    </div>
+
+    <div class="step-nav">
+      <button class="step-btn active" data-step="1">2K tokens</button>
+      <button class="step-btn" data-step="2">8K tokens</button>
+      <button class="step-btn" data-step="3">32K tokens</button>
+      <button class="step-btn" data-step="4">128K tokens</button>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Linear Memory Growth</h3>
+        <p>KV cache grows O(n) with sequence length. At 128K tokens, cache alone can be 200GB+. Becomes the primary bottleneck in long-context inference.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Model Weights Fixed</h3>
+        <p>Model parameters stay constant. LLaMA-2 70B weighs ~140GB. But cache exceeds this at moderate context lengths, limiting practical deployment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 05: SHRINKING THE CACHE
+       ======================================== -->
+  <section class="section" id="section-05">
+    <div class="section-header">
+      <span class="section-number">05 — Shrinking the Cache</span>
+      <h2>Optimization Techniques</h2>
+    </div>
+    <p>Multiple strategies reduce KV cache footprint without sacrificing quality. From architectural changes (MQA, GQA) to quantization and smart eviction policies.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow-accent">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Title -->
+        <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text-primary)" font-family="'JetBrains Mono', monospace">ATTENTION HEAD CONFIGURATIONS</text>
+
+        <!-- MHA: Multi-Head Attention (Full) -->
+        <g id="mha" transform="translate(100, 70)">
+          <rect x="0" y="0" width="150" height="280" fill="var(--bg-card)" stroke="var(--accent-coral)" stroke-width="2" rx="6"/>
+          <text x="75" y="25" text-anchor="middle" font-size="11" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">MHA</text>
+
+          <!-- Query heads -->
+          <text x="10" y="50" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32 Q heads</text>
+          <g id="q-heads">
+            <rect x="10" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="22" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="34" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <text x="50" y="66" font-size="7" fill="var(--text-dim)">...</text>
+            <rect x="60" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+          </g>
+
+          <!-- Key heads -->
+          <text x="10" y="100" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32 K heads</text>
+          <g id="k-heads-mha">
+            <rect x="10" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <rect x="22" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <rect x="34" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <text x="50" y="116" font-size="7" fill="var(--text-dim)">...</text>
+            <rect x="60" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+          </g>
+
+          <!-- Value heads -->
+          <text x="10" y="150" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32 V heads</text>
+          <g id="v-heads-mha">
+            <rect x="10" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <rect x="22" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <rect x="34" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <text x="50" y="166" font-size="7" fill="var(--text-dim)">...</text>
+            <rect x="60" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+          </g>
+
+          <text x="75" y="230" text-anchor="middle" font-size="9" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">Full Cache</text>
+          <text x="75" y="250" text-anchor="middle" font-size="8" fill="var(--text-dim)">Memory: 100%</text>
+          <text x="75" y="265" text-anchor="middle" font-size="8" fill="var(--text-dim)">Quality: Best</text>
+        </g>
+
+        <!-- MQA: Multi-Query Attention (Minimal) -->
+        <g id="mqa" transform="translate(375, 70)">
+          <rect x="0" y="0" width="150" height="280" fill="var(--bg-card)" stroke="var(--accent-teal)" stroke-width="2" rx="6"/>
+          <text x="75" y="25" text-anchor="middle" font-size="11" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">MQA</text>
+
+          <!-- Query heads -->
+          <text x="10" y="50" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32 Q heads</text>
+          <g id="q-heads-mqa">
+            <rect x="10" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="22" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="34" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <text x="50" y="66" font-size="7" fill="var(--text-dim)">...</text>
+            <rect x="60" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+          </g>
+
+          <!-- Single Key head -->
+          <text x="10" y="100" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">1 K head</text>
+          <g id="k-heads-mqa">
+            <rect x="10" y="110" width="8" height="8" fill="var(--accent-gold)" filter="url(#glow-accent)"/>
+            <text x="30" y="116" font-size="8" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">↓ 32x smaller</text>
+          </g>
+
+          <!-- Single Value head -->
+          <text x="10" y="150" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">1 V head</text>
+          <g id="v-heads-mqa">
+            <rect x="10" y="160" width="8" height="8" fill="var(--accent-purple)" filter="url(#glow-accent)"/>
+            <text x="30" y="166" font-size="8" fill="var(--accent-purple)" font-family="'JetBrains Mono', monospace" font-weight="600">↓ 32x smaller</text>
+          </g>
+
+          <text x="75" y="230" text-anchor="middle" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">Minimal Cache</text>
+          <text x="75" y="250" text-anchor="middle" font-size="8" fill="var(--text-dim)">Memory: 3%</text>
+          <text x="75" y="265" text-anchor="middle" font-size="8" fill="var(--text-dim)">Quality: Degraded</text>
+        </g>
+
+        <!-- GQA: Grouped Query Attention (Balanced) -->
+        <g id="gqa" transform="translate(650, 70)">
+          <rect x="0" y="0" width="150" height="280" fill="var(--bg-card)" stroke="var(--accent-purple)" stroke-width="2" rx="6"/>
+          <text x="75" y="25" text-anchor="middle" font-size="11" fill="var(--accent-purple)" font-family="'JetBrains Mono', monospace" font-weight="600">GQA</text>
+
+          <!-- Query heads -->
+          <text x="10" y="50" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">32 Q heads</text>
+          <g id="q-heads-gqa">
+            <rect x="10" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="22" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <rect x="34" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+            <text x="50" y="66" font-size="7" fill="var(--text-dim)">...</text>
+            <rect x="60" y="60" width="8" height="8" fill="var(--accent-teal)"/>
+          </g>
+
+          <!-- 8 Key heads -->
+          <text x="10" y="100" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">8 K heads</text>
+          <g id="k-heads-gqa">
+            <rect x="10" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <rect x="22" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <rect x="34" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <rect x="46" y="110" width="8" height="8" fill="var(--accent-gold)"/>
+            <text x="60" y="116" font-size="8" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">↓ 4x smaller</text>
+          </g>
+
+          <!-- 8 Value heads -->
+          <text x="10" y="150" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">8 V heads</text>
+          <g id="v-heads-gqa">
+            <rect x="10" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <rect x="22" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <rect x="34" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <rect x="46" y="160" width="8" height="8" fill="var(--accent-purple)"/>
+            <text x="60" y="166" font-size="8" fill="var(--accent-purple)" font-family="'JetBrains Mono', monospace" font-weight="600">↓ 4x smaller</text>
+          </g>
+
+          <text x="75" y="230" text-anchor="middle" font-size="9" fill="var(--accent-purple)" font-family="'JetBrains Mono', monospace" font-weight="600">Balanced Cache</text>
+          <text x="75" y="250" text-anchor="middle" font-size="8" fill="var(--text-dim)">Memory: 25%</text>
+          <text x="75" y="265" text-anchor="middle" font-size="8" fill="var(--text-dim)">Quality: Good</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Multi-Query Attention (MQA)</h3>
+        <p>Single K and V head shared across all Q heads. Reduces cache to 1/num_heads size. Trade-off: quality degradation. Used in Falcon, PaLM.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Grouped Query Attention (GQA)</h3>
+        <p>Compromise: g groups of heads share K/V. Typically 4-8x compression. Maintains quality better than MQA. Used in LLaMA-2, Gemini.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Quantization</h3>
+        <p>Store K and V in INT8 or INT4 instead of FP32. 75-87% memory savings with minimal quality loss. Supported in vLLM and TensorRT-LLM.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Sliding Window Attention</h3>
+        <p>Only cache recent tokens (e.g., last 4096 tokens). Effective for local patterns. Mistral 7B: 4K window. Breaks long-range dependency capture.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Token Eviction (H₂O)</h3>
+        <p>Keep high-importance tokens, evict low-importance ones. H₂O paper: identify via attention scores. Maintains context quality with 50-70% cache reduction.</p>
+      </div>
+      <div class="arch-card">
+        <h3>KV Merging</h3>
+        <p>Merge semantically similar tokens' K/V. Reduces cache while preserving key information. Advanced technique, trade-off between compression and fidelity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 06: PAGEDATTENTION
+       ======================================== -->
+  <section class="section" id="section-06">
+    <div class="section-header">
+      <span class="section-number">06 — PagedAttention: Virtual Memory for AI</span>
+      <h2>The vLLM Breakthrough</h2>
+    </div>
+    <p>PagedAttention (Kwon et al., 2023) is the killer optimization behind vLLM. It treats KV cache like OS virtual memory: logical blocks map to physical memory through a block table, enabling <strong>near-zero fragmentation</strong> and memory sharing across requests.</p>
+
+    <div class="svg-stage">
+      <svg viewBox="0 0 900 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad-wasted" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:var(--accent-coral);stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:var(--accent-coral);stop-opacity:0.1" />
+          </linearGradient>
+        </defs>
+
+        <!-- TRADITIONAL: Contiguous allocation with fragmentation -->
+        <g id="traditional">
+          <text x="200" y="30" text-anchor="middle" font-size="12" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">TRADITIONAL: Contiguous Blocks</text>
+
+          <!-- Sequence 1: contiguous, fragmented -->
+          <rect x="80" y="60" width="90" height="30" fill="var(--accent-coral)" opacity="0.6" rx="2"/>
+          <text x="125" y="81" text-anchor="middle" font-size="8" fill="var(--bg-deepest)">Seq 1</text>
+
+          <!-- Wasted space -->
+          <rect x="180" y="60" width="40" height="30" fill="url(#grad-wasted)" stroke="var(--accent-coral)" stroke-width="1" stroke-dasharray="2,2" rx="2"/>
+          <text x="200" y="81" text-anchor="middle" font-size="7" fill="var(--accent-coral)">waste</text>
+
+          <!-- Sequence 2: contiguous, fragmented -->
+          <rect x="230" y="60" width="120" height="30" fill="var(--accent-teal)" opacity="0.6" rx="2"/>
+          <text x="290" y="81" text-anchor="middle" font-size="8" fill="var(--bg-deepest)">Seq 2</text>
+
+          <!-- Wasted space -->
+          <rect x="360" y="60" width="60" height="30" fill="url(#grad-wasted)" stroke="var(--accent-coral)" stroke-width="1" stroke-dasharray="2,2" rx="2"/>
+          <text x="390" y="81" text-anchor="middle" font-size="7" fill="var(--accent-coral)">waste</text>
+
+          <!-- Sequence 3: contiguous, fits -->
+          <rect x="430" y="60" width="80" height="30" fill="var(--accent-purple)" opacity="0.6" rx="2"/>
+          <text x="470" y="81" text-anchor="middle" font-size="8" fill="var(--bg-deepest)">Seq 3</text>
+
+          <!-- Text label -->
+          <text x="200" y="120" font-size="9" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">~50-60% Memory Wasted (Fragmentation)</text>
+
+          <!-- Example -->
+          <text x="80" y="145" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Batch 1: allocate 512 slots</text>
+          <text x="80" y="160" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">Request ends after 300 tokens → 212 slots wasted</text>
+        </g>
+
+        <!-- PagedAttention: Block table mapping -->
+        <g id="paged-attention">
+          <text x="700" y="30" text-anchor="middle" font-size="12" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">PagedAttention: Block Table</text>
+
+          <!-- Logical blocks (left) -->
+          <text x="620" y="60" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">Logical Blocks</text>
+          <rect x="600" y="75" width="60" height="20" fill="var(--accent-teal)" opacity="0.3" stroke="var(--accent-teal)" stroke-width="1" rx="2"/>
+          <text x="630" y="88" text-anchor="middle" font-size="7">Block 1</text>
+
+          <rect x="600" y="100" width="60" height="20" fill="var(--accent-teal)" opacity="0.3" stroke="var(--accent-teal)" stroke-width="1" rx="2"/>
+          <text x="630" y="113" text-anchor="middle" font-size="7">Block 2</text>
+
+          <rect x="600" y="125" width="60" height="20" fill="var(--accent-teal)" opacity="0.3" stroke="var(--accent-teal)" stroke-width="1" rx="2"/>
+          <text x="630" y="138" text-anchor="middle" font-size="7">Block 3</text>
+
+          <!-- Arrows to physical blocks -->
+          <path d="M 670 85 L 720 85" stroke="var(--accent-teal)" stroke-width="1" marker-end="url(#arrow-teal)"/>
+          <path d="M 670 110 L 720 95" stroke="var(--accent-teal)" stroke-width="1" marker-end="url(#arrow-teal)"/>
+          <path d="M 670 135 L 720 105" stroke="var(--accent-teal)" stroke-width="1" marker-end="url(#arrow-teal)"/>
+
+          <!-- Physical blocks (right) - packed -->
+          <text x="780" y="60" font-size="9" fill="var(--accent-gold)" font-family="'JetBrains Mono', monospace" font-weight="600">Physical Memory</text>
+          <rect x="720" y="75" width="60" height="20" fill="var(--accent-gold)" opacity="0.6" stroke="var(--accent-gold)" stroke-width="1" rx="2"/>
+          <text x="750" y="88" text-anchor="middle" font-size="7">Phys 1</text>
+
+          <rect x="720" y="100" width="60" height="20" fill="var(--accent-gold)" opacity="0.6" stroke="var(--accent-gold)" stroke-width="1" rx="2"/>
+          <text x="750" y="113" text-anchor="middle" font-size="7">Phys 2</text>
+
+          <rect x="720" y="125" width="60" height="20" fill="var(--accent-gold)" opacity="0.6" stroke="var(--accent-gold)" stroke-width="1" rx="2"/>
+          <text x="750" y="138" text-anchor="middle" font-size="7">Phys 3</text>
+
+          <!-- No wasted space label -->
+          <text x="700" y="180" text-anchor="middle" font-size="9" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600"><4% Fragmentation</text>
+
+          <!-- Benefits -->
+          <text x="620" y="220" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">✓ Copy-on-write for shared prefixes</text>
+          <text x="620" y="235" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">✓ Dynamic block allocation</text>
+          <text x="620" y="250" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">✓ Preemption without data loss</text>
+          <text x="620" y="265" font-size="8" fill="var(--text-dim)" font-family="'JetBrains Mono', monospace">✓ 10x+ batch size increase</text>
+        </g>
+
+        <!-- Comparison metric -->
+        <g id="comparison">
+          <rect x="80" y="290" width="760" height="90" fill="var(--bg-card)" stroke="var(--border-card)" rx="6"/>
+          <text x="100" y="315" font-size="10" fill="var(--accent-coral)" font-family="'JetBrains Mono', monospace" font-weight="600">Traditional: 60-70% memory waste, low batch size, inefficient scheduler</text>
+          <text x="100" y="335" font-size="10" fill="var(--accent-teal)" font-family="'JetBrains Mono', monospace" font-weight="600">PagedAttention: <4% waste, 10-100x batch multiplier, continuous batching</text>
+          <text x="100" y="355" font-size="9" fill="var(--text-dim)">Result: Same GPU memory, 10x more throughput</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>Block Tables</h3>
+        <p>Map logical block IDs to physical memory addresses. Each request maintains its own block table. Enables non-contiguous allocation without software overhead.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Memory Sharing</h3>
+        <p>Copy-on-write semantics. Requests sharing a prefix (e.g., system prompt) share the same physical blocks. When one modifies, allocate new block. Save 40-60% on common prefixes.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Continuous Batching</h3>
+        <p>Preempt and resume requests without losing state. New requests start immediately; old requests pause. Eliminates idle GPU time. Vastly improves utilization.</p>
+      </div>
+      <div class="arch-card">
+        <h3>Near-Zero Waste</h3>
+        <p>Fragmentation reduced to <4% (vs 60% traditional). Because blocks are small (16 tokens) and flexibly allocated, padding/waste is minimal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       SECTION 07: THE PRODUCTION LANDSCAPE
+       ======================================== -->
+  <section class="section" id="section-07">
+    <div class="section-header">
+      <span class="section-number">07 — The Production Landscape</span>
+      <h2>How Major Frameworks Handle KV Cache</h2>
+    </div>
+    <p>Leading inference frameworks implement KV cache optimization differently. Understanding their strategies helps you choose the right tool for your workload.</p>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3>vLLM</h3>
+        <p>PagedAttention, continuous batching, memory sharing. Best-in-class throughput. 10-40x speed vs naive inference. Industry standard for long-context and batch serving.</p>
+      </div>
+      <div class="arch-card">
+        <h3>TensorRT-LLM (NVIDIA)</h3>
+        <p>In-flight batching, FP8 KV cache quantization, GPU-optimized kernels. Lower latency for single requests. Native NVIDIA hardware optimization.</p>
+      </div>
+      <div class="arch-card">
+        <h3>HuggingFace Text Generation Inference (TGI)</h3>
+        <p>Flash Attention, token streaming, dynamic batching. Strong on ease-of-use. Integrates HF models seamlessly. Growing performance parity with vLLM.</p>
+      </div>
+      <div class="arch-card">
+        <h3>SGLang</h3>
+        <p>RadixAttention (prefix tree for KV), speculative decoding, multi-modal support. Research-focused. Excellent for advanced batching patterns and constrained generation.</p>
+      </div>
+      <div class="arch-card">
+        <h3>LM Studio (Local)</h3>
+        <p>Simplified KV cache management, user-friendly UI. Single-request focus. Good for development and testing. Sacrifices some throughput optimization.</p>
+      </div>
+      <div class="arch-card">
+        <h3>llama.cpp</h3>
+        <p>Memory-efficient, CPU/GPU hybrid. Basic KV caching. Focus on accessibility, not maximum throughput. Excellent for edge deployment and small models.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border: var(--border-card); border-radius: 12px;">
+      <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-2); margin-bottom: 1.5rem;">Future Directions</h3>
+      <p style="color: var(--text-dim); line-height: 1.7; margin-bottom: 1rem;">
+        <strong>Disaggregated KV Stores:</strong> Separate KV cache from inference engine. Allows scaling caching independently from compute.
+      </p>
+      <p style="color: var(--text-dim); line-height: 1.7; margin-bottom: 1rem;">
+        <strong>Cross-Request Caching:</strong> Share KV cache across users/requests. Radical efficiency gains for multi-user scenarios (but privacy considerations).
+      </p>
+      <p style="color: var(--text-dim); line-height: 1.7;">
+        <strong>Speculative Decoding with Cache Prefilling:</strong> Speculatively generate tokens and precompute their KV cache. Accept when tokens match, reject otherwise. Unifies prefill/decode phases.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       READING LIST & RESOURCES
+       ======================================== -->
+  <section class="reading-list">
+    <div class="section-header">
+      <span class="section-number">Resources</span>
+      <h2>Further Reading</h2>
+    </div>
+
+    <div class="tier tier-1">
+      <div class="tier-header">
+        <span class="tier-badge tier-1-badge">Essential</span>
+      </div>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div class="resource-icon">📖</div>
+          <div class="resource-body">
+            <h4>Attention Is All You Need</h4>
+            <p class="author">Vaswani et al., 2017</p>
+            <p>The foundational transformer paper. Introduces self-attention, positional encoding, and the encoder-decoder architecture. Essential for understanding how attention operates.</p>
+          </div>
+          <div class="resource-tag">paper</div>
+        </div>
+        <div class="resource-card">
+          <div class="resource-icon">💻</div>
+          <div class="resource-body">
+            <h4>KV Cache Tutorial</h4>
+            <p class="author">Sebastian Raschka</p>
+            <p>Hands-on coding tutorial for implementing KV cache from scratch. Walks through prefill vs decode phases with PyTorch examples. Highly recommended for implementation details.</p>
+          </div>
+          <div class="resource-tag">tutorial</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier tier-2">
+      <div class="tier-header">
+        <span class="tier-badge tier-2-badge">Foundational</span>
+      </div>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div class="resource-icon">📄</div>
+          <div class="resource-body">
+            <h4>PagedAttention: Efficient Memory Management for Large Language Model Serving with paged KV cache</h4>
+            <p class="author">Kwon et al., 2023 (vLLM)</p>
+            <p>The breakthrough paper behind vLLM. Treats KV cache as virtual memory with block-level management. Reduces fragmentation from 60% to <4%, enabling 10x batch improvements.</p>
+          </div>
+          <div class="resource-tag">paper</div>
+        </div>
+        <div class="resource-card">
+          <div class="resource-icon">📄</div>
+          <div class="resource-body">
+            <h4>GQA: Training Generalist Models for 3B Tokens and Beyond</h4>
+            <p class="author">Ainslie et al., 2023 (Google)</p>
+            <p>Introduces Grouped Query Attention as a middle ground between MHA and MQA. Used in LLaMA-2, Gemini. Balances cache reduction with quality preservation.</p>
+          </div>
+          <div class="resource-tag">paper</div>
+        </div>
+        <div class="resource-card">
+          <div class="resource-icon">📄</div>
+          <div class="resource-body">
+            <h4>H₂O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models</h4>
+            <p class="author">Zhang et al., 2023</p>
+            <p>Token importance-based eviction strategy. Identifies and keeps high-importance tokens, evicts low-importance ones. 50-70% cache reduction with minimal quality loss.</p>
+          </div>
+          <div class="resource-tag">paper</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier tier-3">
+      <div class="tier-header">
+        <span class="tier-badge tier-3-badge">Advanced</span>
+      </div>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div class="resource-icon">📚</div>
+          <div class="resource-body">
+            <h4>vLLM Documentation</h4>
+            <p class="author">vLLM Project</p>
+            <p>Official documentation for vLLM. Covers PagedAttention, continuous batching, API usage. Reference implementation for production KV cache optimization.</p>
+          </div>
+          <div class="resource-tag">docs</div>
+        </div>
+        <div class="resource-card">
+          <div class="resource-icon">📚</div>
+          <div class="resource-body">
+            <h4>NVIDIA TensorRT-LLM Documentation</h4>
+            <p class="author">NVIDIA</p>
+            <p>TensorRT-LLM: GPU-optimized LLM inference. Covers FP8 KV cache quantization, in-flight batching, kernel fusion. Optimized for NVIDIA GPUs (H100, A100).</p>
+          </div>
+          <div class="resource-tag">docs</div>
+        </div>
+        <div class="resource-card">
+          <div class="resource-icon">📄</div>
+          <div class="resource-body">
+            <h4>Efficient Long-Context Large Language Model Inference with RadixAttention</h4>
+            <p class="author">SGLang Team, 2024</p>
+            <p>RadixAttention: prefix tree data structure for KV cache. Enables semantic compression and prefix sharing. Novel approach to long-context efficiency.</p>
+          </div>
+          <div class="resource-tag">paper</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="suggested-path">
+      <h3>Suggested Learning Path</h3>
+      <div class="path-steps">
+        <div class="path-step">Attention Basics</div>
+        <svg width="20" height="4" viewBox="0 0 20 4">
+          <line x1="0" y1="2" x2="16" y2="2" stroke="var(--accent-coral)" stroke-width="1.5"/>
+          <polygon points="16,2 20,0 20,4" fill="var(--accent-coral)"/>
+        </svg>
+        <div class="path-step">KV Cache Mechanics</div>
+        <svg width="20" height="4" viewBox="0 0 20 4">
+          <line x1="0" y1="2" x2="16" y2="2" stroke="var(--accent-coral)" stroke-width="1.5"/>
+          <polygon points="16,2 20,0 20,4" fill="var(--accent-coral)"/>
+        </svg>
+        <div class="path-step">Optimizations</div>
+        <svg width="20" height="4" viewBox="0 0 20 4">
+          <line x1="0" y1="2" x2="16" y2="2" stroke="var(--accent-coral)" stroke-width="1.5"/>
+          <polygon points="16,2 20,0 20,4" fill="var(--accent-coral)"/>
+        </svg>
+        <div class="path-step">Production Systems</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       FOOTER
+       ======================================== -->
+  <footer class="page-footer">
+    <p><em>"Every token you generate trades memory for speed. Understanding KV cache is understanding the economics of modern LLM inference."</em> — This guide</p>
+  </footer>
+
+  <!-- ========================================
+       JAVASCRIPT: Scroll-triggered animations
+       ======================================== -->
+  <script>
+    // Initialize scroll-triggered animations
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections and reading list
+    document.querySelectorAll('.section, .reading-list').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Step button interaction handler
+    document.querySelectorAll('.step-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const step = e.target.dataset.step;
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.step-btn').forEach(b => {
+          b.classList.remove('active');
+        });
+
+        // Add active class to clicked button
+        e.target.classList.add('active');
+
+        // Trigger diagram update based on step (extensible for future interactions)
+        console.log('Step', step, 'activated');
+      });
+    });
+  </script>
+</body>
+</html>

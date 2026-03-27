@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCS236 Deep Generative Models — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+  </style>
+</head>
+
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Foundations', title: '<em>Foundations</em> of Generative Modeling' },
+  { num: '02', short: 'Autoregressive', title: '<em>Autoregressive</em> Models' },
+  { num: '03', short: 'VAE', title: '<em>Variational</em> Autoencoders' },
+  { num: '04', short: 'Flows', title: '<em>Normalizing</em> Flows' },
+  { num: '05', short: 'GAN', title: '<em>Generative</em> Adversarial Networks' },
+  { num: '06', short: 'EBM & Score', title: '<em>Energy-Based</em> &amp; Score-Based Models' },
+  { num: '07', short: 'Diffusion', title: '<em>Diffusion</em> Models' },
+  { num: '08', short: 'Evaluation', title: '<em>Evaluating</em> &amp; Comparing Models' },
+  { num: '09', short: 'Sources', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 Foundations
+  `<p>Generative models learn to sample from and reason about high-dimensional data distributions. Unlike discriminative models that learn p(y|x), generative models learn p(x)—the full data distribution. This enables sampling, density estimation, missing data imputation, and learning meaningful representations.</p>
+  <p>The core challenge: modeling complex, high-dimensional distributions like images, text, or audio. There is no universal best approach. Different model families trade off likelihood tractability, sampling speed, mode coverage, and stability. The course explores eight major families, each with distinct strengths and limitations.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Sampling</div><div class="sl">Generate new data</div></div>
+    <div class="st"><div class="sv">Likelihood</div><div class="sl">Density estimation</div></div>
+    <div class="st"><div class="sv">Representation</div><div class="sl">Learn structure</div></div>
+    <div class="st"><div class="sv">8 Families</div><div class="sl">Different trades</div></div>
+  </div>`,
+
+  // 02 Autoregressive
+  `<p>Autoregressive models factor the joint distribution as p(x) = ∏ᵢ p(xᵢ|x₁:ᵢ₋₁). This chain rule decomposition makes the likelihood tractable and allows fast likelihood computation. Models like PixelCNN and WaveNet apply neural networks to each conditional term, predicting one dimension at a time given all previous dimensions.</p>
+  <p>Strength: exact likelihood. Weakness: slow generation (O(n) samples per dimension). The sequential nature is fundamentally inherent to the factorization. Variants like MADE improve efficiency by using masking. RNNs and Transformers also fit this paradigm.</p>
+  <div class="s-chips">
+    <span class="s-chip">Chain rule: p(x)=∏p(xᵢ|x₁:ᵢ₋₁)</span>
+    <span class="s-chip">PixelCNN, WaveNet</span>
+    <span class="s-chip">Tractable likelihood</span>
+    <span class="s-chip">Sequential generation</span>
+  </div>`,
+
+  // 03 VAE
+  `<p>Variational Autoencoders introduce latent variables z. The generative process: z ~ N(0, I), then x ~ p_θ(x|z). To learn, we maximize the Evidence Lower Bound (ELBO): ELBO(x; θ, λ) = 𝔼_q_λ[log p_θ(x,z)/q_λ(z|x)] = 𝔼_q_λ[log p_θ(x|z)] - KL(q_λ(z|x) || p(z)). The reparameterization trick enables efficient gradient estimation.</p>
+  <p>VAEs learn a meaningful latent space where interpolation produces smooth transitions. The KL term pushes q(z|x) toward the prior, preventing posterior collapse. Trade-off: the KL divergence loss causes blurriness in reconstructions.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Latent z</div><div class="sl">Disentangled space</div></div>
+    <div class="st"><div class="sv">ELBO</div><div class="sl">Tractable bound</div></div>
+    <div class="st"><div class="sv">Reparameterization</div><div class="sl">Gradient trick</div></div>
+    <div class="st"><div class="sv">Reconstruction+KL</div><div class="sl">Dual objectives</div></div>
+  </div>`,
+
+  // 04 Flows
+  `<p>Normalizing flows use invertible transformations f_θ to map from simple distributions (e.g., standard Gaussian) to complex ones. By change of variables: p_x(x) = p_z(f_θ⁻¹(x)) |det(∂f_θ⁻¹/∂x)|. The determinant of the Jacobian must be efficient to compute. Coupling layers and RealNVP satisfy this constraint while allowing expressive transformations.</p>
+  <p>Strengths: exact likelihood, efficient sampling. Weakness: volume-preserving constraints limit expressiveness. Glow and Flow++  extend the framework with multi-scale architectures and dequantization tricks.</p>
+  <div class="s-chips">
+    <span class="s-chip">Change of variables</span>
+    <span class="s-chip">Invertible f_θ</span>
+    <span class="s-chip">RealNVP, Glow</span>
+    <span class="s-chip">Exact likelihood + fast sampling</span>
+  </div>`,
+
+  // 05 GAN
+  `<p>GANs introduce an adversarial game between a generator G and discriminator D. G tries to fool D; D tries to distinguish real from generated data. The objective: min_G max_D 𝔼[log D(x)] + 𝔼[log(1 - D(G(z)))]. The Nash equilibrium (when it exists) corresponds to G matching the data distribution.</p>
+  <p>Strength: high-quality samples, no likelihood requirement. Weakness: training instability, mode collapse, and difficulty evaluating convergence. Advanced techniques: Wasserstein distance, spectral normalization, and gradient penalties mitigate these issues.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Min-max game</div><div class="sl">Generator vs Discriminator</div></div>
+    <div class="st"><div class="sv">No likelihood</div><div class="sl">Implicit model</div></div>
+    <div class="st"><div class="sv">High-quality samples</div><div class="sl">Mode coverage issues</div></div>
+    <div class="st"><div class="sv">Training tricks</div><div class="sl">Stability critical</div></div>
+  </div>`,
+
+  // 06 EBM & Score
+  `<p>Energy-based models define p(x) = exp(-E(x)) / Z, where E is an energy function and Z is a partition function. Learning uses contrastive divergence: update parameters to lower energy on data, raise it on model samples. Score-based models learn ∇ log p(x) (the score function) via score matching, which avoids estimating Z entirely.</p>
+  <p>Scores enable sampling via Langevin dynamics: x_{t+1} = x_t + (ε/2)∇ log p(x_t) + √ε · ζ_t. Strength: flexible, tractable training. Weakness: sampling requires many steps. Score-based and diffusion models are deeply connected.</p>
+  <div class="s-chips">
+    <span class="s-chip">EBM: p(x)=exp(-E(x))/Z</span>
+    <span class="s-chip">Score: ∇log p(x)</span>
+    <span class="s-chip">Contrastive divergence</span>
+    <span class="s-chip">Langevin dynamics</span>
+  </div>`,
+
+  // 07 Diffusion
+  `<p>Diffusion models define a forward process: q(x_t|x_0) with gradually increasing noise. Learning the reverse: p_θ(x_{t-1}|x_t), a denoising neural network. DDPM (Denoising Diffusion Probabilistic Models) shows this is equivalent to score matching with a weighted loss. DDIM accelerates sampling via a deterministic path. Discrete diffusion extends to categorical and sequential data.</p>
+  <p>Strengths: simple training, stable, scalable, state-of-the-art sample quality (DALL-E, Stable Diffusion). Weakness: slow sampling (100s of steps). Connection to score-based models reveals a unified framework spanning multiple model families.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Forward: add noise</div><div class="sl">q(x_t|x_0)</div></div>
+    <div class="st"><div class="sv">Reverse: denoise</div><div class="sl">p_θ(x_{t-1}|x_t)</div></div>
+    <div class="st"><div class="sv">DDPM, DDIM</div><div class="sl">Training & sampling</div></div>
+    <div class="st"><div class="sv">Score matching</div><div class="sl">Unified view</div></div>
+  </div>`,
+
+  // 08 Evaluation
+  `<p>No single metric captures model quality. Likelihood-based models (autoregressive, VAE, flows) can report log p(x) on test sets. Sample-based models (GANs, diffusion) use Inception Score (IS) and Fréchet Inception Distance (FID), which measure sample quality via inception networks but cannot assess mode coverage. Precision and Recall metrics quantify mode coverage and sample quality separately.</p>
+  <p>Best practice: report multiple metrics, use human evaluation, and visualize samples. Different applications prioritize differently: likelihood for compression, sample quality for generation, diversity for data augmentation. Understanding trade-offs between families informs model selection.</p>
+  <div class="s-chips">
+    <span class="s-chip">Likelihood: log p(x)</span>
+    <span class="s-chip">IS: sample quality</span>
+    <span class="s-chip">FID: distribution match</span>
+    <span class="s-chip">Precision/Recall: coverage</span>
+  </div>`,
+
+  // 09 References
+  `<p>This course covers eight major families of generative models, each with rich theory and practical applications. The references below provide foundational papers, recent advances, and comprehensive surveys spanning the field.</p>
+  <p>From variational inference to score-based models, these works document the evolution of generative modeling and offer entry points for deeper study of specific architectures and extensions.</p>`
+];
+
+const details = [
+  // 01 Foundations Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 — Details</div>
+    <h2><em>Foundations</em> of Generative Modeling</h2>
+  </div>
+  <p>A generative model learns p(x), the probability distribution over observed data x. This is fundamentally different from discriminative models, which learn p(y|x). The advantage: once you have p(x), you can sample, compute likelihoods, perform inference over missing variables, and learn useful representations.</p>
+  <h3>Density Estimation and Sampling</h3>
+  <p>The two core capabilities are: (1) density estimation—computing log p(x) for data x; (2) sampling—drawing new samples x ~ p(x). Different model families make different trade-offs. Autoregressive models have tractable likelihood but slow sampling. Flows have both tractable likelihood and efficient sampling. GANs produce excellent samples but provide no likelihood. Diffusion models achieve state-of-the-art sample quality but require many sampling steps.</p>
+  <h3>Latent Variable Models</h3>
+  <p>Many generative models use latent variables z that capture hidden structure. The generative process: sample z from a simple prior p(z), then draw x from p_θ(x|z). This induces the marginal p_θ(x) = ∫ p_θ(x|z)p(z) dz. VAEs and normalizing flows use latent variables to enable efficient inference and sampling. Estimating z from x (inference) is often as important as sampling x.</p>
+  <h3>Taxonomy: Eight Model Families</h3>
+  <p>The course covers: (1) autoregressive models—chain rule factorization, exact likelihood, slow generation; (2) VAEs—latent variables, ELBO optimization, blurry samples; (3) normalizing flows—invertible transformations, exact likelihood, constrained expressiveness; (4) GANs—adversarial training, high-quality samples, mode collapse risk; (5) EBMs—energy functions, contrastive training; (6) score-based models—learn score function ∇log p(x); (7) diffusion models—iterative denoising, state-of-the-art quality; (8) discrete diffusion—for categorical and sequence data.</p>
+  <h3>Learning Objectives</h3>
+  <p>Most generative models optimize some form of likelihood or divergence: maximum likelihood (autoregressive), ELBO (VAE), exact likelihood with constraints (flows), adversarial divergence (GAN), contrastive divergence (EBM), or score matching (score-based). Understanding these objectives and their properties is central to applying and extending generative models.</p>`,
+
+  // 02 Autoregressive Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 — Details</div>
+    <h2><em>Autoregressive</em> Models</h2>
+  </div>
+  <p>Autoregressive models decompose the joint distribution using the chain rule: p(x) = p(x₁)·p(x₂|x₁)·p(x₃|x₁,x₂)·...·p(x_n|x₁,...,x_{n-1}). Each conditional term p(xᵢ|x₁:ᵢ₋₁) is parameterized by a neural network. To train, compute -log p(x) on the training set and optimize via maximum likelihood.</p>
+  <h3>Tractable Likelihood</h3>
+  <p>The likelihood decomposes into a product of conditionals, each of which is tractable. Computing log p(x) involves n forward passes (one per dimension) but no integrals or approximations. This makes maximum likelihood training straightforward: minimize -∑ log p(xᵢ|x₁:ᵢ₋₁).</p>
+  <h3>PixelCNN and WaveNet</h3>
+  <p>PixelCNN models images by predicting pixels in raster scan order. A masked convolutional network ensures each prediction depends only on previous pixels. WaveNet extends the idea to audio, with dilated convolutions to increase receptive field. Both achieve competitive likelihoods and generate sharp samples (though sometimes repetitive due to exposure bias).</p>
+  <h3>The Sequential Bottleneck</h3>
+  <p>Sampling requires generating one dimension at a time: first sample x₁, then x₂ given x₁, then x₃ given x₁, x₂, etc. This O(n) sequential process is inherently slow. For a 256×256 image (65k dimensions), drawing one sample requires 65k neural network evaluations. Parallelization is difficult because future dimensions depend on past ones.</p>
+  <h3>MADE and Masking</h3>
+  <p>MADE (Masked Autoencoder for Distribution Estimation) improves efficiency by using masked linear layers, making the computation fully parallelizable during training. The mask ensures output dimension i depends only on input dimensions 1 to i-1. Despite parallelizable training, sampling remains sequential.</p>`,
+
+  // 03 VAE Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 — Details</div>
+    <h2><em>Variational</em> Autoencoders</h2>
+  </div>
+  <p>VAEs combine latent variable models with variational inference. The generative model: z ~ N(0, I), then x ~ p_θ(x|z), a neural network decoder. The challenge: computing log p(x) = ∫ p(x|z)p(z) dz is intractable. VAEs solve this by introducing an encoder q_λ(z|x) that approximates the true posterior p(z|x).</p>
+  <h3>The ELBO Objective</h3>
+  <p>The Evidence Lower Bound (ELBO) is: ELBO(x; θ, λ) = 𝔼_q_λ(z|x)[log p_θ(x|z)] - KL(q_λ(z|x) || p(z)). The first term is reconstruction loss: the encoder produces a distribution over z, the decoder reconstructs x from z, and we measure fidelity. The second term is the KL divergence penalty: it pushes q(z|x) toward the standard normal prior, encouraging a structured latent space.</p>
+  <h3>The Reparameterization Trick</h3>
+  <p>To backpropagate through the sampling operation z ~ q_λ(z|x), we reparameterize: z = μ_λ(x) + ε ⊙ σ_λ(x), where ε ~ N(0, I) and ⊙ is element-wise product. Now z is a deterministic function of ε (which is non-trainable), so gradients flow through μ and σ.</p>
+  <h3>Disentangled Representation</h3>
+  <p>VAEs learn a latent space where dimensions capture interpretable features. Interpolation between two latent codes produces meaningful transitions (e.g., a smooth rotation of a face). This is because the KL penalty encourages the posterior to stay close to the standard normal prior, which has no preferred directions or scales.</p>
+  <h3>Blurriness and KL Annealing</h3>
+  <p>VAEs tend to produce blurry reconstructions because the KL term conflicts with the reconstruction term: high β (weight on KL) leads to aggressive posterior regularization and poor reconstructions. Low β leads to posterior collapse (q(z|x) ≈ p(z) and z is ignored). KL annealing—gradually increasing β during training—helps balance these objectives.</p>`,
+
+  // 04 Flows Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 — Details</div>
+    <h2><em>Normalizing</em> Flows</h2>
+  </div>
+  <p>Normalizing flows construct flexible generative models by composing simple invertible transformations. A base distribution (e.g., Gaussian) is transformed through a sequence of invertible functions to model complex distributions. The log-likelihood is tractable through the change-of-variables formula: log p_X(x) = log p_Z(f⁻¹(x)) - Σ log|det J_f_i(·)|, where J is the Jacobian of each transformation.</p>
+  <h3>Invertibility Constraint</h3>
+  <p>For flows to be generative (capable of both sampling and likelihood evaluation), each transformation must be invertible. Additionally, the determinant of the Jacobian must be efficiently computable. This excludes standard neural network layers and requires specialized architectures like coupling layers and autoregressive transformations.</p>
+  <h3>RealNVP and Coupling Layers</h3>
+  <p>Real-valued Non-Volume Preserving (RealNVP) uses coupling layers where dimensions are split, and one subset is transformed affinely based on the other subset. This preserves invertibility while enabling expressive transformations. Each coupling layer has tractable Jacobian determinant (a product of diagonal elements), and stacking layers increases expressiveness.</p>
+  <h3>Sampling and Likelihood</h3>
+  <p>Flows enable efficient sampling: draw z ~ p_Z, then compute x = f(z) in a single forward pass. Likelihood computation is equally efficient. This dual tractability makes flows ideal for tasks requiring both sampling and density estimation, such as variational inference or likelihood-based model selection.</p>
+  <h3>Limitations</h3>
+  <p>Volume-preservation constraints (Jacobian determinant ≈ 1) limit expressiveness. Flows also require deep architectures to model complex distributions, increasing computational cost. Recent extensions like neural spline flows and unconstrained transformations address these limitations but at computational cost.</p>`,
+
+  // 05 GAN Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 — Details</div>
+    <h2><em>Generative</em> Adversarial Networks</h2>
+  </div>
+  <p>GANs formulate generative modeling as a two-player game. A generator G learns to produce samples from noise, while a discriminator D learns to distinguish real samples from generated ones. The objective is: min_G max_D V(D, G) = 𝔼_x[log D(x)] + 𝔼_z[log(1 - D(G(z)))]. At the Nash equilibrium, G matches the data distribution and D cannot distinguish them.</p>
+  <h3>Training Dynamics</h3>
+  <p>The adversarial setup creates interesting dynamics. As D improves, it provides stronger gradient signal to G. However, poorly trained discriminators provide uninformative gradients, slowing G's training. Vanishing gradients and mode collapse (G learns to generate only a few modes) are endemic problems. The original formulation suffers from training instability.</p>
+  <h3>Wasserstein GANs and Improvements</h3>
+  <p>Wasserstein distance provides a more stable training objective than binary classification. WGAN-GP (gradient penalty) enforces Lipschitz continuity without weight clipping. Spectral normalization constrains the discriminator's Lipschitz constant. These improvements enable more stable training and higher-quality samples on complex datasets.</p>
+  <h3>Implicit Distribution Learning</h3>
+  <p>Unlike VAEs and flows, GANs do not explicitly model p(x). Instead, G implicitly defines a distribution through its sampling procedure. This avoids intractable likelihood computation but prevents direct likelihood-based evaluation. GANs excel at perceptual quality and mode coverage but struggle with density estimation and mode collapse.</p>
+  <h3>Conditional Generation and Applications</h3>
+  <p>Conditional GANs (cGANs) enable class-conditional generation: G and D both receive class labels. StyleGAN introduces style injection for fine-grained control. Pix2Pix and CycleGAN enable image-to-image translation. These extensions demonstrate GANs' versatility for structured generation tasks.</p>`,
+
+  // 06 EBM & Score Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 — Details</div>
+    <h2><em>Energy-Based</em> &amp; Score-Based Models</h2>
+  </div>
+  <p>Energy-based models (EBMs) define distributions via energy functions: p(x) ∝ exp(-E(x)). The energy function assigns low values to high-probability regions and high values to low-probability regions. Learning requires inferring the partition function Z = ∫ exp(-E(x)) dx, which is intractable. Contrastive divergence approximates this via Markov chain Monte Carlo sampling on model samples.</p>
+  <h3>Score Matching and Score-Based Models</h3>
+  <p>Score-based models learn the score function: ∇_x log p(x), the gradient of log-density. Score matching avoids estimating Z entirely by minimizing the expected squared difference between the model score and data score. This framework is elegant and enables efficient training on high-dimensional data.</p>
+  <h3>Langevin Dynamics and Sampling</h3>
+  <p>Sampling from score-based models uses Langevin dynamics: x_{t+1} = x_t + (ε/2)∇ log p(x_t) + √ε ζ_t, where ζ_t is Gaussian noise. This iterative process requires many steps (often 1000+) to mix thoroughly. However, the framework is flexible and theoretically grounded.</p>
+  <h3>Connections to Diffusion Models</h3>
+  <p>Diffusion and score-based models are deeply connected. Diffusion models can be viewed as learning scores for perturbed distributions at different noise levels. Song et al. showed that the reverse SDE (stochastic differential equation) of diffusion is determined by score functions, unifying multiple generative frameworks under one mathematical structure.</p>
+  <h3>Advantages and Challenges</h3>
+  <p>Score-based models offer theoretical elegance and flexibility. They scale well to high-dimensional data and avoid mode-collapse issues. However, sampling is slow due to iterative procedures. Recent work combines score-based and flow-based approaches to achieve both efficiency and flexibility.</p>`,
+
+  // 07 Diffusion Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 — Details</div>
+    <h2><em>Diffusion</em> Models</h2>
+  </div>
+  <p>Diffusion models define a forward process that gradually adds Gaussian noise to data: q(x_t|x_0) = √(ᾱ_t) x_0 + √(1-ᾱ_t) ε, where ᾱ_t = ∏_{s=1}^t (1-β_s) and β_t are fixed or learnable noise schedules. After sufficient steps, x_T ≈ N(0,I). Learning involves training a neural network p_θ(x_{t-1}|x_t) to reverse this process, predicting either x_0, noise ε_θ(x_t,t), or scores ∇ log p(x_t).</p>
+  <h3>DDPM: Denoising Diffusion Probabilistic Models</h3>
+  <p>DDPM (Ho et al., 2020) reformulated diffusion as a latent variable model with a Markov chain: p_θ(x_0:T) = p(x_T) ∏_t p_θ(x_{t-1}|x_t). The training objective is equivalent to minimizing noise prediction error at each step. DDPM achieved impressive image generation results, particularly on CIFAR-10 and CelebA, rivaling GANs in quality.</p>
+  <h3>Scalability and DDIM</h3>
+  <p>DDPM requires many sampling steps (often 1000), making generation slow. DDIM (Denoising Diffusion Implicit Models) accelerates sampling by using a deterministic trajectory instead of stochastic steps, reducing steps to 50-100 with minimal quality loss. This breakthrough made diffusion models practical for real-time applications.</p>
+  <h3>Discrete and Structured Diffusion</h3>
+  <p>While continuous diffusion targets images and audio, discrete diffusion models extend to categorical sequences and structured data. D3PM (Discrete Denoising Diffusion Probabilistic Models) handles mixed continuous-discrete domains. These extensions enable diffusion models for text, molecules, and protein sequences.</p>
+  <h3>Recent Advances: Stable Diffusion, DALL-E 3</h3>
+  <p>Recent models like Stable Diffusion (latent space diffusion) and DALL-E 3 achieve photorealistic image generation from text. Training on large datasets (billions of image-text pairs) with careful engineering enables unprecedented sample quality and semantic understanding. These models represent a paradigm shift in generative AI, surpassing GANs for visual generation.</p>`,
+
+  // 08 Evaluation Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08 — Details</div>
+    <h2><em>Evaluating</em> &amp; Comparing Models</h2>
+  </div>
+  <p>Evaluating generative models is non-trivial because no single metric captures all aspects of quality. Different models excel at different objectives. A model with excellent likelihood may produce blurry samples; one with perfect mode coverage may miss rare regions. Comprehensive evaluation requires multiple metrics aligned with specific use cases.</p>
+  <h3>Likelihood-Based Metrics</h3>
+  <p>Models that explicitly parameterize p(x) (autoregressive, VAEs, flows) can report negative log-likelihood (NLL) or bits per dimension (BPD). Lower is better. Likelihood directly assesses density estimation and is interpretable: -log p(x) measures information content. However, likelihood alone doesn't guarantee perceptual quality; VAEs with low likelihood can produce blurry images.</p>
+  <h3>Sample Quality Metrics: IS and FID</h3>
+  <p>Inception Score (IS) measures sample quality by passing generated images through a pre-trained Inception-v3 classifier. High IS indicates that samples are diverse and class-recognizable. Fréchet Inception Distance (FID) compares distributions of real and generated image features in Inception-v3 space. FID is more robust and preferred for comparing models. Both assume images are natural and may fail for out-of-distribution domains.</p>
+  <h3>Mode Coverage: Precision and Recall</h3>
+  <p>Precision measures what fraction of generated samples are close to real data. Recall measures what fraction of real modes are covered by generated samples. A model can achieve high precision by generating a few high-quality samples (mode collapse) or high recall by covering all modes broadly. Simultaneously optimizing both requires careful training.</p>
+  <h3>Human Evaluation and Domain-Specific Metrics</h3>
+  <p>Human evaluation remains the gold standard for perceptual quality. Observers rate sample quality, realism, and diversity. For specific domains (medical imaging, code generation), task-specific metrics matter more than generic ones. Downstream task performance (e.g., using generated data as training data) offers practical evaluation. Best practice: combine multiple metrics, use human studies, and visualize samples for thorough assessment.</p>`,
+
+  // 09 References Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
+    <h2>References & <em>Further</em> Reading</h2>
+  </div>
+  <h3>Course Materials</h3>
+  <ul>
+   <li><a href="https://deepgenerativemodels.github.io/" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Stanford CS236: Deep Generative Models</a> — Complete course page with lectures, notes, and assignments</li>
+  </ul>
+  <h3>Foundational Papers by Topic</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+   <div>
+    <h4>Autoregressive Models</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1606.05328" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">PixelCNN (van den Oord et al, 2016)</a></li>
+     <li><a href="https://arxiv.org/abs/1609.03499" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">WaveNet (van den Oord et al, 2016)</a></li>
+     <li><a href="https://arxiv.org/abs/1706.03762" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Attention Is All You Need (Vaswani et al, 2017)</a></li>
+    </ul>
+    <h4>Variational Autoencoders</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1312.6114" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Auto-Encoding Variational Bayes (Kingma & Welling, 2013)</a></li>
+    </ul>
+    <h4>Normalizing Flows</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1505.05770" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Normalizing Flows (Rezende & Mohamed, 2015)</a></li>
+     <li><a href="https://arxiv.org/abs/1605.08803" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">RealNVP (Dinh et al, 2016)</a></li>
+     <li><a href="https://arxiv.org/abs/1807.03039" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">GLOW (Kingma & Dhariwal, 2018)</a></li>
+    </ul>
+   </div>
+   <div>
+    <h4>Generative Adversarial Networks</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1406.2661" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">GAN (Goodfellow et al, 2014)</a></li>
+     <li><a href="https://arxiv.org/abs/1701.07875" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Wasserstein GAN (Arjovsky et al, 2017)</a></li>
+     <li><a href="https://arxiv.org/abs/1812.04948" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">StyleGAN (Karras et al, 2019)</a></li>
+    </ul>
+    <h4>Score-Based & Diffusion Models</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1907.05600" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Generative Modeling by Estimating Gradients (Song & Ermon, 2019)</a></li>
+     <li><a href="https://arxiv.org/abs/2006.11239" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Denoising Diffusion Probabilistic Models (Ho et al, 2020)</a></li>
+     <li><a href="https://arxiv.org/abs/2010.02502" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Denoising Diffusion Implicit Models (Song et al, 2020)</a></li>
+     <li><a href="https://arxiv.org/abs/2112.10752" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">High-Resolution Image Synthesis with Latent Diffusion (Rombach et al, 2022)</a></li>
+    </ul>
+    <h4>Evaluation Metrics</h4>
+    <ul>
+     <li><a href="https://arxiv.org/abs/1706.08500" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">FID Score (Heusel et al, 2017)</a></li>
+     <li><a href="https://arxiv.org/abs/1606.03490" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Inception Score (Salimans et al, 2016)</a></li>
+    </ul>
+   </div>
+  </div>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>2</em>36</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford CS</div>
+        <div class="hero-title">Deep <em>Generative</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>XCS236 · Comprehensive Deep-Dive Architecture</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip — extends from sidebar edge
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

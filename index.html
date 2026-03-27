@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>read-rd</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--amber:#8a6e1e;
+  --grain-opacity:0.015;--grad1:#2e6ab406;--grad2:#9b7aed04;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--amber:#e8c870;
+  --grain-opacity:0.02;--grad1:#9b7aed06;--grad2:#4ee8d004;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Jost',-apple-system,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent);transition:background 1s}
+
+.shell{max-width:680px;margin:0 auto;padding:48px 24px 100px;position:relative;z-index:1}
+
+.head{border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:32px}
+.head-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.head h1{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:500;color:var(--bright);letter-spacing:.5px}
+.head h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.head-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.head-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);width:40%;opacity:.5;margin-top:12px}
+.ctrl-row{display:flex;gap:0}
+.ctrl-btn{width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--dim);background:transparent;border:1px solid var(--border);transition:color .2s,background .2s}
+.ctrl-btn:last-child{border-left:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+
+.tree{font-family:'IBM Plex Mono',monospace;font-size:13px}
+.dir{margin-bottom:2px}
+.dir-head{display:flex;align-items:center;gap:6px;padding:7px 8px;cursor:pointer;border:1px solid transparent;transition:all .2s;user-select:none}
+.dir-head:hover{background:var(--bg3);border-color:var(--border)}
+.dir-chevron{width:14px;height:14px;color:var(--dim);transition:transform .2s;flex-shrink:0}
+.dir.collapsed .dir-chevron{transform:rotate(-90deg)}
+.dir-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center}
+.dir-name{color:var(--bright);font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;flex:1}
+.dir-count{font-size:10px;color:var(--dim);letter-spacing:1px}
+.dir-children{overflow:hidden;transition:max-height .3s ease}
+.dir.collapsed .dir-children{max-height:0 !important}
+
+.file{display:flex;align-items:center;gap:8px;padding:5px 8px 5px 42px;text-decoration:none;color:var(--text);transition:color .2s,background .2s;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 60%)}
+.file:last-child{border-bottom:none}
+.file:hover{color:var(--bright);background:var(--accent-soft)}
+.file-name{flex:1;font-size:13px;font-weight:400;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-fmt{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);color:var(--dim);flex-shrink:0;transition:all .2s}
+.file:hover .file-fmt{border-color:var(--accent);color:var(--accent)}
+.file-fmt.dd{color:var(--accent);border-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.file-fmt.slides{color:var(--cyan);border-color:color-mix(in srgb,var(--cyan),transparent 60%)}
+.file-fmt.guide{color:var(--green);border-color:color-mix(in srgb,var(--green),transparent 60%)}
+.file-fmt.app{color:var(--amber);border-color:color-mix(in srgb,var(--amber),transparent 60%)}
+
+.planned{opacity:.4;font-style:italic;pointer-events:none}
+.planned .file-name::after{content:' — TBA';color:var(--dim);font-size:11px}
+
+.status-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;padding-top:16px;border-top:1px solid var(--border)}
+.stat{display:flex;align-items:baseline;gap:5px}
+.stat-v{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--bright);font-weight:600;letter-spacing:.5px}
+.stat-l{font-size:11px;color:var(--dim);letter-spacing:.3px}
+
+@media(max-width:600px){
+  .shell{padding:24px 16px 80px}
+  .head h1{font-size:26px}
+  .file{padding-left:32px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="head">
+    <div class="head-top">
+      <h1>read<em>-rd</em></h1>
+      <div class="ctrl-row">
+        <button class="ctrl-btn" onclick="expandAll()" title="Expand all">⊞</button>
+        <button class="ctrl-btn" onclick="collapseAll()" title="Collapse all">⊟</button>
+        <button class="ctrl-btn" onclick="toggleTheme()" id="theme-btn"></button>
+      </div>
+    </div>
+    <div class="head-meta" id="stats"></div>
+    <div class="head-rule"></div>
+    <div style="display:flex;gap:16px;margin-top:14px">
+      <a href="pages-with-images.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:4px 10px;border:1px solid var(--border);transition:all .2s">37 Images</a>
+      <a href="narrated-pages.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:4px 10px;border:1px solid var(--border);transition:all .2s">19 Narrations</a>
+    </div>
+  </div>
+  <div class="tree" id="tree"></div>
+  <div class="status-row" id="status-row"></div>
+</div>
+
+<script>
+const chev = `<svg class="dir-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 3 9 7 5 11"/></svg>`;
+
+const dirs = [
+  { name:'courses', icon:'🎓', label:'Courses', children:[
+    {t:'SCPD Study Hub',f:'courses/scpd.html',fmt:'app'},
+    { name:'scpd-ml', icon:'🧠', label:'XCS229 · Machine Learning', children:[
+      {t:'Course Overview',f:'courses/scpd-ml/xcs229.dd.html',fmt:'dd'},
+      {t:'Linear Algebra',f:'courses/scpd-ml/linear-algebra.dd.html',fmt:'dd'},
+      {t:'Linear Regression',f:'courses/scpd-ml/linear-regression.dd.html',fmt:'dd'},
+      {t:'Logistic Regression',f:'courses/scpd-ml/logistic-regression.dd.html',fmt:'dd'},
+      {t:'GLM',f:'courses/scpd-ml/glm.dd.html',fmt:'dd'},
+      {t:'Generative Algorithms',f:'courses/scpd-ml/generative-algorithms.dd.html',fmt:'dd'},
+      {t:'SVMs & Kernels',f:'courses/scpd-ml/svm-kernels.dd.html',fmt:'dd'},
+      {t:'Decision Trees & Ensembles',f:'courses/scpd-ml/decision-trees-ensemble.dd.html',fmt:'dd'},
+      {t:'Neural Networks',f:'courses/scpd-ml/neural-networks.dd.html',fmt:'dd'},
+      {t:'Unsupervised Learning',f:'courses/scpd-ml/unsupervised.dd.html',fmt:'dd'},
+      {t:'PCA & ICA',f:'courses/scpd-ml/pca-ica.dd.html',fmt:'dd'},
+      {t:'Bias-Variance & Regularization',f:'courses/scpd-ml/bias-variance.dd.html',fmt:'dd'},
+      {t:'Reinforcement Learning',f:'courses/scpd-ml/reinforcement-learning.dd.html',fmt:'dd'},
+      {t:'Kernel Methods',f:'courses/scpd-ml/kernel-methods.dd.html',fmt:'dd'},
+      {t:'Autoencoders',f:'courses/scpd-ml/autoencoders.dd.html',fmt:'dd'},
+      {t:'CNNs & RNNs',f:'courses/scpd-ml/cnn-rnn.slides.html',fmt:'slides'},
+      {t:'Transformers',f:'courses/scpd-ml/transformers.slides.html',fmt:'slides'},
+      {t:'KV Cache',f:'courses/scpd-ml/kv-cache.dd.html',fmt:'dd'},
+      {t:'KV Cache Guide',f:'courses/scpd-ml/kv-cache.guide.html',fmt:'guide'},
+      {t:'KV Cache Slides',f:'courses/scpd-ml/kv-cache.slides.html',fmt:'slides'},
+      {t:'Problem Sets Overview',f:'courses/scpd-ml/problem-sets.dd.html',fmt:'dd'},
+      {t:'PS1 (25 pts)',f:'courses/scpd-ml/ps1.dd.html',fmt:'dd'},
+      {t:'PS2 (35 pts)',f:'courses/scpd-ml/ps2.dd.html',fmt:'dd'},
+      {t:'PS3 (35 pts)',f:'courses/scpd-ml/ps3.dd.html',fmt:'dd'},
+      {t:'PS4 (50 pts)',f:'courses/scpd-ml/ps4.dd.html',fmt:'dd'},
+      {t:'PS5 (55 pts)',f:'courses/scpd-ml/ps5.dd.html',fmt:'dd'},
+    ]},
+    { name:'scpd-deep-gen-ai', icon:'🎨', label:'XCS236 · Deep Generative AI', children:[
+      {t:'Course Overview',f:'courses/scpd-deep-gen-ai/xcs236.dd.html',fmt:'dd'},
+      {t:'Intro to Generative Models',f:'courses/scpd-deep-gen-ai/intro.dd.html',fmt:'dd'},
+      {t:'Autoregressive Models',f:'courses/scpd-deep-gen-ai/autoregressive.dd.html',fmt:'dd'},
+      {t:'MLE & Latent Variables',f:'courses/scpd-deep-gen-ai/mle-latent.dd.html',fmt:'dd'},
+      {t:'Variational Autoencoders',f:'courses/scpd-deep-gen-ai/vae.dd.html',fmt:'dd'},
+      {t:'Normalizing Flows',f:'courses/scpd-deep-gen-ai/normalizing-flows.dd.html',fmt:'dd'},
+      {t:'GANs',f:'courses/scpd-deep-gen-ai/gan.dd.html',fmt:'dd'},
+      {t:'Energy-Based Models',f:'courses/scpd-deep-gen-ai/ebm.dd.html',fmt:'dd'},
+      {t:'Score-Based Models',f:'courses/scpd-deep-gen-ai/score-based.dd.html',fmt:'dd'},
+      {t:'Diffusion Models',f:'courses/scpd-deep-gen-ai/diffusion.dd.html',fmt:'dd'},
+      {t:'Evaluation',f:'courses/scpd-deep-gen-ai/evaluation.dd.html',fmt:'dd'},
+      {t:'PS1 (40 pts)',f:'courses/scpd-deep-gen-ai/ps1.dd.html',fmt:'dd'},
+      {t:'PS2 (80 pts)',f:'courses/scpd-deep-gen-ai/ps2.dd.html',fmt:'dd'},
+      {t:'PS3 (80 pts)',f:'courses/scpd-deep-gen-ai/ps3.dd.html',fmt:'dd'},
+    ]},
+  ]},
+  { name:'ai', icon:'🤖', label:'AI Research', children:[
+    {t:'Agentic LLM Survey',f:'ai/agentic-lm-survey/index.html',fmt:'app'},
+    {t:'GenAI 2026 Outlook',f:'ai/genai-2026-outlook/index.html',fmt:'app'},
+    {t:'Trending AI Papers',f:'ai/trending-ai.dd.html',fmt:'dd'},
+    {t:'ML Blog Project',f:'ai/ml-blog.dd.html',fmt:'dd'},
+  ]},
+  { name:'physics', icon:'⚛️', label:'Physics', children:[
+    {t:'Block Universe & Retrocausality',f:'physics/block-universe.dd.html',fmt:'dd'},
+    {t:'The Cosmos',f:'physics/the-cosmos/index.html',fmt:'app'},
+  ]},
+  { name:'sci-fi-te', icon:'🔮', label:'Sci-Fi Thought Experiments', children:[
+    {t:'Retrocausality, Hope & Depression',f:'sci-fi-te/retrocausal-emotion/index.html',fmt:'app'},
+    {t:'Time Travel in Fiction',f:'sci-fi-te/time-travel-fiction/index.html',fmt:'app'},
+    {t:'Non-linear Time',f:'sci-fi-te/nonlinear-time.dd.html',fmt:'dd'},
+  ]},
+  { name:'philosophy', icon:'🏛️', label:'Philosophy', children:[
+    {t:'Dark Psychology & Manipulation',f:'philosophy/dark-psychology.dd.html',fmt:'dd'},
+    {t:"Sophie's World Companion",f:'philosophy/sophies-world-companion/index.html',fmt:'app'},
+    {t:'The Architecture of Influence',f:'philosophy/persuasion-survey/index.html',fmt:'app'},
+    {t:"Sophie's World Reader",f:'philosophy/sophies-world-reader/index.html',fmt:'app'},
+    {t:'Stoicism Landscape',f:'philosophy/stoicism-landscape/index.html',fmt:'app'},
+    {t:'Paradoxes: Zeno to Gödel',f:'philosophy/paradoxes/index.html',fmt:'app'},
+  ]},
+  { name:'craft', icon:'✍️', label:'Craft & Reading', children:[
+    {t:'Poetry Study Syllabus',f:'craft/poetry-syllabus.dd.html',fmt:'dd'},
+    {t:'Poetry Collection',f:'craft/poetry-collection.dd.html',fmt:'dd'},
+    {t:'Project Hail Mary',f:'craft/project-hail-mary.dd.html',fmt:'dd'},
+    {t:'The Art of Typography',f:'craft/art-of-typography/index.html',fmt:'app'},
+    {t:'The Science of Music',f:'craft/science-of-music/index.html',fmt:'app'},
+    {t:'Constructed Languages',f:'craft/constructed-languages/index.html',fmt:'app'},
+  ]},
+  { name:'self', icon:'🔍', label:'Self & Understanding', children:[
+    {t:'ADHD / ASD / AuDHD',f:'self/audhd.dd.html',fmt:'dd'},
+    {t:'How to Know a Person',f:'self/how-to-know-a-person.dd.html',fmt:'dd'},
+    {t:'Personal Wellbeing',f:'self/wellbeing.dd.html',fmt:'dd'},
+    {t:'Career & Growth',f:'self/career.dd.html',fmt:'dd'},
+  ]},
+  { name:'cog-sci', icon:'🧩', label:'Cognitive Science', children:[
+    {t:'Attachment Theory',f:'cog-sci/attachment-theory/index.html',fmt:'app'},
+    {t:'Sleep & Dreams',f:'cog-sci/sleep-and-dreams/index.html',fmt:'app'},
+    {t:'Borrowed Grief',f:'cog-sci/dream-incorporation/index.html',fmt:'app'},
+    {t:'Stoicism in Practice',f:'cog-sci/stoicism-in-practice/index.html',fmt:'app'},
+    {t:'The Science of Humor',f:'cog-sci/science-of-humor/index.html',fmt:'app'},
+    {t:'Religion & Psychology',f:'cog-sci/religion-psychology/index.html',fmt:'app'},
+    {t:'Brain Energy & Metabolic Psychiatry',f:'cog-sci/brain-energy/index.html',fmt:'app'},
+    {t:'Fashionable Despair',f:'cog-sci/fashionable-despair/index.html',fmt:'app'},
+  ]},
+  { name:'anthro', icon:'🏴', label:'Anthropology', children:[
+    {t:'Flag History',f:'anthro/flag-history/index.html',fmt:'app'},
+    {t:'Religion in the Contemporary World',f:'anthro/religion-today/index.html',fmt:'app'},
+  ]},
+  { name:'hiking', icon:'🥾', label:'Hiking', children:[
+    {t:'Bay Area Trails',f:'hiking/bay-area/index.html',fmt:'app'},
+  ]},
+  { name:'digests', icon:'📰', label:'AI Research Digests', children:[
+    {t:'Digest Reader',f:'digests/index.html',fmt:'app'},
+  ]},
+  { name:'meta', icon:'🔧', label:'Meta', children:[
+    {t:'Hi from Claude',f:'claude.html',fmt:'dd'},
+  ]},
+];
+
+function countFiles(n){if(n.f!==undefined)return n.planned?0:1;let c=0;(n.children||[]).forEach(x=>c+=countFiles(x));return c}
+function countPlanned(n){if(n.f!==undefined)return n.planned?1:0;let c=0;(n.children||[]).forEach(x=>c+=countPlanned(x));return c}
+
+function buildTree(nodes, container, depth) {
+  nodes.forEach(node => {
+    if (node.children) {
+      const fc = countFiles(node), pc = countPlanned(node);
+      const dir = document.createElement('div');
+      dir.className = 'dir';
+      dir.dataset.name = node.name;
+      const head = document.createElement('div');
+      head.className = 'dir-head';
+      const cs = pc > 0 ? `${fc} + ${pc}` : `${fc}`;
+      head.innerHTML = `${chev}<span class="dir-icon">${node.icon||'📁'}</span><span class="dir-name">${node.label||node.name}</span><span class="dir-count">${cs}</span>`;
+      head.onclick = () => { dir.classList.toggle('collapsed'); };
+      dir.appendChild(head);
+      const cw = document.createElement('div');
+      cw.className = 'dir-children';
+      buildTree(node.children, cw, (depth||0)+1);
+      dir.appendChild(cw);
+      container.appendChild(dir);
+    } else {
+      const a = document.createElement(node.f ? 'a' : 'span');
+      a.className = 'file' + (node.planned ? ' planned' : '');
+      if (node.f) a.href = node.f;
+      a.innerHTML = `<span class="file-name">${node.t}</span><span class="file-fmt ${node.fmt}">${node.fmt}</span>`;
+      container.appendChild(a);
+    }
+  });
+}
+
+function expandAll(){document.querySelectorAll('.dir').forEach(d=>d.classList.remove('collapsed'))}
+function collapseAll(){document.querySelectorAll('.dir').forEach(d=>d.classList.add('collapsed'))}
+
+function toggleTheme() {
+  const h = document.documentElement;
+  const t = h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t==='dark'?'☀':'☽';
+  try{localStorage.setItem('rd-theme',t)}catch(e){}
+}
+
+(function(){
+  try{const s=localStorage.getItem('rd-theme');if(s)document.documentElement.setAttribute('data-theme',s)}catch(e){}
+  const tree=document.getElementById('tree');
+  buildTree(dirs,tree,0);
+
+  // Default: collapse course subdirs
+  document.querySelectorAll('.dir').forEach(d=>{
+    const nm=d.dataset.name;
+    if(nm==='scpd-ml'||nm==='scpd-deep-gen-ai') d.classList.add('collapsed');
+  });
+
+  let tf=0,tp=0;
+  dirs.forEach(d=>{tf+=countFiles(d);tp+=countPlanned(d)});
+  document.getElementById('stats').textContent=`${tf} files · ${dirs.length} sections`+(tp>0?` · ${tp} planned`:'');
+
+  const fmts={};
+  function cf(ns){ns.forEach(n=>{if(n.children)cf(n.children);else if(n.fmt&&!n.planned)fmts[n.fmt]=(fmts[n.fmt]||0)+1})}
+  cf(dirs);
+  const row=document.getElementById('status-row');
+  Object.entries(fmts).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    row.innerHTML+=`<div class="stat"><span class="stat-v">${v}</span><span class="stat-l">${k}</span></div>`;
+  });
+
+  document.getElementById('theme-btn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀':'☽';
+})();
+</script>
+</body>
+</html>

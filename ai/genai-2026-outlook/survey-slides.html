@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI 2026 — Survey Slides</title>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  /* SVG fills — light */
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Only prevent selection on nav controls, not slide content */
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+/* ---- SLIDE CONTAINER ---- */
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- SLIDE LAYOUT ---- */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+/* Subtle divider between text and SVG columns */
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+/* ---- TEXT ELEMENTS ---- */
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+/* Constrain content width on ultrawide screens — skip title & divider slides */
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- TITLE SLIDE ---- */
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+/* ---- TOC ---- */
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION DIVIDER ---- */
+/* Light mode: warm accent background */
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+/* Dark mode: deeper accent-tinted background */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+/* ---- NAVIGATION (overlay at viewport bottom) ---- */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* SVG Styling */
+.fig { overflow: visible; } /* prevent viewBox clipping on edges */
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+/* Center text vertically in boxes when text-anchor is middle */
+.fig .box-label { dominant-baseline: central; }
+
+/* Dark mode SVG overrides — remap hardcoded fills/strokes */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  /* accent colors shift slightly brighter in dark */
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+/* Animations for SVG */
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+.stat-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 13px;
+  color: var(--dim);
+}
+.toc ol {
+  padding-left: 24px;
+  line-height: 2.2;
+  font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="presentation">
+  <div class="nav-bar">
+    <div class="nav-items">
+      <button class="nav-item active" onclick="goToSlide(0)">Title</button>
+<button class="nav-item" onclick="goToSlide(1)">TOC</button>
+<button class="nav-item" onclick="goToSlide(2)">Paradox</button>
+<button class="nav-item" onclick="goToSlide(3)">S1</button>
+<button class="nav-item" onclick="goToSlide(4)">S1: Data</button>
+<button class="nav-item" onclick="goToSlide(5)">S3</button>
+<button class="nav-item" onclick="goToSlide(6)">S3: Data</button>
+<button class="nav-item" onclick="goToSlide(7)">S4</button>
+<button class="nav-item" onclick="goToSlide(8)">S4: Data</button>
+<button class="nav-item" onclick="goToSlide(9)">S5</button>
+<button class="nav-item" onclick="goToSlide(10)">S5: Data</button>
+<button class="nav-item" onclick="goToSlide(11)">S6-S8</button>
+<button class="nav-item" onclick="goToSlide(12)">S6-S8: Data</button>
+<button class="nav-item" onclick="goToSlide(13)">Tensions</button>
+<button class="nav-item" onclick="goToSlide(14)">T1-T6</button>
+<button class="nav-item" onclick="goToSlide(15)">Synthesis</button>
+<button class="nav-item" onclick="goToSlide(16)">Links</button>
+    </div>
+    <div class="nav-controls">
+      <span class="slide-counter"><span id="current-num">1</span> / <span id="total-num">17</span></span>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+    </div>
+  </div>
+
+  <div class="slides-wrapper">
+    <section class="slide slide-title active">
+      <div class="slide-title-content">
+        <div class="badge">DISCOURSE SURVEY · MARCH 2026</div>
+        <h1>GenAI 2026 <em>&amp; After</em></h1>
+        <p class="subtitle">Technology, Adoption, and Societal Impact — what 53+ sources say about the next chapter of generative AI</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-1">
+        <h3>Survey Structure</h3>
+        <div class="toc"><ol><li>The Central Paradox</li>
+<li>S1: LLMs & Foundation Models</li>
+<li>S3: AI Agents</li>
+<li>S4: Workplace Adoption</li>
+<li>S5: Employment & Labor</li>
+<li>S6-S8: Trust, Regulation, Economics</li>
+<li>Six Tensions</li>
+<li>Synthesis</li></ol></div>
+        <div class="key-point"><p>8 dimensions · 53+ sources · Methodology: source adequacy assessed before each section</p></div>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-2">
+        <div class="text-col">
+          <h3>The Central Paradox</h3>
+          <ul>
+            <li><strong>88%</strong> deploy AI somewhere (PwC)</li>
+            <li><strong>78%</strong> use in at least one function (McKinsey)</li>
+            <li>But only <strong>39%</strong> report EBIT impact</li>
+            <li>Only <strong>12%</strong> achieved both revenue + cost gains</li>
+            <li><strong>42%</strong> of initiatives abandoned (S&amp;P Global)</li>
+          </ul>
+          <div class="key-point"><p>The technology has never been better. The gap between capability and value has never been wider.</p></div>
+        </div>
+        <div class="viz-col"><svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg" class="fig">
+  <text x="190" y="18" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--dim)" letter-spacing="1">ADOPTION vs VALUE</text>
+  <line x1="20" y1="28" x2="360" y2="28" stroke="var(--border)" stroke-width="0.5"/>
+  <text x="30" y="58" font-family="Source Sans 3,sans-serif" font-size="12" fill="var(--dim)">Deploy AI somewhere</text>
+  <rect x="30" y="64" width="308" height="22" rx="3" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="344" y="80" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="var(--accent)">88%</text>
+  <text x="30" y="110" font-family="Source Sans 3,sans-serif" font-size="12" fill="var(--dim)">Use AI in ≥1 function</text>
+  <rect x="30" y="116" width="273" height="22" rx="3" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="308" y="132" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="var(--accent)">78%</text>
+  <text x="30" y="162" font-family="Source Sans 3,sans-serif" font-size="12" fill="var(--dim)">Productivity gains</text>
+  <rect x="30" y="168" width="231" height="22" rx="3" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="266" y="184" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="var(--accent3)">66%</text>
+  <text x="30" y="214" font-family="Source Sans 3,sans-serif" font-size="12" fill="var(--dim)">Enterprise EBIT impact</text>
+  <rect x="30" y="220" width="137" height="22" rx="3" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="172" y="236" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="var(--accent3)">39%</text>
+  <text x="30" y="266" font-family="Source Sans 3,sans-serif" font-size="12" fill="var(--dim)">Both revenue + cost gains</text>
+  <rect x="30" y="272" width="42" height="22" rx="3" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="78" y="288" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="var(--accent3)">12%</text>
+  <rect x="20" y="300" width="340" height="16" rx="2" fill="var(--svg-info-bg)"/>
+  <text x="190" y="312" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--mute)">Sources: PwC, McKinsey, Deloitte 2025-2026</text>
+</svg></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">S1</div>
+        <h2 class="section-heading">LLMs &amp; Foundation Models</h2>
+        <p class="section-sub">8 sources · Commoditization, cost collapse, compute ceiling</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-2">
+        <div class="text-col"><h3>Model Commoditization</h3>
+<ul><li><strong>SWE-bench:</strong> 4% → 72% in one year</li>
+<li><strong>Cost:</strong> 280× inference deflation in 18 months</li>
+<li><strong>Top-10 gap:</strong> narrowed to 5.4% on Chatbot Arena</li>
+<li><strong>Efficiency:</strong> NVIDIA argues 7B models are 10-30× more efficient for most tasks</li>
+<li><strong>Open-source:</strong> Qwen 8.85M downloads — Chinese models closing the gap</li></ul>
+<div class="key-point"><p>The model itself is becoming the least interesting part of the stack.</p></div></div>
+        <div class="viz-col"><svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg" class="fig">
+  <text x="190" y="18" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--dim)" letter-spacing="1">THREE DEFLATION CURVES</text>
+  <line x1="20" y1="28" x2="360" y2="28" stroke="var(--border)" stroke-width="0.5"/>
+  <rect x="30" y="40" width="320" height="70" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="190" y="60" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="var(--accent)">INFERENCE COST</text>
+  <text x="190" y="82" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="24" font-weight="600" fill="var(--accent)">280×</text>
+  <text x="190" y="102" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">deflation in 18 months</text>
+  <rect x="30" y="120" width="320" height="70" rx="6" fill="var(--svg-accent2-fill)" stroke="var(--accent2)" stroke-width="0.5"/>
+  <text x="190" y="140" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="var(--accent2)">MODEL SIZE</text>
+  <text x="190" y="162" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="24" font-weight="600" fill="var(--accent2)">142×</text>
+  <text x="190" y="182" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">shrinkage, same benchmark</text>
+  <rect x="30" y="200" width="320" height="70" rx="6" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="190" y="220" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="var(--accent3)">TOP-10 GAP</text>
+  <text x="190" y="242" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="24" font-weight="600" fill="var(--accent3)">5.4%</text>
+  <text x="190" y="262" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">on Chatbot Arena</text>
+  <rect x="20" y="284" width="340" height="28" rx="4" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="0.5"/>
+  <text x="190" y="302" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--accent)">Advantage moves: MODEL → SYSTEM</text>
+</svg></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">S3</div>
+        <h2 class="section-heading">AI Agents</h2>
+        <p class="section-sub">10 sources · Hype, production reality, integration bottleneck</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-2">
+        <div class="text-col">
+          <h3>Agent Production Reality</h3>
+          <ul>
+            <li><strong>40%</strong> of projects canceled by 2027 (Gartner)</li>
+            <li><strong>≤10 steps</strong> before human needed in 68% of cases</li>
+            <li><strong>85%</strong> custom-built (reject generic frameworks)</li>
+            <li><strong>74%</strong> evaluated by humans, not benchmarks</li>
+            <li><strong>1000+</strong> MCP servers, but &lt;4% RSA focus = opportunity</li>
+          </ul>
+          <div class="key-point"><p>The failure mode is integration, not the LLM. Brittle connectors and legacy systems kill projects.</p></div>
+        </div>
+        <div class="viz-col"><svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg" class="fig">
+  <text x="190" y="18" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--dim)" letter-spacing="1">DEMO vs PRODUCTION</text>
+  <line x1="20" y1="28" x2="360" y2="28" stroke="var(--border)" stroke-width="0.5"/>
+  <rect x="20" y="40" width="165" height="130" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="102" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="13" font-weight="600" fill="var(--accent)">DEMO</text>
+  <text x="102" y="82" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">100-step chains</text>
+  <text x="102" y="98" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Generic frameworks</text>
+  <text x="102" y="114" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Automated eval</text>
+  <text x="102" y="130" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Clean APIs</text>
+  <text x="102" y="160" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--accent)">"Fully autonomous"</text>
+  <rect x="195" y="40" width="165" height="130" rx="6" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="277" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="13" font-weight="600" fill="var(--accent3)">PRODUCTION</text>
+  <text x="277" y="82" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--accent3)">≤10 steps (68%)</text>
+  <text x="277" y="98" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">85% custom-built</text>
+  <text x="277" y="114" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">74% human eval</text>
+  <text x="277" y="130" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Legacy + rate limits</text>
+  <text x="277" y="160" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--accent3)">Human-in-loop always</text>
+  <rect x="20" y="180" width="340" height="50" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="0.5"/>
+  <text x="190" y="198" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent)">WHERE PROJECTS DIE</text>
+  <text x="190" y="216" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Integration, not the model: brittle connectors,</text>
+  <text x="190" y="228" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">OAuth, legacy systems, rate limits</text>
+  <rect x="20" y="244" width="340" height="66" rx="6" fill="var(--svg-info-bg)"/>
+  <text x="190" y="262" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" font-weight="600" fill="var(--dim)">TIMELINE SPREAD</text>
+  <circle cx="70" cy="286" r="8" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+  <text x="70" y="290" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--accent)">18m</text>
+  <text x="70" y="304" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--mute)">AI 2027</text>
+  <circle cx="190" cy="286" r="8" fill="var(--svg-accent2-fill)" stroke="var(--accent2)" stroke-width="1"/>
+  <text x="190" y="290" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--accent2)">5yr</text>
+  <text x="190" y="304" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--mute)">Davenport</text>
+  <circle cx="310" cy="286" r="8" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="1"/>
+  <text x="310" y="290" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--accent3)">10yr</text>
+  <text x="310" y="304" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="var(--mute)">Karpathy</text>
+  <line x1="78" y1="286" x2="302" y2="286" stroke="var(--border)" stroke-width="1"/>
+</svg></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">S4</div>
+        <h2 class="section-heading">Workplace Adoption</h2>
+        <p class="section-sub">10 sources · The adoption-value gap</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-2">
+        <div class="text-col"><h3>The Adoption-Value Gap</h3>
+<ul><li><strong>McKinsey:</strong> 78% use AI → only 39% EBIT impact</li>
+<li><strong>Deloitte:</strong> 66% productivity → only 20% revenue</li>
+<li><strong>PwC:</strong> 88% deploy → only 12% both gains</li>
+<li><strong>Coding:</strong> strongest use case (+67% PRs/day)</li>
+<li><strong>Skills:</strong> #1 barrier (Deloitte, 3,235 leaders)</li></ul>
+<div class="key-point"><p>Leadership commitment (3× differentiator) matters more than technology choice.</p></div></div>
+        <div class="viz-col"><svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg" class="fig">
+  <text x="190" y="18" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--dim)" letter-spacing="1">THREE SURVEYS, ONE STORY</text>
+  <line x1="20" y1="28" x2="360" y2="28" stroke="var(--border)" stroke-width="0.5"/>
+  <rect x="20" y="40" width="110" height="90" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="75" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent)">McKinsey</text>
+  <text x="75" y="84" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Use: 78%</text>
+  <text x="75" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">EBIT: 39%</text>
+  <text x="75" y="120" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" fill="var(--accent)">Gap: 39pp</text>
+  <rect x="140" y="40" width="110" height="90" rx="6" fill="var(--svg-accent2-fill)" stroke="var(--accent2)" stroke-width="0.5"/>
+  <text x="195" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent2)">Deloitte</text>
+  <text x="195" y="84" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Productivity: 66%</text>
+  <text x="195" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Revenue: 20%</text>
+  <text x="195" y="120" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" fill="var(--accent2)">Gap: 46pp</text>
+  <rect x="260" y="40" width="110" height="90" rx="6" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="315" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent3)">PwC</text>
+  <text x="315" y="84" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Deploy: 88%</text>
+  <text x="315" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Both: 12%</text>
+  <text x="315" y="120" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" fill="var(--accent3)">Gap: 76pp</text>
+  <rect x="20" y="146" width="350" height="52" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="0.5"/>
+  <text x="195" y="168" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent)">WHERE VALUE MATERIALIZES</text>
+  <text x="195" y="188" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Coding +67% PRs · Juniors +20-30% · Decisions 28→47%</text>
+  <rect x="20" y="210" width="350" height="52" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="0.5"/>
+  <text x="195" y="232" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent3)">BARRIERS (Deloitte, 3,235 leaders)</text>
+  <text x="195" y="252" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">#1 Worker skills · #2 Data infra · #3 Governance</text>
+  <rect x="20" y="278" width="350" height="30" rx="4" fill="var(--svg-info-bg)"/>
+  <text x="195" y="296" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--mute)">Only 34% reimagining business through AI (Deloitte)</text>
+</svg></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">S5</div>
+        <h2 class="section-heading">Employment &amp; Labor</h2>
+        <p class="section-sub">8 sources · Career ladder, vulnerability, no broad disruption yet</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-2">
+        <div class="text-col"><h3>The Layered Story</h3>
+<ul><li><strong>Surface:</strong> "No discernible disruption" 33 months post-ChatGPT (Yale)</li>
+<li><strong>Undertow:</strong> Young tech workers unemployment +3pp (Goldman)</li>
+<li><strong>Structure:</strong> Career ladder breaking — codified knowledge substituted, tacit augmented (Dallas Fed)</li>
+<li><strong>Vulnerable:</strong> 6.1M clerical workers with low adaptive capacity (Brookings)</li>
+<li><strong>Gender:</strong> 79% of employed women in high-risk jobs vs 58% men</li></ul></div>
+        <div class="viz-col"><svg viewBox="0 0 380 320" xmlns="http://www.w3.org/2000/svg" class="fig">
+  <text x="190" y="18" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="var(--dim)" letter-spacing="1">THE LAYERED STORY</text>
+  <line x1="20" y1="28" x2="360" y2="28" stroke="var(--border)" stroke-width="0.5"/>
+  <rect x="20" y="40" width="340" height="58" rx="6" fill="var(--svg-yellow-fill)" stroke="var(--yellow)" stroke-width="0.5"/>
+  <text x="190" y="62" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--yellow)">SURFACE: No disruption (Yale)</text>
+  <text x="190" y="82" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">33 months post-ChatGPT · market stable</text>
+  <rect x="20" y="108" width="340" height="58" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="0.5"/>
+  <text x="190" y="130" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent)">UNDERTOW: Young tech (Goldman)</text>
+  <text x="190" y="150" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">20-30yr tech: unemployment +3pp</text>
+  <rect x="20" y="176" width="340" height="58" rx="6" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="0.5"/>
+  <text x="190" y="198" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent3)">STRUCTURE: Career ladder (Dallas Fed)</text>
+  <text x="190" y="218" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Codified → substituted · Tacit → augmented</text>
+  <rect x="20" y="244" width="340" height="58" rx="6" fill="var(--svg-accent2-fill)" stroke="var(--accent2)" stroke-width="0.5"/>
+  <text x="190" y="266" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" font-weight="600" fill="var(--accent2)">VULNERABLE: 6.1M clerical (Brookings)</text>
+  <text x="190" y="286" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--dim)">Low pay, narrow skills, 79% women</text>
+  <rect x="20" y="308" width="340" height="10" rx="2" fill="var(--svg-info-bg)"/>
+</svg></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">S6-S8</div>
+        <h2 class="section-heading">Trust, Regulation, Economics</h2>
+        <p class="section-sub">Public perception · EU vs US · The bubble question</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-1">
+        <div class="text-col"><h3>Three More Dimensions</h3>
+<ul><li><strong>Trust:</strong> 66% use AI, 46% trust it, 56% made mistakes (KPMG, 48K people)</li>
+<li><strong>EU:</strong> AI Act core enforcement August 2026. Penalties: €35M / 7% turnover</li>
+<li><strong>US:</strong> No federal law. 45+ state patchwork. Trump EO signals preemption</li>
+<li><strong>Capex:</strong> $500B+ hyperscaler investment. 9× AI company revenue growth</li>
+<li><strong>Bubble?</strong> 42% project abandonment AND $15B OpenAI revenue target — both true</li></ul></div>
+      </div>
+    </section>
+
+<section class="slide slide-section">
+      <div class="section-title-block">
+        <div class="section-num-large">T1-T6</div>
+        <h2 class="section-heading">Six Tensions</h2>
+        <p class="section-sub">Where credible sources reach opposite conclusions</p>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-1">
+        <div class="text-col"><h3>The Six Contradictions</h3>
+<ul><li><strong>T1 Adoption vs. value:</strong> 88% deploy, 12% get both gains</li>
+<li><strong>T2 No disruption vs. undertow:</strong> Aggregate fine, young tech workers hurting</li>
+<li><strong>T3 Use vs. trust:</strong> 66% use, 46% trust — unprecedented gap</li>
+<li><strong>T4 Scale vs. efficiency:</strong> 9 GW clusters vs 7B models that are 10-30× cheaper</li>
+<li><strong>T5 Bubble vs. boom:</strong> Both sides cite valid evidence simultaneously</li>
+<li><strong>T6 Autonomy timelines:</strong> 18 months vs 5 years vs 10 years — 6× spread</li></ul>
+<div class="key-point"><p>These tensions, not consensus points, reveal the true state of the field.</p></div></div>
+      </div>
+    </section>
+
+<section class="slide">
+      <div class="slide-content col-1">
+        <div class="text-col"><h3>Synthesis</h3>
+<ul><li>GenAI 2026 is in an <strong>installation phase</strong> — massive capital deployment, real capability, enterprise returns concentrated in a minority</li>
+<li>The technology-adoption question is answered: everyone has AI</li>
+<li>The organizational-transformation question is wide open</li>
+<li>78% adopted minus 12% full value = <strong>66% of organizations in limbo</strong></li></ul>
+<div class="key-point"><p>AI is simultaneously underhyped (capabilities are extraordinary) and overhyped (enterprise returns are modest). Both are true.</p></div></div>
+      </div>
+    </section>
+
+<section class="slide slide-title">
+      <div class="slide-title-content">
+        <div class="badge">GENAI 2026 &amp; AFTER</div>
+        <h1>Full Survey <em>Available</em></h1>
+        <p class="subtitle">8 interactive deep-dives · 53+ sources · Survey paper · Tensions paper<br><br>
+        <a href="https://nafsadh.github.io/read-rd/ai/genai-2026-outlook/" style="color:var(--accent)">nafsadh.github.io/read-rd/ai/genai-2026-outlook</a></p>
+      </div>
+    </section>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+</div>
+
+<script>
+
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+
+</script>
+</body>
+</html>

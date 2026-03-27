@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Transformer — Attention Is All You Need</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+.fig .box-label { dominant-baseline: central; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+  .slide .subtitle { margin-bottom: 0.5rem; }
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+  .toc-list { grid-template-columns: 1fr; }
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- SLIDE 0: TITLE -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="40" height="6" rx="3" fill="#5b5bd6"/>
+    <rect x="44" width="40" height="6" rx="3" fill="#0ea5e9"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#0d9488"/>
+  </svg>
+  <h1><em>Attention</em> Is All You Need</h1>
+  <div class="ref">Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, Polosukhin</div>
+  <div class="ref">NeurIPS 2017 · The Transformer Architecture</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<!-- SLIDE 1: TABLE OF CONTENTS -->
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">Outline</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>What We'll Cover</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <ul class="toc-list">
+        <li><span class="toc-num">I</span> Core Architecture</li>
+        <li><span class="toc-num">II</span> Scaled Dot-Product Attention</li>
+        <li><span class="toc-num">III</span> Multi-Head Attention</li>
+        <li><span class="toc-num">IV</span> Feed-Forward & Layer Norm</li>
+        <li><span class="toc-num">V</span> Positional Encoding</li>
+        <li><span class="toc-num">VI</span> Results & Modern Variants</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER: ARCHITECTURE -->
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>The Encoder-Decoder Stack</h1>
+  <div class="subtitle">6 identical layers of self-attention and feed-forward networks</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<!-- SLIDE 3: ENCODER-DECODER OVERVIEW -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1 · Overview</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>Encoder-Decoder Architecture</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The Transformer consists of <strong>stacked encoders and decoders</strong>, each with 6 identical layers.</p>
+      <div class="eq-box">
+        <span class="label">Encoder</span>
+        N=6 identical layers<br>d_model=512 dimensions
+      </div>
+      <div class="eq-box">
+        <span class="label">Decoder</span>
+        N=6 identical layers<br>d_model=512 dimensions
+      </div>
+      <p class="point">Each layer has <strong>two sub-layers</strong>: multi-head self-attention + feed-forward.</p>
+      <div class="key-idea">
+        <div class="kicker">Why stacking?</div>
+        <p>Each layer refines representations, building hierarchy of abstract features.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Encoder-Decoder</text>
+        <rect x="20" y="45" width="140" height="140" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5"/>
+        <text x="90" y="65" text-anchor="middle" font-size="12" font-weight="600" fill="#5b5bd6">Encoder</text>
+        <text x="90" y="90" text-anchor="middle" font-size="11" fill="#6e6b64">N=6 Layers</text>
+        <text x="90" y="125" text-anchor="middle" font-size="11" fill="#6e6b64">Multi-Head</text>
+        <text x="90" y="140" text-anchor="middle" font-size="11" fill="#6e6b64">Self-Attention</text>
+        <text x="90" y="160" text-anchor="middle" font-size="11" fill="#6e6b64">Feed-Forward</text>
+        <text x="90" y="175" text-anchor="middle" font-size="10" fill="#b0ada5">(d_model=512)</text>
+
+        <rect x="190" y="45" width="140" height="140" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5"/>
+        <text x="260" y="65" text-anchor="middle" font-size="12" font-weight="600" fill="#0ea5e9">Decoder</text>
+        <text x="260" y="90" text-anchor="middle" font-size="11" fill="#6e6b64">N=6 Layers</text>
+        <text x="260" y="125" text-anchor="middle" font-size="11" fill="#6e6b64">Masked</text>
+        <text x="260" y="140" text-anchor="middle" font-size="11" fill="#6e6b64">Self-Attention</text>
+        <text x="260" y="160" text-anchor="middle" font-size="11" fill="#6e6b64">Encoder-Decoder</text>
+        <text x="260" y="175" text-anchor="middle" font-size="11" fill="#6e6b64">Cross-Attention</text>
+
+        <path d="M 90 195 L 260 45" stroke="#6e6b64" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="135" y="125" font-size="10" fill="#b0ada5">context</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: INPUT EMBEDDINGS & POSITIONAL ENCODING -->
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1 · Input</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>Embeddings + Positional Encoding</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Tokens are first <strong>embedded into d_model=512 dimensions</strong>, then combined with positional encodings.</p>
+      <div class="eq-box">
+        <span class="label">Embedding</span>
+        e(token) ∈ ℝ^512
+      </div>
+      <p class="point">Attention mechanism is <strong>order-agnostic</strong>—it doesn't inherently know sequence position. Positional encodings inject position information.</p>
+      <div class="key-idea">
+        <div class="kicker">Why needed?</div>
+        <p>Without positions, "The cat sat" and "sat cat The" look identical to the model.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Input Pipeline</text>
+        <rect x="30" y="50" width="120" height="50" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+        <text x="90" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#5b5bd6">Token IDs</text>
+        <text x="90" y="92" text-anchor="middle" font-size="10" fill="#6e6b64">[2, 42, 187, ...]</text>
+
+        <path d="M 90 100 L 90 120" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="30" y="120" width="120" height="50" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+        <text x="90" y="145" text-anchor="middle" font-size="12" font-weight="600" fill="#0ea5e9">Token Embed</text>
+        <text x="90" y="162" text-anchor="middle" font-size="10" fill="#6e6b64">d_model=512</text>
+
+        <path d="M 90 170 L 90 190" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="30" y="190" width="120" height="50" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" rx="4"/>
+        <text x="90" y="215" text-anchor="middle" font-size="12" font-weight="600" fill="#7c3aed">+ Pos Encoding</text>
+        <text x="90" y="232" text-anchor="middle" font-size="10" fill="#6e6b64">PE(pos, 2i)</text>
+
+        <path d="M 90 240 L 90 260" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="30" y="260" width="120" height="50" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="1.5" rx="4"/>
+        <text x="90" y="285" text-anchor="middle" font-size="12" font-weight="600" fill="#0d9488">Encoder Input</text>
+        <text x="90" y="302" text-anchor="middle" font-size="10" fill="#6e6b64">shape: (seq, 512)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: POSITIONAL ENCODING FORMULA -->
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1 · Positional Enc.</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>Sinusoidal Positional Encoding</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Position information uses <strong>sine and cosine waves</strong> at different frequencies.</p>
+      <div class="eq-box">
+        <span class="label">Formula</span>
+        PE(pos, 2i) = sin(pos / 10000^(2i/d))<br>
+        PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+      </div>
+      <p class="point">Even dimensions use <code>sin</code>, odd dimensions use <code>cos</code>. This creates a unique signal for each position.</p>
+      <div class="key-idea">
+        <div class="kicker">Advantage</div>
+        <p>Relative position relationships are learned automatically: the model can extrapolate to longer sequences.</p>
+      </div>
+      <p class="note">Modern: GPT-2 uses learned PE; LLaMA uses RoPE.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">PE Heatmap (pos × dim)</text>
+        <rect x="25" y="45" width="300" height="200" fill="rgba(0,0,0,0.02)" stroke="#b0ada5" stroke-width="1"/>
+
+        <!-- Simplified heatmap visualization -->
+        <rect x="30" y="50" width="20" height="20" fill="#5b5bd6" opacity="0.3"/>
+        <rect x="52" y="50" width="20" height="20" fill="#5b5bd6" opacity="0.5"/>
+        <rect x="74" y="50" width="20" height="20" fill="#5b5bd6" opacity="0.7"/>
+        <rect x="96" y="50" width="20" height="20" fill="#5b5bd6" opacity="0.9"/>
+        <rect x="118" y="50" width="20" height="20" fill="#0ea5e9" opacity="0.5"/>
+        <rect x="140" y="50" width="20" height="20" fill="#0ea5e9" opacity="0.7"/>
+
+        <rect x="30" y="72" width="20" height="20" fill="#5b5bd6" opacity="0.4"/>
+        <rect x="52" y="72" width="20" height="20" fill="#5b5bd6" opacity="0.6"/>
+        <rect x="74" y="72" width="20" height="20" fill="#5b5bd6" opacity="0.5"/>
+        <rect x="96" y="72" width="20" height="20" fill="#0ea5e9" opacity="0.4"/>
+
+        <rect x="30" y="94" width="20" height="20" fill="#5b5bd6" opacity="0.5"/>
+        <rect x="52" y="94" width="20" height="20" fill="#0ea5e9" opacity="0.5"/>
+        <rect x="74" y="94" width="20" height="20" fill="#0ea5e9" opacity="0.6"/>
+
+        <text x="175" y="280" text-anchor="middle" font-size="11" fill="#6e6b64">pos=0 (start)</text>
+        <text x="175" y="300" text-anchor="middle" font-size="11" fill="#6e6b64">Higher frequencies: rapid oscillation</text>
+        <text x="175" y="320" text-anchor="middle" font-size="11" fill="#6e6b64">Lower frequencies: slow changes</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER: ATTENTION -->
+<div class="slide section-divider" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h1>Scaled Dot-Product Attention</h1>
+  <div class="subtitle">"Attention is a soft dictionary lookup: find the most relevant keys for each query."</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<!-- SLIDE 7: ATTENTION FORMULA -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2 · Core Formula</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>Scaled Dot-Product Attention</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">For each query, compute <strong>similarity to all keys</strong>, then use softmax to create a probability distribution over values.</p>
+      <div class="eq-box">
+        <span class="label">Attention Formula</span>
+        Attention(Q, K, V) = softmax(QK^T / √dk) V
+      </div>
+      <p class="point"><strong>Q</strong> (queries): what am I looking for? <strong>K</strong> (keys): what are you? <strong>V</strong> (values): what do you contain?</p>
+      <p class="point">The <code>√dk</code> scaling prevents the softmax from becoming too peaked.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Attention Flow</text>
+        <rect x="25" y="50" width="70" height="50" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+        <text x="60" y="85" text-anchor="middle" font-size="12" font-weight="600" fill="#5b5bd6">Q</text>
+
+        <rect x="110" y="50" width="70" height="50" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+        <text x="145" y="85" text-anchor="middle" font-size="12" font-weight="600" fill="#0ea5e9">K</text>
+
+        <rect x="195" y="50" width="70" height="50" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" rx="4"/>
+        <text x="230" y="85" text-anchor="middle" font-size="12" font-weight="600" fill="#7c3aed">V</text>
+
+        <path d="M 60 100 L 100 140" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 145 100 L 110 140" stroke="#0ea5e9" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="80" y="140" width="110" height="50" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="4"/>
+        <text x="135" y="160" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">QK^T / √dk</text>
+        <text x="135" y="180" text-anchor="middle" font-size="10" fill="#6e6b64">scores</text>
+
+        <path d="M 135 190 L 135 210" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="80" y="210" width="110" height="50" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="4"/>
+        <text x="135" y="230" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">softmax()</text>
+        <text x="135" y="250" text-anchor="middle" font-size="10" fill="#6e6b64">weights</text>
+
+        <path d="M 145 210 L 220 190" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 135 210 L 135 270" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="80" y="270" width="110" height="50" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="1.5" rx="4"/>
+        <text x="135" y="295" text-anchor="middle" font-size="12" font-weight="600" fill="#0d9488">Output</text>
+        <text x="135" y="312" text-anchor="middle" font-size="10" fill="#6e6b64">(weighted sum)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: WHY SCALE BY SQRT(DK) -->
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2 · Scaling</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>Why Scale by √d_k?</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Without scaling, dot products grow with <code>d_k</code>. Large dot products push softmax into saturation (tiny gradients).</p>
+      <p class="point">With d_k=64: unscaled scores average μ≈0, σ≈8. After softmax, one value dominates.</p>
+      <p class="point"><strong>Scaling by √d_k=8</strong> keeps variance stable: σ ≈ 1, softmax distributes probability more evenly.</p>
+      <div class="key-idea">
+        <div class="kicker">Result</div>
+        <p>Better gradient flow during backprop; model learns more nuanced attention patterns.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Softmax Distribution</text>
+
+        <text x="60" y="50" font-size="11" font-weight="600" fill="#5b5bd6">Unscaled</text>
+        <rect x="30" y="60" width="70" height="120" fill="rgba(0,0,0,0.02)" stroke="#b0ada5" stroke-width="1" rx="3"/>
+        <rect x="35" y="160" width="8" height="20" fill="#5b5bd6"/>
+        <rect x="45" y="160" width="8" height="20" fill="#5b5bd6"/>
+        <rect x="55" y="155" width="8" height="25" fill="#5b5bd6"/>
+        <rect x="65" y="120" width="8" height="60" fill="#5b5bd6"/>
+        <rect x="75" y="165" width="8" height="15" fill="#5b5bd6"/>
+        <text x="60" y="190" text-anchor="middle" font-size="9" fill="#6e6b64">(peaked)</text>
+
+        <text x="250" y="50" font-size="11" font-weight="600" fill="#0ea5e9">Scaled (÷√64)</text>
+        <rect x="220" y="60" width="70" height="120" fill="rgba(0,0,0,0.02)" stroke="#b0ada5" stroke-width="1" rx="3"/>
+        <rect x="225" y="135" width="8" height="45" fill="#0ea5e9"/>
+        <rect x="235" y="130" width="8" height="50" fill="#0ea5e9"/>
+        <rect x="245" y="125" width="8" height="55" fill="#0ea5e9"/>
+        <rect x="255" y="128" width="8" height="52" fill="#0ea5e9"/>
+        <rect x="265" y="132" width="8" height="48" fill="#0ea5e9"/>
+        <rect x="275" y="136" width="8" height="44" fill="#0ea5e9"/>
+        <text x="250" y="190" text-anchor="middle" font-size="9" fill="#6e6b64">(distributed)</text>
+
+        <text x="175" y="230" text-anchor="middle" font-size="11" fill="#6e6b64">Large variance → one key dominates</text>
+        <text x="175" y="250" text-anchor="middle" font-size="11" fill="#6e6b64">Stable variance → balanced attention</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: MULTI-HEAD ATTENTION SETUP -->
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2 · Multi-Head</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Multi-Head Attention (h=8 heads)</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Instead of one large attention head, use <strong>h=8 parallel heads</strong>, each with <strong>d_k = d_v = 64</strong>.</p>
+      <p class="point">Each head sees a 64-dim projection of Q, K, V. All outputs concatenated: (8 × 64) = 512.</p>
+      <div class="eq-box">
+        <span class="label">Multi-Head</span>
+        head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)<br>
+        MultiHead(Q,K,V) = Concat(head_1,...,head_8)W^O
+      </div>
+      <p class="point">This allows the model to attend to <strong>different subspaces</strong> simultaneously.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Multi-Head (h=8)</text>
+
+        <rect x="20" y="50" width="310" height="40" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="175" y="75" text-anchor="middle" font-size="11" fill="#1a1a1a">Input: (seq_len, 512)</text>
+
+        <path d="M 175 90 L 175 110" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <!-- 8 heads -->
+        <g id="head">
+          <rect x="25" y="110" width="35" height="60" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="3"/>
+          <text x="42" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="#5b5bd6">h1</text>
+          <text x="42" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">64d</text>
+        </g>
+        <g id="head">
+          <rect x="68" y="110" width="35" height="60" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="3"/>
+          <text x="85" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="#5b5bd6">h2</text>
+          <text x="85" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">64d</text>
+        </g>
+        <g id="head">
+          <rect x="111" y="110" width="35" height="60" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="3"/>
+          <text x="128" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="#5b5bd6">h3</text>
+          <text x="128" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">64d</text>
+        </g>
+        <text x="160" y="145" text-anchor="middle" font-size="10" fill="#6e6b64">... h8</text>
+        <g id="head">
+          <rect x="192" y="110" width="35" height="60" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="3"/>
+          <text x="209" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="#5b5bd6">h8</text>
+          <text x="209" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">64d</text>
+        </g>
+
+        <path d="M 42 170 L 100 190" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 85 170 L 100 190" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 128 170 L 100 190" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 209 170 L 150 190" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="40" y="190" width="190" height="50" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="135" y="215" text-anchor="middle" font-size="11" fill="#1a1a1a">Concat + Linear W^O</text>
+        <text x="135" y="232" text-anchor="middle" font-size="10" fill="#6e6b64">(8×64 → 512)</text>
+
+        <path d="M 135 240 L 135 265" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="40" y="265" width="190" height="50" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="135" y="290" text-anchor="middle" font-size="11" fill="#1a1a1a">Output: (seq_len, 512)</text>
+        <text x="135" y="310" text-anchor="middle" font-size="10" fill="#6e6b64">same shape as input</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: SELF vs CROSS ATTENTION -->
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2 · Variants</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2>Self-Attention vs Cross-Attention</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Self-Attention (Encoder):</strong> Q, K, V all come from the same sequence. Each token attends to all tokens.</p>
+      <div class="eq-box">
+        <span class="label">Self-Att.</span>
+        Q = X W_Q<br>K = X W_K<br>V = X W_V
+      </div>
+      <p class="point"><strong>Cross-Attention (Decoder→Encoder):</strong> Q from decoder, K and V from encoder. Decoder accesses encoder context.</p>
+      <div class="eq-box">
+        <span class="label">Cross-Att.</span>
+        Q = decoder_X W_Q<br>K = encoder_X W_K<br>V = encoder_X W_V
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Attention Types</text>
+
+        <text x="90" y="50" font-size="11" font-weight="600" fill="#5b5bd6">Self-Attention</text>
+        <rect x="30" y="65" width="120" height="80" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+        <circle cx="55" cy="95" r="8" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="75" cy="95" r="8" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="95" cy="95" r="8" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="115" cy="95" r="8" fill="#5b5bd6" opacity="0.6"/>
+        <text x="90" y="130" text-anchor="middle" font-size="10" fill="#6e6b64">one sequence</text>
+
+        <path d="M 55 95 Q 60 110 75 95" stroke="#5b5bd6" stroke-width="1" fill="none"/>
+        <path d="M 75 95 Q 85 110 95 95" stroke="#5b5bd6" stroke-width="1" fill="none"/>
+        <path d="M 95 95 Q 100 110 115 95" stroke="#5b5bd6" stroke-width="1" fill="none"/>
+
+        <text x="250" y="50" font-size="11" font-weight="600" fill="#0ea5e9">Cross-Attention</text>
+        <rect x="180" y="65" width="50" height="80" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+        <text x="205" y="110" text-anchor="middle" font-size="9" fill="#0ea5e9">decoder</text>
+        <text x="205" y="130" text-anchor="middle" font-size="9" fill="#0ea5e9">(queries)</text>
+
+        <path d="M 230 95 L 270 80" stroke="#0ea5e9" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="270" y="65" width="50" height="80" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" rx="4"/>
+        <text x="295" y="110" text-anchor="middle" font-size="9" fill="#7c3aed">encoder</text>
+        <text x="295" y="130" text-anchor="middle" font-size="9" fill="#7c3aed">(K, V)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER: COMPONENTS -->
+<div class="slide section-divider" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.3</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h1>Feed-Forward & Layer Norm</h1>
+  <div class="subtitle">The two sub-layers of every encoder/decoder block</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<!-- SLIDE 12: FEED-FORWARD NETWORK -->
+<div class="slide" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.3 · Feed-Forward</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h2>Position-Wise Feed-Forward</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">After attention, each position independently goes through a <strong>two-layer MLP</strong>: 512 → 2048 → 512.</p>
+      <div class="eq-box">
+        <span class="label">FFN</span>
+        FFN(x) = max(0, xW_1 + b_1)W_2 + b_2
+      </div>
+      <p class="point">The hidden layer (2048 dims) is <strong>4× wider</strong> than d_model. This adds model capacity and non-linearity.</p>
+      <div class="key-idea">
+        <div class="kicker">Why "position-wise"?</div>
+        <p>Same MLPs applied independently to each position. Parameters are shared across the sequence.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Feed-Forward Block</text>
+
+        <rect x="40" y="50" width="270" height="40" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="175" y="75" text-anchor="middle" font-size="11" fill="#1a1a1a">Input: (seq_len, d_model=512)</text>
+
+        <path d="M 175 90 L 175 110" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="70" y="110" width="210" height="40" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="3"/>
+        <text x="175" y="135" text-anchor="middle" font-size="11" fill="#5b5bd6">Linear W_1 + ReLU</text>
+        <text x="175" y="152" text-anchor="middle" font-size="10" fill="#6e6b64">(512 → 2048)</text>
+
+        <path d="M 175 150 L 175 170" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="70" y="170" width="210" height="40" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="3"/>
+        <text x="175" y="195" text-anchor="middle" font-size="11" fill="#0ea5e9">Linear W_2</text>
+        <text x="175" y="212" text-anchor="middle" font-size="10" fill="#6e6b64">(2048 → 512)</text>
+
+        <path d="M 175 210 L 175 230" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="40" y="230" width="270" height="40" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="175" y="255" text-anchor="middle" font-size="11" fill="#1a1a1a">Output: (seq_len, 512)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: LAYER NORM & RESIDUAL -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.3 · Norm & Skip</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>Layer Normalization & Residual Connections</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Each sub-layer (attention, FFN) is wrapped with <strong>residual connection + layer norm</strong>.</p>
+      <div class="eq-box">
+        <span class="label">Sub-Layer</span>
+        LayerNorm(x + Sublayer(x))
+      </div>
+      <p class="point"><strong>Layer Norm:</strong> normalizes features per position (not across batch). Stabilizes training.</p>
+      <p class="point"><strong>Residual:</strong> x + f(x) allows gradients to flow directly to earlier layers. Eases training of deep networks.</p>
+      <div class="key-idea">
+        <div class="kicker">Why stack 6 layers?</div>
+        <p>Residuals + layer norm enable stable training of 6-deep networks without degradation.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Residual + Norm Block</text>
+
+        <circle cx="70" cy="80" r="4" fill="#5b5bd6"/>
+        <circle cx="280" cy="80" r="4" fill="#5b5bd6"/>
+        <line x1="74" y1="80" x2="276" y2="80" stroke="#5b5bd6" stroke-width="2"/>
+        <text x="175" y="70" text-anchor="middle" font-size="10" fill="#5b5bd6" font-weight="600">x (residual path)</text>
+
+        <rect x="80" y="110" width="190" height="60" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+        <text x="175" y="135" text-anchor="middle" font-size="11" fill="#5b5bd6">Multi-Head Attention</text>
+        <text x="175" y="160" text-anchor="middle" font-size="10" fill="#6e6b64">(or Feed-Forward)</text>
+
+        <path d="M 70 80 L 100 110" stroke="#5b5bd6" stroke-width="2"/>
+        <path d="M 175 170 L 175 180" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path d="M 280 80 L 250 110" stroke="#5b5bd6" stroke-width="2"/>
+
+        <circle cx="175" cy="190" r="6" fill="none" stroke="#6e6b64" stroke-width="1.5"/>
+        <text x="175" y="193" text-anchor="middle" font-size="12" fill="#6e6b64" font-weight="600">+</text>
+
+        <path d="M 175 196 L 175 210" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="80" y="210" width="190" height="40" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+        <text x="175" y="240" text-anchor="middle" font-size="11" fill="#0ea5e9">LayerNorm</text>
+
+        <path d="M 175 250 L 175 270" stroke="#6e6b64" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        <rect x="40" y="270" width="270" height="40" fill="rgba(0,0,0,0.04)" stroke="#6e6b64" stroke-width="1.5" rx="3"/>
+        <text x="175" y="295" text-anchor="middle" font-size="11" fill="#1a1a1a">Output to next layer</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: DECODER MASKING -->
+<div class="slide" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.3 · Decoder</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h2>Decoder: Causal Masking</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">During inference, the decoder generates output <strong>one token at a time</strong>. It cannot attend to future tokens.</p>
+      <p class="point"><strong>Causal mask:</strong> set attention scores to -∞ for all future positions. After softmax, weights become 0.</p>
+      <div class="eq-box">
+        <span class="label">Masking</span>
+        scores_ij ← -∞ if j > i<br>
+        (attend only to ≤ current position)
+      </div>
+      <p class="point">This ensures the model generates tokens sequentially without peeking ahead.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Causal Attention Mask</text>
+
+        <text x="120" y="60" font-size="11" fill="#6e6b64">Query position →</text>
+        <text x="60" y="110" font-size="10" fill="#6e6b64" text-anchor="end">Key</text>
+        <text x="60" y="125" font-size="10" fill="#6e6b64" text-anchor="end">pos</text>
+
+        <!-- Attention matrix visualization -->
+        <rect x="75" y="75" width="20" height="20" fill="#0ea5e9" opacity="0.8"/>
+        <rect x="100" y="75" width="20" height="20" fill="#7c3aed" opacity="0.2"/>
+        <rect x="125" y="75" width="20" height="20" fill="#7c3aed" opacity="0.1"/>
+        <rect x="150" y="75" width="20" height="20" fill="#7c3aed" opacity="0.05"/>
+
+        <rect x="75" y="100" width="20" height="20" fill="#0ea5e9" opacity="0.7"/>
+        <rect x="100" y="100" width="20" height="20" fill="#0ea5e9" opacity="0.8"/>
+        <rect x="125" y="100" width="20" height="20" fill="#7c3aed" opacity="0.1"/>
+        <rect x="150" y="100" width="20" height="20" fill="#7c3aed" opacity="0.05"/>
+
+        <rect x="75" y="125" width="20" height="20" fill="#0ea5e9" opacity="0.6"/>
+        <rect x="100" y="125" width="20" height="20" fill="#0ea5e9" opacity="0.7"/>
+        <rect x="125" y="125" width="20" height="20" fill="#0ea5e9" opacity="0.75"/>
+        <rect x="150" y="125" width="20" height="20" fill="#7c3aed" opacity="0.05"/>
+
+        <rect x="75" y="150" width="20" height="20" fill="#0ea5e9" opacity="0.5"/>
+        <rect x="100" y="150" width="20" height="20" fill="#0ea5e9" opacity="0.6"/>
+        <rect x="125" y="150" width="20" height="20" fill="#0ea5e9" opacity="0.65"/>
+        <rect x="150" y="150" width="20" height="20" fill="#0ea5e9" opacity="0.7"/>
+
+        <text x="255" y="95" font-size="10" fill="#0ea5e9">allowed</text>
+        <text x="255" y="115" font-size="10" fill="#7c3aed">masked</text>
+
+        <text x="175" y="210" text-anchor="middle" font-size="11" fill="#6e6b64">Lower triangle = allowed</text>
+        <text x="175" y="230" text-anchor="middle" font-size="11" fill="#6e6b64">Upper triangle = masked (-∞)</text>
+        <text x="175" y="250" text-anchor="middle" font-size="11" fill="#6e6b64">Token can only attend to past & self</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION DIVIDER: RESULTS -->
+<div class="slide section-divider" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">§5</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h1>Experiments & Results</h1>
+  <div class="subtitle">Machine translation at scale: WMT 2014 English-German and English-French</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<!-- SLIDE 16: TRAINING SETUP -->
+<div class="slide" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · Training</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h2>Training & Evaluation</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Hardware:</strong> 8 NVIDIA P100 GPUs. <strong>Speed:</strong> ~4,500 tokens/sec per GPU.</p>
+      <p class="point"><strong>Total training time:</strong> 3.5 days for big model (12 hours for base).</p>
+      <div class="eq-box">
+        <span class="label">Dataset</span>
+        WMT 2014 English-German<br>
+        WMT 2014 English-French<br>
+        Multi-GPU distributed training
+      </div>
+      <p class="point"><strong>Metric:</strong> BLEU score (bilingual evaluation understudy). Higher = better translation quality.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Training Timeline</text>
+
+        <line x1="50" y1="300" x2="320" y2="300" stroke="#6e6b64" stroke-width="2"/>
+        <circle cx="50" cy="300" r="4" fill="#6e6b64"/>
+        <circle cx="320" cy="300" r="4" fill="#6e6b64"/>
+
+        <text x="50" y="320" text-anchor="middle" font-size="10" fill="#6e6b64">0h</text>
+        <text x="320" y="320" text-anchor="middle" font-size="10" fill="#6e6b64">84h (3.5d)</text>
+
+        <circle cx="100" cy="300" r="5" fill="#0ea5e9" opacity="0.6"/>
+        <text x="100" y="335" text-anchor="middle" font-size="9" fill="#6e6b64">checkpoint 1</text>
+
+        <circle cx="185" cy="300" r="5" fill="#0ea5e9" opacity="0.7"/>
+        <text x="185" y="335" text-anchor="middle" font-size="9" fill="#6e6b64">checkpoint 2</text>
+
+        <circle cx="270" cy="300" r="5" fill="#0ea5e9" opacity="0.8"/>
+        <text x="270" y="335" text-anchor="middle" font-size="9" fill="#6e6b64">final</text>
+
+        <text x="175" y="80" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a1a">Hardware: 8 × P100</text>
+        <text x="175" y="105" text-anchor="middle" font-size="11" fill="#6e6b64">~4.5k tokens/sec</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17: BLEU SCORES -->
+<div class="slide" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · Results</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h2>BLEU Scores: State-of-the-Art</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Transformer achieves <strong>28.4 BLEU on EN→DE</strong> and <strong>41.8 BLEU on EN→FR</strong>.</p>
+      <div class="eq-box">
+        <span class="label">Big Model Results</span>
+        EN→DE: 28.4 BLEU (best)<br>
+        EN→FR: 41.8 BLEU (best)<br>
+        Training: 3.5 days
+      </div>
+      <p class="point">Outperforms previous RNN/CNN baselines. Faster training. Better parallelization than sequential RNNs.</p>
+      <div class="key-idea">
+        <div class="kicker">Key Win</div>
+        <p>Self-attention is inherently parallel. Unlike LSTMs, all positions process simultaneously.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">BLEU Comparison</text>
+
+        <!-- Y-axis -->
+        <line x1="50" y1="310" x2="50" y2="80" stroke="#6e6b64" stroke-width="1.5"/>
+        <text x="20" y="200" font-size="10" fill="#6e6b64">BLEU</text>
+
+        <!-- X-axis -->
+        <line x1="50" y1="310" x2="300" y2="310" stroke="#6e6b64" stroke-width="1.5"/>
+
+        <!-- Bars for EN-DE -->
+        <rect x="60" y="240" width="30" height="70" fill="#5b5bd6" opacity="0.6"/>
+        <text x="75" y="325" text-anchor="middle" font-size="10" fill="#6e6b64">EN-DE</text>
+        <text x="75" y="215" text-anchor="middle" font-size="11" font-weight="600" fill="#5b5bd6">28.4</text>
+
+        <!-- Bars for EN-FR -->
+        <rect x="110" y="130" width="30" height="180" fill="#0ea5e9" opacity="0.6"/>
+        <text x="125" y="325" text-anchor="middle" font-size="10" fill="#6e6b64">EN-FR</text>
+        <text x="125" y="105" text-anchor="middle" font-size="11" font-weight="600" fill="#0ea5e9">41.8</text>
+
+        <!-- Previous best (RNN) baseline -->
+        <line x1="180" y1="250" x2="220" y2="250" stroke="#b0ada5" stroke-width="2" stroke-dasharray="4 2"/>
+        <text x="230" y="255" font-size="10" fill="#b0ada5">prev. SOTA</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18: MODERN ARCHITECTURES -->
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · Modern</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>Modern Variants: Decoder-Only & Encoder-Only</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>GPT / Decoder-Only:</strong> no encoder. Generate next token autoregressively. Scales to 100B+ parameters.</p>
+      <p class="point"><strong>BERT / Encoder-Only:</strong> no decoder. Bidirectional context. Powerful for classification, understanding tasks.</p>
+      <p class="point"><strong>T5 / Encoder-Decoder:</strong> keeps both. Good for sequence-to-sequence (translation, summarization).</p>
+      <div class="key-idea">
+        <div class="kicker">Paradigm</div>
+        <p>Transformer is a foundation. Different tasks demand different masking & architectures.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Model Families</text>
+
+        <!-- GPT -->
+        <rect x="20" y="50" width="100" height="80" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+        <text x="70" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="#5b5bd6">GPT</text>
+        <text x="70" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">Decoder</text>
+        <text x="70" y="110" text-anchor="middle" font-size="9" fill="#6e6b64">Autoregressive</text>
+
+        <!-- BERT -->
+        <rect x="135" y="50" width="100" height="80" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+        <text x="185" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="#0ea5e9">BERT</text>
+        <text x="185" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">Encoder</text>
+        <text x="185" y="110" text-anchor="middle" font-size="9" fill="#6e6b64">Bidirectional</text>
+
+        <!-- T5 -->
+        <rect x="250" y="50" width="100" height="80" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="1.5" rx="4"/>
+        <text x="300" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="#0d9488">T5</text>
+        <text x="300" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">Enc-Dec</text>
+        <text x="300" y="110" text-anchor="middle" font-size="9" fill="#6e6b64">Unified</text>
+
+        <!-- Use cases -->
+        <text x="70" y="160" text-anchor="middle" font-size="9" fill="#6e6b64">LLMs, Chat</text>
+        <text x="185" y="160" text-anchor="middle" font-size="9" fill="#6e6b64">Classification</text>
+        <text x="300" y="160" text-anchor="middle" font-size="9" fill="#6e6b64">Translation</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: MODERN POSITIONAL ENCODINGS -->
+<div class="slide" data-n="19">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · PE Variants</span>
+    <span class="slide-num">19</span>
+  </div>
+  <h2>Modern Positional Encoding Variants</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Learned PE (GPT-2):</strong> treat position embeddings as learnable parameters. Simple, effective for fixed sequence lengths.</p>
+      <p class="point"><strong>RoPE (LLaMA):</strong> rotate query/key vectors by angle proportional to position. Enables extrapolation to longer sequences.</p>
+      <p class="point"><strong>ALiBi (no sinusoid):</strong> add bias to attention scores based on relative distance. Even simpler, no explicit PE needed.</p>
+      <div class="key-idea">
+        <div class="kicker">Trend</div>
+        <p>Moving away from explicit sinusoids toward implicit, learnable, or distance-based schemes.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">PE Methods</text>
+
+        <g>
+          <rect x="30" y="50" width="95" height="70" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1.5" rx="4"/>
+          <text x="77" y="75" text-anchor="middle" font-size="10" font-weight="600" fill="#5b5bd6">Sinusoidal</text>
+          <text x="77" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">(Original)</text>
+          <text x="77" y="115" text-anchor="middle" font-size="8" fill="#6e6b64">Fixed</text>
+        </g>
+
+        <g>
+          <rect x="140" y="50" width="95" height="70" fill="rgba(0,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5" rx="4"/>
+          <text x="187" y="75" text-anchor="middle" font-size="10" font-weight="600" fill="#0ea5e9">Learned</text>
+          <text x="187" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">(GPT-2)</text>
+          <text x="187" y="115" text-anchor="middle" font-size="8" fill="#6e6b64">Flexible</text>
+        </g>
+
+        <g>
+          <rect x="250" y="50" width="95" height="70" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" rx="4"/>
+          <text x="297" y="75" text-anchor="middle" font-size="10" font-weight="600" fill="#7c3aed">RoPE</text>
+          <text x="297" y="95" text-anchor="middle" font-size="9" fill="#6e6b64">(LLaMA)</text>
+          <text x="297" y="115" text-anchor="middle" font-size="8" fill="#6e6b64">Rotate</text>
+        </g>
+
+        <line x1="50" y1="150" x2="330" y2="150" stroke="#b0ada5" stroke-width="1" stroke-dasharray="2 2"/>
+
+        <rect x="50" y="170" width="280" height="100" fill="rgba(0,0,0,0.04)" stroke="#b0ada5" stroke-width="1.5" rx="4"/>
+        <text x="190" y="195" text-anchor="middle" font-size="10" fill="#6e6b64">Key insight: relative position is more important</text>
+        <text x="190" y="215" text-anchor="middle" font-size="10" fill="#6e6b64">than absolute. Modern methods encode distance,</text>
+        <text x="190" y="235" text-anchor="middle" font-size="10" fill="#6e6b64">not position indices.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20: KEY TAKEAWAYS -->
+<div class="slide" data-n="20">
+  <div class="slide-header">
+    <span class="slide-chapter">Summary</span>
+    <span class="slide-num">20</span>
+  </div>
+  <h2>Key Takeaways</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>1. Self-Attention is Parallelizable:</strong> Unlike RNNs, Transformers process all positions simultaneously. Massive speedup.</p>
+      <p class="point"><strong>2. Multi-Head Attention:</strong> h=8 heads, each projecting to d_k=64 dims, allow the model to attend to different subspaces.</p>
+      <p class="point"><strong>3. Positional Encoding:</strong> Injects sequence order via sinusoids, learned embeddings, or rotation. Critical for understanding position.</p>
+      <p class="point"><strong>4. Residual + Layer Norm:</strong> Enable training of 6-deep stacks. Gradients flow directly through skip connections.</p>
+      <p class="point"><strong>5. Simplicity & Generality:</strong> Encoder-decoder, decoder-only (GPT), encoder-only (BERT) all use the same building block.</p>
+      <p class="point"><strong>6. Scale Laws:</strong> Transformer performance scales smoothly with model size and data. Foundation for modern LLMs.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21: WHY TRANSFORMERS WON -->
+<div class="slide" data-n="21">
+  <div class="slide-header">
+    <span class="slide-chapter">Conclusion</span>
+    <span class="slide-num">21</span>
+  </div>
+  <h2>Why Transformers Won</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Parallelism:</strong> GPU-friendly. RNNs are sequential; Transformers are parallel.</p>
+      <p class="point"><strong>Long-Range Dependencies:</strong> Attention has O(1) path between any two positions. RNNs suffer from vanishing gradients.</p>
+      <p class="point"><strong>Scaling:</strong> Performance improves consistently with more data, compute, and parameters. Enables billion-parameter models.</p>
+      <p class="point"><strong>Interpretability:</strong> Attention weights show which tokens influence each prediction. More transparent than RNN hidden states.</p>
+      <p class="point"><strong>Flexibility:</strong> Same architecture adapted for language, vision, speech, code. Universal building block.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 350 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Timeline</text>
+
+        <line x1="50" y1="60" x2="300" y2="60" stroke="#6e6b64" stroke-width="2"/>
+        <circle cx="50" cy="60" r="4" fill="#6e6b64"/>
+
+        <circle cx="100" cy="60" r="5" fill="#5b5bd6"/>
+        <text x="100" y="85" text-anchor="middle" font-size="10" fill="#6e6b64">2017</text>
+        <text x="100" y="100" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">Transformer</text>
+
+        <circle cx="160" cy="60" r="5" fill="#0ea5e9"/>
+        <text x="160" y="85" text-anchor="middle" font-size="10" fill="#6e6b64">2018-19</text>
+        <text x="160" y="100" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="600">BERT, GPT-2</text>
+
+        <circle cx="220" cy="60" r="5" fill="#7c3aed"/>
+        <text x="220" y="85" text-anchor="middle" font-size="10" fill="#6e6b64">2020-22</text>
+        <text x="220" y="100" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">GPT-3, T5</text>
+
+        <circle cx="280" cy="60" r="6" fill="#0d9488"/>
+        <text x="280" y="85" text-anchor="middle" font-size="10" fill="#6e6b64">2023+</text>
+        <text x="280" y="100" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">LLMs</text>
+
+        <text x="175" y="180" text-anchor="middle" font-size="11" fill="#6e6b64">One paper changed</text>
+        <text x="175" y="200" text-anchor="middle" font-size="11" fill="#6e6b64">machine learning forever.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 22</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">◐</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>

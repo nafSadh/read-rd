@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Networks — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style></head>
+<body data-theme="light">
+
+<script>
+// Data
+const sections = [
+  {num:'01',short:'Non-linear Models',title:'<em>Beyond</em> Linear Boundaries'},
+  {num:'02',short:'Architecture',title:'<em>Network</em> Structure'},
+  {num:'03',short:'Forward Pass',title:'<em>Computing</em> Activations'},
+  {num:'04',short:'Backpropagation',title:'<em>Gradient</em> Flow'},
+  {num:'05',short:'Partial Derivatives',title:'<em>Jacobians</em> & Gradients'},
+  {num:'06',short:'Backward Modules',title:'<em>Basic</em> Loss Functions'},
+  {num:'07',short:'Modern Modules',title:'<em>Advanced</em> Techniques'},
+  {num:'08',short:'Vectorization',title:'<em>Batch</em> Processing'}
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  `<p>Linear models are fundamentally limited: they cannot express non-linear decision boundaries or capture feature interactions. Neural networks overcome this through composition of nonlinear transformations. The universal approximation theorem guarantees that with enough hidden units and nonlinear activations, networks can approximate any continuous function. This power comes from learned feature representations that gradually transform raw inputs into higher-level abstractions.</p><p>Deep networks learn hierarchical representations where early layers capture low-level patterns and deeper layers combine them into semantic concepts. The nonlinearity enables the network to fold and twist the input space, creating arbitrary decision boundaries. Modern architectures exploit this to solve tasks that linear methods cannot: image recognition, language understanding, and complex reasoning all rely on the expressive power that depth and nonlinearity provide.</p>`,
+
+  `<p>Neural networks are organized into layers: input, hidden, and output. Each layer contains units (neurons) connected to the previous layer via learnable weights and biases. For a unit in layer ℓ, the activation is computed from weighted inputs plus bias, then passed through an activation function. Common activations include ReLU (piecewise linear), sigmoid (smooth probability), and tanh (centered). The choice of activation affects optimization dynamics and representational capacity.</p><p>Architecture design involves choosing depth (number of hidden layers), width (units per layer), and activation functions. Wider networks increase capacity but may overfit; deeper networks learn hierarchical representations but become harder to train. Skip connections bypass layers, enabling very deep models. Modern practice favors ReLU and variants (Leaky ReLU, GELU) for their computational efficiency and training stability compared to older sigmoid/tanh activations.</p>`,
+
+  `<p>Forward propagation computes layer-by-layer activations by matrix multiplication and element-wise operations. For input x, each layer ℓ computes: z^[ℓ] = W^[ℓ]a^[ℓ-1] + b^[ℓ], then a^[ℓ] = σ(z^[ℓ]) where σ is the activation. Vectorized computation processes entire batches simultaneously, dramatically improving GPU utilization. A batch of N samples computes N predictions in parallel: Z^[ℓ] is (units × N), resulting in A^[ℓ] also (units × N).</p><p>Vectorization is essential for practical deep learning. Computing one sample at a time wastes GPU parallelism; batching amortizes overhead. The forward pass accumulates intermediate activations and pre-activations needed later for backpropagation. Memory usage scales with batch size, batch length, and model depth, creating practical trade-offs. Efficient implementations minimize data movement between GPU memory and computation.</p>`,
+
+  `<p>Backpropagation computes gradients by applying the chain rule backward through the network. The key insight: derivatives flow from loss L backward through layers, combining with local layer computations to get gradients for each parameter. If loss ∂L/∂a^[out] is known, then ∂L/∂z^[out] = ∂L/∂a^[out] ⊙ σ\'(z^[out]). Then ∂L/∂W = ∂L/∂z · (a^[prev])^T and derivatives propagate to previous layers.</p><p>Backprop is the reverse of forward propagation: information flows backward. This efficient algorithm computes all gradients in O(cost of forward pass), avoiding the naive approach of numerically differentiating each parameter. Modern frameworks automate backprop via computational graphs that track operations and automatically derive gradient rules. Understanding backprop is crucial for debugging, choosing architectures, and designing new layers.</p>`,
+
+  `<p>Jacobians are matrices of all first-order partial derivatives. For a vector function f: ℝⁿ → ℝᵐ, the Jacobian J is m×n with entries ∂f_i/∂x_j. In neural networks, Jacobians describe how each output changes with each input. For a single-layer network with weights W and bias b, the Jacobian of z = Wx+b is simply W. For composed functions, Jacobians multiply via the chain rule: ∂z/∂x = (∂z/∂y)(∂y/∂x).</p><p>Upstream gradients arrive from the loss function; downstream gradients propagate to earlier layers. At each layer, local Jacobians transform upstream gradients into downstream gradients. The product of Jacobians along the path determines sensitivity. Deep networks can suffer vanishing gradients (products approach zero) or exploding gradients (products grow exponentially). Modern techniques like normalization, careful initialization, and ReLU activations mitigate these issues, enabling stable training of very deep models.</p>`,
+
+  `<p>Backward functions define gradient computation for each module. Linear layer: given upstream ∂L/∂z, compute ∂L/∂W = ∂L/∂z · a^T and ∂L/∂a = W^T · ∂L/∂z. ReLU: gradient is zero where input is negative, passes through where positive (∂L/∂x = [z > 0] ⊙ ∂L/∂z). Sigmoid and tanh: gradients involve σ(1-σ) and 1-tanh². Softmax with cross-entropy loss has a simple gradient: ∂L/∂z = (softmax(z) - y), where y is the one-hot target.</p><p>Loss functions couple with final layers to produce clean gradients. Cross-entropy for classification creates ∂L/∂logits = (predictions - targets), enabling efficient gradient descent. MSE loss for regression yields ∂L/∂predictions = 2(predictions - targets). Proper loss-layer combinations are crucial: using squared error with softmax is suboptimal compared to softmax+cross-entropy. Understanding backward functions enables building custom layers and debugging gradient flow issues.</p>`,
+
+  `<p>Modern modules improve training stability and performance beyond basic layers. BatchNorm normalizes layer inputs to zero mean/unit variance, reducing internal covariate shift and enabling higher learning rates. Dropout randomly zeros activations during training, acting as implicit ensemble and regularizer. Skip connections let gradients bypass layers, alleviating vanishing gradient problem in very deep networks. Residual networks learn incremental changes via z = x + f(x) rather than z = f(x), enabling networks with hundreds of layers.</p><p>Attention mechanisms compute weighted combinations of inputs, with weights learned from content similarity. Self-attention relates each position to all others; this enables transformers to process sequences without recurrence. Layer normalization and various positional encodings support attention-based architectures. These modern components are composable: combining residuals, attention, and normalization creates powerful architectures for vision and language. Understanding these building blocks is essential for reading and implementing contemporary models.</p>`,
+
+  `<p>Vectorization processes entire batches simultaneously. Instead of computing one sample at a time, matrices have shape (features, batch_size). Forward pass: X is (input_dims, N), W is (hidden_dims, input_dims), so Z = W @ X + b broadcasts bias to N samples. Backward pass: dW = (dZ @ X.T) / N accumulates gradients across the batch. This amortizes weight matrix reads and enables GPU cores to work in parallel on different samples simultaneously.</p><p>GPU parallelism requires thinking in matrix operations. A typical GPU can launch thousands of threads; processing individual samples serializes these. Large batches (hundreds to thousands) best exploit hardware. Frameworks like PyTorch and TensorFlow automatically handle vectorization when you code with tensors. Understanding batch dimensions is critical: shape (32, 64, 28, 28) might represent 32 images of 64 channels at 28×28 resolution, and operations happen independently across the batch dimension, then are aggregated for gradient updates.</p>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Neural Networks</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Artificial_neural_network" target="_blank">Artificial Neural Networks - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank">Backpropagation - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 11)</a></li>
+  <li><a href="https://arxiv.org/abs/1502.01852" target="_blank">He et al. - Delving Deep into Rectifiers (ReLU Analysis)</a></li>
+</ul>`];
+
+const details = [
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 01</span><h2><em>Non-linear</em> Models & Feature Learning</h2></div><p>Linear models compute ŷ = w·x + b, producing predictions that are linear combinations of input features. In 2D, a linear classifier draws a straight line boundary; in higher dimensions, a hyperplane. This is fundamentally limiting: many problems require nonlinear boundaries. A simple example is XOR: no line separates the positive cases (0,1) and (1,0) from the negative cases (0,0) and (1,1). Linear models cannot express this function.</p><p>Neural networks overcome this through composition of nonlinear transformations. Each hidden layer applies a nonlinear function σ to weighted combinations: h = σ(W₁x + b₁). Then the next layer transforms h nonlinearly: h₂ = σ(W₂h + b₂). Finally, outputs are computed from deep features: ŷ = W_out h_k + b_out. This composition of nonlinearities enables the network to compute arbitrary functions.</p><p>The universal approximation theorem states: any continuous function f: [0,1]ⁿ → ℝ can be approximated arbitrarily closely by a neural network with one hidden layer of sufficient width and nonlinear activation. This assumes appropriate weights exist; training is another matter. In practice, deep networks (multiple hidden layers) are more efficient: they can express functions with far fewer parameters than shallow (one hidden layer) networks.</p><p>Feature learning is the key insight: hidden layers learn representations of data. Early layers in deep networks learn simple patterns (edges in vision). Deeper layers combine these into complex features (shapes, objects). This hierarchy emerges from backpropagation without explicit programming. Each layer's weights are optimized to minimize the loss when combined with all downstream layers. This joint optimization of features and classifiers is far more powerful than hand-engineered features plus simple models.</p><p>The depth-width trade-off: deep networks with fewer units per layer need fewer parameters than shallow wide networks for the same expressive power. However, deeper networks are harder to train due to gradient flow issues (vanishing/exploding gradients). Modern techniques like normalization, skip connections, and careful initialization mitigate these issues, enabling training of very deep networks (hundreds of layers).</p><p>Expressivity comes at a cost: overfitting. A network with many parameters can memorize training data without learning generalizable patterns. Regularization (L2 penalty on weights, dropout, early stopping) prevents overfitting. The bias-variance tradeoff persists: more expressive models have lower bias but higher variance. Proper validation and test set evaluation is essential to assess true generalization performance.</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 02</span><h2><em>Neural</em> Network Architecture</h2></div><p>A neural network is a directed acyclic graph of layers. Layers are organized sequentially: input layer (the data), hidden layers (learned representations), and output layer (predictions). Each layer contains units (sometimes called neurons, though this is a loose biological analogy). Each unit in layer ℓ receives inputs from all units in layer ℓ-1, weighted by learnable parameters W^[ℓ] and shifted by biases b^[ℓ].</p><p>The computation in a single unit is: z = Σᵢ wᵢ·aᵢ + b, then a = σ(z). Here aᵢ are inputs from previous layer, wᵢ are weights, b is bias, z is the pre-activation, σ is an activation function, and a is the output activation. This operation—weighted sum then nonlinearity—is repeated in parallel across all units in the layer, then propagated forward.</p><div class="diagram-wrap"><svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6"/></marker></defs><text x="20" y="20" class="lbl">Input Layer</text><circle cx="40" cy="60" r="8" class="node"/><circle cx="40" cy="110" r="8" class="node"/><circle cx="40" cy="160" r="8" class="node"/><text x="20" y="225" class="lbl-hi">Hidden 1</text><circle cx="160" cy="75" r="8" class="node"/><circle cx="160" cy="140" r="8" class="node"/><circle cx="160" cy="190" r="8" class="node-hi"/><text x="140" y="225" class="lbl">Hidden 2</text><circle cx="280" cy="85" r="8" class="node"/><circle cx="280" cy="155" r="8" class="node"/><text x="260" y="225" class="lbl">Output</text><circle cx="420" cy="110" r="8" class="node-hi"/><path d="M 48 60 L 152 75" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 60 L 152 140" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 60 L 152 190" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 110 L 152 75" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 110 L 152 140" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 110 L 152 190" class="edge-hi" marker-end="url(#arrowhead)"/><path d="M 48 160 L 152 75" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 160 L 152 140" class="edge" marker-end="url(#arrowhead)"/><path d="M 48 160 L 152 190" class="edge-hi" marker-end="url(#arrowhead)"/><path d="M 168 75 L 272 85" class="edge" marker-end="url(#arrowhead)"/><path d="M 168 75 L 272 155" class="edge" marker-end="url(#arrowhead)"/><path d="M 168 140 L 272 85" class="edge" marker-end="url(#arrowhead)"/><path d="M 168 140 L 272 155" class="edge" marker-end="url(#arrowhead)"/><path d="M 168 190 L 272 85" class="edge-hi" marker-end="url(#arrowhead)"/><path d="M 168 190 L 272 155" class="edge-hi" marker-end="url(#arrowhead)"/><path d="M 288 85 L 412 110" class="edge" marker-end="url(#arrowhead)"/><path d="M 288 155 L 412 110" class="edge-hi" marker-end="url(#arrowhead)"/></svg></div><p>Activation functions introduce nonlinearity. <strong>ReLU (Rectified Linear Unit)</strong>: σ(z) = max(0,z). This piecewise linear function is zero for negative inputs, linear for positive. It's computationally efficient and avoids saturation (constant derivatives) unlike older activations. <strong>Sigmoid</strong>: σ(z) = 1/(1+e^{-z}), smooth S-shaped curve from 0 to 1, useful for binary classification outputs. <strong>Tanh</strong>: σ(z) = (e^z - e^{-z})/(e^z + e^{-z}), similar to sigmoid but ranges [-1,1], zero-centered output.</p><p>ReLU and variants (Leaky ReLU, ELU) are modern standards for hidden layers. They avoid the vanishing gradient problem of sigmoid/tanh: gradients of sigmoid approach zero for extreme inputs, making deep networks hard to train. ReLU gradients are constant (1) for positive inputs. Variants like Leaky ReLU (f(z) = z if z > 0, else 0.01z) avoid the "dying ReLU" problem where a unit permanently outputs zero.</p><p>Depth refers to the number of hidden layers. A network with one hidden layer is "shallow," commonly used for simpler problems. Deep networks have many hidden layers, enabling hierarchical learning. The trade-off: more expressivity with depth, but harder optimization (gradient flow issues). Modern architectures use skip connections (residual connections) to enable training of 100+ layer networks.</p><p>Width refers to the number of units per hidden layer. Wider layers increase capacity. The universal approximation theorem requires width proportional to input dimensionality for a single hidden layer, but is not constructive—training may not find such solutions. In practice, moderate widths (comparable to input/output dimensions) work well, though problems with many parameters may need very wide hidden layers.</p><p>Architectural choices cascade: depth interacts with width, activation function choice, and training procedures. Convolutional networks use local connectivity and weight sharing for vision. Recurrent networks process sequences by maintaining hidden state. Transformers use attention mechanisms instead of convolutions or recurrence. The diversity of architectures reflects different inductive biases suited to different data structures (images, sequences, graphs).</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 03</span><h2><em>Forward</em> Propagation: Computing Activations</h2></div><p>Forward propagation computes layer-by-layer activations from input to output. For a network with L hidden layers, the computation is: Given input x = a^[0], for each layer ℓ = 1, 2, ..., L: (1) z^[ℓ] = W^[ℓ] a^[ℓ-1] + b^[ℓ], (2) a^[ℓ] = σ(z^[ℓ]). Finally, output predictions are ŷ = a^[L].</p><p>Each step is a matrix-vector operation. W^[ℓ] has shape (num_units^[ℓ], num_units^[ℓ-1]); a^[ℓ-1] has shape (num_units^[ℓ-1]). The product z^[ℓ] = W^[ℓ] a^[ℓ-1] has shape (num_units^[ℓ]). Then bias b^[ℓ] (shape num_units^[ℓ]) is added to each column. Finally, σ is applied element-wise. This chain of operations transforms raw features into increasingly abstract representations.</p><div class="diagram-wrap"><svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg"><text x="10" y="20" class="lbl">Example: 2-layer network</text><text x="10" y="45" class="node-text">Input x ∈ ℝ³</text><text x="10" y="70" class="node-text">z¹ = W¹x + b¹, shape (4,)</text><text x="10" y="90" class="node-text">a¹ = ReLU(z¹), shape (4,)</text><text x="10" y="110" class="node-text">z² = W²a¹ + b², shape (2,)</text><text x="10" y="130" class="node-text">ŷ = softmax(z²), shape (2,)</text><text x="380" y="45" class="lbl">Shapes</text><text x="380" y="70" class="node-sub">W¹: (4,3)</text><text x="380" y="85" class="node-sub">b¹: (4,)</text><text x="380" y="100" class="node-sub">W²: (2,4)</text><text x="380" y="115" class="node-sub">b²: (2,)</text></svg></div><p>Vectorization processes multiple samples simultaneously. Instead of computing one sample at a time, inputs and activations are matrices where the second dimension is the batch index. X has shape (input_dims, batch_size); Z^[ℓ] = W^[ℓ] X + b^[ℓ] (broadcasting b across batch); A^[ℓ] = σ(Z^[ℓ]). All N samples propagate in parallel through all layers. This is orders of magnitude faster on GPUs than processing samples sequentially.</p><p>Intermediate activations and pre-activations are stored during forward propagation for use in backpropagation. The memory footprint is roughly O(L × batch_size × max_hidden_units). Very large models or batches may exceed GPU memory, requiring gradient accumulation (processing multiple mini-batches before updating) or checkpointing (recomputing some activations during backprop instead of storing all).</p><p>Numerical stability is crucial. Intermediate values can become very large (exploding) or tiny (vanishing). Softmax is traditionally computed as softmax(z)_i = e^{z_i} / Σⱼ e^{z_j}, but if z is large, exp(z) overflows. The numerically stable version subtracts max(z): softmax(z)_i = e^{z_i - max(z)} / Σⱼ e^{z_j - max(z)}, giving the same result without overflow.</p><p>Batch normalization normalizes pre-activations in each layer to zero mean/unit variance across the mini-batch. This reduces internal covariate shift—the phenomenon that as earlier layers change during training, the distributions of inputs to later layers shift. Normalization allows higher learning rates and faster convergence. During training, normalization uses batch statistics; during inference, running statistics accumulated during training are used.</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 04</span><h2><em>Backpropagation</em>: Computing Gradients</h2></div><p>Backpropagation is an efficient algorithm for computing gradients of the loss with respect to all parameters. The key insight: derivatives compose via the chain rule. If loss is L, and we know ∂L/∂z^[L] (gradient at output), we can compute ∂L/∂z^[L-1] from ∂L/∂z^[L] and local derivatives of layer L-1. This propagates backward to the input layer, computing ∂L/∂W^[ℓ] for all ℓ.</p><p>The procedure: (1) Forward pass: compute and store all activations and pre-activations. (2) Compute output gradient: ∂L/∂z^[L] from loss function and output activation. (3) Backward pass, layer by layer from L to 1: (a) Compute ∂L/∂a^[ℓ] = (W^[ℓ+1])^T ∂L/∂z^[ℓ+1], (b) Compute ∂L/∂z^[ℓ] = ∂L/∂a^[ℓ] ⊙ σ'(z^[ℓ]), (c) Compute ∂L/∂W^[ℓ] = ∂L/∂z^[ℓ] (a^[ℓ-1])^T, ∂L/∂b^[ℓ] = ∂L/∂z^[ℓ].</p><div class="diagram-wrap"><svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="currentColor"/></marker></defs><text x="10" y="20" class="lbl">Backprop Flow (example)</text><text x="10" y="50" class="node-text">Forward: x → z¹ → a¹ → z² → ŷ</text><text x="10" y="75" class="node-sub">Loss L computed from ŷ and target y</text><text x="10" y="100" class="node-text">Backward: ∂L/∂ŷ ← ∂L/∂z² ← ∂L/∂a¹ ← ∂L/∂z¹</text><text x="10" y="125" class="node-sub">At each layer: compute ∂L/∂W, ∂L/∂b</text><text x="10" y="155" class="node-text">Update: W ← W - α · ∂L/∂W</text><text x="10" y="170" class="node-text">Repeat for next mini-batch</text></svg></div><p>The computational cost of backpropagation is O(1) times the forward pass cost—roughly equal time, maybe 2-3x due to additional gradient computations. This is far better than numerical differentiation, which would require O(number of parameters) forward passes, making it infeasible for networks with millions of parameters.</p><p>Backprop relies on the chain rule. For composed functions h = g(f(x)), dh/dx = (dh/df)(df/dx). For deep networks: dL/dW^[1] = (dL/d^[L])(d^[L]/d^[L-1])...(d^[2]/dW^[1]). These products of Jacobians determine gradient magnitude. If Jacobians have eigenvalues > 1, products explode (exploding gradients). If < 1, products vanish (vanishing gradients).</p><p>Vanishing gradients are a key challenge in training deep networks with sigmoid/tanh. The derivative of sigmoid is σ(z)(1-σ(z)), which is ≤ 0.25. Multiplying through many layers: 0.25^100 ≈ 0, so gradients for early layers become negligible. Modern solutions include ReLU activations (constant gradient 1 for positive inputs), batch normalization (keeps activation ranges reasonable), and skip connections (provide direct gradient paths).</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 05</span><h2><em>Partial</em> Derivatives: Jacobians & Gradient Flow</h2></div><p>A Jacobian matrix captures all first-order partial derivatives of a vector-valued function. For f: ℝⁿ → ℝᵐ, the Jacobian J is m×n with J_ij = ∂f_i/∂x_j. In neural networks, understanding Jacobians explains how information flows through layers. For the linear layer z = Wx + b (ignoring bias), the Jacobian is simply W: each output depends linearly on inputs via W's rows.</p><p>For a composed function z = σ(Wx + b) where σ is a nonlinear activation, the Jacobian is Jσ(W), where Jσ is the Jacobian of σ. For element-wise activations, Jσ is diagonal: Jσ = diag(σ'(z)). So J = diag(σ'(z)) W. The activation derivative σ'(z) scales the weight matrix's influence on output gradients.</p><p>Upstream gradients arrive from the loss function at the output layer. Downstream gradients flow to earlier layers. At each layer ℓ, the local Jacobian J^[ℓ] transforms upstream gradients: downstream = J^[ℓ] · upstream. This is backpropagation: ∂L/∂z^[ℓ] = J^[ℓ]^T · ∂L/∂z^[ℓ+1], where J^[ℓ] is the Jacobian of layer ℓ's output with respect to input.</p><div class="diagram-wrap"><svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg"><text x="10" y="20" class="lbl">Gradient Flow Through Layers</text><circle cx="60" cy="80" r="30" class="node"/><text x="55" y="85" class="node-text">z¹</text><circle cx="180" cy="80" r="30" class="node"/><text x="175" y="85" class="node-text">a¹=σ(z¹)</text><circle cx="300" cy="80" r="30" class="node"/><text x="295" y="85" class="node-text">z²</text><circle cx="420" cy="80" r="30" class="node"/><text x="415" y="85" class="node-text">L</text><path d="M 90 80 L 150 80" class="edge"/><text x="115" y="75" class="lbl-hi">W²</text><path d="M 210 80 L 270 80" class="edge"/><text x="235" y="75" class="lbl-hi">σ</text><path d="M 330 80 L 390 80" class="edge"/><text x="360" y="75" class="lbl-hi">Loss</text><path d="M 390 120 L 330 120" class="edge-hi"/><text x="335" y="145" class="node-sub">∂L/∂z² back</text><path d="M 270 120 L 210 120" class="edge-hi"/><text x="215" y="145" class="node-sub">∂L/∂a¹ back</text><path d="M 150 120 L 90 120" class="edge-hi"/><text x="95" y="145" class="node-sub">∂L/∂z¹ back</text><text x="10" y="190" class="node-sub">Gradients flow backward from loss</text><text x="10" y="210" class="node-sub">Each layer contributes its local Jacobian</text></svg></div><p>The product of Jacobians along a path determines end-to-end sensitivity. For a 10-layer network where each layer's Jacobian has spectral radius 0.9 (eigenvalues' magnitude at most 0.9), the product is 0.9^10 ≈ 0.35. For 100 layers: 0.9^100 ≈ 0. Gradients vanish. This is why deep sigmoid networks are notoriously hard to train—sigmoid's derivative is small everywhere.</p><p>Modern activation functions mitigate this. ReLU's derivative is 1 (for z > 0) or 0 (for z < 0). For positive pre-activations, gradients flow unchanged through ReLU, avoiding both vanishing and exploding problems (unless many units die). Batch normalization keeps intermediate values in reasonable ranges, ensuring activation derivatives stay bounded. Skip connections provide direct gradient paths: dL/dz = dL/d(z+f(z)) includes a direct dL/dz term, preventing vanishing gradients even in very deep networks.</p><p>Exploding gradients also cause problems: if spectral radius is 1.1, then 1.1^100 is huge. Gradient clipping (capping gradient norm at a threshold) prevents this. Weight initialization is crucial: initializing weights from a distribution with variance 1/fan_in (where fan_in is the number of inputs) ensures Jacobians have reasonable spectral properties, enabling stable training from the start.</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 06</span><h2><em>Backward</em> Functions: Basic Loss Functions</h2></div><p>Each layer type requires a defined backward function specifying how to compute parameter gradients from upstream gradients. These are composed to form the full backpropagation algorithm. A framework like PyTorch or TensorFlow stores these functions and applies them automatically; understanding them reveals how gradients flow.</p><p><strong>Linear layer backward:</strong> Given upstream gradient ∂L/∂z (shape: num_output × batch_size), compute: (1) ∂L/∂W = (∂L/∂z) @ (a_prev)^T, summed over batch, (2) ∂L/∂b = sum(∂L/∂z, over batch), (3) downstream ∂L/∂a_prev = W^T @ ∂L/∂z. The derivatives reflect each parameter's role: W multiplies activations, so its gradient involves activations; b is broadcast, so gradient is summed over batch.</p><p><strong>ReLU backward:</strong> Recall a = max(0, z). Derivative: da/dz = 1 if z > 0, else 0. So ∂L/∂z_i = [z_i > 0] * ∂L/∂a_i. In code: where z was positive, gradients pass through; where negative, gradients are zero. This is efficient: one element-wise multiply with a binary mask.</p><p><strong>Sigmoid backward:</strong> σ(z) = 1/(1+e^{-z}). Derivative: σ'(z) = σ(z)(1-σ(z)). So ∂L/∂z = σ(z)(1-σ(z)) * ∂L/∂a. Since sigmoid outputs a, this is a(1-a) * ∂L/∂a. Small a or (1-a) leads to small gradients (vanishing).</p><p><strong>Tanh backward:</strong> tanh'(z) = 1 - tanh(z)^2. Similar to sigmoid, gradients can vanish for extreme inputs. Modern networks prefer ReLU variants.</p><div class="diagram-wrap"><svg viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg"><text x="10" y="20" class="lbl">Loss Function Gradients</text><text x="10" y="45" class="node-text">Softmax + Cross-Entropy:</text><text x="10" y="65" class="node-sub">p_i = exp(z_i) / sum_j exp(z_j)</text><text x="10" y="80" class="node-sub">L = -sum_i y_i * log(p_i)</text><text x="10" y="100" class="node-sub">∂L/∂z_i = p_i - y_i (remarkably simple!)</text><text x="270" y="45" class="node-text">Mean Squared Error:</text><text x="270" y="65" class="node-sub">L = (1/N) * sum (y - ŷ)²</text><text x="270" y="85" class="node-sub">∂L/∂ŷ = (2/N) * (ŷ - y)</text></svg></div><p><strong>Softmax + Cross-Entropy:</strong> This is the standard for multi-class classification. Softmax normalizes logits z to probabilities: p = softmax(z), p_i = e^{z_i}/Σⱼ e^{z_j}. Cross-entropy loss: L = -Σᵢ y_i log(p_i), where y is one-hot. The gradient is ∂L/∂z = p - y. This is remarkably clean: gradients are simply the difference between predicted and target probabilities. This elegant gradient motivated the popularity of softmax+cross-entropy.</p><p><strong>Mean Squared Error (MSE):</strong> For regression, L = (1/N) Σ(y - ŷ)². Gradient: ∂L/∂ŷ = 2(ŷ - y). MSE penalizes large errors quadratically, useful for outputs with unbounded range. Cross-entropy is better for classification (outputs are probabilities).</p><p><strong>Binary Cross-Entropy:</strong> For binary classification with sigmoid output: L = -[y log(σ(z)) + (1-y) log(1-σ(z))]. Gradient: ∂L/∂z = σ(z) - y, same form as softmax+cross-entropy. This motivation (simple gradient) is why sigmoid + BCE is standard for binary tasks.</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 07</span><h2><em>Modern</em> Modules: Advanced Techniques</h2></div><p><strong>Batch Normalization (BN):</strong> Normalizes pre-activations across the mini-batch to zero mean and unit variance, then applies learnable scale and shift. For a layer's pre-activations z, compute batch mean μ_b and variance σ²_b across the batch, then normalize: z_norm = (z - μ_b) / sqrt(σ²_b + ε). Then scale-shift: z_out = γ z_norm + β, where γ and β are learned parameters (initialized to 1 and 0). This reduces internal covariate shift—the problem that as earlier layers change, distributions into later layers shift, forcing later layers to constantly re-adapt.</p><p>Benefits: enables higher learning rates, faster convergence, acts as regularizer (noise from batch statistics). During training, BN uses batch statistics; during inference, it uses running averages computed during training (exponential moving average of batch statistics). BN has been phenomenally successful; many modern architectures use it extensively.</p><p><strong>Layer Normalization (LN):</strong> Normalizes across features (hidden units) instead of across the batch. For a sample's activations a (vector), compute z_norm = (a - mean(a)) / sqrt(var(a) + ε), then scale-shift. LN is independent of batch size—useful when batch size is small or varies. Transformers typically use LN before or after attention/MLP blocks.</p><p><strong>Dropout:</strong> During training, randomly set each activation to 0 with probability p (typically 0.5), and scale the remaining activations by 1/(1-p). This is equivalent to multiplying activations by a random binary mask, then rescaling. Effect: prevents co-adaptation of units (unit A cannot rely on unit B always being present). Acts as implicit ensemble: training samples multiple sub-networks. During inference, use full network without dropout (no scaling needed due to the 1/(1-p) during training).</p><p><strong>Skip Connections (Residual Connections):</strong> Instead of z = f(x), compute z = x + f(x). The network learns the residual (change) rather than absolute function. This enables very deep networks: gradients have a direct path from output back to input, preventing vanishing gradients. ResNet (He et al., 2016) showed that 100+ layer networks trained with skip connections exceed shallow networks in accuracy. Skip connections fundamentally changed deep learning, enabling architectures previously thought impossible to train.</p><div class="diagram-wrap"><svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrowhead3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="currentColor"/></marker></defs><text x="10" y="20" class="lbl">Residual Connection (Skip)</text><circle cx="60" cy="90" r="20" class="node"/><text x="55" y="95" class="node-text">x</text><path d="M 80 90 L 120 90" class="edge" marker-end="url(#arrowhead3)"/><circle cx="160" cy="70" r="20" class="node"/><text x="150" y="75" class="node-text">f(x)</text><path d="M 160 50 L 160 30 L 60 30 L 60 70" class="edge" marker-end="url(#arrowhead3)"/><text x="85" y="20" class="lbl-hi">skip</text><circle cx="220" cy="90" r="20" class="node-hi"/><text x="205" y="95" class="node-text">x+f(x)</text><path d="M 180 70 L 200 90" class="edge" marker-end="url(#arrowhead3)"/></svg></div><p><strong>Attention Mechanisms:</strong> Compute weighted combinations of values based on learned similarity (attention weights) between queries and keys. Self-attention relates each position to all others; used in Transformers. Query Q, Key K, Value V matrices project input features. Attention weights: α = softmax(Q K^T / sqrt(d_k)). Output: weighted sum of values based on α. This enables modeling long-range dependencies without depth, addressing RNN limitations. Transformers stack attention layers, achieving state-of-the-art on NLP and increasingly on vision tasks.</p><p><strong>Positional Encoding:</strong> Transformers process all positions in parallel (unlike RNNs which process sequentially), losing order information. Positional encodings (learned or sinusoidal functions of position) are added to inputs to inject position information. Sinusoidal: PE(pos,2i) = sin(pos/10000^{2i/d}), PE(pos,2i+1) = cos(pos/10000^{2i/d}). This enables the transformer to learn position-dependent patterns.</p>`,
+
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 08</span><h2><em>Vectorization</em>: Batch Processing</h2></div><p>Vectorization is the practice of organizing computation in matrices/tensors to exploit parallel hardware. Instead of a loop over samples, we organize samples as a batch dimension and process all simultaneously. Example: computing predictions for N samples with a linear layer. Naive approach: for i in range(N): z[i] = W @ x[i] + b. This calls matrix-vector multiply N times, underutilizing GPU parallelism.</p><p>Vectorized approach: organize inputs as matrix X (input_dims, N), then Z = W @ X + b (matrix-matrix multiply) broadcasts b across columns. Modern GPU hardware excels at matrix operations: a 4096×4096 matrix multiply is far faster than 4096 4096×1 matrix-vector products. Batching amortizes overhead and saturates GPU cores.</p><p>Batch size trade-offs: Larger batches use hardware more efficiently but require more memory and may hurt generalization (large batches sometimes converge to sharper minima, which generalize worse). Typical practice: use the largest batch fitting in GPU memory (often 32-256 samples, or higher for large GPUs). Gradient accumulation: process mini-batches, accumulate gradients, then update—effectively simulates a larger batch without extra memory.</p><p>Shape conventions: Typically (batch, features) or (batch, channels, height, width) for images. Modern frameworks use (batch, ...) as the first dimension for most operations. Understanding shapes is critical for debugging: a (32, 64) input is 32 samples of 64 features; after a layer with 128 units, output is (32, 128); activation functions and element-wise ops preserve shape.</p><div class="diagram-wrap"><svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg"><text x="10" y="20" class="lbl">Vectorized Computation</text><text x="10" y="50" class="node-text">Input: X shape (input_dims, batch_size)</text><text x="10" y="70" class="node-sub">W shape (hidden_dims, input_dims)</text><text x="10" y="90" class="node-text">Z = W @ X + b</text><text x="10" y="110" class="node-sub">result Z shape (hidden_dims, batch_size)</text><text x="10" y="135" class="node-text">Activation: A = ReLU(Z)</text><text x="10" y="155" class="node-text">Processes all batch_size samples in parallel</text><text x="280" y="50" class="lbl">Memory Layout</text><text x="280" y="75" class="node-sub">X: [sample_1_features]</text><text x="280" y="90" class="node-sub">   [sample_2_features]</text><text x="280" y="105" class="node-sub">   [......]</text><text x="280" y="120" class="node-sub">   [sample_N_features]</text></svg></div><p>Frameworks like PyTorch and TensorFlow abstract vectorization details but expose it via tensor operations. Writing code at the tensor level (not loops) enables automatic batching and GPU acceleration. A simple pattern: x = torch.randn(batch_size, 784); y = net(x) propagates the entire batch through the network, much faster than looping.</p><p>Memory hierarchy: GPU memory (limited, fast), GPU compute (highly parallel), CPU memory (large, slow), disk (persistent). Strategies: fit model in GPU memory, use gradient checkpointing (recompute activations during backprop instead of storing) for large models, use mixed precision (16-bit floats where possible) to reduce memory footprint. Understanding these trade-offs is essential for scaling deep learning to large models and datasets.</p><p>Distributed training extends vectorization across multiple GPUs/TPUs. Data parallelism: different samples in a batch go to different devices, gradients are averaged. Model parallelism: different layers go to different devices. Gradient synchronization introduces communication overhead; the sweet spot depends on bandwidth and compute speed. Modern large-scale training uses sophisticated strategies (ZeRO, FSDP) to efficiently distribute training across thousands of devices.</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div><h2><em>Sources</em> & References</h2></div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — Neural networks, backpropagation algorithm, and deep learning fundamentals</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://www.deeplearningbook.org/" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Goodfellow, Bengio & Courville — Deep Learning</a> — Comprehensive reference on neural networks including architectures, optimization, and applications</p>
+<p><a href="https://en.wikipedia.org/wiki/Backpropagation" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Backpropagation Algorithm</a> — Overview of gradient computation in neural networks and automatic differentiation</p>'`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Machine Learning</div>
+        <div class="hero-title">Neural <em>Networks</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Part II · Deep Learning & Backpropagation</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

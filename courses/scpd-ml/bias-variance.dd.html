@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bias-Variance & Regularization — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Bias-Variance', title: '<em>Bias-Variance</em> Tradeoff' },
+  { num: '02', short: 'Decomposition', title: '<em>Mathematical</em> Decomposition' },
+  { num: '03', short: 'Double Descent', title: '<em>Double</em> Descent' },
+  { num: '04', short: 'Complexity', title: '<em>Sample</em> Complexity Bounds' },
+  { num: '05', short: 'Regularization', title: '<em>Regularization</em> Methods' },
+  { num: '06', short: 'Implicit Reg', title: '<em>Implicit</em> Regularization' },
+  { num: '07', short: 'Model Selection', title: '<em>Model</em> Selection' },
+  { num: '08', short: 'Bayesian View', title: '<em>Bayesian</em> Perspective' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // 01 Bias-Variance Tradeoff
+  `<p>The bias-variance tradeoff is fundamental to understanding generalization in machine learning. Bias measures how much the average prediction of a model differs from the true target, reflecting systematic errors from model simplicity. Variance measures how much predictions fluctuate across different training datasets, reflecting sensitivity to small changes in the data.</p>
+  <p>Expected test error decomposes into three components: squared bias, variance, and irreducible noise. The bias-variance curve typically exhibits a U-shape: high-complexity models (e.g., deep neural networks) have low bias but high variance, while simple models (e.g., linear regression) have high bias but low variance. Finding the optimal model complexity that minimizes this tradeoff is central to building effective predictors.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Bias</div><div class="sl">Systematic Error</div></div>
+    <div class="st"><div class="sv">Variance</div><div class="sl">Instability</div></div>
+    <div class="st"><div class="sv">Noise</div><div class="sl">Irreducible</div></div>
+    <div class="st"><div class="sv">U-Curve</div><div class="sl">Optimal Point</div></div>
+  </div>`,
+
+  // 02 Mathematical Decomposition
+  `<p>Formally, consider a regression problem with true function f and predictions ŷ. The expected squared error can be decomposed as E[(ŷ - y)²] = Bias²(ŷ) + Var(ŷ) + σ², where σ² is the irreducible noise in the target. Bias²(ŷ) = (E[ŷ] - f)² measures distance from the true function, while Var(ŷ) = E[(ŷ - E[ŷ])²] measures variation across training sets.</p>
+  <p>This decomposition reveals why simple models underfit: they cannot express the true function, creating large bias. Complex models overfit: they fit noise in the training data, creating large variance. The derivation assumes the data is drawn from a true underlying distribution, and both bias and variance are computed in expectation over training set samples. Understanding this breakdown is essential for diagnosing where a model fails and choosing appropriate complexity.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad-bv" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style="stop-color:var(--accent);stop-opacity:0.1" />
+          <stop offset="100%" style="stop-color:var(--accent);stop-opacity:0" />
+        </linearGradient>
+      </defs>
+      <text x="280" y="25" text-anchor="middle" class="lbl-hi" font-size="14" font-weight="600">Expected Error Decomposition</text>
+      <line x1="40" y1="320" x2="540" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <line x1="40" y1="40" x2="40" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <text x="25" y="60" text-anchor="end" class="lbl" font-size="11">Error</text>
+      <text x="555" y="335" class="lbl" font-size="11">Model Complexity →</text>
+      <path d="M 80 280 Q 200 200 280 150 Q 360 140 480 160" stroke="var(--accent)" stroke-width="2.5" fill="url(#grad-bv)" opacity="0.8"/>
+      <path d="M 80 260 Q 200 220 280 210 Q 360 230 480 270" stroke="var(--green)" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+      <path d="M 80 290 Q 200 180 280 90 Q 360 50 480 40" stroke="var(--red)" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+      <line x1="280" y1="320" x2="280" y2="140" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+      <circle cx="280" cy="150" r="5" fill="var(--cyan)" opacity="0.7"/>
+      <text x="280" y="90" text-anchor="middle" class="lbl-hi" font-size="12" font-weight="600">Optimal</text>
+      <text x="200" y="165" class="lbl" font-size="11">Total Error</text>
+      <text x="140" y="245" class="lbl" font-size="11">Bias²</text>
+      <text x="380" y="80" class="lbl" font-size="11">Variance</text>
+      <text x="320" y="310" class="lbl" font-size="10">Low Complexity ← Sweet Spot → High Complexity</text>
+    </svg>
+  </div>`,
+
+  // 03 Double Descent
+  `<p>A striking modern discovery challenges the traditional bias-variance intuition: the double descent phenomenon. When models are overparameterized (parameter count exceeds training samples), test error can decrease again after passing the interpolation threshold where models fit all training data perfectly. This suggests the classical U-curve might be incomplete.</p>
+  <p>Double descent occurs in deep neural networks, kernel methods, and random forests. The regime where model capacity greatly exceeds sample size—called the benign overfitting regime—can achieve low generalization error despite perfect training fit. This challenges the notion that fitting noise is inherently bad. The mechanism involves implicit regularization in the learning algorithm itself: SGD and early stopping naturally select smooth solutions even in overparameterized settings, providing a form of automatic capacity control.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad-dd" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style="stop-color:var(--red);stop-opacity:0.1" />
+          <stop offset="100%" style="stop-color:var(--red);stop-opacity:0" />
+        </linearGradient>
+      </defs>
+      <text x="280" y="25" text-anchor="middle" class="lbl-hi" font-size="14" font-weight="600">Double Descent Phenomenon</text>
+      <line x1="40" y1="320" x2="540" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <line x1="40" y1="40" x2="40" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <text x="25" y="60" text-anchor="end" class="lbl" font-size="11">Error</text>
+      <text x="555" y="335" class="lbl" font-size="11">Capacity →</text>
+      <path d="M 80 280 Q 180 200 280 100 L 320 240 Q 400 180 480 100" stroke="var(--red)" stroke-width="2.5" fill="url(#grad-dd)" opacity="0.8"/>
+      <line x1="280" y1="320" x2="280" y2="100" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+      <circle cx="280" cy="100" r="6" fill="var(--cyan)" opacity="0.7"/>
+      <text x="280" y="80" text-anchor="middle" class="lbl-hi" font-size="11">Interpolation<br/>Threshold</text>
+      <rect x="320" y="50" width="100" height="40" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+      <text x="370" y="65" text-anchor="middle" class="lbl" font-size="11">Benign</text>
+      <text x="370" y="80" text-anchor="middle" class="lbl" font-size="11">Overfitting</text>
+      <text x="160" y="245" class="lbl" font-size="11">Classical U</text>
+    </svg>
+  </div>`,
+
+  // 04 Sample Complexity Bounds
+  `<p>PAC (Probably Approximately Correct) learning provides finite-sample guarantees for generalization. For a hypothesis class H with size |H|, to guarantee error at most ε with confidence 1-δ, we need sample complexity m = O(log|H|/ε²δ). This bound decreases with hypothesis class size but increases logarithmically—suggesting larger hypothesis classes need only modestly more samples.</p>
+  <p>The VC (Vapnik-Chervonenkis) dimension refines this for infinite hypothesis classes by capturing expressive capacity. A hypothesis class shatters a set of points if it can realize all 2^d labelings on d points. The VC dimension is the size of the largest shattered set. For linear classifiers in d dimensions, VC dimension equals d+1. The fundamental theorem of VC theory bounds generalization gap by VC dimension, showing why simpler models (lower VC dimension) generalize better with fewer samples.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">PAC</div><div class="sl">Probably Approx. Correct</div></div>
+    <div class="st"><div class="sv">VC Dim</div><div class="sl">Capacity Measure</div></div>
+    <div class="st"><div class="sv">O(log|H|)</div><div class="sl">Sample Complex.</div></div>
+    <div class="st"><div class="sv">Tighter</div><div class="sl">Bounds</div></div>
+  </div>`,
+
+  // 05 Regularization Methods
+  `<p>Regularization adds a penalty term to the loss function to control model complexity. L2 regularization (ridge) penalizes squared parameter magnitudes: J(w) = L(w) + λ||w||². This smooths decision boundaries and shrinks weights toward zero, reducing variance at the cost of introducing bias. L1 regularization (lasso) uses J(w) = L(w) + λ||w||₁, inducing sparsity by setting some weights exactly to zero, providing feature selection.</p>
+  <p>The regularization strength λ controls the bias-variance tradeoff directly: large λ increases bias but decreases variance, while small λ increases variance. Elastic Net combines L1 and L2: J(w) = L(w) + λ₁||w||₁ + λ₂||w||². From a Bayesian perspective, L2 regularization corresponds to Gaussian priors on weights, while L1 corresponds to Laplace priors. Regularization paths visualize how solution coefficients change with λ, revealing which features remain important at different complexity levels.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad-reg" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style="stop-color:var(--cyan);stop-opacity:0.1" />
+          <stop offset="100%" style="stop-color:var(--cyan);stop-opacity:0" />
+        </linearGradient>
+      </defs>
+      <text x="280" y="25" text-anchor="middle" class="lbl-hi" font-size="14" font-weight="600">Regularization Path</text>
+      <line x1="40" y1="320" x2="540" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <line x1="40" y1="40" x2="40" y2="320" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+      <text x="25" y="60" text-anchor="end" class="lbl" font-size="11">Weight</text>
+      <text x="555" y="335" class="lbl" font-size="11">λ →</text>
+      <path d="M 80 120 L 280 180 L 480 300" stroke="var(--green)" stroke-width="2.5" fill="none"/>
+      <path d="M 80 100 Q 200 140 280 220 Q 360 280 480 310" stroke="var(--red)" stroke-width="2.5" fill="none"/>
+      <path d="M 80 140 Q 200 160 280 240 Q 360 290 480 310" stroke="var(--blue)" stroke-width="2.5" fill="none"/>
+      <circle cx="480" cy="300" r="4" fill="var(--green)"/>
+      <circle cx="480" cy="310" r="4" fill="var(--red)"/>
+      <circle cx="480" cy="310" r="4" fill="var(--blue)" opacity="0.5"/>
+      <text x="100" y="95" class="lbl" font-size="10">High λ: Sparse</text>
+      <text x="450" y="50" class="lbl" font-size="10">Low λ: Complex</text>
+      <text x="280" y="310" text-anchor="middle" class="lbl" font-size="10">High λ (Strong Regularization) ← Tradeoff → Low λ (Weak)</text>
+    </svg>
+  </div>`,
+
+  // 06 Implicit Regularization
+  `<p>Modern deep learning benefits from implicit regularization—built-in capacity control through the learning algorithm itself, even without explicit penalties. Early stopping halts training before overfitting begins, effectively limiting the number of gradient descent steps and thus model complexity. This simple technique often outperforms explicit L2 regularization, particularly in neural networks.</p>
+  <p>Stochastic gradient descent (SGD) provides implicit regularization through gradient noise. The random minibatch sampling introduces noise that biases optimization toward flatter minima and smoother solutions, favoring better-generalizing models. Overparameterized networks trained with SGD often exhibit implicit bias toward low-rank or simple solutions despite their capacity. Batch normalization and layer normalization also contribute to regularization by stabilizing gradients and smoothing the loss landscape. These mechanisms help explain why overparameterized neural networks trained with SGD and early stopping generalize well despite not using explicit L1/L2 penalties.</p>
+  <div class="callout">
+    <h4>Key Insight</h4>
+    <p>Implicit regularization shows that the training algorithm itself can control capacity and prevent overfitting. This fundamentally changed how practitioners approach deep learning, moving away from excessive explicit regularization toward designing algorithms with good implicit bias.</p>
+  </div>`,
+
+  // 07 Model Selection
+  `<p>Model selection involves choosing hyperparameters (λ, network depth, etc.) and model architecture to minimize generalization error. The standard approach uses a three-way split: training set for fitting, validation set for model selection, and test set for final evaluation. K-fold cross-validation partitions data into k disjoint folds, training on k-1 folds and validating on the remaining fold, then averaging performance. Leave-One-Out Cross-Validation (LOOCV) uses each point as a validation set, providing low-bias but high-variance estimates.</p>
+  <p>Practical model selection often uses validation curves, plotting training and validation error as hyperparameters vary. Large gaps indicate overfitting. Grid search exhaustively evaluates a predefined hyperparameter space, while random search and Bayesian optimization sample more efficiently. Information criteria like AIC and BIC balance fit and complexity, useful when validation data is scarce. Cross-validation remains the gold standard: it fully leverages limited data and provides reliable estimates of generalization performance across different hyperparameter settings.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad-cv" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style="stop-color:var(--green);stop-opacity:0.1" />
+          <stop offset="100%" style="stop-color:var(--green);stop-opacity:0" />
+        </linearGradient>
+      </defs>
+      <text x="280" y="25" text-anchor="middle" class="lbl-hi" font-size="14" font-weight="600">K-Fold Cross-Validation Splits</text>
+      <g>
+        <rect x="70" y="70" width="440" height="25" fill="none" stroke="var(--border)" stroke-width="1.5" rx="2"/>
+        <rect x="70" y="70" width="88" height="25" fill="var(--green)" opacity="0.3"/>
+        <rect x="158" y="70" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="114" y="88" text-anchor="middle" class="node-text" font-size="10">Fold 1</text>
+        <text x="202" y="88" text-anchor="middle" class="node-text" font-size="10">Valid 1</text>
+        <rect x="246" y="70" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="290" y="88" text-anchor="middle" class="node-text" font-size="10">Fold 2</text>
+        <rect x="334" y="70" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="378" y="88" text-anchor="middle" class="node-text" font-size="10">Fold 3</text>
+        <rect x="422" y="70" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="466" y="88" text-anchor="middle" class="node-text" font-size="10">Fold 4</text>
+        <text x="40" y="88" text-anchor="end" class="lbl" font-size="10">Split 1:</text>
+      </g>
+      <g>
+        <rect x="70" y="115" width="440" height="25" fill="none" stroke="var(--border)" stroke-width="1.5" rx="2"/>
+        <rect x="70" y="115" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="158" y="115" width="88" height="25" fill="var(--green)" opacity="0.3"/>
+        <rect x="246" y="115" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="334" y="115" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="422" y="115" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="114" y="133" text-anchor="middle" class="node-text" font-size="10">Train</text>
+        <text x="202" y="133" text-anchor="middle" class="node-text" font-size="10">Valid 2</text>
+        <text x="40" y="133" text-anchor="end" class="lbl" font-size="10">Split 2:</text>
+      </g>
+      <g>
+        <rect x="70" y="160" width="440" height="25" fill="none" stroke="var(--border)" stroke-width="1.5" rx="2"/>
+        <rect x="70" y="160" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="158" y="160" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="246" y="160" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <rect x="334" y="160" width="88" height="25" fill="var(--green)" opacity="0.3"/>
+        <rect x="422" y="160" width="88" height="25" fill="var(--accent)" opacity="0.6"/>
+        <text x="378" y="178" text-anchor="middle" class="node-text" font-size="10">Valid 3</text>
+        <text x="40" y="178" text-anchor="end" class="lbl" font-size="10">Split 3:</text>
+      </g>
+      <text x="70" y="220" class="lbl" font-size="11">Green = Validation Fold, Gray = Training Folds. Repeat k times, average results.</text>
+      <text x="280" y="270" text-anchor="middle" class="lbl" font-size="11">Result: Robust hyperparameter estimate with full data usage</text>
+    </svg>
+  </div>`,
+
+  // 08 Bayesian Perspective
+  `<p>Bayesian machine learning interprets regularization as prior knowledge about parameters. L2 regularization J(w) = L(w) + λ||w||² corresponds to placing a Gaussian prior p(w) ∝ exp(-λ||w||²) on weights, with MAP (maximum a posteriori) estimation equivalent to regularized empirical risk. L1 regularization corresponds to Laplace priors. This perspective naturally encodes domain knowledge: strong priors (large λ) express high uncertainty about parameters, while weak priors (small λ) allow data to speak freely.</p>
+  <p>Bayesian model comparison uses marginal likelihood (evidence) to compare models: p(D|M) = ∫ p(D|w,M)p(w|M)dw. This automatically penalizes complexity—the integral over large parameter spaces is smaller—without requiring a separate validation set. The Bayesian approach also provides uncertainty quantification: posterior distributions p(w|D) encode parameter uncertainty, enabling prediction intervals and principled decision-making under uncertainty. Variational inference and MCMC methods approximate intractable posteriors, making Bayesian methods scalable to modern problems.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Prior as Regularizer</h4>
+      <p>Strong priors (high certainty) lead to high regularization pressure, while weak priors allow data-driven learning. This unifies frequentist and Bayesian perspectives.</p>
+    </div>
+    <div class="feat">
+      <h4>Model Comparison</h4>
+      <p>Marginal likelihood automatically balances fit and complexity without validation data, providing principled model selection.</p>
+    </div>
+    <div class="feat">
+      <h4>Uncertainty Quantification</h4>
+      <p>Posterior distributions over parameters provide credible intervals and prediction uncertainty, essential for risk-sensitive applications.</p>
+    </div>
+    <div class="feat">
+      <h4>Hierarchical Priors</h4>
+      <p>Empirical Bayes and hierarchical models learn hyperparameters from data, automating the bias-variance tradeoff.</p>
+    </div>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Course Materials</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff" target="_blank">Bias-Variance Tradeoff - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 7)</a></li>
+  <li><a href="https://arxiv.org/abs/1812.11959" target="_blank">Double Descent: Re-examining the Bias-Variance Paradigm</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Overfitting" target="_blank">Overfitting - Wikipedia</a></li>
+</ul>`];
+
+const details = [
+  // Detail 01: Bias-Variance Tradeoff
+  `<div class="detail-header">
+    <span class="num">01 · Bias-Variance Tradeoff</span>
+    <h2><em>Understanding</em> Model Capacity</h2>
+  </div>
+  <p>The bias-variance tradeoff is the foundational principle for understanding why machine learning models generalize or fail. When we train a model on finite data and apply it to new, unseen data, performance differs from training performance. This gap—generalization error—arises from two distinct sources: bias and variance.</p>
+  <p>Bias is the systematic error introduced by the model's assumptions. A model with high bias is too simple to capture the underlying truth. For example, fitting a linear model to nonlinear data introduces bias because the model structure cannot express the data's true relationship. This is called underfitting. Conversely, a complex model like a deep neural network can reduce bias substantially by adapting to intricate patterns in data.</p>
+  <p>Variance is the sensitivity of the model to the specific training sample. High variance means the model changes dramatically when trained on different datasets. This occurs when a model has many parameters relative to data size, allowing it to fit idiosyncrasies and noise rather than true signal. This is called overfitting. The model "memorizes" rather than "learns." Cross-validation detects high variance: training error stays low while validation error climbs.</p>
+  <p>The tradeoff is unavoidable: increasing model capacity reduces bias but increases variance. Finding the sweet spot—the model complexity that minimizes total error—is the art of machine learning. This occurs where bias² + variance is minimized. Too simple → underfit. Too complex → overfit. Just right → generalize.</p>
+  <h3>Formal Decomposition</h3>
+  <p>For a regression problem with true function f, label y = f(x) + ε where ε is noise with E[ε]=0, and model ŷ = h(x,D) trained on dataset D, the expected squared error decomposes as:</p>
+  <pre>E_x,y,D[(y - ŷ)²] = Bias²(x) + Var(x) + σ²</pre>
+  <p>where Bias(x) = E_D[ŷ] - f(x) is bias at point x, Var(x) = E_D[(ŷ - E_D[ŷ])²] is variance at x, and σ² = E[(y - f(x))²] is irreducible noise. The expectations over D average over many training sets sampled from the same distribution.</p>
+  <h3>Implications</h3>
+  <p>This decomposition reveals why test error increases for both simple and complex models. Simple models cannot capture f, creating large bias. Complex models fit noise, creating large variance. The optimal model sits at the intersection, balancing both errors. In practice, you observe this through validation curves: training error decreases monotonically as complexity increases, but validation error exhibits a U-shape.</p>`,
+
+  // Detail 02: Mathematical Decomposition
+  `<div class="detail-header">
+    <span class="num">02 · Mathematical Decomposition</span>
+    <h2><em>Deriving</em> the Error Decomposition</h2>
+  </div>
+  <p>The bias-variance decomposition is not intuition but mathematical fact. Here's the formal derivation. Assume we have training data D = {(x₁,y₁), ..., (xₘ,yₘ)} drawn i.i.d. from distribution p(x,y), and a model h(x,D) trained on D. For a single test point (x,y):</p>
+  <pre>E_D[(y - h(x,D))²] = E_D[y² - 2y·h(x,D) + h(x,D)²]
+  = E[y²] - 2E[y]E_D[h(x,D)] + E_D[h(x,D)²]
+  = E[y²] - E[y]² + E[y]² - 2E[y]E_D[h(x,D)] + E_D[h(x,D)²] - E_D[h(x,D)]² + E_D[h(x,D)]²
+  = Var(y) + (E[y] - E_D[h])² + E_D[(h - E_D[h])²]</pre>
+  <p>Setting E[y] = f(x) (true function) and σ² = Var(y) (noise), we get the standard form:</p>
+  <pre>E_D[(y - h)²] = σ² + (f(x) - E_D[h])² + E_D[(h - E_D[h])²]
+  = σ² + Bias² + Variance</pre>
+  <p>The key insight: bias measures how much the average prediction deviates from truth, while variance measures fluctuation around that average.</p>
+  <h3>Example: Polynomial Regression</h3>
+  <p>Fit a degree-d polynomial to noisy data from a true degree-2 function. For d=1: large bias (can't fit curves), small variance (few parameters). For d=2: small bias (matches truth), small variance (optimal model). For d=10: small bias, large variance (fits noise). The U-curve emerges naturally as d increases.</p>
+  <h3>Why Cross-Validation Works</h3>
+  <p>Validation error estimates E_D[(y - h)²] by averaging over held-out test points. It directly measures bias + variance + noise, providing a practical way to find the optimal complexity without knowing the true decomposition.</p>`,
+
+  // Detail 03: Double Descent
+  `<div class="detail-header">
+    <span class="num">03 · Double Descent</span>
+    <h2><em>Beyond</em> the U-Curve: Modern Phenomena</h2>
+  </div>
+  <p>For decades, the bias-variance U-curve was the fundamental principle. However, modern deep learning revealed a surprising phenomenon: the double descent. When models are heavily overparameterized—parameter count p greatly exceeds sample size n (p >> n)—test error decreases again after passing the interpolation threshold where p ≈ n and perfect training fit is achieved.</p>
+  <p>This challenges conventional wisdom. Intuitively, fitting all training data perfectly (zero bias) should destroy generalization. Yet deep neural networks, kernel machines with infinite-dimensional feature spaces, and even simple linear models exhibit this benign overfitting regime where perfect fit coexists with good generalization.</p>
+  <h3>The Interpolation Threshold</h3>
+  <p>The critical point occurs at p ≈ n: the minimum parameter count needed to fit all training labels. Classical learning theory predicts test error should blow up here. Instead, test error peaks but then decreases as p increases further. The curve dips, rises, then falls again—hence "double descent."</p>
+  <h3>Implicit Regularization Explanation</h3>
+  <p>In the heavily overparameterized regime (p >> n), many weight vectors achieve zero training loss. The optimization algorithm—typically SGD with early stopping—implicitly selects among these solutions toward those with good generalization properties. Early stopping biases toward simpler, flatter solutions. SGD noise pushes toward solutions with smaller effective dimension. These mechanisms act as implicit regularization without explicit penalties.</p>
+  <h3>Practical Implications</h3>
+  <p>Double descent explains why modern deep networks generalize despite vast overparameterization. It suggests that bigger models trained with SGD and early stopping can outperform "optimally sized" models. This shifts focus from finding the "right" model size to designing algorithms with good implicit bias. The phenomenon occurs for supervised learning, but the precise mechanisms remain an active research area.</p>`,
+
+  // Detail 04: Sample Complexity Bounds
+  `<div class="detail-header">
+    <span class="num">04 · Sample Complexity Bounds</span>
+    <h2>How <em>Much</em> Data Do You Really Need?</h2>
+  </div>
+  <p>Learning theory quantifies how many samples suffice to learn well. PAC learning provides finite-sample guarantees: with m samples, we can guarantee error at most ε with probability at least 1-δ, provided m is large enough. For a finite hypothesis class H with |H| possible functions, the answer is surprisingly clean:</p>
+  <pre>m ≥ (1/ε²) · log(|H|/δ)</pre>
+  <p>This shows that samples needed grows logarithmically with class size. A hypothesis class twice as large requires only log(2) ≈ 0.69 more samples—hardly any increase. This suggests expressive power doesn't demand samples exponentially, only logarithmically.</p>
+  <h3>VC Dimension and Infinite Classes</h3>
+  <p>Real classifiers (neural networks, SVMs) have infinite parameter settings. The VC dimension measures capacity for infinite classes. A set of d points is shattered by class H if H can realize all 2^d possible labelings. The VC dimension is the size of the largest shattered set. For linear classifiers in d dimensions, VC dimension = d+1. A circle classifier (origin and radius) has VC dimension = 3.</p>
+  <p>The fundamental theorem of VC theory bounds generalization error by VC dimension:</p>
+  <pre>P(error_test - error_train > ε) ≤ poly(d) · exp(-ε²m)</pre>
+  <p>where d is VC dimension. Higher VC dimension means we need more samples to achieve the same confidence.</p>
+  <h3>Practical Use</h3>
+  <p>These bounds are often loose in practice—a loose upper bound is still useful. They guide thinking: simpler models (lower VC dimension) generalize with fewer samples. Deep networks have enormous VC dimension, yet generalize—suggesting other factors (implicit regularization, data structure) matter beyond classical bounds.</p>`,
+
+  // Detail 05: Regularization Methods
+  `<div class="detail-header">
+    <span class="num">05 · Regularization Methods</span>
+    <h2><em>Controlling</em> Complexity Explicitly</h2>
+  </div>
+  <p>Regularization adds a penalty for model complexity to the loss function. Instead of minimizing only training error L(w), we minimize J(w) = L(w) + λ·R(w) where R(w) measures complexity and λ ≥ 0 controls the tradeoff. Larger λ prefers simpler models (high bias, low variance); smaller λ allows complex models (low bias, high variance).</p>
+  <h3>L2 Regularization (Ridge)</h3>
+  <p>The most common form: R(w) = ||w||² = Σ wᵢ². This penalizes large weights, encouraging the model to distribute weight across features rather than relying on a few large coefficients. The solution is:</p>
+  <pre>w* = (X^T X + λI)^(-1) X^T y</pre>
+  <p>Adding λI makes the matrix invertible even when features are correlated, stabilizing the solution. Ridge regression always finds a solution, even if data is ill-conditioned. From Bayesian view, L2 regularization corresponds to placing a Gaussian prior N(0, σ²I) on weights, where σ² ∝ 1/λ.</p>
+  <h3>L1 Regularization (Lasso)</h3>
+  <p>Uses R(w) = ||w||₁ = Σ|wᵢ|. Unlike L2, the L1 penalty induces sparsity: many weights become exactly zero, providing feature selection. This is useful when you suspect only a few features matter. Lasso is computationally harder (no closed form), requiring iterative solvers, but the sparse solution often generalizes better when true model is sparse. From Bayesian view, L1 corresponds to Laplace priors with sharp peaks at zero.</p>
+  <h3>Elastic Net</h3>
+  <p>Combines both: J(w) = L(w) + λ₁||w||₁ + λ₂||w||². Provides both feature selection (L1) and stability (L2). Good balance when you want sparse solutions but also stable coefficients.</p>
+  <h3>Choosing λ</h3>
+  <p>Use cross-validation: try many λ values, pick the one minimizing validation error. Validation curves show training error (always decreases with smaller λ) versus validation error (U-shaped). The optimal λ is where validation error is minimized.</p>`,
+
+  // Detail 06: Implicit Regularization
+  `<div class="detail-header">
+    <span class="num">06 · Implicit Regularization</span>
+    <h2><em>Regularization</em> Without Penalties</h2>
+  </div>
+  <p>A striking discovery: even without explicit regularization terms, learning algorithms possess built-in capacity control. The algorithm itself regularizes. This implicit regularization explains why modern neural networks trained with SGD generalize well despite having far more parameters than training samples and no explicit L1/L2 penalties.</p>
+  <h3>Early Stopping</h3>
+  <p>Stop gradient descent before convergence. Train on the training set, monitor validation error. When validation error stops improving (or starts increasing), stop. This simple trick often outperforms explicit L2 regularization. Why? Each gradient step increases model complexity. Stopping before full convergence limits the number of steps, controlling effective capacity. Early stopping is essentially implicit L2 regularization via step count instead of weight magnitude.</p>
+  <h3>SGD Noise</h3>
+  <p>Stochastic gradient descent updates on random minibatches, introducing noise. This noise is not harmful—it helps generalization. The noise biases optimization toward flatter minima and smoother solutions. Sharp minima tend to overfit; flat minima generalize better. In overparameterized networks, many weight vectors achieve zero training loss. SGD's noise selects among them, favoring simpler, more generalizable solutions. This implicit bias is why SGD outperforms batch gradient descent even on identical problems.</p>
+  <h3>Depth and Width</h3>
+  <p>Deeper networks have implicit regularization effects through layer-wise feature learning. Shallow but wide networks behave like kernel methods. Architectural choices (depth, width, skip connections) implicitly control capacity. Batch normalization and layer normalization stabilize gradients and smooth the loss landscape, indirectly regularizing.</p>
+  <h3>Practical Value</h3>
+  <p>Understanding implicit regularization shifts practice away from obsessing over explicit penalties toward designing algorithms and architectures with good inductive bias. This principle—that the algorithm itself regularizes—is central to modern deep learning's success.</p>`,
+
+  // Detail 07: Model Selection
+  `<div class="detail-header">
+    <span class="num">07 · Model Selection</span>
+    <h2><em>Choosing</em> Architectures and Hyperparameters</h2>
+  </div>
+  <p>Model selection means choosing model architecture (e.g., network depth), hyperparameters (e.g., learning rate, regularization strength), and features. This is separate from parameter learning (fitting weights). Mistakes here are common: selecting a model with poor architecture or hyperparameters dooms performance regardless of optimization quality.</p>
+  <h3>The Three-Way Split</h3>
+  <p>Divide data into three parts: training (fit parameters), validation (select hyperparameters), test (final evaluation). Train on training set, evaluate many hyperparameter configurations on validation set, pick the configuration with best validation error, then report test error on held-out test set. Never select hyperparameters using test data—that causes overfitting at the model selection level.</p>
+  <h3>K-Fold Cross-Validation</h3>
+  <p>When data is limited, three-way split wastes samples. K-fold uses each fold for validation once: train on k-1 folds, validate on the remaining fold, repeat k times, average results. This uses all data for both training and validation, providing low-bias estimates. k=5 or k=10 is standard. Leave-One-Out CV (k=n) has very low bias but high variance and is computationally expensive.</p>
+  <h3>Hyperparameter Tuning</h3>
+  <p>Grid search evaluates a predefined grid of hyperparameter values (e.g., λ ∈ {0.001, 0.01, 0.1, 1}). Simple but can miss good values between grid points. Random search samples randomly from ranges, often finding good configurations with fewer evaluations. Bayesian optimization models the relationship between hyperparameters and validation error, intelligently choosing which values to try next. This is most efficient but more complex.</p>
+  <h3>Validation Curves</h3>
+  <p>Plot training and validation error as a hyperparameter varies. Large gap indicates overfitting; training error high means underfitting. The sweet spot is where validation error is minimized. This visual tool guides intuition: you can see whether increasing complexity helps or hurts.</p>
+  <h3>Information Criteria</h3>
+  <p>AIC = 2k - 2ln(L) and BIC = k·ln(n) - 2ln(L) balance fit (likelihood L) and complexity (k parameters, n samples). Useful when validation data is scarce. Lower AIC/BIC is better. But cross-validation is more reliable in modern settings.</p>`,
+
+  // Detail 08: Bayesian Perspective
+  `<div class="detail-header">
+    <span class="num">08 · Bayesian Perspective</span>
+    <h2><em>Priors</em>, Posteriors, and Uncertainty</h2>
+  </div>
+  <p>Bayesian methods interpret regularization and model selection through probability. Instead of finding point estimates w*, compute posterior distribution p(w|D) = p(D|w)p(w) / p(D). Prior p(w) encodes assumptions; likelihood p(D|w) is the data model; posterior p(w|D) combines both, updated by data. MAP (maximum a posteriori) estimation finds w* = argmax p(w|D) = argmax p(D|w)p(w), equivalent to maximum likelihood with a regularization penalty.</p>
+  <h3>Regularization as Prior</h3>
+  <p>L2 regularization with penalty λ||w||² corresponds to Gaussian prior p(w) ∝ exp(-λ||w||²), i.e., N(0, (2λ)^(-1)I). Large λ means small variance—strong belief that weights are small. Small λ means large variance—weak prior, data can freely shape the solution. L1 regularization corresponds to Laplace priors p(w) ∝ exp(-λ||w||₁), which have sharp peaks at zero, encouraging sparsity. This unifies frequentist and Bayesian views: regularization is prior belief.</p>
+  <h3>Model Comparison via Evidence</h3>
+  <p>Compare models M1 and M2 using marginal likelihood (evidence): p(D|M) = ∫ p(D|w,M)p(w|M)dw. This integral over the parameter space automatically balances fit and complexity. Large parameter spaces with weak priors give small integrals, penalizing overcomplex models. Bayes factor B = p(D|M1)/p(D|M2) compares models. This provides principled model selection without cross-validation.</p>
+  <h3>Uncertainty Quantification</h3>
+  <p>The full posterior p(w|D) provides credible intervals and prediction uncertainty. For a test point x, predictive distribution is p(y|x,D) = ∫ p(y|x,w)p(w|D)dw. This averages predictions across the posterior, naturally incorporating parameter uncertainty. Useful for risk-sensitive applications where you need to know "how confident am I?"</p>
+  <h3>Empirical Bayes</h3>
+  <p>Learn hyperparameters (e.g., λ) from data by maximizing marginal likelihood p(D|λ). This automates the bias-variance tradeoff: no validation set needed. Type-II maximum likelihood finds λ* = argmax ∫ p(D|w,λ)p(w|λ)dw. Practical: often outperforms fixed hyperparameters.</p>
+  <h3>Computational Challenge</h3>
+  <p>Computing posteriors requires integrals over high-dimensional spaces. Variational inference approximates p(w|D) with simpler distribution q(w). MCMC (Markov Chain Monte Carlo) samples from the posterior. For neural networks, these methods are still computationally intensive, but recent work on scalable Bayesian deep learning is progressing.</p>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — Bias-variance decomposition, learning theory, and generalization error bounds</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://arxiv.org/abs/1901.08888" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Belkin et al. — Reconciling Modern Machine Learning and the Bias-Variance Trade-off (2019)</a> — Modern analysis of bias-variance relationship including the phenomenon of double descent</p>
+<p><a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Bias-Variance Tradeoff</a> — Introduction to statistical estimation error and the bias-variance decomposition</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">Bias-Variance & <em>Regularization</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Part III · Generalization Theory & Model Selection</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

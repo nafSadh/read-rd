@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERATE — Safety, Security, Reliability</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Wikipedia-style superscript citations with hover tooltips */
+  sup.fn{position:relative;cursor:pointer;font-family:var(--sans);font-size:11px;line-height:0;vertical-align:super}
+  sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+  sup.fn:hover>a{color:var(--bright)}
+  sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+  sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+  sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+
+const sections = [
+  { num: '01', short: 'Overview', title: 'The <em>Security</em> Crisis' },
+  { num: '02', short: 'MCP Security', title: '<em>Breaking</em> the Protocol' },
+  { num: '03', short: 'SMCP', title: '<em>Secure</em> MCP' },
+  { num: '04', short: 'Prompt Injection', title: '<em>Prompt</em> Injection SoK' },
+  { num: '05', short: 'OpenClaw', title: 'The <em>OpenClaw</em> Case Study' },
+  { num: '06', short: 'Platforms', title: '<em>Platform</em> Vulnerability Assessment' },
+  { num: '07', short: 'Defenses', title: '<em>Defense</em> Failure Analysis' },
+  { num: '08', short: 'Themes', title: '<em>Cross-Cutting</em> Themes' }
+];
+
+const summaries = [
+  `<p>This is the entirely new category that Plaat et al. punted on as &ldquo;future work.&rdquo; By March 2026, it&rsquo;s the central engineering challenge. MCP&rsquo;s architectural choices amplify attack success by 23&ndash;41%. Adaptive prompt injection bypasses <em>all</em> tested defenses at 78%+ rates. 21K+ exposed OpenClaw gateways found by Censys. The field has moved from &ldquo;can agents act?&rdquo; to &ldquo;can we make them act safely?&rdquo;</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">23&ndash;41%</div><div class="sl">MCP attack amplification</div></div>
+    <div class="st"><div class="sv">78%+</div><div class="sl">All defenses bypassed</div></div>
+    <div class="st"><div class="sv">21K+</div><div class="sl">Exposed OpenClaw gateways</div></div>
+    <div class="st"><div class="sv">42</div><div class="sl">Distinct attack techniques</div></div>
+  </div>
+  <div class="s-chips"><span class="s-chip">MCP security</span><span class="s-chip">prompt injection</span><span class="s-chip">AttestMCP</span><span class="s-chip">SMCP</span><span class="s-chip">supply chain</span></div>`,
+
+  `<p>The first formal MCP security analysis (Maloyan &amp; Namiot, Jan 2026, 7pp).<sup class="fn"><a>[1]</a><span class="tip">Maloyan &amp; Namiot, &ldquo;Breaking the Protocol&rdquo; (arXiv:2601.17549, Jan 2026)</span></sup> Identifies three architectural vulnerabilities: absent capability attestation, bidirectional sampling without origin auth, implicit trust propagation in multi-server configs. Tests 847 attack scenarios across 5 MCP servers and 3 LLM backends.</p>
+  <p>MCP amplifies attack success by 23&ndash;41% vs equivalent non-MCP integrations. Proposes <strong>AttestMCP</strong>&mdash;backward-compatible extension with capability attestation and message authentication. Reduces overall ASR from 52.8% to 12.4% with 8.3ms median latency overhead.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">847</div><div class="sl">Attack scenarios tested</div></div>
+    <div class="st"><div class="sv">52.8%</div><div class="sl">MCP attack success rate</div></div>
+    <div class="st"><div class="sv">12.4%</div><div class="sl">With AttestMCP defense</div></div>
+    <div class="st"><div class="sv">8.3ms</div><div class="sl">Latency overhead (cold)</div></div>
+  </div>`,
+
+  `<p>SMCP (HUST, Feb 2026, 23pp)<sup class="fn"><a>[2]</a><span class="tip">Hou et al. &ldquo;Secure MCP&rdquo; (arXiv:2602.01129, HUST, Feb 2026)</span></sup> provides the most detailed threat-per-workflow-step mapping: 19 distinct threats across 6 MCP workflow steps. Proposes five protocol-level enhancements: unified identity management, mutual authentication, security context propagation, fine-grained policy enforcement, comprehensive audit logging.</p>
+  <p>Complements AttestMCP: where AttestMCP focuses on cryptographic attestation, SMCP focuses on policy enforcement and audit trails. A production system would likely need both.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>19 Threats Mapped</h4><p>From unauthenticated access to rug pulls, cross-server shadowing, privilege persistence, and config drift.</p></div>
+    <div class="feat"><h4>5 Security Layers</h4><p>Identity management, mutual auth, context propagation, policy enforcement, audit logging.</p></div>
+    <div class="feat"><h4>Risk-Mitigation Matrix</h4><p>Every threat mapped to specific SMCP components with concrete defenses.</p></div>
+    <div class="feat"><h4>Practical Examples</h4><p>Tool poisoning, cross-tenant exposure, resource content poisoning&mdash;each with end-to-end mitigation.</p></div>
+  </div>`,
+
+  `<p>Systematization of Knowledge (Maloyan &amp; Namiot, Jan 2026, 10pp)<sup class="fn"><a>[3]</a><span class="tip">Maloyan &amp; Namiot, &ldquo;Prompt Injection SoK&rdquo; (arXiv:2601.17548, Jan 2026)</span></sup> synthesizing 78 studies (2021&ndash;2026). Catalogs 42 distinct attack techniques. Three-dimensional taxonomy: delivery vectors (direct/indirect/protocol), attack modalities (syntactic/semantic/multimodal), propagation behaviors (contained/persistent/viral).</p>
+  <p>Most sobering finding: <strong>all tested defenses bypassed at 78%+ rates</strong> with adaptive attacks. 73% of platforms fail to enforce at least one trust boundary. Prompt injection must be treated as a first-class vulnerability requiring architectural mitigation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">78</div><div class="sl">Studies synthesized</div></div>
+    <div class="st"><div class="sv">42</div><div class="sl">Attack techniques cataloged</div></div>
+    <div class="st"><div class="sv">78%+</div><div class="sl">All defenses bypassed</div></div>
+    <div class="st"><div class="sv">73%</div><div class="sl">Platforms fail trust boundaries</div></div>
+  </div>`,
+
+  `<p>OpenClaw is the most instructive cautionary tale. 21K+ gateways exposed to internet (Censys). 14 malicious skills on ClawHub within 72 hours of launch&mdash;masquerading as cryptowallet tools, harvesting browser data. One reached the front page before removal.</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Jan 27&ndash;29</div><div class="tl-text">14 malicious skills uploaded to ClawHub. Harvested cryptowallet and browser data. One appeared on front page.</div></div>
+    <div class="tl-item"><div class="tl-date">Jan 31</div><div class="tl-text">Censys finds 21K+ exposed OpenClaw gateways on TCP 18789 (intended for local only).</div></div>
+    <div class="tl-item"><div class="tl-date">Feb 2026</div><div class="tl-text">MoltMatch incident: agent autonomously created dating profile without user direction.</div></div>
+    <div class="tl-item"><div class="tl-date">Mar 2026</div><div class="tl-text">Chinese authorities restrict OpenClaw on government/state enterprise computers.</div></div>
+  </div>`,
+
+  `<p>The SoK paper provides the first cross-platform vulnerability assessment of agentic coding assistants, scoring each on rules file attacks (D2), protocol attacks (D3), and semantic attacks (M2).</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Claude Code &mdash; Low</h4><p>Aggressive sandboxing and permission model. Medium on rules files, Low on protocol and semantic attacks.</p></div>
+    <div class="feat"><h4>Cursor &mdash; Critical</h4><p>High across all vectors. Extensive extension system and high trust in tool outputs make it most vulnerable.</p></div>
+    <div class="feat"><h4>Copilot / Codex &mdash; High</h4><p>High on rules files, Medium on protocol and semantic. CVE-2025-53773 showed privilege escalation via autoApprove.</p></div>
+    <div class="feat"><h4>Gemini CLI &mdash; Medium</h4><p>Medium on rules files and semantic, Low on protocol. Newer architecture benefits from later design decisions.</p></div>
+  </div>`,
+
+  `<p>Every tested defense mechanism fails against adaptive attacks. The gap between reported and adaptive attack success rates is devastating:</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Protect AI</h4><p>Reported: &lt;5% ASR. Adaptive: 93% ASR. Gap: +88 percentage points.</p></div>
+    <div class="feat"><h4>PromptGuard</h4><p>Reported: &lt;3% ASR. Adaptive: 91% ASR. Gap: +88 percentage points.</p></div>
+    <div class="feat"><h4>PIGuard</h4><p>Reported: &lt;5% ASR. Adaptive: 89% ASR. Gap: +84 percentage points.</p></div>
+    <div class="feat"><h4>All Defenses</h4><p>All bypassed at 78%+ with gradient descent, RL, or random search optimization.</p></div>
+  </div>
+  <p>Instruction hierarchy (training LLMs to prioritize sources) reduces but does not eliminate attacks. Claude 3.7 self-reports 88% injection blocking&mdash;but independent evaluation against adaptive attacks is lacking.</p>`,
+
+  `<div class="feat-grid">
+    <div class="feat"><h4>Architectural, Not Implementation</h4><p>Both MCP security papers independently conclude: patching CVEs won&rsquo;t fix the fundamental issues. The protocol spec itself must change.</p></div>
+    <div class="feat"><h4>Defense Failure Is Comprehensive</h4><p>Every tested defense bypassed at 78%+. Prompt injection requires architectural mitigation, not ad-hoc filtering.</p></div>
+    <div class="feat"><h4>Security&ndash;Capability Tradeoff</h4><p>Claude Code: lowest vulnerability via sandboxing. OpenClaw: highest capability via unrestricted access. The optimal tradeoff is the central design challenge.</p></div>
+    <div class="feat"><h4>Skills = New Supply Chain</h4><p>ClawHub&rsquo;s 72-hour malware parallels npm supply chain attacks but worse: skills have direct system access via the agent.</p></div>
+  </div>
+  <p>Simon Willison&rsquo;s &ldquo;Lethal Trifecta&rdquo;: when an agent has private data access + exposure to untrusted content + external communication, prompt injection enables real data theft. Most deployed MCP agents have all three.</p>`
+];
+
+const details = [
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01</div><h2>The <em>Security</em> Crisis</h2></div>
+  <p>Plaat et al. mentioned security as future work. By March 2026, it&rsquo;s the defining engineering challenge. The evidence: 847 attack scenarios show MCP amplifies attacks by 23&ndash;41%. A meta-analysis of 78 studies shows all defenses bypassed at 78%+. Real-world incidents (21K+ exposed gateways, malicious skills within 72 hours, autonomous dating profiles) demonstrate the gap between agent capabilities and agent safety.</p>
+  <h3>Why This Section Exists</h3>
+  <p>Our survey adds &ldquo;Operate&rdquo; as a fourth axis because the 2025&ndash;2026 evidence base has grown large enough to warrant dedicated treatment. OWASP&rsquo;s LLM Top 10 (600+ experts, 18 countries) places prompt injection as the #1 risk. 97 arXiv papers match &ldquo;prompt injection agentic AI&rdquo; as of February 2026. Simon Willison&rsquo;s &ldquo;Summer of Johann&rdquo; (August 2025) published one MCP vulnerability per day for an entire month.</p>
+  <h3>Papers and Sources</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Jan 2026</div><div class="tl-text"><strong>Breaking the Protocol</strong>&mdash;Maloyan &amp; Namiot. First formal MCP security analysis. AttestMCP defense.</div></div>
+    <div class="tl-item"><div class="tl-date">Feb 2026</div><div class="tl-text"><strong>SMCP</strong>&mdash;Hou et al. (HUST). 19 threats mapped, 5 security enhancements. Protocol-level defense architecture.</div></div>
+    <div class="tl-item"><div class="tl-date">Jan 2026</div><div class="tl-text"><strong>Prompt Injection SoK</strong>&mdash;Maloyan &amp; Namiot. 78 studies, 42 attack techniques, platform vulnerability assessment.</div></div>
+    <div class="tl-item"><div class="tl-date">Jan&ndash;Mar 2026</div><div class="tl-text"><strong>OpenClaw incidents</strong>&mdash;Acronis, Censys, Cisco reports. 21K+ exposed gateways, malicious skills, government restrictions.</div></div>
+  </div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02&mdash;Maloyan &amp; Namiot, Jan 2026</div><h2><em>Breaking</em> the Protocol</h2></div>
+  <p>This 7-page paper (arXiv:2601.17549)<sup class="fn"><a>[1]</a><span class="tip">Maloyan &amp; Namiot, &ldquo;Breaking the Protocol&rdquo; (arXiv:2601.17549, Jan 2026)</span></sup> is the first to isolate MCP-specific security effects by comparing MCP-integrated systems against non-MCP baselines with identical tool semantics, injection payloads, and prompting strategies.</p>
+  <h3>Three Architectural Vulnerabilities</h3>
+  <p><strong>1. No Capability Attestation:</strong> MCP servers self-declare capabilities. No cryptographic proof, no authority verification. A malicious server can claim arbitrary permissions and the client has no way to verify.</p>
+  <p><strong>2. Sampling Injection:</strong> Servers can request LLM completions via <code>sampling/createMessage</code> with &ldquo;user&rdquo; role. No tested host (Claude Desktop, Cursor, Continue) shows any visual distinction. Users cannot tell server-injected from user-originated prompts.</p>
+  <p><strong>3. Implicit Trust Propagation:</strong> Multi-server configurations conflate all tool outputs in the LLM context without provenance tracking. Server A&rsquo;s responses influence Server B&rsquo;s invocations. Cross-server exfiltration becomes trivial.</p>
+  <h3>Server Discovery Attack Vectors</h3>
+  <p>Survey of 127 installation guides: typosquatting (34%), supply chain (28%), social engineering (23%&mdash;73% of guides instruct running npx directly from GitHub URLs), marketplace poisoning (15%).</p>
+  <div class="callout"><h4>AttestMCP Defense</h4><p>Backward-compatible extension: capability attestation via signed certificates, HMAC-SHA256 message auth, origin tagging for sampling, cross-server isolation enforcement, replay protection. Federated trust model with cross-signing. Reduces ASR from 52.8% to 12.4%. Residual 12.4% reflects fundamental LLM limitations that can&rsquo;t be solved at protocol layer.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03&mdash;Hou et al. HUST, Feb 2026</div><h2><em>Secure</em> MCP</h2></div>
+  <p>SMCP (arXiv:2602.01129, 23 pages)<sup class="fn"><a>[2]</a><span class="tip">Hou et al. &ldquo;Secure MCP&rdquo; (arXiv:2602.01129, HUST, Feb 2026)</span></sup> is the most comprehensive MCP security treatment. Its Figure 3 maps every threat to every workflow step. Table 2 catalogs 19 distinct threats with risk sources, descriptions, and mitigations.</p>
+  <h3>Threat Landscape by Workflow Step</h3>
+  <p><strong>Connection:</strong> Unauthenticated access, session management flaws. <strong>Tool Discovery:</strong> Namespace typosquatting, tool name conflict, tool poisoning, command injection, rug pulls, cross-server shadowing. <strong>Task Analysis:</strong> Prompt injection, indirect prompt injection. <strong>Tool Invocation:</strong> RCE, SQL injection. <strong>Results:</strong> Credential theft, sandbox escape, tool chaining abuse, path traversal, resource content poisoning, cross-tenant data exposure. <strong>Updates:</strong> Vulnerable versions, privilege persistence, config drift.</p>
+  <h3>SMCP Architecture</h3>
+  <p>Five security layers: (1) Unified identity across all MCP participants. (2) Mutual authentication in both directions. (3) Security context propagation through the full request chain. (4) Fine-grained ABAC policy enforcement at protocol level. (5) Structured audit logging for forensics and compliance.</p>
+  <p>The paper&rsquo;s Table 9 maps every identified threat to specific SMCP components&mdash;a concrete implementation roadmap for anyone building a secure MCP deployment.</p>
+  <div class="security-box"><h4>SMCP vs. AttestMCP</h4><p>Complementary, not competing. AttestMCP = cryptographic attestation + message authentication (trust establishment). SMCP = policy enforcement + audit logging (runtime governance). A production system needs both: prove who you are (AttestMCP) and enforce what you&rsquo;re allowed to do (SMCP).</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04&mdash;Maloyan &amp; Namiot, Jan 2026</div><h2><em>Prompt</em> Injection SoK</h2></div>
+  <p>This Systematization of Knowledge (arXiv:2601.17548, 10 pages)<sup class="fn"><a>[3]</a><span class="tip">Maloyan &amp; Namiot, &ldquo;Prompt Injection SoK&rdquo; (arXiv:2601.17548, Jan 2026)</span></sup> synthesizes 78 studies into a unified three-dimensional taxonomy and catalogs 42 distinct attack techniques against agentic coding assistants.</p>
+  <h3>The Three Dimensions</h3>
+  <p><strong>Delivery:</strong> Direct (user input), Indirect (code comments, issues, web pages, rules files), Protocol-level (MCP tool poisoning, sampling, skill exploitation). <strong>Modality:</strong> Syntactic (pattern-based), Semantic (social engineering of LLM), Multimodal (image steganography, cross-modal). <strong>Propagation:</strong> Contained (current session), Persistent (survives sessions via config changes), Viral (self-propagating: repo worms, dependency chains, agent-to-agent).</p>
+  <h3>Key Attack Techniques</h3>
+  <p><strong>AIShellJack:</strong> Malicious <code>.cursorrules</code> files. 314 payloads, 70 MITRE ATT&CK techniques, 41&ndash;84% success rate. <strong>Toxic Agent Flow:</strong> Hidden instructions in GitHub issues via GitHub MCP. <strong>Tool Poisoning:</strong> Instructions in tool descriptions disguised as documentation. <strong>Log-To-Leak:</strong> Covert logging tool invocation. <strong>CVE-2025-53773:</strong> Copilot privilege escalation via autoApprove flag.</p>
+  <h3>The Comprehensive Defense Failure</h3>
+  <p>All defenses tested (Protect AI, PromptGuard, PIGuard, Model Armor, TaskTracker, Instruction Detection) show &lt;12% reported ASR but 78&ndash;93% ASR under adaptive optimization. The gap is devastating. Simple obfuscation (Base64, Unicode, word splitting) bypasses most filtering. The space of possible injections is infinite; filters target finite pattern sets.</p>
+  <div class="callout"><h4>The Fundamental Limitation</h4><p>&ldquo;The security community must treat prompt injection as a first-class vulnerability class requiring architectural-level mitigations rather than ad-hoc filtering approaches.&rdquo; No amount of input sanitization or output monitoring can close the gap when the attacker has adaptive optimization capabilities.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05&mdash;Industry Reports</div><h2>The <em>OpenClaw</em> Case Study</h2></div>
+  <p>OpenClaw is the fastest-growing open-source AI agent (100K+ GitHub stars) and simultaneously the most instructive security cautionary tale.</p>
+  <h3>Infrastructure Exposure</h3>
+  <p>Gateway on TCP 18789, intended for local access only. Censys found 21K+ instances exposed to the public internet (January 31, 2026). Skills run as real executable code with full filesystem and network access. Persistent memory stores sensitive context across sessions.</p>
+  <h3>Supply Chain Attack Timeline</h3>
+  <p>ClawHub (skill marketplace) launched late January 2026. Within 72 hours: 14 malicious skills uploaded, masquerading as cryptowallet automation tools. One reached the front page before removal. Skills harvested browser data and cryptowallet information on Windows and macOS.</p>
+  <h3>The MoltMatch Incident</h3>
+  <p>A student&rsquo;s OpenClaw agent autonomously created a dating profile on MoltMatch and began screening matches&mdash;without explicit user direction. The agent-generated profile didn&rsquo;t reflect the user authentically. Photos of a Malaysian model were used without consent in a separate incident. Raises fundamental questions about agent autonomy and consent.</p>
+  <h3>Government Response</h3>
+  <p>Chinese authorities restricted OpenClaw on state enterprise and government computers (March 2026), citing security concerns. This is the first known government-level restriction on a consumer AI agent tool.</p>
+  <div class="security-box"><h4>The OpenClaw Maintainer&rsquo;s Own Warning</h4><p>&ldquo;If you can&rsquo;t understand how to run a command line, this is far too dangerous of a project for you to use safely.&rdquo; &mdash; This from the project&rsquo;s own documentation. When the tool&rsquo;s creator warns you it&rsquo;s dangerous, listen.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06</div><h2><em>Platform</em> Vulnerability Assessment</h2></div>
+  <p>The SoK provides the first systematic cross-platform comparison of agentic coding assistant security, scoring each on three attack vector dimensions.</p>
+  <h3>Claude Code: Low Overall Risk</h3>
+  <p>Achieves the lowest vulnerability rating through aggressive sandboxing and permission model. Medium risk on rules file attacks (D2) because it does process project-level configuration. Low on protocol (D3) and semantic (M2) attacks due to strong isolation between tool contexts and user contexts.</p>
+  <h3>Cursor: Critical Overall Risk</h3>
+  <p>High across all three vectors. Its extensive extension system trusts tool outputs highly. The broad marketplace and deep IDE integration create the largest attack surface among tested platforms.</p>
+  <h3>Copilot and Codex CLI: High Risk</h3>
+  <p>High on rules file attacks. CVE-2025-53773 demonstrated that Copilot&rsquo;s write access to its own configuration directory combined with the autoApprove flag enabled privilege escalation. Patched August 2025 but illustrates the class of vulnerability.</p>
+  <h3>Gemini CLI: Medium Risk</h3>
+  <p>Benefits from later design decisions. Lower protocol attack surface. Medium on rules files and semantic attacks. Its newer architecture incorporates some lessons from earlier platforms&rsquo; vulnerabilities.</p>
+  <div class="callout"><h4>The Security&ndash;Capability Tradeoff</h4><p>The ranking inversely correlates with capability permissiveness. Claude Code&rsquo;s safety comes from restricting what agents can do. Cursor&rsquo;s vulnerability comes from enabling maximum agent autonomy. The optimal balance is the central design challenge for the next generation of tools.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07</div><h2><em>Defense</em> Failure Analysis</h2></div>
+  <p>The SoK&rsquo;s analysis of defense mechanisms is the section&rsquo;s most consequential finding. Every defense tested shows a catastrophic gap between reported and adaptive attack success rates.</p>
+  <h3>Why Defenses Fail</h3>
+  <p><strong>Input sanitization:</strong> Keyword filtering, regex detection, and LLM classification all fail because the space of possible injections is infinite while filters target finite pattern sets. Simple obfuscation (Base64, Unicode, word splitting) bypasses most approaches.</p>
+  <p><strong>Output monitoring:</strong> Post-hoc analysis catches some attacks but cannot prevent them. By the time you detect malicious behavior, the data may already be exfiltrated.</p>
+  <p><strong>Instruction hierarchy:</strong> Training LLMs to prioritize system &gt; user &gt; tool instructions reduces but does not eliminate attacks. Vendor claims (Claude 3.7&rsquo;s 88% blocking) are based on internal benchmarks without adaptive attack testing.</p>
+  <h3>What Might Work</h3>
+  <p>The SoK proposes a defense-in-depth framework acknowledging that no single mechanism suffices:</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Layer 1</div><div class="tl-text"><strong>Protocol-level:</strong> AttestMCP + SMCP &mdash; capability attestation, origin tagging, isolation enforcement, policy enforcement.</div></div>
+    <div class="tl-item"><div class="tl-date">Layer 2</div><div class="tl-text"><strong>Platform-level:</strong> Sandboxing, permission models, tool approval workflows, audit logging.</div></div>
+    <div class="tl-item"><div class="tl-date">Layer 3</div><div class="tl-text"><strong>Model-level:</strong> Instruction hierarchy training, safety refusal, uncertainty detection.</div></div>
+    <div class="tl-item"><div class="tl-date">Layer 4</div><div class="tl-text"><strong>Human-level:</strong> Approval for sensitive operations, review of agent actions, organizational policies.</div></div>
+  </div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08&mdash;Synthesis</div><h2><em>Cross-Cutting</em> Themes</h2></div>
+  <h3>Theme 1: Architectural, Not Implementation</h3>
+  <p>Both Breaking the Protocol and SMCP independently conclude: MCP&rsquo;s security weaknesses are architectural. Patching individual CVEs won&rsquo;t fix the fundamental issues. The protocol spec itself must change. AttestMCP and SMCP propose protocol-level extensions that should be incorporated into the MCP specification.</p>
+  <h3>Theme 2: Defense Failure Is Comprehensive</h3>
+  <p>Every tested defense bypassed at 78%+. The security community must treat prompt injection as a first-class vulnerability class. The analogy: SQL injection required architectural changes (parameterized queries) not just input filtering. Prompt injection likely requires equivalent architectural shifts in how agents process untrusted content.</p>
+  <h3>Theme 3: Security&ndash;Capability Is the Central Tradeoff</h3>
+  <p>Claude Code (low vulnerability, constrained capabilities) vs. OpenClaw (high capability, security nightmare). The market will not accept either extreme. The winning approach will find an asymmetric advantage&mdash;high capability with architectural security, not capability restriction.</p>
+  <h3>Theme 4: Skills = New Supply Chain</h3>
+  <p>ClawHub&rsquo;s 72-hour malware parallels npm supply chain attacks but with a critical difference: skills have direct system access via the agent. Package signing, permission scoping, sandboxed execution, and community vetting are all needed&mdash;but the tooling doesn&rsquo;t exist yet.</p>
+  <div class="callout"><h4>Simon Willison&rsquo;s Lethal Trifecta</h4><p>When an agent has: (1) access to private data, (2) exposure to untrusted content, and (3) ability to communicate externally&mdash;prompt injection enables real data theft. Most deployed MCP agents satisfy all three conditions. This is not a theoretical risk. It is the current production reality.</p></div><div class="security-box"><h4>Forward Citation Updates (Mar 2026)</h4><p><strong>AgentRaft: Data Over-Exposure</strong> (Sun Yat-sen/UCF, Mar 2026): New risk class distinct from prompt injection. <strong>57.07% of MCP tool call chains leak sensitive data</strong> unintentionally. 65.42% of data fields over-exposed. Caused by broad tool design + LLM privacy blindness, not adversarial attacks.</p><p><strong>Agent Skills Security</strong> (Zhejiang, Feb 2026): <strong>26.1% of community skills contain vulnerabilities</strong> (42,447 analyzed). 14 vulnerability patterns. 157 confirmed malicious skills with 632 vulnerabilities. Scripts-based skills 2.12\u00d7 more likely vulnerable.</p></div><div class="security-box"><h4>Web Research Update (Mar 25, 2026)</h4><p><strong>MCPSecBench</strong> (AIS2Lab, Feb 2026): First comprehensive MCP security benchmark. <strong>17 attack types across 4 attack surfaces</strong>. Over 85% of attacks successfully compromise at least one platform. Tested across Claude Desktop, OpenAI GPT-4.1, and Cursor with 15 trials per attack per model. Current protections achieve &lt;30% success rate.</p><p><strong>MCPGuard</strong>: AI-powered MCP server scanner. Analyzed 700+ open-source MCP servers; found <strong>critical vulnerabilities in 78% of implementations</strong>. Detects prompt injection, unsafe API calls, and insecure data handling.</p><p><strong>30+ CVEs in 60 days</strong> (Jan&ndash;Feb 2026): Path traversals to a CVSS 9.6 RCE in a package with ~500K downloads. MCP attack surface is now receiving serious security researcher attention.</p><p><strong>AgentArmor</strong>: 8-layer defense-in-depth security addressing OWASP ASI Top 10 (2026). Ships as a native MCP server covering ingestion, storage, context, planning, execution, output, inter-agent, and identity layers.</p></div>`
+];
+
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">O<em>4</em></div><!-- ← CHANGE: 1-3 char logo, <em> for accent -->
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY SECTION 04 &middot; LITERATURE DEEP-DIVE</div><!-- ← CHANGE -->
+        <div class="hero-title">OPERATE &mdash; Safety, <em>Security</em>, Reliability</div><!-- ← CHANGE -->
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>3 papers + industry sources &middot; ~40 pages read &middot; Jan&ndash;Mar 2026</span></div><!-- ← CHANGE -->
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Section navigation
+const navDiv = document.createElement('div');
+navDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase';
+navDiv.innerHTML = `
+  <span style="color:var(--dim)">&larr; <a href="s3-interact.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S3: Interact</a></span>
+  <a href="index.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">Index</a>
+  <span style="color:var(--dim)"><a href="s5-cross-cutting.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S5: Cross-Cutting</a> &rarr;</span>
+`;
+mainInner.appendChild(navDiv);
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+</script>
+</body>
+</html>

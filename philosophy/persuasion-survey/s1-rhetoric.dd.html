@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Grammar of Persuasion — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#2e6ab406;--grad2:#9b7aed04;--sidebar-bg:var(--bg2);--right-bg:var(--bg2);--grain-opacity:0.015;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);--edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;--close-text:"✕";--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--heading-ls:.5px;--label-ls:2.5px;--grad1:#9b7aed06;--grad2:#4ee8d004;--sidebar-bg:var(--bg);--right-bg:var(--bg2);--grain-opacity:0.02;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--bg3);--edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}.ctrl-btn.detail-btn .icon-open{display:block}.detail-open .ctrl-btn.detail-btn .icon-open{display:none}.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}.sidebar-item:hover{background:var(--bg3)}.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}.detail-open .sidebar-label{opacity:0;width:0}.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}.section-block .s-list.pro li{padding-left:20px}.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent),transparent 70%);transition:border .2s}a:hover{border-bottom-color:var(--accent)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}.detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Aristotle', title: 'The <em>Three</em> Appeals' },
+  { num: '02', short: 'Plato vs Aristotle', title: '<em>Flattery</em> or Art?' },
+  { num: '03', short: 'Roman Rhetoric', title: 'Cicero\'s Five <em>Canons</em>' },
+  { num: '04', short: 'The Sophists', title: 'Persuasion <em>Without</em> Truth' },
+  { num: '05', short: 'Dual Process', title: '<em>System</em> 1 & System 2' },
+  { num: '06', short: 'Cialdini', title: '<em>Six</em> Principles of Influence' },
+  { num: '07', short: 'ELM & HSM', title: '<em>Routes</em> to Persuasion' },
+  { num: '08', short: 'Synthesis', title: 'The <em>Invariant</em> Grammar' }
+];
+
+const summaries = [
+  `<p>Aristotle's Rhetoric identifies three fundamental appeals: <em>ethos</em> (credibility and character), <em>pathos</em> (emotional resonance), and <em>logos</em> (logical reasoning). These three channels operate across all persuasive communication, from the courtroom to the marketplace to the present day.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Ethos</div><div class="sl">Credibility</div></div>
+    <div class="st"><div class="sv">Pathos</div><div class="sl">Emotion</div></div>
+    <div class="st"><div class="sv">Logos</div><div class="sl">Reasoning</div></div>
+    <div class="st"><div class="sv">Kairos</div><div class="sl">Timing</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">classical rhetoric</span>
+    <span class="s-chip">persuasion theory</span>
+    <span class="s-chip">three appeals</span>
+  </div>`,
+
+  `<p>Plato condemned rhetoric in the <em>Gorgias</em> as flattery without truth. Aristotle disagreed: he saw rhetoric as a morally neutral art—a faculty for discovering and employing all available means of persuasion. This philosophical divide frames the entire survey: is persuasion power or technique?</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Plato</div><div class="sl">Rhetoric = Flattery</div></div>
+    <div class="st"><div class="sv">Aristotle</div><div class="sl">Rhetoric = Art</div></div>
+    <div class="st"><div class="sv">Sophists</div><div class="sl">Rhetoric = Technique</div></div>
+    <div class="st"><div class="sv">Modern</div><div class="sl">Rhetoric = Inevitable</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">plato's critique</span>
+    <span class="s-chip">aristotle's defense</span>
+    <span class="s-chip">ancient debate</span>
+  </div>`,
+
+  `<p>Cicero systematized persuasive communication into five canons: <em>inventio</em> (discovering arguments), <em>dispositio</em> (arranging ideas), <em>elocutio</em> (stylistic expression), <em>memoria</em> (memorization), and <em>actio</em> (delivery/performance). This framework dominated Western rhetoric for 2,000 years.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Inventio</div><div class="sl">Discovery</div></div>
+    <div class="st"><div class="sv">Dispositio</div><div class="sl">Arrangement</div></div>
+    <div class="st"><div class="sv">Elocutio</div><div class="sl">Style</div></div>
+    <div class="st"><div class="sv">Memoria</div><div class="sl">Memory</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">five canons</span>
+    <span class="s-chip">roman rhetoric</span>
+    <span class="s-chip">Western framework</span>
+  </div>`,
+
+  `<p>The Sophists (Gorgias, Protagoras) taught persuasion as technique divorced from truth: "Man is the measure of all things." They viewed rhetoric as power, not wisdom. This amorality—the capacity to argue either side of a question equally well—is the historical ancestor of modern dark psychology and manipulation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Gorgias</div><div class="sl">Encomium Power</div></div>
+    <div class="st"><div class="sv">Protagoras</div><div class="sl">Relativism</div></div>
+    <div class="st"><div class="sv">Amorality</div><div class="sl">Truth-Neutral</div></div>
+    <div class="st"><div class="sv">Tradition</div><div class="sl">Continues Today</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">sophists</span>
+    <span class="s-chip">ancient amorality</span>
+    <span class="s-chip">power-based rhetoric</span>
+  </div>`,
+
+  `<p>Kahneman's dual-process model: System 1 is fast, intuitive, automatic, and heuristic-driven. System 2 is slow, deliberate, analytical. Most persuasion targets System 1 because it consumes less cognitive energy and dominates decision-making under time pressure or cognitive load.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">System 1</div><div class="sl">Fast/Automatic</div></div>
+    <div class="st"><div class="sv">System 2</div><div class="sl">Slow/Deliberate</div></div>
+    <div class="st"><div class="sv">Heuristics</div><div class="sl">Mental Shortcuts</div></div>
+    <div class="st"><div class="sv">Bias</div><div class="sl">Systematic Error</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">cognitive psychology</span>
+    <span class="s-chip">dual process</span>
+    <span class="s-chip">behavioral economics</span>
+  </div>`,
+
+  `<p>Cialdini's six principles (later seven with "unity"): <em>reciprocity</em> (obligation to return favors), <em>commitment & consistency</em> (honoring prior commitments), <em>social proof</em> (following group behavior), <em>authority</em> (deferring to experts), <em>liking</em> (preferring similar others), <em>scarcity</em> (valuing limited resources), and <em>unity</em> (shared identity/belonging).</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Reciprocity</div><div class="sl">Obligation</div></div>
+    <div class="st"><div class="sv">Consistency</div><div class="sl">Commitment</div></div>
+    <div class="st"><div class="sv">Social Proof</div><div class="sl">Conformity</div></div>
+    <div class="st"><div class="sv">Authority</div><div class="sl">Deference</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">cialdini</span>
+    <span class="s-chip">influence principles</span>
+    <span class="s-chip">liking, scarcity, unity</span>
+  </div>`,
+
+  `<p>The Elaboration Likelihood Model (Petty & Cacioppo, 1986) describes central vs peripheral routes: high involvement triggers central (logos) processing; low involvement triggers peripheral (ethos/pathos). The Heuristic-Systematic Model (Chaiken, 1980) similarly distinguishes systematic vs heuristic processing. Both map ancient rhetoric onto modern cognitive science.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Central Route</div><div class="sl">Logos/Reasoning</div></div>
+    <div class="st"><div class="sv">Peripheral Route</div><div class="sl">Ethos/Pathos</div></div>
+    <div class="st"><div class="sv">Systematic</div><div class="sl">Analytical</div></div>
+    <div class="st"><div class="sv">Heuristic</div><div class="sl">Intuitive</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">ELM</span>
+    <span class="s-chip">HSM</span>
+    <span class="s-chip">processing routes</span>
+  </div>`,
+
+  `<p>The invariant grammar of persuasion: every persuasive act from Aristotle (ethos, pathos, logos) to modern AI operates through identical channels. The containers and speeds change—from oratory to print to digital—but the underlying structure remains constant. Understanding this grammar is the master key to both influence and defense.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Classical</div><div class="sl">2,350 years ago</div></div>
+    <div class="st"><div class="sv">Modern</div><div class="sl">Today</div></div>
+    <div class="st"><div class="sv">Substrate</div><div class="sl">Unchanged</div></div>
+    <div class="st"><div class="sv">Scale</div><div class="sl">Accelerating</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">invariant structure</span>
+    <span class="s-chip">persuasion grammar</span>
+    <span class="s-chip">timeless principles</span>
+  </div>`
+];
+
+const details = [
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">01</text></svg> Section 01</div>
+    <h2><em>Aristotle's</em> Three Appeals</h2>
+  </div>
+  <p>Aristotle's <em>Rhetoric</em> (composed circa 350 BCE) stands as the foundational text on persuasion in the Western intellectual tradition, and its influence has been continuous and transformative for over two millennia. What makes the work remarkable is not merely its antiquity but its analytical precision: Aristotle defines rhetoric not as dishonesty or mere technique, but as &ldquo;the faculty of discovering all the available means of persuasion.&rdquo;<sup class="fn"><a href="https://plato.stanford.edu/entries/aristotle-rhetoric/">[1]</a><span class="tip"><a href="https://plato.stanford.edu/entries/aristotle-rhetoric/" target="_blank">Rapp, C.: Aristotle&rsquo;s Rhetoric &mdash; Stanford Encyclopedia of Philosophy (2002/2022) &rarr;</a></span></sup> This formulation is deliberately capacious. It positions rhetoric as a systematic art of analysis rather than a repertoire of tricks, and it democratizes influence by implying that anyone who studies the available means can learn to persuade effectively.</p>
+  <p>The <em>Rhetoric</em> was composed during a period when Athenian democracy required citizens to argue their own cases in court and to deliberate publicly on matters of war, taxation, and governance. Persuasion was not a luxury but a civic necessity. Aristotle's taxonomy thus emerged from practical observation of what actually worked in the Assembly, the courts, and ceremonial contexts (epideictic oratory). He identified three fundamental channels through which all persuasion operates, and modern cognitive science has largely confirmed that these three channels map onto distinct psychological mechanisms.</p>
+  <h3>Ethos: Credibility & Character</h3>
+  <p><em>Ethos</em> is persuasion through the character and credibility of the speaker. Audiences are more readily persuaded by someone they perceive as trustworthy, competent, and possessed of good will toward them. Aristotle is careful to distinguish ethos from mere reputation: he argues that the most persuasive ethos is constructed within the speech itself, through the speaker's demonstration of practical wisdom (phronesis), moral virtue (arete), and benevolence toward the audience (eunoia). This tripartite structure of credibility has proven remarkably durable. Modern communication research consistently finds that perceived expertise, trustworthiness, and goodwill remain the three principal dimensions of source credibility, confirming what Aristotle observed through philosophical analysis alone.<sup class="fn"><a href="https://plato.stanford.edu/entries/aristotle-rhetoric/">[1]</a><span class="tip"><a href="https://plato.stanford.edu/entries/aristotle-rhetoric/" target="_blank">Rapp, C.: Aristotle&rsquo;s Rhetoric &mdash; SEP (2002/2022) &rarr;</a></span></sup></p>
+  <p>Remarkably, Aristotle argues that ethos is the most powerful of the three appeals. A credible, trustworthy speaker can often persuade without rigorous argument: mere testimony suffices when the source is sufficiently trusted. This observation anticipates the modern finding that people use source credibility as a heuristic shortcut (what Chaiken would later call "heuristic processing" and Cialdini would formalize as the "authority" principle). In the Athenian courtroom, a well-known citizen's word carried weight that no amount of evidence from an unknown stranger could match. Today, the same dynamic operates when a trusted physician's recommendation outweighs statistical evidence that a patient could evaluate independently.</p>
+  <p>The implications for manipulation are profound. If ethos is the most powerful appeal, then the most effective form of deception is not false argument but false character. A con artist who establishes trust before making their pitch is operating on the ethos channel. Propaganda that uses trusted institutions as mouthpieces is weaponizing ethos. The modern phenomenon of "astroturfing" (manufacturing grassroots credibility) is an ethos attack. Aristotle's framework thus identifies the most dangerous vector of manipulation twenty-three centuries before the term existed.</p>
+  <div class="callout">
+    <h4>Aristotle on Character</h4>
+    <p>Aristotle insists that ethos must be constructed through the speech itself, not merely inherited from prior reputation. A speaker demonstrates practical wisdom by showing familiarity with the subject, moral virtue by displaying fairness and honesty, and goodwill by showing genuine concern for the audience's interests.</p>
+  </div>
+  <h3>Pathos: Emotional Resonance</h3>
+  <p><em>Pathos</em> is persuasion through emotion. Audiences are moved by narratives, imagery, and appeals to values they hold dear: fear, hope, love, shame, anger, pity, indignation. A speaker who can make the audience feel something is already halfway to persuading them. Pathos does not operate through logic; it operates through identification, emotional contagion, and value alignment. Aristotle devotes the longest portion of Book II of the <em>Rhetoric</em> to analyzing specific emotions, their causes, and how speakers can arouse or calm them. This systematic treatment of emotional persuasion is arguably the first work of applied emotional psychology.</p>
+  <p>The power of pathos is that it often operates below conscious awareness. A well-crafted narrative can shift attitudes without the audience recognizing that they have been influenced emotionally rather than rationally. Neuroscience has since confirmed this: emotional processing in the amygdala occurs faster than conscious deliberation in the prefrontal cortex, meaning that an emotional response is already shaping judgment before the rational mind has engaged. This is the physiological basis of what Kahneman would later call System 1 processing. Aristotle could not know the neuroscience, but his observation that pathos is effective precisely because it bypasses deliberation was exactly correct.</p>
+  <p>Modern advertising, propaganda, and social media are overwhelmingly pathos-driven. A 30-second television advertisement cannot construct a careful logical argument (logos) or establish deep personal credibility (ethos). What it can do is trigger an emotional response: desire, nostalgia, fear of missing out, aspiration. Social media algorithms amplify content that triggers strong emotional reactions (particularly outrage and fear) because emotional engagement drives sharing behavior. The entire attention economy is, in Aristotelian terms, a pathos machine.</p>
+  <h3>Logos: Logical Reasoning</h3>
+  <p><em>Logos</em> is persuasion through reason, evidence, and logical argument. This is the appeal to the analytical mind: the syllogism, the statistical proof, the chain of reasoning from premises to conclusion. Logos is the most effortful of the three appeals because it requires the audience to follow a logical chain and evaluate evidence critically. Aristotle distinguishes between two forms of logos: the <em>enthymeme</em> (a rhetorical syllogism, often with an unstated premise that the audience supplies from shared knowledge) and the <em>paradeigma</em> (argument by example or analogy). The enthymeme is particularly important because it involves the audience in the reasoning process, making them co-authors of the conclusion rather than passive recipients.</p>
+  <p>However, logos is not the most powerful appeal in practice. Many people are persuaded by weak arguments simply because they come from credible sources (ethos) or resonate emotionally (pathos). The pure power of logos depends on audience engagement and cognitive capacity to evaluate the argument. Petty and Cacioppo's Elaboration Likelihood Model would later formalize this as the "central route": logos works powerfully when audience involvement is high and cognitive resources are available, but in conditions of low involvement or distraction, peripheral cues (ethos and pathos) dominate. The uncomfortable truth is that most persuasive contexts in modern life involve low involvement and high distraction, meaning logos is systematically disadvantaged.</p>
+  <p>This creates what might be called the "rationality paradox" of persuasion: the most intellectually rigorous form of persuasion is also the least effective in most real-world contexts. A carefully reasoned editorial will persuade fewer people than a vivid anecdote. A statistically sound risk assessment will move fewer minds than a single emotionally compelling story. This is not a failure of audiences; it is a feature of human cognition that Aristotle already understood.</p>
+  <h3>Kairos: The Fourth Factor</h3>
+  <p>Some scholars add a fourth element: <em>kairos</em>, the opportune moment or context. Persuasion does not operate in a vacuum. The same message delivered at the right moment can be transformative; delivered at the wrong moment, it falls flat. Kairos encompasses timing, context, audience readiness, cultural moment, and situational appropriateness. Aristotle recognized this implicitly throughout the <em>Rhetoric</em> but did not systematize it as explicitly as the three appeals. Later rhetoricians, particularly the Sophists, elevated kairos to equal status: Gorgias was renowned for his ability to seize the opportune moment in debate.</p>
+  <p>In modern persuasion, kairos has become algorithmically optimized. Digital advertising platforms determine the optimal moment to display a message based on user behavior patterns. Political campaigns time announcements to coincide with news cycles that amplify their message. Social media algorithms surface content when users are most receptive (often late at night when cognitive defenses are lowest). The ancient art of timing has been industrialized.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="280" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="22" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">ARISTOTLE'S APPEALS: STRUCTURE &amp; MODERN MAPPING</text>
+    <line x1="30" y1="34" x2="370" y2="34" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="140" y="44" width="120" height="40" class="node-hi" rx="4"/>
+    <text x="200" y="60" text-anchor="middle" class="node-text" font-size="11">PERSUASION</text>
+    <text x="200" y="74" text-anchor="middle" class="node-sub" font-size="9">Audience Judgment</text>
+    <line x1="160" y1="84" x2="70" y2="110" class="edge-hi" stroke-width="1.2"/>
+    <line x1="200" y1="84" x2="200" y2="110" class="edge-hi" stroke-width="1.2"/>
+    <line x1="240" y1="84" x2="330" y2="110" class="edge-hi" stroke-width="1.2"/>
+    <rect x="20" y="110" width="100" height="50" class="node" rx="4"/>
+    <text x="70" y="130" text-anchor="middle" class="node-text" font-size="11">ETHOS</text>
+    <text x="70" y="144" text-anchor="middle" class="node-sub" font-size="8">Credibility</text>
+    <text x="70" y="154" text-anchor="middle" class="node-sub" font-size="7">phronesis + arete + eunoia</text>
+    <rect x="150" y="110" width="100" height="50" class="node" rx="4"/>
+    <text x="200" y="130" text-anchor="middle" class="node-text" font-size="11">PATHOS</text>
+    <text x="200" y="144" text-anchor="middle" class="node-sub" font-size="8">Emotion</text>
+    <text x="200" y="154" text-anchor="middle" class="node-sub" font-size="7">fear, pity, anger, hope</text>
+    <rect x="280" y="110" width="100" height="50" class="node" rx="4"/>
+    <text x="330" y="130" text-anchor="middle" class="node-text" font-size="11">LOGOS</text>
+    <text x="330" y="144" text-anchor="middle" class="node-sub" font-size="8">Reasoning</text>
+    <text x="330" y="154" text-anchor="middle" class="node-sub" font-size="7">enthymeme + paradeigma</text>
+    <line x1="70" y1="160" x2="70" y2="186" class="edge" stroke-dasharray="3,3"/>
+    <line x1="200" y1="160" x2="200" y2="186" class="edge" stroke-dasharray="3,3"/>
+    <line x1="330" y1="160" x2="330" y2="186" class="edge" stroke-dasharray="3,3"/>
+    <rect x="20" y="186" width="100" height="36" fill="rgba(91,91,214,0.06)" rx="3" stroke="none"/>
+    <text x="70" y="200" text-anchor="middle" class="lbl-hi" font-size="8">MODERN: Authority</text>
+    <text x="70" y="212" text-anchor="middle" class="lbl" font-size="7">Cialdini / Heuristic Cue</text>
+    <rect x="150" y="186" width="100" height="36" fill="rgba(91,91,214,0.06)" rx="3" stroke="none"/>
+    <text x="200" y="200" text-anchor="middle" class="lbl-hi" font-size="8">MODERN: System 1</text>
+    <text x="200" y="212" text-anchor="middle" class="lbl" font-size="7">Kahneman / Peripheral</text>
+    <rect x="280" y="186" width="100" height="36" fill="rgba(91,91,214,0.06)" rx="3" stroke="none"/>
+    <text x="330" y="200" text-anchor="middle" class="lbl-hi" font-size="8">MODERN: Central Rte</text>
+    <text x="330" y="212" text-anchor="middle" class="lbl" font-size="7">ELM / System 2</text>
+    <rect x="100" y="236" width="200" height="30" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="248" text-anchor="middle" class="lbl-hi" font-size="9">KAIROS</text>
+    <text x="200" y="260" text-anchor="middle" class="lbl" font-size="7.5">Context, timing, audience readiness</text>
+  </svg></div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Ethos</h4>
+      <p>Speaker credibility constructed through demonstrated wisdom, moral character, and goodwill. The strongest appeal: trust bypasses the need for argument.</p>
+    </div>
+    <div class="feat">
+      <h4>Pathos</h4>
+      <p>Emotional resonance through narrative, imagery, and value alignment. Operates below conscious awareness; processed faster than rational evaluation.</p>
+    </div>
+    <div class="feat">
+      <h4>Logos</h4>
+      <p>Logical reasoning via enthymeme and example. Most effortful to process; most durable when successful, but least effective in low-involvement contexts.</p>
+    </div>
+    <div class="feat">
+      <h4>Kairos</h4>
+      <p>The opportune moment. Context and timing determine whether a message succeeds or falls flat. Now algorithmically optimized in digital persuasion.</p>
+    </div>
+  </div>
+  <h3>Source Assessment</h3>
+  <p>The primary source is Aristotle's <em>Rhetoric</em> itself, supplemented by Christof Rapp's comprehensive entry in the Stanford Encyclopedia of Philosophy (2002, revised 2022). Rapp's analysis is particularly valuable because it situates the <em>Rhetoric</em> within Aristotle's broader philosophical project, showing how the theory of persuasion connects to his ethics, psychology, and political philosophy. The three appeals are not arbitrary categories but derive from Aristotle's understanding of human nature: ethos maps onto social cognition, pathos onto emotional psychology, and logos onto rationality. The framework's endurance across 2,350 years suggests it identifies something genuinely structural about human persuasion rather than merely describing the conventions of Athenian oratory.</p>
+  <p>These three (or four) appeals remain the DNA of all persuasion: you cannot persuade without them. Modern advertising, political messaging, social media, AI-generated content, and algorithmic recommendation systems all operate through ethos, pathos, and logos. The appearance of these principles in every persuasive act across millennia and cultures suggests they map onto something fundamental about human cognition and social psychology. The grammar does not change; only the speed and scale of deployment changes.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">02</text></svg> Section 02</div>
+    <h2><em>Flattery</em> or Art?</h2>
+  </div>
+  <p>The first great debate in the history of persuasion is between Plato and Aristotle. This is not a technical disagreement or a scholarly quibble about definitions; it is a profound moral and philosophical disagreement about the nature of rhetoric itself, about its relationship to truth and justice, and about whether the capacity to influence others is fundamentally a force for good or for corruption. Every subsequent debate about persuasion, manipulation, propaganda, advertising ethics, and AI-generated influence is, at some level, a recapitulation of this ancient argument.</p>
+  <h3>Plato's Critique: The Gorgias Dialogue</h3>
+  <p>In the dialogue <em>Gorgias</em> (composed circa 385 BCE), Plato launches a devastating attack on rhetoric. Through the character of Socrates, Plato argues that rhetoric is not a genuine art (techne) at all but merely a "knack" (empeiria) for producing pleasure. His analogy is memorable and precise: rhetoric is to justice what cooking is to medicine, and what cosmetics are to physical training. In each case, the former mimics the latter's results through superficial means. Cooking makes food taste good without making it nutritious; cosmetics make the body look healthy without making it healthy; rhetoric makes arguments sound persuasive without making them true. The rhetor is a creature of appetite, not reason, who traffics in appearances rather than reality.</p>
+  <p>Plato's concern goes deeper than technique. He argues that rhetoric is morally dangerous because it gives the speaker power to persuade people to do harmful things. A skilled rhetor can make the worse argument appear better (the famous "making the weaker argument the stronger"). This capacity to deceive, divorced from any relationship to truth or justice, makes rhetoric a threat to both individual souls and the political order. For Plato, true persuasion must be grounded in knowledge of the good. A physician who understands health can genuinely help a patient; a cook who merely understands pleasure cannot. Similarly, a philosopher who knows truth can genuinely guide citizens; a rhetor who merely knows technique cannot.</p>
+  <p>It is worth noting that Plato softened this absolute condemnation in a later dialogue, the <em>Phaedrus</em> (circa 370 BCE). There, Plato allows that rhetoric could be legitimate if practiced by someone who possesses genuine knowledge of truth and uses rhetoric to convey that truth persuasively to souls that cannot follow pure philosophical reasoning. This "philosophical rhetoric" accepts that human beings often need emotional engagement and narrative structure to grasp truth, not just abstract argument. But this concession is tightly qualified: only the philosopher who knows truth has the right to practice rhetoric. Everyone else is a dangerous charlatan.</p>
+  <h3>Aristotle's Response: Rhetoric as Art</h3>
+  <p>Aristotle's defense of rhetoric in the <em>Rhetoric</em> (circa 350 BCE) is careful and measured. He acknowledges Plato's concern but rejects the conclusion. Rhetoric, Aristotle argues, is morally neutral: neither inherently good nor bad. It is a faculty, an analytical capacity, analogous to logic or medicine. A physician can use medical knowledge to heal or to poison; a logician can construct valid arguments for true or false conclusions. The tool is not to blame for its misuse. What matters is the character and intention of the practitioner.</p>
+  <p>Moreover, Aristotle argues that rhetoric is essential to democratic life. In a political order where decisions are made collectively through public speech (the Assembly debating war and peace, the courts adjudicating disputes, the festival speeches celebrating shared values), every citizen needs the ability to persuade and to evaluate persuasion. To deny citizens rhetorical training is to deny them effective participation in self-governance. This is Aristotle's most powerful counter to Plato: in a democracy, rhetoric is not a luxury of the elite but a necessity for every citizen. Suppressing rhetoric does not eliminate persuasion; it merely ensures that only the naturally gifted (or naturally manipulative) can influence public decisions.</p>
+  <p>Aristotle also makes a subtler epistemological argument. In many practical domains (politics, law, ethics), certainty is unattainable. We cannot prove what the best policy is the way we can prove a geometric theorem. In these domains of probability and practical judgment, rhetoric is the appropriate mode of reasoning. It is not a degraded form of philosophy but a mode of inquiry suited to the inherently uncertain conditions of human affairs. This argument would later be picked up by Stephen Toulmin in the twentieth century, who argued that Aristotle's rhetoric provides a better model for practical reasoning than formal logic.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="220" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THE PLATO-ARISTOTLE DEBATE</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="30" y="44" width="155" height="80" fill="rgba(139,32,32,0.06)" rx="4" stroke="rgba(139,32,32,0.3)" stroke-width="1"/>
+    <text x="107" y="62" text-anchor="middle" class="node-text" font-size="11">PLATO</text>
+    <text x="107" y="78" text-anchor="middle" class="lbl" font-size="8">Rhetoric = Flattery</text>
+    <text x="107" y="92" text-anchor="middle" class="lbl" font-size="8">Technique without truth</text>
+    <text x="107" y="106" text-anchor="middle" class="lbl" font-size="8">Dangerous to souls &amp; states</text>
+    <text x="107" y="118" text-anchor="middle" class="lbl" font-size="8">Only philosophers may persuade</text>
+    <rect x="215" y="44" width="155" height="80" fill="rgba(46,110,62,0.06)" rx="4" stroke="rgba(46,110,62,0.3)" stroke-width="1"/>
+    <text x="292" y="62" text-anchor="middle" class="node-text" font-size="11">ARISTOTLE</text>
+    <text x="292" y="78" text-anchor="middle" class="lbl" font-size="8">Rhetoric = Art (techne)</text>
+    <text x="292" y="92" text-anchor="middle" class="lbl" font-size="8">Morally neutral faculty</text>
+    <text x="292" y="106" text-anchor="middle" class="lbl" font-size="8">Essential for democracy</text>
+    <text x="292" y="118" text-anchor="middle" class="lbl" font-size="8">All citizens need rhetoric</text>
+    <text x="200" y="148" text-anchor="middle" class="lbl-hi" font-size="9">UNRESOLVED FOR 2,350 YEARS</text>
+    <line x1="100" y1="156" x2="300" y2="156" class="edge-hi" stroke-width="0.8"/>
+    <text x="200" y="172" text-anchor="middle" class="lbl" font-size="8">Modern question: Is AI persuasion neutral or dangerous?</text>
+    <text x="200" y="186" text-anchor="middle" class="lbl" font-size="8">Same debate, new medium, higher stakes</text>
+    <rect x="60" y="196" width="280" height="18" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="209" text-anchor="middle" class="lbl" font-size="7.5">The entire survey is a prolonged engagement with this question</text>
+  </svg></div>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Aristotle's Position</h4>
+      <ul>
+        <li>Rhetoric is a learnable art, not mere flattery</li>
+        <li>Moral neutrality enables democratic participation</li>
+        <li>Suited to practical domains where certainty is impossible</li>
+        <li>Citizens need rhetorical skill for self-governance</li>
+        <li>Suppressing rhetoric benefits only the naturally gifted</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Plato's Concern</h4>
+      <ul>
+        <li>Rhetoric can persuade to evil without knowledge of truth</li>
+        <li>Flattery substitutes for genuine expertise and justice</li>
+        <li>Divorcing technique from truth is morally corrosive</li>
+        <li>Rhetorical power corrupts both practitioners and audiences</li>
+        <li>Only truth-knowers should practice persuasion</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Modern Relevance: The Unsettled Question</h3>
+  <p>This debate has never been settled, and it cannot be settled, because it reflects a genuine tension in human communication. Every new medium of persuasion reopens the question. When printing presses spread propaganda, Plato's concern seemed prescient. When democratic movements used pamphlets to organize, Aristotle's defense seemed vindicated. Now, as AI systems generate personalized persuasion at superhuman scale, the debate has returned with extraordinary urgency. Is AI persuasion a neutral tool that citizens can learn to use and evaluate (Aristotle's view)? Or is it an inherently dangerous capacity that should be restricted to those who use it truthfully (Plato's view)?</p>
+  <p>Contemporary rhetoric scholarship has largely abandoned the attempt to establish rhetoric as "good" or "bad" and instead analyzes how it actually works. But the Platonic concern remains: how do we distinguish between legitimate persuasion and manipulation? The answer proposed by most modern scholars is that the boundary lies not in the technique itself but in the relationship between the speaker's claims and truth, and in the degree to which the audience's autonomy is respected. A persuader who presents genuine evidence and allows the audience to evaluate it freely is practicing Aristotelian rhetoric. A persuader who fabricates evidence, exploits cognitive biases, or restricts the audience's ability to evaluate alternatives is practicing something closer to what Plato feared. This distinction becomes the foundation of Section 2 (Exploit).</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">03</text></svg> Section 03</div>
+    <h2><em>Cicero's</em> Five Canons</h2>
+  </div>
+  <p>If Aristotle established the theory of persuasion, Cicero operationalized it. Marcus Tullius Cicero (106-43 BCE) was Rome's greatest orator and one of its most influential political figures. His treatise <em>De Oratore</em> (55 BCE), written as an elegant dialogue among prominent Roman advocates, systematized persuasive communication into five canons (<em>officia oratoris</em>) that became the dominant framework for teaching rhetoric throughout the Western world for nearly two millennia. Where Aristotle had analyzed the psychology of persuasion (why people are persuaded), Cicero focused on the craft of persuasion (how to produce persuasive discourse). This shift from analysis to production is what made Cicero's framework so influential for practitioners.</p>
+  <p>Cicero was not merely a theorist. He had successfully defended clients in capital trials, delivered orations that changed the course of Roman politics (the Catilinarian Orations), and wielded rhetoric as a weapon of governance throughout his career as consul, senator, and political leader. His framework thus arose from decades of high-stakes practice, not academic speculation. When Cicero describes the five canons, he is describing what actually works in contexts where failure means exile, financial ruin, or death.</p>
+  <h3>Inventio: Discovery & Invention</h3>
+  <p><em>Inventio</em> is the discovery or invention of arguments: the systematic process of finding all available material for a persuasive case. This encompasses research, evidence gathering, audience analysis, and argument construction. Cicero taught that inventio includes the <em>topoi</em> (commonplaces): stock arguments and lines of reasoning that apply to common situations. A Roman advocate knew the standard arguments for defense in murder cases, the standard appeals for deliberative assemblies, and the standard structures for praise or blame in ceremonial speeches. These topoi were not formulas but generative frameworks, like templates that could be adapted to specific circumstances.</p>
+  <p>In the modern era, inventio corresponds to market research, audience segmentation, competitive analysis, message testing, focus groups, and data analytics. The advertising executive who researches consumer psychology before crafting a campaign is practicing inventio. The political strategist who polls voters before designing messaging is following Cicero's first canon. What has changed is the sophistication of the tools (from personal observation to big data analytics), not the underlying principle: effective persuasion begins with systematic research into what will move a specific audience.</p>
+  <h3>Dispositio: Arrangement & Structure</h3>
+  <p><em>Dispositio</em> is the arrangement of arguments in the most effective order. Not all arguments carry equal weight, and identical arguments in different sequences produce different persuasive effects. Cicero, building on the earlier <em>Rhetorica ad Herennium</em>, taught a six-part structure that became the template for Western argumentation: <em>exordium</em> (opening to secure attention and goodwill), <em>narratio</em> (statement of facts in a favorable light), <em>propositio</em> (thesis or claim), <em>confirmatio</em> (proof of your position with evidence and argument), <em>refutatio</em> (refutation of the opponent's arguments), and <em>peroratio</em> (emotional conclusion designed to move the audience to action).</p>
+  <p>This structure proved so effective that it became the basis of essay structure, legal argumentation, newspaper editorials, sermon construction, and even storytelling across Western culture. When a modern student is taught to write a five-paragraph essay (introduction, three body paragraphs, conclusion), they are following a simplified version of Cicero's dispositio. When a lawyer structures an opening statement (grab attention, state the facts favorably, make the argument, address the opposing view, close with emotional impact), they are practicing dispositio in its original legal context. The ubiquity of this structure is so complete that it has become invisible: we follow it without knowing we are following a 2,100-year-old Roman template.</p>
+  <h3>Elocutio: Style & Expression</h3>
+  <p><em>Elocutio</em> is the choice of language: words, figures of speech, rhythm, tone, and stylistic register. Cicero classified three levels of style (grand, middle, and plain) and over a hundred figures of speech. His central insight is that the same content expressed in different language produces profoundly different persuasive effects. A vivid metaphor makes an abstract idea concrete and memorable. Parallel structure (anaphora, tricolon) creates rhythm that makes arguments feel inevitable. Understatement (litotes) can be more powerful than direct assertion because it invites the audience to fill in the gap.</p>
+  <p>Elocutio teaches that <em>how</em> you say something matters as much as <em>what</em> you say. This insight is foundational to modern communication design. In the digital age, elocutio encompasses not just verbal language but visual design, typography, color theory, interface layout, and multimodal content design. The aesthetic dimension of a website, the font choices on a product label, the color palette of a political campaign: all are exercises in elocutio. They shape how audiences feel about a message before they have consciously evaluated its content.</p>
+  <h3>Memoria & Actio: Memory and Delivery</h3>
+  <p><em>Memoria</em> is the memorization of a speech using systematic techniques. Cicero taught the <em>method of loci</em> (memory palace): the orator mentally walks through a familiar building, placing arguments in specific rooms and visualizing vivid images associated with each point. During delivery, the orator mentally retraces the walk, encountering each argument in sequence. This technique remained the dominant memory system until the printing press made memorization less critical.</p>
+  <p><em>Actio</em> is delivery: the voice, gesture, facial expression, pacing, eye contact, and physical presence of the speaker. Cicero considered actio the most practically important canon, arguing that a brilliant speech poorly delivered would fail, while a mediocre speech delivered with conviction and presence could succeed. Research on communication effectiveness broadly supports this claim: nonverbal channels (tone, expression, posture, confidence) account for a substantial proportion of persuasive impact, particularly in peripheral-route processing. This is why politicians invest heavily in media coaching and why video content outperforms text in digital marketing.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">CICERO'S FIVE CANONS: PRODUCTION PIPELINE</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="15" y="50" width="68" height="52" class="node-hi" rx="4"/>
+    <text x="49" y="68" text-anchor="middle" class="node-text" font-size="9">INVENTIO</text>
+    <text x="49" y="82" text-anchor="middle" class="node-sub" font-size="7">Discovery</text>
+    <text x="49" y="94" text-anchor="middle" class="node-sub" font-size="7">What to say</text>
+    <line x1="83" y1="76" x2="93" y2="76" class="edge-hi" stroke-width="1"/>
+    <rect x="93" y="50" width="68" height="52" class="node-hi" rx="4"/>
+    <text x="127" y="68" text-anchor="middle" class="node-text" font-size="9">DISPOSITIO</text>
+    <text x="127" y="82" text-anchor="middle" class="node-sub" font-size="7">Arrangement</text>
+    <text x="127" y="94" text-anchor="middle" class="node-sub" font-size="7">In what order</text>
+    <line x1="161" y1="76" x2="171" y2="76" class="edge-hi" stroke-width="1"/>
+    <rect x="171" y="50" width="68" height="52" class="node-hi" rx="4"/>
+    <text x="205" y="68" text-anchor="middle" class="node-text" font-size="9">ELOCUTIO</text>
+    <text x="205" y="82" text-anchor="middle" class="node-sub" font-size="7">Style</text>
+    <text x="205" y="94" text-anchor="middle" class="node-sub" font-size="7">How to say it</text>
+    <line x1="239" y1="76" x2="249" y2="76" class="edge-hi" stroke-width="1"/>
+    <rect x="249" y="50" width="68" height="52" class="node-hi" rx="4"/>
+    <text x="283" y="68" text-anchor="middle" class="node-text" font-size="9">MEMORIA</text>
+    <text x="283" y="82" text-anchor="middle" class="node-sub" font-size="7">Memory</text>
+    <text x="283" y="94" text-anchor="middle" class="node-sub" font-size="7">Retention</text>
+    <line x1="317" y1="76" x2="327" y2="76" class="edge-hi" stroke-width="1"/>
+    <rect x="327" y="50" width="58" height="52" class="node-hi" rx="4"/>
+    <text x="356" y="68" text-anchor="middle" class="node-text" font-size="9">ACTIO</text>
+    <text x="356" y="82" text-anchor="middle" class="node-sub" font-size="7">Delivery</text>
+    <text x="356" y="94" text-anchor="middle" class="node-sub" font-size="7">Performance</text>
+    <line x1="49" y1="102" x2="49" y2="124" class="edge" stroke-dasharray="3,3"/>
+    <line x1="127" y1="102" x2="127" y2="124" class="edge" stroke-dasharray="3,3"/>
+    <line x1="205" y1="102" x2="205" y2="124" class="edge" stroke-dasharray="3,3"/>
+    <line x1="283" y1="102" x2="283" y2="124" class="edge" stroke-dasharray="3,3"/>
+    <line x1="356" y1="102" x2="356" y2="124" class="edge" stroke-dasharray="3,3"/>
+    <text x="49" y="136" text-anchor="middle" class="lbl" font-size="7">Research &amp;</text>
+    <text x="49" y="146" text-anchor="middle" class="lbl" font-size="7">market analysis</text>
+    <text x="127" y="136" text-anchor="middle" class="lbl" font-size="7">Information</text>
+    <text x="127" y="146" text-anchor="middle" class="lbl" font-size="7">architecture</text>
+    <text x="205" y="136" text-anchor="middle" class="lbl" font-size="7">UX &amp; visual</text>
+    <text x="205" y="146" text-anchor="middle" class="lbl" font-size="7">design</text>
+    <text x="283" y="136" text-anchor="middle" class="lbl" font-size="7">CMS &amp; content</text>
+    <text x="283" y="146" text-anchor="middle" class="lbl" font-size="7">management</text>
+    <text x="356" y="136" text-anchor="middle" class="lbl" font-size="7">Video, voice</text>
+    <text x="356" y="146" text-anchor="middle" class="lbl" font-size="7">&amp; presentation</text>
+    <rect x="40" y="162" width="320" height="24" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="170" text-anchor="middle" class="lbl" font-size="7.5">MODERN EQUIVALENTS</text>
+    <text x="200" y="182" text-anchor="middle" class="lbl" font-size="7.5">2,100-year-old framework still structures all persuasion production</text>
+  </svg></div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Inventio</h4>
+      <p>Systematic discovery of arguments, evidence, and audience vulnerabilities. Modern form: research, analytics, audience segmentation, message testing.</p>
+    </div>
+    <div class="feat">
+      <h4>Dispositio</h4>
+      <p>Arrangement in persuasive sequence: opening, facts, thesis, proof, refutation, emotional close. Still the template for essays, legal arguments, and campaigns.</p>
+    </div>
+    <div class="feat">
+      <h4>Elocutio</h4>
+      <p>Stylistic expression: word choice, figures of speech, rhythm. In digital contexts: visual design, typography, color, interface aesthetics.</p>
+    </div>
+    <div class="feat">
+      <h4>Memoria & Actio</h4>
+      <p>Retention and performance. Memory palace technique. Delivery: voice, gesture, confidence, physical presence. Nonverbal channels dominate persuasive impact.</p>
+    </div>
+  </div>
+  <p>These five canons reveal that persuasion is not a single faculty but a complex production process requiring research, strategic thinking, linguistic artistry, mnemonic discipline, and performative skill. A great persuader must be strong in all five dimensions; weakness in any one undermines the whole effort. The canons also reveal that persuasion is <em>work</em>: it requires preparation, planning, and practice, not merely talent or inspiration. This craft orientation is what makes Cicero's framework so useful for practitioners and what distinguishes it from Aristotle's more analytical approach.</p>
+  <p>Remarkably, these five canons still structure how we teach writing, speaking, marketing, and communication. They are so fundamental that they appear invisible: we do not realize we are following a 2,100-year-old Roman template. Every marketing campaign proceeds through research (inventio), strategy (dispositio), creative development (elocutio), content management (memoria), and presentation (actio). The framework endures because it describes the actual production process of persuasion, not merely an abstract theory about it.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">04</text></svg> Section 04</div>
+    <h2>Persuasion <em>Without</em> Truth</h2>
+  </div>
+  <p>Predating Aristotle by a generation were the Sophists, itinerant professional teachers of rhetoric, argumentation, and political success who flourished in fifth-century Athens. Figures like Gorgias of Leontini, Protagoras of Abdera, Hippias, Prodicus, and Thrasymachus charged substantial fees to train ambitious young men in the art of persuasion. What distinguished the Sophists from later rhetoricians was their radical philosophical position: rhetoric was not about truth but about power. The capacity to persuade anyone of anything, to argue either side of a question with equal force, was the supreme intellectual skill. Truth was secondary to effect; what mattered was not whether your argument was correct but whether it was successful.</p>
+  <h3>The Sophistic Tradition</h3>
+  <p>Gorgias of Leontini (circa 483-375 BCE) was perhaps the most famous Sophist. His <em>Encomium of Helen</em> is a masterpiece of rhetorical virtuosity: an elaborate defense of Helen of Troy, a figure universally condemned in Greek culture for her role in starting the Trojan War. Gorgias constructs a defense so clever that it seems airtight. He argues that Helen either went to Troy by physical force, or by persuasive speech (which he likens to a drug that overpowers the mind), or by love (which is a form of divine madness), or by divine compulsion. In none of these cases, Gorgias contends, is Helen culpable, because in each case she was acted upon by a force she could not resist. The point of the speech is not genuinely to rehabilitate Helen's reputation but to demonstrate the raw power of rhetoric: with sufficient skill, you can make the indefensible seem defensible. The speech is simultaneously a legal defense, a philosophical argument, and a performance of sophistic power.</p>
+  <p>Protagoras of Abdera (circa 490-420 BCE) articulated the philosophical foundation of sophism in a single, devastating sentence: "Man is the measure of all things, of the things that are that they are, and of the things that are not that they are not." This is epistemological relativism in its purest form: there is no objective truth, only perspectival truth. If perception is the only reality, then persuasion is not a degraded form of truth-seeking but the only form of truth-making available. The art of persuasion becomes the art of constructing shared realities among audiences. If there is no objective fact to be right about, then being persuasive <em>is</em> being right. This collapse of the distinction between persuasion and truth is what makes sophism so powerful and so dangerous.</p>
+  <h3>The Amorality of Technique</h3>
+  <p>This is the sophistic tradition's great contribution to the history of persuasion, and it is precisely what Plato feared. The Sophists stripped rhetoric of any moral or epistemological foundation and reduced it to pure technique. Rhetoric becomes amoral: neutral with respect to truth, interested only in effectiveness, pure power divorced from justice. The Sophist does not ask "Is this argument true?" but "Will this argument work?" This is not yet called "dark psychology," but it is the historical ancestor of all manipulation. The sophistic tradition establishes the template that will be replicated by every subsequent practitioner who wields persuasion without ethical constraint: Machiavelli, Bernays, neuromarketers, dark pattern designers, AI-generated disinformation campaigns.</p>
+  <p>The sophistic tradition also introduces a crucial insight about the nature of persuasion itself: it is value-neutral as a <em>technique</em>. The same psychological mechanisms that make a charitable appeal effective also make a scam effective. The same understanding of emotional resonance that allows a therapist to help a patient also allows a manipulator to control a victim. The grammar of persuasion does not care about the intentions of the speaker. This insight is uncomfortable but essential: if we want to understand how manipulation works, we must understand persuasion in its amoral form.</p>
+  <div class="security-box">
+    <h4>Warning: The Amorality Trap</h4>
+    <p>The sophistic tradition teaches that rhetoric has no inherent relation to truth or goodness: it is a neutral tool that can be wielded for any purpose. This view is seductive to practitioners of persuasion because it removes moral responsibility. The advertising executive who argues "I am just using psychological techniques to sell products" is working in the sophistic tradition. But amorality is a choice with consequences. A rhetor who deliberately divorces persuasion from truth is complicit in the manipulation of human judgment, even if they maintain plausible deniability about their intentions.</p>
+  </div>
+  <h3>Modern Heirs of Sophism</h3>
+  <p>The sophistic tradition did not disappear with the decline of ancient Athens; it evolved and proliferated. Modern disciplines like neuromarketing (using brain imaging to optimize advertising), dark pattern design (using interface tricks to manipulate user behavior), growth hacking (using psychological triggers to drive user engagement), and psychological manipulation in politics (using data analytics to target voter vulnerabilities) are the direct heirs of sophism. They ask "How can we move people?" without asking "Is what we're moving them toward true or good?" They are sophisticates with better tools: neuroscience, behavioral economics, data science, machine learning, and now generative AI.</p>
+  <p>The sophistic question, "What works?", has become the dominant question of modern persuasion industries. A/B testing, conversion optimization, engagement metrics, click-through rates: all measure effectiveness without reference to truth. In a world of fake news, deepfakes, and algorithmically amplified disinformation, the sophistic approach has become the default mode of digital persuasion. The entire attention economy operates on sophistic principles: what generates engagement (clicks, shares, time-on-site) is what gets amplified, regardless of whether it is true, beneficial, or harmful.</p>
+  <h3>The Sophistication of Sophism</h3>
+  <p>It is important to note that the Sophists were not stupid or unsophisticated. They were often brilliant. Gorgias's speeches were admired for their artistry even by those who condemned their ethics. Protagoras was hired by Athens to draft the constitution of Thurii, a new colony. Hippias of Elis was a polymath who claimed expertise in mathematics, astronomy, grammar, music, and mnemonics. They understood human nature deeply and could move audiences with extraordinary skill. The problem is not lack of intelligence; it is the deliberate separation of technique from truth, of effectiveness from ethics.</p>
+  <p>When you master the psychology of persuasion without anchoring yourself to truth or ethics, you become dangerous not because you lack understanding but because your understanding is weaponized without restraint. The Sophists gave humanity its first comprehensive technology of persuasion. They demonstrated that persuasion could be studied systematically, taught as a skill, and deployed strategically. Everything that followed, from Cicero's canons to Cialdini's principles to AI-generated personalized messaging, builds on the sophistic insight that persuasion is a learnable, deployable technology. The only question is whether that technology will be constrained by ethics or left to operate in the amoral mode the Sophists pioneered.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">05</text></svg> Section 05</div>
+    <h2><em>System</em> 1 & System 2</h2>
+  </div>
+  <p>Twenty-five centuries after Aristotle identified ethos, pathos, and logos as the three channels of persuasion, cognitive psychologist Daniel Kahneman won the Nobel Prize in Economics (2002) for formalizing the cognitive mechanisms underlying those channels. Working with Amos Tversky from the 1970s onward, Kahneman demonstrated that the human mind operates through two fundamentally different modes of thinking. Their foundational 1974 paper in <em>Science</em>,<sup class="fn"><a href="https://doi.org/10.1126/science.185.4157.1124">[2]</a><span class="tip"><a href="https://doi.org/10.1126/science.185.4157.1124" target="_blank">Tversky &amp; Kahneman: Judgment under Uncertainty &mdash; Science (1974) &rarr;</a></span></sup> and Kahneman&rsquo;s 2011 synthesis <em>Thinking, Fast and Slow</em>,<sup class="fn"><a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow">[3]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow" target="_blank">Kahneman, D.: Thinking, Fast and Slow &mdash; Farrar, Straus &amp; Giroux (2011) &rarr;</a></span></sup> revealed that most persuasion succeeds by targeting the faster, more intuitive system, bypassing the deliberative system that could evaluate and resist it.</p>
+  <h3>System 1: Fast, Automatic, Intuitive</h3>
+  <p><em>System 1</em> is the default mode of human cognition. It operates automatically, effortlessly, and continuously. It requires no conscious attention and generates impressions, feelings, and inclinations that, if endorsed by System 2, become beliefs, attitudes, and actions. System 1 recognizes a friend's face in a crowd, drives a familiar route without conscious planning, reacts to a sudden noise before you can think about it, and evaluates whether a stranger is trustworthy within 100 milliseconds of seeing their face. It is evolutionarily ancient: a survival mechanism optimized for rapid pattern recognition, threat detection, and quick action in environments where delayed response meant death.</p>
+  <p>System 1 is the seat of heuristics: mental shortcuts that usually produce adequate judgments but introduce systematic, predictable errors. Tversky and Kahneman's original 1974 paper identified three foundational heuristics. The <em>availability heuristic</em>: judging the probability of events by how easily examples come to mind, which causes people to overestimate dramatic risks (plane crashes, shark attacks) and underestimate mundane ones (heart disease, car accidents). The <em>anchoring effect</em>: being disproportionately influenced by the first number or piece of information encountered, so that an initial price tag, statistic, or estimate skews all subsequent judgment. The <em>representativeness heuristic</em>: judging likelihood by similarity to a prototype or stereotype, which produces base-rate neglect and conjunction fallacies. Hundreds of additional biases have since been documented, all operating primarily through System 1.</p>
+  <p>Crucially, System 1 is intuitive and affective. It makes judgments based on feelings, not analysis. When you feel that a person is trustworthy, that a product is desirable, or that an argument is convincing, that is System 1 operating. Neuroscience has confirmed that emotional processing in the amygdala occurs before conscious deliberation in the prefrontal cortex, meaning that System 1 has already generated a judgment before System 2 has even begun to evaluate. System 1 is often right: our intuitions are refined by millions of years of evolution and decades of personal experience. But System 1 is also systematically exploitable by anyone who understands its biases and can trigger them deliberately.</p>
+  <h3>System 2: Slow, Deliberate, Analytical</h3>
+  <p><em>System 2</em> is the mode of conscious, effortful thinking. It requires sustained attention and cognitive resources. System 2 performs complex arithmetic, reads dense legal contracts, evaluates the logical structure of arguments, considers alternative hypotheses, and questions assumptions. It is what you engage when you carefully compare insurance policies, debug computer code, or follow a chain of philosophical reasoning. System 2 is the seat of what we call "critical thinking": the deliberate, self-aware evaluation of evidence and argument.</p>
+  <p>System 2 is, in Kahneman's memorable characterization, lazy. It requires effort, and humans are biologically motivated to conserve cognitive resources (a phenomenon known as "cognitive miser" theory). The brain consumes roughly 20% of the body's energy despite representing only 2% of its mass; System 2 processing is particularly energy-intensive. Consequently, System 1 is the default mode. System 2 only takes over when System 1 encounters something surprising, when the stakes are perceived as very high, when someone explicitly reminds us to think carefully, or when System 1's initial judgment is flagged as potentially wrong. This asymmetry between the two systems is the fundamental insight that makes all persuasion possible: most people, most of the time, are operating on System 1, the fast, intuitive system that is systematically vulnerable to bias and emotional manipulation.</p>
+  <h3>Persuasion Targets System 1</h3>
+  <p>The most effective persuasion does not argue at the System 2 level (logical reasoning, careful evidence evaluation). Instead, it creates conditions where System 1 delivers the desired judgment before System 2 has the opportunity to intervene. The techniques for targeting System 1 map directly onto the rhetorical tradition:</p>
+  <ul class="s-list">
+    <li><strong>Emotional salience (pathos):</strong> Making the desired conclusion feel right through narrative, imagery, and value alignment</li>
+    <li><strong>Source credibility (ethos):</strong> Establishing trust so that the audience accepts claims without scrutiny</li>
+    <li><strong>Vivid language and imagery:</strong> Making arguments memorable and concrete, activating the availability heuristic</li>
+    <li><strong>Heuristic triggering:</strong> Deliberately activating anchoring, social proof, scarcity, and other cognitive biases</li>
+    <li><strong>Cognitive load and time pressure:</strong> Ensuring System 2 cannot intervene by overwhelming attention or creating urgency</li>
+    <li><strong>In-group/out-group psychology:</strong> Activating tribal loyalties that bypass rational evaluation of evidence</li>
+  </ul>
+  <p>The dual-process model is the cognitive science explanation for why ancient rhetoric works so well: Aristotle's three appeals map onto the operating characteristics of the two systems. Ethos works because System 1 uses source credibility as a heuristic shortcut, accepting claims from trusted sources without evaluation. Pathos works because System 1 processes emotional content automatically, generating affect-based judgments that precede and often override rational analysis. Logos works only when System 2 is engaged, which requires motivation, cognitive resources, and absence of time pressure. The uncomfortable implication is that logos, the appeal most people consider the most legitimate form of persuasion, is also the one that operates in the narrowest range of conditions.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="260" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">DUAL-PROCESS MODEL &amp; RHETORIC</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="30" y="44" width="160" height="90" fill="rgba(139,32,32,0.06)" rx="4" stroke="rgba(139,32,32,0.3)" stroke-width="1"/>
+    <text x="110" y="62" text-anchor="middle" class="node-text" font-size="11">SYSTEM 1</text>
+    <text x="110" y="78" text-anchor="middle" class="lbl" font-size="8">Fast, automatic, intuitive</text>
+    <text x="110" y="92" text-anchor="middle" class="lbl" font-size="8">Heuristics &amp; biases</text>
+    <text x="110" y="106" text-anchor="middle" class="lbl" font-size="8">Emotional, affective</text>
+    <text x="110" y="120" text-anchor="middle" class="lbl-hi" font-size="8">PRIMARY PERSUASION TARGET</text>
+    <rect x="210" y="44" width="160" height="90" fill="rgba(46,106,180,0.06)" rx="4" stroke="rgba(46,106,180,0.3)" stroke-width="1"/>
+    <text x="290" y="62" text-anchor="middle" class="node-text" font-size="11">SYSTEM 2</text>
+    <text x="290" y="78" text-anchor="middle" class="lbl" font-size="8">Slow, deliberate, analytical</text>
+    <text x="290" y="92" text-anchor="middle" class="lbl" font-size="8">Logical evaluation</text>
+    <text x="290" y="106" text-anchor="middle" class="lbl" font-size="8">Effortful, lazy by default</text>
+    <text x="290" y="120" text-anchor="middle" class="lbl" font-size="8">Rarely engaged in practice</text>
+    <line x1="110" y1="134" x2="110" y2="158" class="edge" stroke-dasharray="3,3"/>
+    <line x1="290" y1="134" x2="290" y2="158" class="edge" stroke-dasharray="3,3"/>
+    <rect x="30" y="158" width="160" height="46" fill="rgba(91,91,214,0.06)" rx="3" stroke="none"/>
+    <text x="110" y="174" text-anchor="middle" class="lbl-hi" font-size="9">ETHOS + PATHOS</text>
+    <text x="110" y="188" text-anchor="middle" class="lbl" font-size="7">Credibility heuristics</text>
+    <text x="110" y="198" text-anchor="middle" class="lbl" font-size="7">Emotional processing</text>
+    <rect x="210" y="158" width="160" height="46" fill="rgba(91,91,214,0.06)" rx="3" stroke="none"/>
+    <text x="290" y="174" text-anchor="middle" class="lbl-hi" font-size="9">LOGOS</text>
+    <text x="290" y="188" text-anchor="middle" class="lbl" font-size="7">Argument evaluation</text>
+    <text x="290" y="198" text-anchor="middle" class="lbl" font-size="7">Evidence assessment</text>
+    <rect x="60" y="218" width="280" height="28" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="230" text-anchor="middle" class="lbl" font-size="8">Most persuasion operates on System 1</text>
+    <text x="200" y="242" text-anchor="middle" class="lbl" font-size="7.5">Kahneman (2011) / Tversky &amp; Kahneman (1974)</text>
+  </svg></div>
+  <h3>The Vulnerability of System 1 and Why Fact-Checking Fails</h3>
+  <p>System 1 is not stupid. It makes good, quick decisions most of the time. Our intuitions about faces, spaces, social dynamics, and danger are refined by evolution and personal experience. But System 1 is systematically vulnerable to manipulation precisely because it is intuitive and affective. A beautiful product design makes you feel the product is good quality (the "aesthetic-usability effect"). An attractive, confident speaker makes you trust their claims (the "halo effect"). A story that resonates emotionally moves you more than a statistical table. These are not bugs in human cognition; they are features that serve us well in natural environments but are ruthlessly exploitable in designed persuasion contexts.</p>
+  <p>In the modern attention economy, System 1 is under permanent siege. Social media, advertising, news feeds, push notifications, and algorithmically curated content are all optimized to capture and hold System 1 attention. They deploy bright colors, vivid images, shocking headlines, social proof indicators, and emotional triggers to generate immediate responses. System 2 is systematically excluded: platforms are designed to minimize the cognitive pause that would allow deliberation. Infinite scroll prevents natural stopping points. Autoplay ensures the next piece of content begins before you can reflect on the last one. Notification badges create urgency that demands immediate response. The entire architecture of digital attention is an anti-System 2 machine.</p>
+  <p>This also explains the persistent failure of fact-checking to change minds. If someone arrived at a belief through System 1 intuition and emotional resonance, presenting System 2 evidence (statistics, expert analysis, logical refutation) may not change the underlying judgment. The person may acknowledge the corrective evidence intellectually while their intuitive, emotional conviction remains unmoved. Neuroscience calls this the "continued influence effect": even after a piece of misinformation has been explicitly corrected, the emotional trace of the original misinformation continues to influence judgment. This is why persuasion through System 1 is so difficult to counteract once it has taken hold: the correction must operate on the same emotional channel as the original persuasion, not merely on the rational channel.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>System 1</h4>
+      <p>Fast, automatic, intuitive. Handles pattern recognition, snap judgments, emotional responses. Vulnerable to bias but efficient for survival. Default mode of cognition.</p>
+    </div>
+    <div class="feat">
+      <h4>System 2</h4>
+      <p>Slow, deliberate, analytical. Handles complex reasoning, logical evaluation, careful deliberation. Lazy and effortful; rarely engaged without explicit triggers.</p>
+    </div>
+    <div class="feat">
+      <h4>Heuristics & Bias</h4>
+      <p>System 1 mental shortcuts: availability, anchoring, representativeness, confirmation, status quo, framing. Usually adequate but systematically exploitable.</p>
+    </div>
+    <div class="feat">
+      <h4>Continued Influence Effect</h4>
+      <p>Even corrected misinformation leaves emotional traces in System 1 that continue to shape judgment. Corrections must target the same emotional channel.</p>
+    </div>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">06</text></svg> Section 06</div>
+    <h2><em>Six</em> Principles of Influence</h2>
+  </div>
+  <p>Robert Cialdini&rsquo;s research on influence, spanning from his landmark 1984 book <em>Influence: The Psychology of Persuasion</em><sup class="fn"><a href="https://en.wikipedia.org/wiki/Influence:_Science_and_Practice">[4]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Influence:_Science_and_Practice" target="_blank">Cialdini, R. B.: Influence: The Psychology of Persuasion (1984; 7th ed. 2021) &rarr;</a></span></sup> through the 2016 follow-up <em>Pre-Suasion</em> and the 2021 expanded seventh edition, has become foundational to modern persuasion science. Cialdini's methodology was unusual and revealing: before writing his first book, he spent three years undergoing training in used car dealerships, telemarketing operations, fundraising organizations, and other persuasion-intensive environments, studying how professional persuaders actually operate in the field. This immersive ethnographic approach, combined with rigorous experimental research, produced a taxonomy of six (later seven) psychological principles that make people susceptible to influence. Importantly, these principles work in both ethical and unethical contexts: they are descriptions of how human psychology actually functions, not prescriptions for manipulation.</p>
+  <h3>Reciprocity: The Obligation to Return</h3>
+  <p>Humans are deeply wired to repay favors, gifts, and concessions. This norm of reciprocity is one of the most universal features of human societies: anthropologists have documented it in every culture ever studied. When someone gives you something (a gift, a compliment, their time, a concession in negotiation), you feel a strong obligation to give back. The power of reciprocity lies in its asymmetry: a small initial gift can create obligation for a much larger return. Cialdini documents how Hare Krishna fundraisers dramatically increased donations by first giving passersby a small flower, creating an obligation that was then "repaid" with a donation far exceeding the flower's value. The "door-in-the-face" technique exploits reciprocal concessions: make an outrageous request that will be refused, then make your real (smaller) request, which feels like a concession the target should reciprocate by agreeing.</p>
+  <h3>Commitment & Consistency</h3>
+  <p>Once people commit to a position, identity, or course of action, they experience strong psychological pressure to behave consistently with that commitment. This pressure comes from two sources: the internal desire to maintain a coherent self-image (cognitive dissonance theory) and the external social pressure to appear consistent (people who contradict themselves lose credibility). The "foot-in-the-door" technique exploits this: get a small initial commitment (signing a petition, agreeing to a minor request), then escalate to larger commitments that the person feels compelled to honor because they have already defined themselves as someone who supports the cause. Written commitments are more binding than verbal ones; public commitments are more binding than private ones; commitments that require effort are more binding than effortless ones.</p>
+  <h3>Social Proof: Following the Crowd</h3>
+  <p>People look to others' behavior to determine what is correct, appropriate, or desirable. This is especially powerful under conditions of uncertainty (when people are unsure what to do, they look to others for guidance) and similarity (people are most influenced by the behavior of others they perceive as similar to themselves). Social proof explains why laugh tracks increase perceived humor, why "bestseller" labels increase book sales, why "most popular" product labels increase purchases, and why social media engagement metrics (likes, shares, follower counts) function as persuasion signals. The manipulative exploitation of social proof includes fabricated testimonials, bot-generated engagement, astroturfing campaigns, and manufactured consensus.</p>
+  <h3>Authority: Deference to Experts</h3>
+  <p>People are more persuaded by perceived authorities and high-status figures. Stanley Milgram's famous obedience experiments demonstrated the extreme power of authority: participants administered what they believed were dangerous electric shocks to another person simply because an authority figure in a white lab coat told them to continue. The authority principle works even when the authority is not actually an expert on the relevant topic. Symbols of authority (titles, uniforms, expensive possessions, institutional affiliations) trigger automatic deference that bypasses critical evaluation. This is a System 1 heuristic: "experts are usually right, so defer to them" is generally a good shortcut, but it is exploitable by anyone who can manufacture the appearance of authority.</p>
+  <h3>Liking: Preferring Those Like Us</h3>
+  <p>We are more persuaded by people we like, and liking is triggered by several well-documented factors: physical attractiveness (the "halo effect" causes attractive people to be perceived as more trustworthy, intelligent, and competent), similarity (we like people who share our values, backgrounds, and interests), compliments (even transparently strategic flattery increases liking), familiarity (mere repeated exposure increases liking), and association (we like people associated with positive things and dislike those associated with negative things). Sales professionals are trained to build rapport through mirroring body language, finding shared interests, and offering genuine compliments. The manipulative version uses these same techniques instrumentally, creating false intimacy to exploit trust.</p>
+  <h3>Scarcity: Valuing What Is Rare</h3>
+  <p>Things that are scarce or becoming scarce are perceived as more valuable, desirable, and urgent. This principle operates through two mechanisms: the economic logic that scarce resources have higher value, and the psychological reactance that occurs when freedom to obtain something is threatened (people want things more when they are told they cannot have them). Scarcity is weaponized through "limited time offers," "only 3 left in stock" notifications, "exclusive access" memberships, and artificial supply constraints. The FOMO (fear of missing out) that drives much social media engagement is a scarcity response: the fear that others are experiencing something you are excluded from.</p>
+  <h3>Unity: Shared Identity (2016)</h3>
+  <p>In <em>Pre-Suasion</em> (2016), Cialdini added a seventh principle: <em>unity</em>, the power of shared identity and belonging. People are disproportionately persuaded by others who are part of their in-group: family, community, nation, religion, political party, or any group with which they share a deep identity. Unity goes beyond mere similarity (liking): it is the perception that the persuader and the audience are fundamentally "one of us." This principle is perhaps the most powerful in the current era of political polarization, algorithmic tribalism, and identity-based information filtering. When a message comes from within your identity group, it bypasses the scrutiny that would be applied to an out-group source. This makes unity the most dangerous of the seven principles in the context of disinformation and radicalization.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Reciprocity</h4>
+      <p>Obligation to return favors. Ethical: genuine value. Unethical: small favors escalating to larger requests.</p>
+    </div>
+    <div class="feat">
+      <h4>Commitment</h4>
+      <p>Consistency with prior commitments. Ethical: value articulation. Unethical: escalation traps, false commitments.</p>
+    </div>
+    <div class="feat">
+      <h4>Social Proof</h4>
+      <p>Following group behavior. Ethical: genuine popularity. Unethical: fake reviews, manufactured consensus.</p>
+    </div>
+    <div class="feat">
+      <h4>Authority</h4>
+      <p>Deference to experts. Ethical: genuine expertise. Unethical: false credentials, manufactured authority.</p>
+    </div>
+    <div class="feat">
+      <h4>Liking</h4>
+      <p>Preference for similar others. Ethical: genuine relationships. Unethical: mimicry, faked similarity, physical manipulation.</p>
+    </div>
+    <div class="feat">
+      <h4>Scarcity</h4>
+      <p>Valuing limited resources. Ethical: genuine scarcity. Unethical: artificial scarcity, manufactured urgency, FOMO.</p>
+    </div>
+  </div>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="240" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">CIALDINI'S SEVEN PRINCIPLES MAPPED TO ARISTOTLE</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="30" y="44" width="105" height="30" fill="rgba(46,110,62,0.08)" rx="3" stroke="rgba(46,110,62,0.3)" stroke-width="0.8"/>
+    <text x="82" y="63" text-anchor="middle" class="node-text" font-size="10">ETHOS</text>
+    <rect x="148" y="44" width="105" height="30" fill="rgba(139,32,32,0.08)" rx="3" stroke="rgba(139,32,32,0.3)" stroke-width="0.8"/>
+    <text x="200" y="63" text-anchor="middle" class="node-text" font-size="10">PATHOS</text>
+    <rect x="265" y="44" width="105" height="30" fill="rgba(46,106,180,0.08)" rx="3" stroke="rgba(46,106,180,0.3)" stroke-width="0.8"/>
+    <text x="318" y="63" text-anchor="middle" class="node-text" font-size="10">LOGOS</text>
+    <line x1="82" y1="74" x2="82" y2="90" class="edge" stroke-dasharray="3,3"/>
+    <line x1="200" y1="74" x2="200" y2="90" class="edge" stroke-dasharray="3,3"/>
+    <line x1="318" y1="74" x2="318" y2="90" class="edge" stroke-dasharray="3,3"/>
+    <rect x="30" y="90" width="105" height="24" class="node" rx="3"/>
+    <text x="82" y="106" text-anchor="middle" class="node-sub" font-size="9">Authority</text>
+    <rect x="30" y="118" width="105" height="24" class="node" rx="3"/>
+    <text x="82" y="134" text-anchor="middle" class="node-sub" font-size="9">Liking</text>
+    <rect x="148" y="90" width="105" height="24" class="node" rx="3"/>
+    <text x="200" y="106" text-anchor="middle" class="node-sub" font-size="9">Scarcity / FOMO</text>
+    <rect x="148" y="118" width="105" height="24" class="node" rx="3"/>
+    <text x="200" y="134" text-anchor="middle" class="node-sub" font-size="9">Unity / In-group</text>
+    <rect x="265" y="90" width="105" height="24" class="node" rx="3"/>
+    <text x="318" y="106" text-anchor="middle" class="node-sub" font-size="9">Commitment</text>
+    <rect x="265" y="118" width="105" height="24" class="node" rx="3"/>
+    <text x="318" y="134" text-anchor="middle" class="node-sub" font-size="9">Reciprocity</text>
+    <rect x="148" y="150" width="105" height="24" class="node" rx="3"/>
+    <text x="200" y="166" text-anchor="middle" class="node-sub" font-size="9">Social Proof</text>
+    <line x1="82" y1="150" x2="148" y2="162" class="edge" stroke-dasharray="2,2"/>
+    <line x1="253" y1="162" x2="318" y2="150" class="edge" stroke-dasharray="2,2"/>
+    <rect x="50" y="190" width="300" height="36" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="204" text-anchor="middle" class="lbl-hi" font-size="9">All 7 principles operate through System 1</text>
+    <text x="200" y="218" text-anchor="middle" class="lbl" font-size="7.5">Cialdini (1984/2021) + Pre-Suasion (2016)</text>
+  </svg></div>
+  <h3>The Weaponization of Influence</h3>
+  <p>These seven principles are psychologically hardwired: they evolved because they are usually good heuristics for decision-making in natural social environments. Reciprocity maintains cooperative relationships. Consistency enables planning and trust. Social proof aggregates distributed information. Authority leverages expertise. Liking promotes cooperation within groups. Scarcity prioritizes genuinely limited resources. Unity strengthens group cohesion. But each of these adaptive mechanisms can be exploited. A skilled manipulator can trigger multiple principles simultaneously: creating a person who feels obligated (reciprocity), committed (consistency), seeing everyone else do it (social proof), trusting the source (authority), liking the persuader (liking), feeling time pressure (scarcity), and perceiving the persuader as part of their group (unity). Under this combined assault, System 2 has virtually no chance of intervening.</p>
+  <p>The key insight is that Cialdini's principles describe the underlying mechanical basis of persuasion. They are the psychological mechanisms through which ethos, pathos, and logos operate at the behavioral level. Authority and liking are the mechanisms of ethos. Scarcity and unity are the mechanisms of pathos. Commitment and reciprocity bridge logos and pathos. Social proof operates across all three channels. Understanding these mechanisms enables both ethical persuasion and effective defense against manipulation. This dual-use nature of persuasion knowledge is the central tension of the entire survey.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">07</text></svg> Section 07</div>
+    <h2><em>Routes</em> to Persuasion</h2>
+  </div>
+  <p>Modern persuasion science has formalized the ancient observation that people are persuaded through qualitatively different cognitive processes depending on their level of involvement, motivation, and available cognitive resources. Two models dominate the field, both developed in the 1980s, and both provide the formal scientific framework that explains why Aristotle's appeals work the way they do. Together, the Elaboration Likelihood Model (ELM) and the Heuristic-Systematic Model (HSM) constitute the most empirically supported account of how persuasion actually operates in human cognition.</p>
+  <h3>Elaboration Likelihood Model (ELM)</h3>
+  <p>Developed by Richard Petty and John Cacioppo in 1986,<sup class="fn"><a href="https://doi.org/10.1016/S0065-2601(08)60214-2">[5]</a><span class="tip"><a href="https://doi.org/10.1016/S0065-2601(08)60214-2" target="_blank">Petty &amp; Cacioppo: The Elaboration Likelihood Model &mdash; Adv. Exp. Soc. Psych. (1986) &rarr;</a></span></sup> the ELM is perhaps the most influential theoretical framework in persuasion research. It proposes that persuasion operates along a continuum of "elaboration likelihood": the probability that a person will engage in careful, effortful thinking about a message's arguments. At one end of the continuum lies the central route; at the other, the peripheral route.</p>
+  <p><strong>Central Route:</strong> When people are highly involved with the topic, motivated to think carefully, and possess the cognitive resources to evaluate arguments, they take the central route. They scrutinize the message's arguments, evaluate the quality and relevance of evidence, consider counterarguments, and form judgments based on the logical merit of the case presented. Central route persuasion corresponds to logos and System 2 processing. Attitudes formed through the central route are more durable, more resistant to counter-persuasion, and more predictive of actual behavior. When someone reads a detailed policy analysis, evaluates a scientific paper, or carefully compares product specifications, they are engaging central route processing.</p>
+  <p><strong>Peripheral Route:</strong> When people are unmotivated, distracted, time-pressured, or lack the expertise to evaluate arguments, they take the peripheral route. They do not carefully evaluate the argument's logic; instead, they rely on heuristic cues that require minimal cognitive effort. Is the source attractive? Is the speaker confident? How many arguments are there (regardless of quality)? Does the message feel familiar? What are other people doing? Persuasion through the peripheral route is based on cues that have little to do with argument quality. This is System 1 persuasion: intuitive, emotional, and subject to decay when the cues fade or when competing cues appear. Attitudes formed through the peripheral route are more fragile and less predictive of behavior.</p>
+  <p>Critically, the central route is more persuasive and longer-lasting, but the peripheral route is faster and requires less effort from both persuader and audience. In a world of chronic information overload and limited attention, most persuasion happens on the peripheral route. This is not a deficiency of modern audiences; it is a rational (if imperfect) adaptation to an environment where central-route processing of every message would be cognitively impossible.</p>
+  <h3>Heuristic-Systematic Model (HSM)</h3>
+  <p>Developed by Shelly Chaiken in 1980,<sup class="fn"><a href="https://doi.org/10.1037/0022-3514.39.5.752">[6]</a><span class="tip"><a href="https://doi.org/10.1037/0022-3514.39.5.752" target="_blank">Chaiken, S.: Heuristic vs. Systematic Information Processing &mdash; JPSP (1980) &rarr;</a></span></sup> the HSM makes a parallel distinction with an important theoretical addition. Like the ELM, the HSM identifies two modes of processing:</p>
+  <p><strong>Systematic Processing:</strong> When motivation is high and cognitive resources are available, people process messages systematically: carefully evaluating arguments, weighing evidence, considering source reliability, and assessing internal consistency. This corresponds to logos and System 2. Systematic processing is effortful but produces more accurate and durable judgments.</p>
+  <p><strong>Heuristic Processing:</strong> When motivation is low or cognitive resources are scarce, people process messages heuristically: using simple decision rules stored in memory. These rules include "experts are trustworthy" (authority heuristic), "if many people believe it, it must be true" (consensus heuristic), "longer messages are more convincing" (length-implies-strength heuristic), and "people who are similar to me are usually right" (likability heuristic). Heuristic processing corresponds to ethos and pathos, and to System 1.</p>
+  <p>The HSM's key contribution beyond the ELM is the concept of <em>co-occurrence</em>: heuristic and systematic processing can operate simultaneously. A person may carefully evaluate an argument's logic (systematic) while also being influenced by the speaker's attractiveness (heuristic). The two modes interact: heuristic cues can bias the direction of systematic processing (you evaluate arguments more charitably when the source is likeable) or can additively increase persuasion (strong arguments plus a credible source are more persuasive than either alone). This co-occurrence model is more realistic than a simple dichotomy and helps explain why real-world persuasion is often a complex mixture of rational and heuristic processing.</p>
+  <h3>The Mapping to Ancient Rhetoric</h3>
+  <p>The correspondence between modern dual-process models and the ancient rhetorical tradition is remarkably precise:</p>
+  <ul class="s-list">
+    <li><strong>Central/Systematic Route = Logos:</strong> Logical reasoning, evidence quality, argument structure. Persuades through the intellect when audience is engaged and capable.</li>
+    <li><strong>Peripheral/Heuristic Route = Ethos + Pathos:</strong> Source credibility, emotional resonance, social cues, attractiveness. Persuades through character and feeling when audience is disengaged or overloaded.</li>
+    <li><strong>Dispositio (Structure):</strong> Cicero's arrangement principles adapt to the processing route. Lead with emotion for peripheral audiences; build a careful logical case for central-route audiences.</li>
+    <li><strong>Elocutio (Style):</strong> Vivid, emotionally evocative language activates peripheral processing; clear, precise, evidence-rich language supports central processing.</li>
+    <li><strong>Kairos (Timing):</strong> The processing route a person takes depends heavily on context, timing, and cognitive state, all of which are kairotic factors.</li>
+  </ul>
+  <h3>When Does Each Route Dominate?</h3>
+  <p><strong>Central Route Dominates When:</strong> The issue is personally relevant and consequential, the person has time and cognitive resources to evaluate, domain expertise is high, there is low time pressure, the stakes of being wrong are high, and the person has a dispositional tendency toward analytical thinking ("need for cognition"). These conditions describe a small fraction of the persuasive encounters most people face in daily life.</p>
+  <p><strong>Peripheral Route Dominates When:</strong> The issue is not personally relevant, the person is busy, distracted, or multitasking, cognitive resources are depleted (end of day, information overload), time pressure is high, the stakes appear low, and the person lacks domain expertise to evaluate arguments. These conditions describe the vast majority of persuasive encounters in modern life: advertisements, social media posts, news headlines, political messaging, product recommendations.</p>
+  <p>This asymmetry explains why modern advertising and social media messaging so relentlessly target the peripheral route: the goal is to persuade without engaging critical thinking. A 30-second television advertisement, a social media post, a push notification, a headline: these are all designed for peripheral route processing. They do not ask people to think; they ask people to feel, associate, and act. The entire architecture of the attention economy is optimized to prevent central-route processing from occurring.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Central Route (ELM)</h4>
+      <p>Effortful processing of arguments. High involvement, high motivation, high cognitive resources. Based on argument quality. Longer-lasting persuasion.</p>
+    </div>
+    <div class="feat">
+      <h4>Peripheral Route (ELM)</h4>
+      <p>Low-effort heuristic processing. Low involvement, low motivation, limited resources. Based on peripheral cues (attractiveness, likeability, authority). Shorter-lasting persuasion.</p>
+    </div>
+    <div class="feat">
+      <h4>Systematic Processing (HSM)</h4>
+      <p>Careful evaluation of message content. High cognitive capacity and motivation. Corresponds to logos and critical thinking.</p>
+    </div>
+    <div class="feat">
+      <h4>Heuristic Processing (HSM)</h4>
+      <p>Mental shortcuts and cues. Low capacity or motivation. Corresponds to ethos and pathos; vulnerable to bias.</p>
+    </div>
+  </div>
+  <h3>Implications for Defense and Literacy</h3>
+  <p>The great insight of ELM and HSM is that persuasion is not monolithic. The same message will persuade through fundamentally different mechanisms depending on the audience's involvement, motivation, and cognitive resources. A skilled persuader tailors their approach: logos-heavy argumentation for engaged, analytical audiences with expertise; ethos and pathos-based messaging for busy, distracted audiences without domain knowledge. This explains why different persuasion contexts require radically different strategies: an academic paper persuades through argument quality (central route), while a billboard persuades through vivid imagery and brand recognition (peripheral route).</p>
+  <p>In the modern attention economy, the peripheral route has become dominant because audiences are systematically prevented from engaging in central-route processing. Push notifications interrupt focus. Infinite scroll prevents reflective pauses. Algorithmic feeds deliver low-effort content optimized for emotional engagement. Social media platforms reward sharing (a peripheral-route behavior) rather than careful analysis (a central-route behavior). This has created a persuasion landscape where heuristics and biases dominate, and critical thinking struggles to compete not because people are incapable of it but because the environment is engineered to prevent it.</p>
+  <p>Understanding ELM and HSM is therefore essential for media literacy and persuasion defense. When you recognize that a message is targeting your peripheral route (emotional imagery, celebrity endorsement, urgency cues, social proof indicators), you can deliberately engage System 2 and central-route processing: pause, evaluate the argument's logic, consider the source's actual expertise, and check for evidence. This conscious shifting from peripheral to central processing is the cognitive core of resistance to manipulation.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-family="monospace">08</text></svg> Section 08</div>
+    <h2>The <em>Invariant</em> Grammar</h2>
+  </div>
+  <p>We have traversed 2,350 years of persuasion thought: from Aristotle's three appeals to Cicero's five canons, from sophistic amorality to Platonic moral critique, from Kahneman's dual-process model to Cialdini's seven principles, from ELM's processing routes to HSM's co-occurrence framework. What emerges from this survey is a remarkable constancy. The grammar of persuasion does not change. The psychological mechanisms through which humans persuade and are persuaded have remained structurally identical across two and a half millennia. What changes, and what changes dramatically, is the speed, scale, precision, and automation of deployment.</p>
+  <h3>The Invariant Structure</h3>
+  <p>Every act of persuasion, from ancient Athenian oration to a modern TikTok advertisement to an AI-generated personalized email, operates through the same underlying structure:</p>
+  <ul class="s-list">
+    <li><strong>Ethos (Credibility):</strong> The persuader must be perceived as trustworthy, competent, of good will. This works through heuristics (attractive people are trustworthy), authority (experts are credible), liking (we trust people like us), and social proof (if others trust them, we should too).</li>
+    <li><strong>Pathos (Emotion):</strong> The message must resonate emotionally—through narrative, vivid language, imagery, and values alignment. This works through System 1, through the heuristics of affect and availability, and through identification with in-groups.</li>
+    <li><strong>Logos (Reasoning):</strong> The message must appear logical, consistent, and evidence-based (whether or not it actually is). This works through argument structure, data presentation, and the appearance of rationality.</li>
+    <li><strong>Kairos (Timing):</strong> The message must be delivered at the opportune moment—when the audience is receptive, when social conditions align, when alternatives are unavailable.</li>
+  </ul>
+  <p>This four-part structure describes Aristotle's appeals and also describes modern persuasion campaigns, AI-generated content, social media algorithms, and neuromarketing with equal accuracy. The containers of persuasion change: papyrus scroll became printed pamphlet became radio broadcast became television advertisement became social media post became AI-generated personalized message. The speed of propagation has accelerated from weeks (messengers) to seconds (fiber optics). The scale has expanded from hundreds (a forum audience) to billions (global internet). But the underlying grammar, the structure through which human minds are moved, remains identical.</p>
+  <h3>Mapping the Entire Section to the Grammar</h3>
+  <p>Each subsection of this deep dive illuminates a different facet of the invariant grammar:</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Section 01: Aristotle</div><div class="tl-text">Establishes the three appeals (ethos, pathos, logos, plus kairos) as the foundational grammar of all persuasion.</div></div>
+    <div class="tl-item"><div class="tl-date">Section 02: Plato vs Aristotle</div><div class="tl-text">The eternal question: is this grammar moral or amoral? Grammar itself is neutral; ethics lie in how the practitioner wields it.</div></div>
+    <div class="tl-item"><div class="tl-date">Section 03: Cicero</div><div class="tl-text">Operationalizes the grammar through five production canons: discover (inventio), arrange (dispositio), express (elocutio), memorize (memoria), deliver (actio).</div></div>
+    <div class="tl-item"><div class="tl-date">Section 04: Sophists</div><div class="tl-text">Demonstrates that the grammar can be wielded amorally: technique without truth, effectiveness without ethics. The dark path.</div></div>
+    <div class="tl-item"><div class="tl-date">Section 05: Dual Process</div><div class="tl-text">Explains the cognitive mechanism underlying the grammar. System 1 makes snap judgments via heuristics; System 2 evaluates deliberately. Most persuasion targets System 1.</div></div>
+    <div class="tl-item"><div class="tl-date">Section 06: Cialdini</div><div class="tl-text">Identifies seven psychological triggers that activate the grammar: reciprocity, commitment, social proof, authority, liking, scarcity, unity.</div></div>
+    <div class="tl-item"><div class="tl-date">Section 07: ELM/HSM</div><div class="tl-text">Formalizes the observation that the grammar operates through different processing routes depending on audience involvement and resources.</div></div>
+  </div>
+  <h3>The Acceleration of the Grammar</h3>
+  <p>The grammar itself has not changed in 2,350 years. But the speed, scale, and precision of deployment have accelerated exponentially. Aristotle addressed audiences of hundreds in the Athenian Assembly. Cicero spoke to thousands in the Roman Forum. Gutenberg's printing press allowed pamphlets to reach tens of thousands. Radio and television reached millions simultaneously. The internet reaches billions in real time. And now generative AI can produce personalized persuasion at superhuman scale: each individual receiving their own optimized message, crafted by a system that has analyzed their psychological profile, timed to arrive when they are most receptive, and designed to activate their specific cognitive vulnerabilities.</p>
+  <p>This acceleration changes the stakes of persuasion without changing its structure. A skilled Athenian orator could persuade hundreds per day. A skilled propagandist with broadcast media could influence millions per day. A sophisticated AI system can generate millions of unique, personalized persuasive messages per hour, each one targeting a different individual through the same channels Aristotle identified. The grammar operates at the speed of light, at the scale of the global internet, and with a precision that no human persuader could match.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THE ACCELERATION OF PERSUASION</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <line x1="40" y1="150" x2="370" y2="150" class="edge" stroke-width="0.5"/>
+    <line x1="40" y1="50" x2="40" y2="150" class="edge" stroke-width="0.5"/>
+    <text x="35" y="48" text-anchor="end" class="lbl" font-size="7">Scale</text>
+    <text x="370" y="164" text-anchor="end" class="lbl" font-size="7">Time</text>
+    <circle cx="60" cy="140" r="4" fill="currentColor" class="lbl-hi"/>
+    <text x="60" y="130" text-anchor="middle" class="lbl" font-size="7">350 BCE</text>
+    <text x="60" y="156" text-anchor="middle" class="lbl" font-size="6">Oratory</text>
+    <text x="60" y="164" text-anchor="middle" class="lbl" font-size="6">100s</text>
+    <circle cx="120" cy="130" r="4" fill="currentColor" class="lbl-hi"/>
+    <text x="120" y="120" text-anchor="middle" class="lbl" font-size="7">55 BCE</text>
+    <text x="120" y="156" text-anchor="middle" class="lbl" font-size="6">Forum</text>
+    <text x="120" y="164" text-anchor="middle" class="lbl" font-size="6">1,000s</text>
+    <circle cx="180" cy="115" r="4" fill="currentColor" class="lbl-hi"/>
+    <text x="180" y="105" text-anchor="middle" class="lbl" font-size="7">1450</text>
+    <text x="180" y="156" text-anchor="middle" class="lbl" font-size="6">Print</text>
+    <text x="180" y="164" text-anchor="middle" class="lbl" font-size="6">10,000s</text>
+    <circle cx="240" cy="90" r="4" fill="currentColor" class="lbl-hi"/>
+    <text x="240" y="80" text-anchor="middle" class="lbl" font-size="7">1928</text>
+    <text x="240" y="156" text-anchor="middle" class="lbl" font-size="6">Broadcast</text>
+    <text x="240" y="164" text-anchor="middle" class="lbl" font-size="6">Millions</text>
+    <circle cx="300" cy="68" r="4" fill="currentColor" class="lbl-hi"/>
+    <text x="300" y="58" text-anchor="middle" class="lbl" font-size="7">2004</text>
+    <text x="300" y="156" text-anchor="middle" class="lbl" font-size="6">Social</text>
+    <text x="300" y="164" text-anchor="middle" class="lbl" font-size="6">Billions</text>
+    <circle cx="355" cy="46" r="5" fill="currentColor" class="lbl-hi"/>
+    <text x="355" y="156" text-anchor="middle" class="lbl" font-size="6">AI-Scale</text>
+    <text x="355" y="164" text-anchor="middle" class="lbl" font-size="6">Personalized</text>
+    <path d="M60,140 Q120,130 180,115 Q240,90 300,68 Q330,55 355,46" class="edge-hi" stroke-width="1.5" fill="none"/>
+    <rect x="80" y="176" width="240" height="16" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="188" text-anchor="middle" class="lbl" font-size="7.5">Grammar unchanged; speed, scale, precision increasing exponentially</text>
+  </svg></div>
+  <h3>The Master Key: Understanding the Grammar</h3>
+  <p>To understand persuasion, to both practice it ethically and defend against manipulation, you must understand this invariant grammar. It is not hidden, not mysterious, not the province of specialists. Aristotle laid it out 2,350 years ago in a text that is still readable today. Cicero operationalized it for practitioners. Kahneman explained its cognitive basis. Cialdini catalogued its psychological triggers. Petty, Cacioppo, and Chaiken formalized its processing routes. The knowledge is available; the grammar is known.</p>
+  <p>The person who understands the grammar can decode any act of persuasion: spot the ethos move (who is being presented as credible, and why?), recognize the pathos appeal (what emotion is being triggered, and to what end?), evaluate the logos argument (what evidence is offered, and is it valid?), and consider the kairos timing (why this message now?). They can ask the diagnostic questions that reveal the persuasion architecture: What credibility is being asserted or manufactured? What emotion am I being made to feel? What reasoning am I being offered, and does it survive scrutiny? Is the timing designed to prevent me from thinking carefully?</p>
+  <p>Conversely, the person who does not understand the grammar is vulnerable to persuasion at every turn. They do not see the mechanisms at work. They feel moved without knowing why. They are persuaded without realizing they have been persuaded. They accept claims because the source seems credible, feel urgency because scarcity cues are triggered, and conform because social proof indicators are activated, all without recognizing that these are deliberate persuasion techniques rather than organic features of reality.</p>
+  <div class="callout">
+    <h4>The Synthesis</h4>
+    <p>Persuasion is not ancient history. It is not modern innovation. It is an invariant human capacity, operating through unchanging channels: ethos, pathos, logos, and kairos. These channels have remained constant across 2,350 years, from the Athenian Assembly to generative AI. Understanding this grammar is the foundation of both ethical influence and effective defense. What follows in the remaining four sections of this survey is the story of what happens when this grammar is weaponized (Section 2: Exploit), how humans build resistance to it (Section 3: Defend), what happens when machines automate it (Section 4: Automate), and how societies attempt to govern it (Section 5: Govern).</p>
+  </div>
+  <p>This concludes Section 1 of the survey. The foundation is established: the timeless, invariant structure through which humans persuade and are persuaded. Everything that follows builds upon this grammar. The grammar itself is neither good nor evil. It is simply the architecture of human influence, as fundamental to our social nature as language itself.</p>`
+];
+
+// ════════════════════════════════════════════════
+// DOM BUILDER
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">A<em>I</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY · SECTION 01</div>
+        <div class="hero-title">The Grammar of <em>Persuasion</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Classical Rhetoric · Aristotle to Cialdini · 2,350 years of influence science</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+
+// Build main content
+const mainScroll = document.getElementById('main-scroll');
+const mainScrollInner = document.createElement('div');
+mainScrollInner.className = 'main-scroll-inner';
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num">
+      <span>${sec.num} · ${sec.short}</span>
+      <button class="s-detail-btn" onclick="viewDetail(${idx})"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button>
+    </div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainScrollInner.appendChild(block);
+});
+mainScroll.appendChild(mainScrollInner);
+
+// Build detail panels
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detail = document.createElement('div');
+  detail.className = 'detail';
+  detail.innerHTML = details[idx];
+  rightInner.appendChild(detail);
+});
+
+// Theme toggle
+function toggleTheme() {
+  const theme = document.body.getAttribute('data-theme');
+  document.body.setAttribute('data-theme', theme === 'light' ? 'dark' : 'light');
+}
+
+// Detail panel
+let currentDetail = 0;
+function viewDetail(idx) {
+  currentDetail = idx;
+  document.body.classList.add('detail-open');
+  const mainHead = document.querySelector('.main-head');
+  mainHead.classList.add('compact');
+  updateDetails();
+  document.getElementById('right').classList.remove('closed');
+  updateRightScroll();
+}
+
+function toggleDetail() {
+  document.body.classList.toggle('detail-open');
+  document.querySelector('.main-head').classList.toggle('compact');
+  document.getElementById('right').classList.toggle('closed');
+  if(!document.body.classList.contains('detail-open')) {
+    currentDetail = 0;
+  }
+  updateDetails();
+}
+
+function updateDetails() {
+  const details = document.querySelectorAll('.detail');
+  details.forEach(d => d.style.display = 'none');
+  details[currentDetail].style.display = 'block';
+}
+
+// Sidebar scrolling
+function scrollToSection(idx) {
+  currentDetail = idx;
+  const blocks = document.querySelectorAll('.section-block');
+  blocks[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+    item.classList.toggle('active', i === idx);
+  });
+}
+
+// Right panel scroll
+const rightPanel = document.getElementById('right');
+const rightTopbar = document.querySelector('.right-topbar');
+const stickyTitle = document.getElementById('right-sticky-title');
+const detailEls = document.querySelectorAll('.detail');
+
+function updateRightScroll() {
+  if(rightPanel.scrollTop > 20) {
+    rightTopbar.classList.add('scrolled');
+    stickyTitle.classList.add('visible');
+    stickyTitle.textContent = sections[currentDetail].short;
+  } else {
+    rightTopbar.classList.remove('scrolled');
+    stickyTitle.classList.remove('visible');
+  }
+}
+
+rightPanel.addEventListener('scroll', updateRightScroll);
+
+// Sidebar hover
+let sidebarHoverTimeout;
+document.addEventListener('mousemove', (e) => {
+  const item = e.target.closest('.sidebar-item');
+  if(item && document.body.classList.contains('detail-open')) {
+    const label = item.getAttribute('data-label');
+    clearTimeout(sidebarHoverTimeout);
+    sidebarTip.classList.add('visible');
+    sidebarTip.textContent = label;
+    const rect = item.getBoundingClientRect();
+    sidebarTip.style.top = (rect.top + rect.height/2 - 12) + 'px';
+    sidebarTip.style.left = (rect.right + 12) + 'px';
+  } else {
+    sidebarHoverTimeout = setTimeout(() => {
+      sidebarTip.classList.remove('visible');
+    }, 100);
+  }
+});
+</script>
+</body>
+</html>

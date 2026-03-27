@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WATER — Lakes, Creeks, Coastline, Beach Walks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+const sections = [
+  { num: '01', short: 'Lakes', title: '<em>Mountain</em> Lakes' },
+  { num: '02', short: 'Creeks', title: '<em>Cascading</em> Creeks' },
+  { num: '03', short: 'Coastline', title: '<em>Rugged</em> Coastline' },
+  { num: '04', short: 'Beach Walks', title: '<em>Sandy</em> Beach Walks' }
+];
+
+const summaries = [
+  // 01 Lakes
+  `<p>The Bay Area's lake systems offer pristine reflection trails through oak and redwood forests. From the sprawling Lake Chabot loop encircling 315 acres to the intimate four-lake circuit at Mt Tam, each system reveals a distinct ecosystem. Crystal-clear waters mirror distant peaks. Swimming is permitted at a select few, making them ideal summer destinations.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">8</div><div class="sl">Lake Hikes</div></div>
+    <div class="st"><div class="sv">0.7–8.7</div><div class="sl">Distance (miles)</div></div>
+    <div class="st"><div class="sv">9–1,053</div><div class="sl">Elevation (ft)</div></div>
+    <div class="st"><div class="sv">Year-round</div><div class="sl">Best Season</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Scenic shoreline</span>
+    <span class="s-chip">Forest immersion</span>
+    <span class="s-chip">Reservoir loops</span>
+  </div>
+  <h4>Featured Hikes</h4>
+  <ul class="s-list">
+    <li><strong>Lake Chabot Loop</strong> — 8.7mi, 784ft, Moderate</li>
+    <li><strong>Bon Tempe Lake Loop</strong> — 4.1mi, 190ft, Easy</li>
+    <li><strong>Alpine/Hidden/Bon Tempe Loop</strong> — 6.4mi, 1,053ft, Moderate</li>
+    <li><strong>Crystal Springs Reservoir Trail</strong> — 6mi, minimal, Easy</li>
+    <li><strong>Lake Anza Loop</strong> — 0.7mi, 39ft, Easy</li>
+    <li><strong>Phoenix Lake Loop</strong> — 2.9mi, 219ft, Easy</li>
+    <li><strong>Horseshoe Lake Loop</strong> — 1.4mi, 101ft, Easy</li>
+    <li><strong>Nicasio Reservoir Trail</strong> — 0.7–3mi, 9ft, Easy</li>
+  </ul>`,
+
+  // 02 Creeks
+  `<p>Waterfall hikes showcase the Bay Area's ephemeral beauty. November through May brings cascading flows through old-growth redwood groves, where creek beds carve steep gullies and fallen giants span the trail. Some routes require technical scrambling; all reward effort with the roar of falling water and mist-cooled air thick with coastal redwood fragrance.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">5</div><div class="sl">Creek Hikes</div></div>
+    <div class="st"><div class="sv">1.3–6</div><div class="sl">Distance (miles)</div></div>
+    <div class="st"><div class="sv">223–1,053</div><div class="sl">Elevation (ft)</div></div>
+    <div class="st"><div class="sv">Nov–May</div><div class="sl">Best Season</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Waterfalls</span>
+    <span class="s-chip">Old-growth redwoods</span>
+    <span class="s-chip">Year-round water</span>
+  </div>
+  <h4>Featured Hikes</h4>
+  <ul class="s-list">
+    <li><strong>Pescadero Creek Loop</strong> — 6mi, 700ft, Moderate</li>
+    <li><strong>Cataract Falls Trail</strong> — 2.9mi, 1,053ft, Hard</li>
+    <li><strong>Redwood Creek Trail (Muir Woods)</strong> — 1.3mi, minimal, Easy</li>
+    <li><strong>Redwood Creek Trail (Mt Tam)</strong> — 3mi, 223ft, Moderate</li>
+    <li><strong>Tamalpais Creek Trail</strong> — 4–6mi, moderate, Moderate</li>
+  </ul>`,
+
+  // 03 Coastline
+  `<p>The Bay Area's dramatic coastline spans from Marin's secluded coves to Point Reyes' tule elk herds and San Francisco's iconic Golden Gate views. Routes traverse windswept ridges above jagged rocks, offer whale-watching opportunities, and descend to narrow beaches wedged between 500-foot cliffs. Coastal weather changes rapidly; layers are essential year-round.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">8</div><div class="sl">Coastline Hikes</div></div>
+    <div class="st"><div class="sv">2.1–13.8</div><div class="sl">Distance (miles)</div></div>
+    <div class="st"><div class="sv">169–1,784</div><div class="sl">Elevation (ft)</div></div>
+    <div class="st"><div class="sv">Apr–Oct</div><div class="sl">Best Season</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Ocean vistas</span>
+    <span class="s-chip">Wildlife viewing</span>
+    <span class="s-chip">Dramatic cliffs</span>
+  </div>
+  <h4>Featured Hikes</h4>
+  <ul class="s-list">
+    <li><strong>Tennessee Valley to Tennessee Beach</strong> — 3.4mi, 180ft, Easy</li>
+    <li><strong>Coastal Trail Loop (Marin Headlands)</strong> — 2.6mi, 377ft, Moderate</li>
+    <li><strong>Chimney Rock Trail</strong> — 2.1mi, 400ft, Easy</li>
+    <li><strong>Lands End Trail</strong> — 3.1mi, 169ft, Easy</li>
+    <li><strong>Devil's Slide Trail</strong> — 2.6mi, minimal, Easy</li>
+    <li><strong>Gray Whale Cove Trail</strong> — 4.8mi, 900ft, Moderate</li>
+    <li><strong>Tomales Point Trail</strong> — 9.7mi, 1,200ft, Moderate</li>
+    <li><strong>Alamere Falls (Coastal)</strong> — 13.8mi, 1,784ft, Hard</li>
+  </ul>`,
+
+  // 04 Beach Walks
+  `<p>Sandy beaches offer meditative mile-after-mile walks with unobstructed ocean horizons. Stinson Beach's graceful 3-mile crescent contrasts with Point Reyes' windswept dunes. Beaches vary from dog-friendly pebble shores to tidepools rich with sea stars and anemones. Low tide reveals hidden coves; high tide clings to sea cliffs, requiring careful route planning.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">5</div><div class="sl">Beach Hikes</div></div>
+    <div class="st"><div class="sv">0.8–5.4</div><div class="sl">Distance (miles)</div></div>
+    <div class="st"><div class="sv">13–68</div><div class="sl">Elevation (ft)</div></div>
+    <div class="st"><div class="sv">Year-round</div><div class="sl">Best Season</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Sandy shores</span>
+    <span class="s-chip">Tide pools</span>
+    <span class="s-chip">Dog-friendly</span>
+  </div>
+  <h4>Featured Hikes</h4>
+  <ul class="s-list">
+    <li><strong>Stinson Beach</strong> — 3.5mi one-way, minimal, Easy</li>
+    <li><strong>Limantour Beach Trail</strong> — 5.4mi, 68ft, Easy</li>
+    <li><strong>Rodeo Beach & Lagoon</strong> — 1.0mi, minimal, Easy</li>
+    <li><strong>Baker Beach</strong> — 2.0mi, minimal, Easy-Moderate</li>
+    <li><strong>Pescadero State Beach</strong> — 0.8mi, 13ft, Easy</li>
+  </ul>`
+];
+
+const defined_num_svg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>`;
+
+const details = [
+  // 01 Lakes detail
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 01</div>
+    <h2><em>Mountain</em> Lakes</h2>
+  </div>
+  <p>Lake hikes represent the serene heart of Bay Area water trails. Circling a pristine body of water provides psychological closure—the loop structure mirrors completion, each step bringing you inevitably back to your start. These routes range from suburban day-hikes to wilderness escapes.</p>
+
+  <h3>Lake Chabot Loop (8.7mi, 784ft, Moderate)</h3>
+  <p>The Bay Area's most substantial lake loop. Chabot Regional Park encompasses 315 acres of crystal water rimmed by oak and eucalyptus forest. The eastern shore offers grassy meadows; the western shore climbs through thicker woodland. Best tackled counter-clockwise to face lake views during the second half. Wildlife: ospreys, great blue herons, occasional deer. Swimming not permitted, but fishing is popular from the boat launch area.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Trailhead Access</h4>
+      <p>Eucalyptus Road, San Leandro. Free parking. Pit toilets at beach area. Crowds peak on weekends April–September.</p>
+    </div>
+    <div class="feat">
+      <h4>Water Features</h4>
+      <p>315-acre reservoir built 1874. Despite size, water stays clear and cool year-round. No boats permitted. Shore slopes are gentle—safe for families.</p>
+    </div>
+    <div class="feat">
+      <h4>Seasonal Variation</h4>
+      <p>Spring: wildflowers, high water. Summer: hot but breezy lakeside. Fall: oak foliage color. Winter: quiet, muddy in places.</p>
+    </div>
+    <div class="feat">
+      <h4>Navigation</h4>
+      <p>Loop is well-marked. Fork at mile 3 can be confusing—stay left for official loop. Return via eastern shore for afternoon sun.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <h4>Dogs & Leashes</h4>
+    <p>Dogs permitted on-leash throughout. No off-leash areas. Plenty of shade for panting breaks. Water access for dogs at two beach areas.</p>
+  </div>
+
+  <h3>Bon Tempe Lake Loop (4.1mi, 190ft, Easy)</h3>
+  <p>The gentlest Mt Tam lake circuit. Bon Tempe has a Sierra-like feel—despite proximity to San Francisco, the forest feels high-altitude and remote. Dense redwood and oak create deep shade even at midday. Perfect for a quick lunch-hour escape from Fairfax. The loop is nearly flat, suitable for families and dogs.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Water Quality</h4>
+      <p>Clear, cool. Part of Mt Tam Watershed. Occasional swimmers wade at the northeast beach, though officially non-swimming. Views of Mt Tamalpais' north slope.</p>
+    </div>
+    <div class="feat">
+      <h4>Ecosystem</h4>
+      <p>Coast redwoods dominate. Douglas fir and tanoak intermixed. Sword ferns carpet the understory. Creek water feeds from Willow Camp area to the north.</p>
+    </div>
+    <div class="feat">
+      <h4>Trailhead Logistics</h4>
+      <p>Fairfax–Bolinas Road, near Fairfax. Very limited parking—arrive before 9am on weekends. Often full by 10am. Alternative: shuttle from Fairfax town.</p>
+    </div>
+    <div class="feat">
+      <h4>Connection Potential</h4>
+      <p>Link with Alpine Lake and Hidden Lake for a longer 6.4-mile three-lake circuit (moderate difficulty). Adds 2,000 ft elevation gain but stunning panoramas.</p>
+    </div>
+  </div>
+
+  <h3>Alpine / Hidden / Bon Tempe Loop (6.4mi, 1,053ft, Moderate)</h3>
+  <p>Three reservoirs in one circuit: Bon Tempe, Hidden, and Alpine. The route climbs from Bon Tempe's gentle shore, summits a ridge offering Bay views, then descends past Hidden Lake's secluded coves before returning via Alpine's open east shore. Best hiked clockwise to front-load the elevation gain on fresh legs.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Elevation Profile</h4>
+      <p>First 1.5mi gain 600ft steeply through redwood forest. Mile 2–4 undulate along ridge with oak chaparral. Final 2mi descend gently back to trailhead.</p>
+    </div>
+    <div class="feat">
+      <h4>Vista Points</h4>
+      <p>Ridge section (mile 1.5–2.5) offers unobstructed views of San Francisco Bay, Mt Diablo, and the East Bay hills. Clearest November–March.</p>
+    </div>
+    <div class="feat">
+      <h4>Lake Contrasts</h4>
+      <p>Bon Tempe: forested, intimate. Hidden: wild, narrow coves. Alpine: open, northern exposure, windier but breeze keeps bugs down.</p>
+    </div>
+    <div class="feat">
+      <h4>Permit & Timing</h4>
+      <p>Watershed hike—free but no permits needed. Dawn-dusk only. Thunderstorms develop quickly on ridge. Start early, finish before 5pm.</p>
+    </div>
+  </div>
+
+  <h3>Crystal Springs Reservoir Trail (6mi, minimal, Easy)</h3>
+  <p>The only completely paved Bay Area lake circuit. Crystal Springs is one of California's oldest reservoirs (1888), containing 315 acres of crystal-clear water. The 600-year-old Jepson laurel stands midway. Bald eagles nest here in winter; spring brings nesting waterfowl. Pristine, urban-free, spectacular.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>Fully paved—wheelchair accessible</li>
+        <li>Bald eagles winter Nov–Feb</li>
+        <li>Historic Jepson laurel tree</li>
+        <li>Crystal-clear water quality</li>
+        <li>Minimal crowds</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Considerations</h4>
+      <ul>
+        <li>Parking capacity limited</li>
+        <li>No shade first 2 miles</li>
+        <li>Paved can mean crowded on weekends</li>
+        <li>Winds can be cold</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Lake Anza Loop (0.7mi, 39ft, Easy)</h3>
+  <p>Tilden Regional Park's jewel. A swimming lake with sandy beach, picnic facilities, and a boathouse. In summer, families and swimmers dominate. The loop is more stroll than hike, but the setting is idyllic: mountain backdrop, alpine-like air despite urban location. Ideal for combining with other Tilden trails (Wildcat Canyon, Fossil Ridge).</p>
+
+  <h3>Phoenix Lake Loop (2.9mi, 219ft, Easy)</h3>
+  <p>An intimate redwood-bordered lake below Mt Tamalpais' west face. The loop circles calm water at the base of dramatic cliffs. Peaceful setting, frequent water access. Popular with families; occasionally crowded on weekends.</p>
+
+  <h3>Horseshoe Lake Loop (1.4mi, 101ft, Easy)</h3>
+  <p>Skyline Ridge Open Space Preserve. A small, quiet lake ideal for birding. Excellent for spring warblers and migrating raptors. Open grassland views toward Santa Cruz Mountains. Less visited than other lakes, making it perfect for solitude.</p>
+
+  <h3>Nicasio Reservoir Trail (0.7–3mi, 9ft, Easy)</h3>
+  <p>A long, gravel path along rolling valley views. Variable length allows customization. Excellent for birding: waterfowl, raptors, herons. Best done in early morning for wildlife. Sunset over Marin hills is spectacular. North Bay character—less crowded than Mt Tam area lakes.</p>`,
+
+  // 02 Creeks detail
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 02</div>
+    <h2><em>Cascading</em> Creeks</h2>
+  </div>
+  <p>Waterfall hikes are temporal experiences. They exist fully only November through May, when coastal storm systems deliver the precipitation that animates creeks. A creek walked in June is a trickle; the same creek in March is a roaring cascade. Plan waterfall hikes accordingly, aiming for the wet season peak.</p>
+
+  <h3>Cataract Falls Trail (2.9mi, 1,053ft, Hard)</h3>
+  <p>The most dramatic waterfall hike in the Bay Area. A mile-long cascade drops 1,200 feet in a narrow redwood gully. Water flows at full force only Nov–May; peak occurs late January and early March. The trail climbs steeply through old-growth forest, then forks. The lower fork (harder scrambling) reaches the cascade base. The upper fork gains ridge views. Both are steep and can be muddy.</p>
+  <div class="callout">
+    <h4>Timing Matters</h4>
+    <p>Visit only during peak water Nov–May, ideally 2–3 weeks after major storms. June–October, the cascade dries to a trickle. The experience at seasonal peak is unforgettable; at low water, underwhelming.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Technical Demands</h4>
+      <p>Lower fork involves rock hopping, scrambling, and potentially creek wading. Upper fork avoids water but gains more elevation. Both require sturdy boots and focus. Not for families or inexperienced hikers.</p>
+    </div>
+    <div class="feat">
+      <h4>Ecosystem</h4>
+      <p>Steep-walled gully supports old-growth redwoods untouched by logging. Douglas fir, tanoak, and sword ferns throughout. Creek-loving plants thrive: azaleas, currants, sorrel. Spotting spotted owls is possible.</p>
+    </div>
+    <div class="feat">
+      <h4>Access & Permits</h4>
+      <p>Mt Tam State Park, accessible via Fairfax–Bolinas Road to Pantoll Road. Small parking area (often full). No permits needed. Peak crowding Dec–Feb weekends.</p>
+    </div>
+    <div class="feat">
+      <h4>Return Route</h4>
+      <p>Most hikers descend the way they came. Total time 2.5–3.5 hours. Creek crossings—impossible in high water, trivial in late spring.</p>
+    </div>
+  </div>
+
+  <h3>Pescadero Creek Loop (6mi, 700ft, Moderate)</h3>
+  <p>Pescadero Creek County Park, inland from the coast. A loop descending to historic Pescadero Mill, surrounded by old-growth redwoods and marbled murrelet habitat (a federally threatened seabird). The creek itself is powerful and clean. Return via ridge trail through oak woodland. One of the most pristine water experiences in San Mateo County.</p>
+
+  <h3>Redwood Creek Trail — Muir Woods (1.3mi, minimal, Easy)</h3>
+  <p>The Bay Area's most-visited waterfall hike. A boardwalk through towering old-growth redwoods alongside Redwood Creek. The creek flows year-round but has most character in winter. The trail is crowded, paved, and extremely accessible—ideal for families and elderly. The psychological impact of 250-year-old redwoods is powerful despite crowds.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>Wheelchair accessible boardwalk</li>
+        <li>World-class old-growth redwoods</li>
+        <li>Year-round flowing water</li>
+        <li>Crowds mean safety</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations</h4>
+      <ul>
+        <li>Often packed, especially weekends</li>
+        <li>Limited parking</li>
+        <li>Entry fee ($10 per vehicle)</li>
+        <li>Short—pairs best with nearby hikes</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Redwood Creek Trail — Mt Tam (3mi, 223ft, Moderate)</h3>
+  <p>The quieter alternative to Muir Woods. Same ecosystem, fewer crowds. Flows through coastal redwood and Douglas fir. Steeper terrain discourages casual visitors. Access requires Mt Tam State Park navigation (Pantoll area). The creek has wild character; conditions vary seasonally.</p>
+
+  <h3>Tamalpais Creek Trail (4–6mi, moderate, Moderate)</h3>
+  <p>Mt Tam Watershed. A cool, redwood-lined creek walk. Water year-round. Peaceful. Often overlooked. Excellent for quiet mornings and solitude-seeking. Variable length allows customization. The creek's waterside setting provides meditative walking.</p>`,
+
+  // 03 Coastline detail
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 03</div>
+    <h2><em>Rugged</em> Coastline</h2>
+  </div>
+  <p>The Bay Area coastline spans 150 miles, from Bodega Head to Santa Cruz. This section covers the most dramatic and accessible segments: windswept ridges above jagged rocks, secluded coves reachable only by foot, elephant seal colonies, and San Francisco's iconic Golden Gate views. Coastal weather changes rapidly. Layers are essential year-round. Wind can exceed 40mph; afternoon fog is common June–August.</p>
+
+  <h3>Lands End Trail (3.1mi, 169ft, Easy)</h3>
+  <p>San Francisco's westernmost coastal trail. Sutro Baths ruins, Golden Gate Bridge views, cypress groves, and dramatic cliff geology. Cypress trees twisted by relentless wind create an otherworldly landscape. The ruins are extensively preserved, with interpretive panels. Popular with photographers and tourists, but sufficient width accommodates crowds. Best at sunrise or late afternoon when light is oblique.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Historical Significance</h4>
+      <p>Sutro Baths (1896–1966) were a 1.7-acre saltwater swimming complex. The ruins, though extensively rebuilt by volunteers, convey the scale of early 20th-century ambition. Nearby Sutro Tower dominates the skyline.</p>
+    </div>
+    <div class="feat">
+      <h4>Ecological Habitat</h4>
+      <p>Coastal scrub with cypress, pittosporum, and coastal sage. Refuge for Tule elk and black-tailed deer. Marbled murrelets nest in nearby cypress. Seals and sea lions visible from cliffs.</p>
+    </div>
+    <div class="feat">
+      <h4>Access & Amenities</h4>
+      <p>Free parking at Cliff House. Bathrooms and food nearby. Trail is paved or well-maintained dirt. Railing mostly continuous but not complete. Dogs on leash permitted.</p>
+    </div>
+    <div class="feat">
+      <h4>Hazards</h4>
+      <p>Cliffs are not gated. Waves can reach trails. Wind is constant. Fog rolls in unpredictably. Stay on marked paths. Sneaker waves are rare but possible.</p>
+    </div>
+  </div>
+
+  <h3>Devil's Slide Trail (2.6mi, minimal, Easy)</h3>
+  <p>Pacifica/Montara. A paved former Highway 1 between tunnels. Dramatically situated along cliffs 1,500 feet above the Pacific. Bridges and tunnels create photo opportunities. No elevation gain. Popular with cyclists and walkers. Stunning sunset views. Increasingly foggy June–August.</p>
+
+  <h3>Chimney Rock Trail (2.1mi, 400ft, Easy)</h3>
+  <p>Point Reyes National Seashore. A headland 500 feet above the Pacific. Elephant seals visible from the cliff top December–April (birthing season). The rock formation (a collapsed sea arch) is distinctive. Short and manageable, with dramatic payoff. Early morning provides best light.</p>
+
+  <h3>Tennessee Valley to Tennessee Beach (3.4mi, 180ft, Easy)</h3>
+  <p>Marin Headlands. A secluded sandy beach accessible only by foot. Rolling grass hills descend to a narrow cove surrounded by bluffs. The beach feels isolated despite proximity to San Francisco. Excellent for sunset. Wildlife: deer, rabbits, raptors. A quintessential Bay Area experience.</p>
+
+  <h3>Coastal Trail Loop — Marin Headlands (2.6mi, 377ft, Moderate)</h3>
+  <p>Exposed ridges with jagged coastline views. WWII battery ruins (former anti-aircraft position). Trail is windy, exposed, and offers minimal shade. But the 360-degree vistas are unmatched. Best on clear days with moderate wind. Combines historical interest with dramatic coastal scenery.</p>
+
+  <h3>Gray Whale Cove Trail (4.8mi, 900ft, Moderate)</h3>
+  <p>Montara/Half Moon Bay area. Rolling coastal hills, wildflowers (spring), and whale watching (Dec–May). The trail climbs from cove level to exposed ridges with panoramic ocean vistas. Best for spotting gray whales migrating north (Jan–Feb) and south (Nov–Dec).</p>
+
+  <h3>Tomales Point Trail (9.7mi, 1,200ft, Moderate)</h3>
+  <p>Point Reyes National Seashore. A ridge walk to the tip of Point Reyes. Tule elk herds, Tomales Bay views, and the convergence of land and water. Entirely exposed—no shade. Wind often strong. The payoff is solitude and a sense of reaching the literal edge of the Bay Area. Weekend crowds are light.</p>
+
+  <h3>Alamere Falls — Coastal Route (13.8mi, 1,784ft, Hard)</h3>
+  <p>Point Reyes. The only waterfall in California cascading directly onto a beach. A long, strenuous route through coastal grassland and redwood forest to Alamere Falls, which drops 50 feet onto Alamere Beach. The payoff—water, coast, and isolation—justifies the elevation and distance. Best Oct–May when water flows. Requires excellent fitness and navigation skills.</p>`,
+
+  // 04 Beach Walks detail
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 04</div>
+    <h2><em>Sandy</em> Beach Walks</h2>
+  </div>
+  <p>Beach walks dissolve the sense of constraint. Walking miles of uninterrupted sand, the mind empties into rhythm: step, breath, horizon. The Bay Area's beaches vary wildly: Stinson's graceful crescent, Point Reyes' windswept dunes, Pescadero's tidepools. Beach hiking timing depends on tides—low tide reveals wet sand and hidden coves; high tide forces retreat to sea cliffs or requires scrambling over rocks.</p>
+
+  <h3>Stinson Beach (3.5mi one-way, minimal, Easy)</h3>
+  <p>The Bay Area's premier sandy beach. A graceful 3.5-mile crescent backed by Mt Tamalpais. Fine, tan sand and near-year-round swimming (though water is always cold). The beach is widest at low tide, narrowest 2 hours after high tide (requires scrambling). Popular with families, surfers, and photographers. Sunset is magical. Winter brings fewer crowds and sometimes bioluminescent plankton.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Access & Amenities</h4>
+      <p>Large paid parking lot. Bathrooms, lifeguards (summer), restaurants, and rentals nearby. Accessibility varies by tide. Best approach: arrive 3 hours before predicted low tide, walk to high tide, and depart.</p>
+    </div>
+    <div class="feat">
+      <h4>Seasonal Variation</h4>
+      <p>Summer: warm, crowded, excellent for swimming. Fall: clear water, fewer people, consistent weather. Winter: wild, beautiful, occasional elephant seals. Spring: wildflowers on backdunes.</p>
+    </div>
+    <div class="feat">
+      <h4>One-Way vs. Round-Trip</h4>
+      <p>Walking the full beach one-way (3.5mi) is the experience. To return, retrace steps or arrange shuttle. Tide timing is critical—if tide comes in faster than expected, retreat to cliffs near the south end.</p>
+    </div>
+    <div class="feat">
+      <h4>Dogs & Restrictions</h4>
+      <p>Dogs on-leash permitted year-round. Off-leash permitted in designated area Nov–Apr. Beach is busy; crowded areas = less pleasant dog experience.</p>
+    </div>
+  </div>
+
+  <h3>Limantour Beach Trail (5.4mi, 68ft, Easy)</h3>
+  <p>Point Reyes National Seashore. A 4-mile sandy beach with dune ridge hiking option. Less visited than Stinson but equally beautiful. The beach is narrower, with steeper dunes. Dune ridge walk offers parallel route with views. Excellent for solitude and wildlife (harbor seals, gray whales Dec–May). Tides are critical—check before starting.</p>
+  <div class="callout">
+    <h4>Tide Planning</h4>
+    <p>Low tide reveals wet, easy-walking sand. High tide requires dune ridge or cliff scrambling. The dune trail is sandy and tough going. Plan walk around low tide window.</p>
+  </div>
+
+  <h3>Rodeo Beach & Lagoon (1.0mi, minimal, Easy)</h3>
+  <p>Marin Headlands. A pebble beach backed by lagoon. Short, accessible, dog-friendly. The lagoon attracts migratory waterfowl. Coastal plants stabilize the dunes. Popular with families and dog walkers. Less crowded than Stinson. The pebbles can be tough on feet; water shoes recommended.</p>
+
+  <h3>Baker Beach (2.0mi, minimal, Easy-Moderate)</h3>
+  <p>The Presidio, San Francisco. Golden Gate Bridge views are iconic. The beach is sandy and wide at low tide, narrow and rocky at high tide. A rope ladder at the south end provides access to the dune top. Popular with photographers, nature enthusiasts, and people watching the bridge. Tides are critical; high tide narrows beach significantly.</p>
+
+  <h3>Pescadero State Beach (0.8mi, 13ft, Easy)</h3>
+  <p>Pescadero coast (south of Half Moon Bay). Tiny beach with extensive tidepools and rocky shores. Rich sea star diversity: purple, red, ochre, and bat stars. Anemones, crabs, and small fish populate the pools. Best visited at low tide. The beach is small but intensely biodiverse. Perfect for tidepooling with kids or naturalists. Short walk but high ecological payoff.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Tidepool Excellence</h4>
+      <ul>
+        <li>Diverse sea star species</li>
+        <li>Abundant anemones</li>
+        <li>Rocky substrate ideal for exploration</li>
+        <li>Small, manageable area</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Constraints</h4>
+      <ul>
+        <li>Very small beach</li>
+        <li>Timing dependent on tides</li>
+        <li>Can feel crowded with just 10 people</li>
+        <li>Parking limited</li>
+      </ul>
+    </div>
+  </div>`
+];
+
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">H<em>2</em>O</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> BAY AREA HIKING GUIDE</div>
+        <div class="hero-title">WATER &mdash; Lakes, Creeks, Coastline & <em>Beach Walks</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>SECTION 02</span><span>~26 TRAILS DOCUMENTED</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+</script>
+<script>
+const NB_IMAGES = [
+  { target: 'hero', type: 'hero', file: 'img/s2-hero.png', prompt: 'Dramatic coastal trail along rugged cliffs with crashing Pacific waves below, wildflowers clinging to bluffs, fog rolling in from the ocean, Point Reyes or Marin Headlands, cinematic landscape photography' }
+];
+</script>
+<script src="../../nano-banana.js"></script>
+</body>
+</html>

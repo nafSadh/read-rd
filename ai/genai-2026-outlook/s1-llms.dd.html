@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S1: LLMs & Foundation Models — GenAI 2026 Outlook</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Wikipedia-style citations */
+  sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+
+    </style>
+</head>
+<body>
+<script>
+const sections = [
+  { num: '01', short: 'Overview', title: '<em>LLMs</em> &amp; Foundation Models' },
+  { num: '02', short: 'Benchmarks', title: 'The <em>Benchmark</em> Crisis' },
+  { num: '03', short: 'Cost Curve', title: 'The <em>Deflation</em> Curve' },
+  { num: '04', short: 'Power', title: 'The <em>Gigawatt</em> Ceiling' },
+  { num: '05', short: 'Context', title: '<em>Context</em> Window Plateau' },
+  { num: '06', short: 'Geopolitics', title: 'The <em>Open-Source</em> Gambit' },
+  { num: '07', short: 'LWM Shift', title: '<em>Beyond</em> Text' },
+  { num: '08', short: 'Efficiency', title: '<em>Small</em> Models, Big Ideas' },
+  { num: '09', short: 'Consensus', title: 'What <em>Everyone</em> Agrees On' },
+  { num: '10', short: 'Fault Lines', title: 'Where the <em>Discourse</em> Fractures' }
+];
+
+
+const summaries = [
+  `<p>Here is what eight sources — from <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford&rsquo;s annual census</a><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[1]</a><span class="tip">Stanford AI Index 2025 &mdash; annual census of AI benchmarks, investment, adoption, and policy.</span></sup> to <a href="https://epoch.ai/" target="_blank">Epoch AI</a><sup class="fn"><a href="https://epoch.ai/" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; supercomputer dataset of 500+ systems tracking compute trends.</span></sup>&rsquo;s supercomputer dataset — converge on: the raw capability story is <em>almost boring now.</em> Models keep getting better. That part is settled.</p>
+   <p>The interesting stories in 2026 are about what happens <strong>around</strong> the models. A 280&times; cost collapse that turns a luxury into a commodity. A power grid that can&rsquo;t keep up. A Chinese open-source movement that is quietly rewriting the geopolitical map. And an efficiency counter-narrative that asks whether we even need the biggest models at all.</p>
+   <div class="s-stat">
+     <div class="st"><div class="sv">280&times;</div><div class="sl">cost collapse in 18 months</div></div>
+     <div class="st"><div class="sv">142&times;</div><div class="sl">smaller model, same score</div></div>
+     <div class="st"><div class="sv">5.4%</div><div class="sl">gap between #1 and #10 model</div></div>
+     <div class="st"><div class="sv">9 GW</div><div class="sl">projected 2030 cluster power</div></div>
+   </div>`,
+
+  `<p>In 2023, researchers built three benchmarks &mdash; MMMU, GPQA, SWE-bench &mdash; specifically designed to stay hard for years. By the end of 2024, they were effectively conquered. SWE-bench went from <strong>4.4% to 71.7%</strong> in twelve months. That&rsquo;s not incremental improvement. That&rsquo;s a phase transition.</p>
+   <p>But here is the uncomfortable question <a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Vanessa Parli</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">[3]</a><span class="tip">Stanford HAI &mdash; AI experts predict trends for 2026.</span></sup> is raising: &ldquo;Are we measuring the right thing? Are those benchmarks compromised?&rdquo; When the test breaks faster than you can design it, maybe the test was never measuring what you thought.</p>
+   <p>Meanwhile, the gap between the #1 and #10 model on Chatbot Arena shrank from <strong>11.9% to 5.4%</strong> in a single year. The top two models? 0.7% apart. We are watching a market commoditize in real time.</p>`,
+
+  `<p>If you remember one number from this entire survey, make it this: GPT-3.5-level inference cost $20 per million tokens in November 2022. By October 2024, the same capability cost <strong>seven cents.</strong> That&rsquo;s a 280-fold reduction in 18 months.</p>
+   <p>This isn&rsquo;t a one-off. Hardware price-performance improves 40% per year. Algorithmic efficiency gains deliver 3&times; less compute per year for the same result. The curves are compounding on each other. <a href="https://www.ibm.com/think/" target="_blank">IBM&rsquo;s</a><sup class="fn"><a href="https://www.ibm.com/think/" target="_blank">[4]</a><span class="tip">IBM Think &mdash; industry interpretation and AI trends analysis.</span></sup> prediction: &ldquo;We&rsquo;re going to hit a commodity point for AI models in 2026.&rdquo;</p>
+   <p>When the top ten models are within 5% of each other and the cost of running them drops 10&times; a year, the question stops being <em>which model</em> and becomes <em>which system.</em></p>`,
+
+  `<p>The biggest AI supercomputer in January 2019 was Oak Ridge&rsquo;s Summit at 13 megawatts. Today xAI&rsquo;s Colossus draws <strong>280 megawatts</strong> &mdash; and it uses mobile generators because the Memphis grid can&rsquo;t supply enough power. That single fact tells you everything about where the constraint has moved.</p>
+   <p><a href="https://epoch.ai/blog/ai-supercomputer-landscape" target="_blank">Epoch AI</a><sup class="fn"><a href="https://epoch.ai/blog/ai-supercomputer-landscape" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; AI supercomputer landscape analysis and projections.</span></sup>&rsquo;s projection: if trends continue, the leading 2030 supercomputer needs <strong>2 million chips, costs $200 billion, and draws 9 gigawatts</strong> &mdash; the output of nine nuclear reactors, the electricity demand of a mid-sized country. Power, not compute, is the binding physical limit on AI scaling.</p>
+   <p>Industry now owns <strong>80%</strong> of all AI compute (up from 40% in 2019). The US hosts 75% of supercomputers globally. This is not just a technology race &mdash; it is an infrastructure race.</p>`,
+
+  `<p>Context windows exploded from 8K tokens (late 2022) to 2 million (early 2024) &mdash; and then <em>stopped.</em> <a href="https://www.anthropic.com/research/agentic-coding-trends-2026" target="_blank">Anthropic</a><sup class="fn"><a href="https://www.anthropic.com/research/agentic-coding-trends-2026" target="_blank">[5]</a><span class="tip">Anthropic &mdash; agentic coding trends 2026.</span></sup>&rsquo;s Claude hasn&rsquo;t changed since the 200K of Claude 2.1. GPT-5.2 shipped with 400K, which is <em>smaller</em> than GPT-4.1. Google retreated from 2M back to 1M.</p>
+   <p>This isn&rsquo;t a pause. It&rsquo;s a plateau with structural causes. The transformer architecture hits diminishing returns at extreme lengths. &ldquo;Context rot&rdquo; degrades quality well before you hit the window limit. And for most real tasks, a smaller window with better retrieval is both cheaper and more effective.</p>
+   <p>The bet: general-purpose context windows stay at ~1M through 2026. The real innovation moves to retrieval, memory architectures, and possibly entirely different models.</p>`,
+
+  `<p><a href="https://www.technologyreview.com/" target="_blank">MIT Technology Review</a><sup class="fn"><a href="https://www.technologyreview.com/" target="_blank">[6]</a><span class="tip">MIT Technology Review &mdash; 10 Breakthrough Technologies 2026.</span></sup>, early 2026: &ldquo;Expect more Silicon Valley apps to <em>quietly ship on top of Chinese open models.</em>&rdquo; Qwen2.5-1.5B alone has 8.85 million downloads. DeepSeek&rsquo;s open-weight playbook was so effective it forced even OpenAI to release open-source models for the first time.</p>
+   <p>The <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford numbers</a><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[1]</a><span class="tip">Stanford AI Index 2025 &mdash; US-China benchmark comparison data.</span></sup> tell the geopolitical story: the US-China benchmark gap collapsed from double digits to <strong>near parity</strong> in one year. China leads in publications and patents. But here&rsquo;s the twist &mdash; Chinese firms gained this ground largely through <em>openness</em>, winning trust in the global AI community even as governments escalate antagonism.</p>
+   <p><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Parli</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">[3]</a><span class="tip">Stanford HAI &mdash; AI experts predict trends for 2026.</span></sup>: &ldquo;I don&rsquo;t think we can take for granted that the US is always going to be at the top of these charts.&rdquo;</p>`,
+
+  `<p><a href="https://www.nngroup.com/articles/large-world-models/" target="_blank">Nielsen&rsquo;s</a><sup class="fn"><a href="https://www.nngroup.com/articles/large-world-models/" target="_blank">[8]</a><span class="tip">Nielsen Norman Group &mdash; Large World Models prediction for 2026.</span></sup> prediction crystallizes the shift: by end of 2026, &ldquo;frontier model&rdquo; will mean a system that <strong>speaks, listens, sees, imagines, and edits</strong> &mdash; not a text engine with attachments bolted on. Text-only AI will be &ldquo;as archaic as a DOS command line.&rdquo;</p>
+   <p>The evidence is already here. Video models generate synchronized audio. Image models render typography. Music models produce separable stems. World models simulate physics in real time. The modalities are no longer separate tracks &mdash; they are converging into a single medium.</p>
+   <p>The architectural question: <strong>early fusion</strong> (one model, all senses) vs <strong>late fusion</strong> (separate models, integrated). Stanford expects clarity within a year.</p>`,
+
+  `<p><a href="https://arxiv.org/abs/2409.15790" target="_blank">NVIDIA&rsquo;s</a><sup class="fn"><a href="https://arxiv.org/abs/2409.15790" target="_blank">[7]</a><span class="tip">NVIDIA &mdash; SLM position paper arguing 7B models are 10-30&times; more efficient for agentic tasks.</span></sup> own position paper makes the counterintuitive case: for most agentic tasks, a <strong>7-billion-parameter model</strong> is not just adequate &mdash; it&rsquo;s 10-30&times; more efficient. &ldquo;Insisting on LLMs for all tasks reflects a misallocation of computational resources.&rdquo;</p>
+   <p>This aligns with <a href="https://hai.stanford.edu/news/stanford-hai-experts-predict-ai-2026" target="_blank">Stanford&rsquo;s Landay</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-hai-experts-predict-ai-2026" target="_blank">[3]</a><span class="tip">Stanford HAI &mdash; AI experts predict trends for 2026.</span></sup>: &ldquo;We have huge models, but we&rsquo;ve seen better models that are smaller. We&rsquo;ve reached some amount of peak data &mdash; both because we&rsquo;re running out and because the data is poor quality.&rdquo;</p>
+   <p>IBM frames 2026 as the year of <strong>frontier vs. efficient</strong>. Edge AI moves from hype to reality. The question isn&rsquo;t just &ldquo;how big?&rdquo; but &ldquo;how smart per watt?&rdquo;</p>`,
+
+  `<p>Across eight sources, five points of convergence emerge &mdash; and the consistency is striking given how differently these sources approach AI.</p>
+   <p><strong>1.</strong> Cost deflation is real, compounding, and the most robust finding. <strong>2.</strong> The top models are commoditizing &mdash; competition moves to systems. <strong>3.</strong> Open-source is winning strategically &mdash; trust through transparency. <strong>4.</strong> Power is the binding physical constraint. <strong>5.</strong> Efficiency matters as much as scale &mdash; smaller, better-trained models beat raw parameter counts.</p>
+   <p>The meta-finding: the <em>model itself</em> is becoming the least interesting part of the AI stack. Integration, orchestration, data quality, and power access are where the real advantages lie.</p>`,
+
+  `<p>Sources fracture on three fundamental questions that will define the next two years:</p>
+   <p><strong>Is this a bubble?</strong> <a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Landay</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">[3]</a><span class="tip">Stanford HAI &mdash; AI experts predict trends for 2026.</span></sup> calls it &ldquo;very speculative.&rdquo; <a href="https://www.understandingai.org/" target="_blank">Understanding AI</a><sup class="fn"><a href="https://www.understandingai.org/" target="_blank">[9]</a><span class="tip">Understanding AI &mdash; independent AI analysis by Timothy B. Lee.</span></sup>&rsquo;s Lee counters that companies are racing to fill customer orders. <strong>Will context windows break through?</strong> Williams says the transformer architecture has hit its limit. Others bet on coding models as the exception. <strong>How fast does multimodal arrive?</strong> Nielsen says end of 2026. Others are more cautious.</p>
+   <p>What&rsquo;s notable isn&rsquo;t just the disagreements &mdash; it&rsquo;s that reasonable, well-informed people can look at the same data and reach opposite conclusions. That tells you we&rsquo;re in a genuinely uncertain moment.</p>`
+];
+
+
+const details = [
+  `<div class="detail-header"><div class="num">01</div><h2><em>LLMs</em> & Foundation Models</h2></div><h3>Why This Section Matters</h3>
+   <p>Of the eight sections in this survey, this one may seem like the most familiar territory &mdash; LLMs, benchmarks, costs, compute. But the familiarity is deceptive. The discourse around LLMs in early 2026 has shifted in a way that most commentary hasn&rsquo;t caught up to. The action is no longer in what models <em>can do</em> (which keeps improving, predictably) but in what the improving models <em>mean</em> for the competitive landscape. The model, as a standalone artifact, is losing strategic importance. Everything around it &mdash; data, integration, orchestration, power &mdash; is gaining.</p>
+   <p>This is a crucial insight to internalize before reading the rest of the survey. When we discuss agents (<a href="s3-agents.dd.html" title="AI Agents">S3</a>) falling at a 40% rate, or workplace adoption (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) lagging behind hype, the reason traces back here: the model works fine; it&rsquo;s the <em>system</em> around the model that fails.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="280" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="24" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THE LLM LANDSCAPE, MARCH 2026</text>
+     <line x1="30" y1="36" x2="370" y2="36" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <rect x="30" y="50" width="160" height="90" fill="rgba(91,91,214,0.08)" rx="4" stroke="#5b5bd6" stroke-width="1"/>
+     <text x="110" y="70" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">CAPABILITY</text>
+     <text x="110" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">SWE-bench: 4% → 72%</text>
+     <text x="110" y="102" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Top-10 gap: 5.4%</text>
+     <text x="110" y="116" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Open ≈ Closed (1.7%)</text>
+     <text x="110" y="132" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">↑ Advancing but commoditizing</text>
+     <rect x="210" y="50" width="160" height="90" fill="rgba(20,150,110,0.04)" rx="4" stroke="#14966e" stroke-width="1"/>
+     <text x="290" y="70" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">COST</text>
+     <text x="290" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Inference: 280× cheaper</text>
+     <text x="290" y="102" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Model size: 142× smaller</text>
+     <text x="290" y="116" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">HW efficiency: +40%/yr</text>
+     <text x="290" y="132" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">↓ Collapsing fast</text>
+     <rect x="30" y="155" width="160" height="90" fill="rgba(124,58,237,0.08)" rx="4" stroke="#7c3aed" stroke-width="1"/>
+     <text x="110" y="175" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">INFRASTRUCTURE</text>
+     <text x="110" y="193" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Industry owns 80%</text>
+     <text x="110" y="207" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">US hosts 75% globally</text>
+     <text x="110" y="221" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Colossus: 280 MW</text>
+     <text x="110" y="237" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">⚡ Power-constrained</text>
+     <rect x="210" y="155" width="160" height="90" fill="rgba(14,143,208,0.08)" rx="4" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="290" y="175" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">GEOPOLITICS</text>
+     <text x="290" y="193" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">US: 40 models, $109B</text>
+     <text x="290" y="207" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">China: 15 models, parity</text>
+     <text x="290" y="221" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Qwen: 8.85M downloads</text>
+     <text x="290" y="237" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">⇆ Open-source reshuffling</text>
+     <rect x="40" y="254" width="320" height="24" fill="rgba(0,0,0,0.03)" rx="3"/>
+     <text x="200" y="260" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl" style="font-size:7.5px">The model itself is becoming the</text>
+     <text x="200" y="272" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl" style="font-size:7.5px">least interesting part of the stack</text>
+   </svg></div>
+   <h3>Source Assessment</h3>
+   <p>Eight sources, each with a distinct vantage point. <strong><a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford AI Index 2025</a></strong><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[1]</a><span class="tip">Stanford AI Index 2025 &mdash; comprehensive annual report on AI benchmarks, investment, and policy.</span></sup> provides the canonical annual dataset &mdash; it&rsquo;s the closest thing to a census of the field, tracking benchmarks, investment, adoption, and policy across hundreds of data points. <strong><a href="https://epoch.ai/" target="_blank">Epoch AI</a></strong><sup class="fn"><a href="https://epoch.ai/" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; compute trends, supercomputer dataset of 500+ systems.</span></sup> brings hardware rigor &mdash; their supercomputer dataset of 500+ systems is the most comprehensive publicly available analysis of the physical infrastructure underlying AI. <strong><a href="https://llm-stats.com/" target="_blank">LLM-Stats</a></strong><sup class="fn"><a href="https://llm-stats.com/" target="_blank">[10]</a><span class="tip">LLM-Stats &mdash; real-time tracking of 500+ models with pricing data.</span></sup> tracks 500+ models with real-time pricing. <strong><a href="https://www.technologyreview.com/" target="_blank">MIT Technology Review</a></strong><sup class="fn"><a href="https://www.technologyreview.com/" target="_blank">[6]</a><span class="tip">MIT Technology Review &mdash; 10 Breakthrough Technologies and industry analysis.</span></sup> and <strong><a href="https://www.ibm.com/think/" target="_blank">IBM Think</a></strong><sup class="fn"><a href="https://www.ibm.com/think/" target="_blank">[4]</a><span class="tip">IBM Think &mdash; AI trends and enterprise adoption analysis.</span></sup> provide industry interpretation. <strong><a href="https://arxiv.org/abs/2409.15790" target="_blank">NVIDIA&rsquo;s SLM paper</a></strong><sup class="fn"><a href="https://arxiv.org/abs/2409.15790" target="_blank">[7]</a><span class="tip">NVIDIA SLM paper &mdash; argues 7B models are 10-30&times; more efficient for agentic tasks.</span></sup> is notable as an argument <em>against</em> the interests of its publisher. <strong><a href="https://www.understandingai.org/" target="_blank">Understanding AI</a></strong><sup class="fn"><a href="https://www.understandingai.org/" target="_blank">[9]</a><span class="tip">Understanding AI &mdash; independent analysis by Timothy B. Lee.</span></sup> offers independent analysis. <strong><a href="https://www.nngroup.com/" target="_blank">Nielsen/UX Tigers</a></strong><sup class="fn"><a href="https://www.nngroup.com/" target="_blank">[8]</a><span class="tip">Nielsen Norman Group &mdash; Large World Models and multimodal AI thesis.</span></sup> provides the multimodal thesis.</p>
+   <p>What this set does <em>not</em> include: primary technical papers on architecture (transformer alternatives, state-space models), training recipes, or alignment methods. Those are covered in depth in the companion <a href="../agentic-lm-survey/s1-reason.dd.html">Agentic LLM Survey</a>. This section is about the <em>discourse</em> &mdash; what informed observers are saying about where LLMs stand and where they&rsquo;re going.</p>
+   <h3>How to Read This Section</h3>
+   <p>Each sub-section pairs a summary (center panel) with analytical depth (this right panel). The summaries give you the story arc in 2-3 paragraphs. The details give you the evidence, the methodology caveats, the connections between findings, and the implications the summaries don&rsquo;t spell out. If you&rsquo;re short on time, read the summaries. If you want to actually understand what&rsquo;s happening, read the details.</p>
+   <div class="callout"><strong>The thread connecting everything:</strong> Four of the five points of consensus (cost deflation, commoditization, open-source, efficiency) point in the same direction &mdash; away from model capability as a competitive advantage, toward system-level integration as the differentiator. The fifth (power constraint) determines who gets to play the game at all. Keep this thread in mind as you read.</div>`,
+  `<div class="detail-header"><div class="num">02</div><h2>The <em>Benchmark</em> Crisis</h2></div><h3>The Numbers That Broke the Tests</h3>
+   <p><a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford&rsquo;s AI Index</a><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[1]</a><span class="tip">Stanford AI Index 2025 &mdash; annual benchmark performance tracking.</span></sup> tracks benchmark performance annually. In 2023, the research community introduced three new benchmarks specifically designed to test the limits of frontier systems and remain challenging for years: MMMU (Massive Multitask Multimodal Understanding), GPQA (Graduate-level Google-Proof QA), and SWE-bench (real-world software engineering). The intent was explicit: these were supposed to be the hard problems that would take time to crack.</p>
+   <p>By the end of 2024, all three were effectively conquered. MMMU gained 18.8 percentage points. GPQA gained 48.9. SWE-bench &mdash; where AI systems had to understand codebases, diagnose bugs, and write functional fixes &mdash; went from 4.4% to 71.7% in twelve months. These are not incremental improvements on a mature curve. They represent qualitative phase transitions in capability. A system that solves 4% of real software engineering problems is a toy. A system that solves 72% is a colleague.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="250" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">BENCHMARK SCORES: 2023 → 2024</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <text x="55" y="60" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="600" class="lbl-hi">MMMU</text>
+     <rect x="110" y="48" width="80" height="18" fill="#5b5bd6" rx="2" opacity="0.3"/>
+     <rect x="110" y="48" width="147" height="18" fill="none" stroke="#5b5bd6" stroke-width="1" stroke-dasharray="3,2" rx="2"/>
+     <text x="265" y="61" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">+18.8 pp</text>
+     <text x="55" y="100" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="600" class="lbl-hi">GPQA</text>
+     <rect x="110" y="88" width="50" height="18" fill="#0e8fd0" rx="2" opacity="0.3"/>
+     <rect x="110" y="88" width="195" height="18" fill="none" stroke="#0e8fd0" stroke-width="1" stroke-dasharray="3,2" rx="2"/>
+     <text x="312" y="101" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">+48.9 pp</text>
+     <text x="38" y="140" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="600" class="lbl-hi">SWE-bench</text>
+     <rect x="110" y="128" width="13" height="18" fill="#14966e" rx="2" opacity="0.3"/>
+     <rect x="110" y="128" width="224" height="18" fill="none" stroke="#14966e" stroke-width="1" stroke-dasharray="3,2" rx="2"/>
+     <text x="340" y="141" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">+67.3 pp</text>
+     <text x="110" y="168" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">█ 2023 score</text>
+     <text x="230" y="168" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">┄ 2024 score</text>
+     <line x1="40" y1="185" x2="360" y2="185" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <text x="200" y="200" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1">MODEL COMMODITIZATION (CHATBOT ARENA)</text>
+     <text x="70" y="220" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">#1 vs #10 gap:</text>
+     <text x="190" y="220" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" class="lbl-hi">11.9%</text>
+     <text x="230" y="220" font-family="'IBM Plex Mono',monospace" font-size="11" class="lbl">→</text>
+     <text x="255" y="220" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" class="lbl-hi">5.4%</text>
+     <text x="70" y="238" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">#1 vs #2 gap:</text>
+     <text x="190" y="238" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" class="lbl-hi">4.9%</text>
+     <text x="230" y="238" font-family="'IBM Plex Mono',monospace" font-size="11" class="lbl">→</text>
+     <text x="255" y="238" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" class="lbl-hi">0.7%</text>
+   </svg></div>
+   <h3>But What Are We Actually Measuring?</h3>
+   <p><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Parli</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">[3]</a><span class="tip">Stanford HAI predictions for 2026.</span></sup> raises the question that should make everyone pause: &ldquo;Are we measuring the right thing? Are those benchmarks compromised?&rdquo; <a href="https://www.ibm.com/think/" target="_blank">IBM&rsquo;s</a><sup class="fn"><a href="https://www.ibm.com/think/" target="_blank">[4]</a><span class="tip">IBM Think &mdash; AI trends analysis.</span></sup> Minhas is more blunt: &ldquo;Are we just training the model to pass the benchmark?&rdquo; This isn&rsquo;t idle skepticism. The concern is specific: when training data potentially includes benchmark questions, or when models are optimized through extensive post-training to handle benchmark-style problems, a high score may reflect memorization and pattern-matching rather than genuine generalized capability. The 71.7% on SWE-bench looks impressive &mdash; until you ask whether the model would perform similarly on a codebase it has never seen that doesn&rsquo;t resemble anything in SWE-bench&rsquo;s distribution.</p>
+   <p>The new generation of harder benchmarks designed to resist this are <em>humbling</em>. Humanity&rsquo;s Last Exam, a crowdsourced set of the hardest questions from domain experts, tops out at 8.8%. FrontierMath, which tests complex mathematical reasoning: 2%. BigCodeBench, which tests real-world coding beyond typical patterns: 35.5% (vs. human expert 97%). These results suggest that the headline benchmarks are measuring something real but limited &mdash; perhaps fluency with common problem types rather than genuine reasoning across novel domains.</p>
+   <h3>Commoditization Is Already Here</h3>
+   <p>The Chatbot Arena leaderboard (now LM Arena) provides the most direct measure of how users perceive model quality in head-to-head comparisons. The numbers tell an unambiguous story of convergence: the Elo gap between the #1 and #10 model shrank from 11.9% to 5.4% in one year. The gap between #1 and #2: 4.9% to 0.7%. The open-weight vs closed-weight gap collapsed from 8% to 1.7%. When the top models are this close, the user experience of switching between them is nearly indistinguishable for most tasks. That is the definition of a commodity market.</p>
+   <p>There is a further consequence of commoditization that Stanford&rsquo;s data reveals: 90% of notable 2024 models came from industry, up from 60% in 2023. Academic AI labs still dominate in highly cited publications, but model <em>production</em> has shifted decisively to industry. The capital and compute requirements for frontier model development have effectively priced universities out. The era of academic AI leadership in model development &mdash; the era of AlexNet, of attention-is-all-you-need, of BERT &mdash; is over. Academic contributions now flow through papers and techniques that industry adopts, not through models that compete on capability.</p>
+   <h3>The 142&times; Shrinkage</h3>
+   <p>Amid the race to build bigger models, the most underappreciated data point in the Stanford report may be this: in 2022, hitting 60% on the MMLU benchmark required PaLM at 540 billion parameters. By 2024, <a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">Microsoft&rsquo;s</a><sup class="fn"><a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">[11]</a><span class="tip">Microsoft &mdash; 7 AI Trends for 2026; Phi-3-mini efficiency data.</span></sup> Phi-3-mini achieved the same threshold with 3.8 billion parameters. That is a 142-fold reduction in model size for equivalent benchmark performance in over two years. This finding cuts against the dominant narrative that AI progress requires ever-larger models and ever-more compute. It suggests, instead, that a substantial portion of &ldquo;progress&rdquo; in the 2020-2023 era was achieved by brute-force scaling of undertrained architectures &mdash; and that with better training recipes, data curation, and architectural choices, far smaller models can reach the same destination.</p>
+   <div class="callout"><strong>The real benchmark crisis</strong> isn&rsquo;t that models are getting too good at tests. It&rsquo;s that we don&rsquo;t have reliable ways to measure what actually matters for deployment: generalization to genuinely novel problems, reliability under distribution shift, calibrated uncertainty, and the ability to know when to refuse. The gap between benchmark scores and real-world value may be <em>growing</em>, not shrinking &mdash; which is exactly the dynamic that produces the &ldquo;pilot purgatory&rdquo; we see in the agents section (<a href="s3-agents.dd.html" title="AI Agents">S3</a>).</div>`,
+  `<div class="detail-header"><div class="num">03</div><h2>The <em>Deflation</em> Curve</h2></div><h3>The Anatomy of a 280&times; Collapse</h3>
+   <p>In November 2022, querying a model at GPT-3.5&rsquo;s quality level (64.8% on MMLU) cost $20 per million tokens. By October 2024, Gemini-1.5-Flash-8B delivered the same quality at $0.07 per million tokens. That is a 280-fold reduction in 18 months. To understand why this matters, consider the math: a task that cost $100 in late 2022 costs 35 cents by late 2024. An application that was economically impossible at $20/M tokens &mdash; say, analyzing every customer support ticket in real time &mdash; becomes trivially cheap at $0.07.</p>
+   <p>But the 280&times; number, dramatic as it is, understates the full picture because it only captures the inference cost curve. The total cost deflation is actually the product of three independent curves that compound on each other.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="260" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THREE COMPOUNDING DEFLATION CURVES</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <rect x="40" y="45" width="100" height="70" fill="rgba(91,91,214,0.08)" rx="4" stroke="#5b5bd6" stroke-width="1"/>
+     <text x="90" y="62" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Hardware</text>
+     <text x="90" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" font-weight="600" class="lbl-hi">40%</text>
+     <text x="90" y="92" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">cheaper/FLOP/year</text>
+     <text x="90" y="105" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl" style="font-size:7.5px">GB300: 24× perf/$</text>
+     <text x="155" y="82" text-anchor="middle" font-family="'Jost',sans-serif" font-size="18" class="lbl">&times;</text>
+     <rect x="170" y="45" width="100" height="70" fill="rgba(14,143,208,0.08)" rx="4" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="220" y="62" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Algorithms</text>
+     <text x="220" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" font-weight="600" class="lbl-hi">3&times;</text>
+     <text x="220" y="92" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">less compute/year</text>
+     <text x="220" y="105" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl" style="font-size:7.5px">same perf, less FLOP</text>
+     <text x="285" y="82" text-anchor="middle" font-family="'Jost',sans-serif" font-size="18" class="lbl">&times;</text>
+     <rect x="300" y="45" width="80" height="70" fill="rgba(20,150,110,0.04)" rx="4" stroke="#14966e" stroke-width="1"/>
+     <text x="340" y="62" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Architecture</text>
+     <text x="340" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" font-weight="600" class="lbl-hi">142&times;</text>
+     <text x="340" y="92" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">smaller models</text>
+     <text x="340" y="105" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl" style="font-size:7.5px">same MMLU score</text>
+     <text x="200" y="135" text-anchor="middle" font-family="'Jost',sans-serif" font-size="14" class="lbl">▼</text>
+     <rect x="80" y="145" width="240" height="50" fill="rgba(91,91,214,0.06)" rx="4" stroke="#5b5bd6" stroke-width="1.5"/>
+     <text x="200" y="168" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" font-weight="600" class="lbl-hi">$20 → $0.07 / M tokens</text>
+     <text x="200" y="184" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">280&times; in 18 months (GPT-3.5 level)</text>
+     <rect x="40" y="210" width="320" height="38" fill="rgba(0,0,0,0.03)" rx="3"/>
+     <text x="200" y="225" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">When cost drops 10&times;/year</text>
+     <text x="200" y="236" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">and models are within 5%,</text>
+     <text x="200" y="248" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">advantage moves: MODEL → SYSTEM</text>
+   </svg></div>
+   <h3>Curve 1: Hardware (<a href="https://epoch.ai/" target="_blank">Epoch AI</a><sup class="fn"><a href="https://epoch.ai/" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; AI accelerator price-performance trends.</span></sup>)</h3>
+   <p>Epoch AI tracks the price-performance of AI accelerators across 20+ chips released between 2012 and 2025. The trend: roughly 40% improvement per year in compute per dollar. Much of this comes not from making chips cheaper, but from making each chip dramatically more powerful. NVIDIA&rsquo;s GB300 costs 9&times; the P100&rsquo;s release price &mdash; but delivers 24&times; the performance per dollar. Energy efficiency improves on a similar curve: GPUs have been getting 34% more energy-efficient per year since 2008, doubling every 2.4 years.</p>
+   <h3>Curve 2: Algorithmic Efficiency (Stanford)</h3>
+   <p>Each year, researchers find ways to achieve the same model performance with roughly 3&times; less compute. This is not hardware improvement &mdash; it&rsquo;s smarter training: better learning rate schedules, attention optimizations, distillation techniques, improved data mixing strategies. This curve is the least visible but may be the most important, because it compounds <em>on top of</em> hardware gains. A 40% hardware improvement combined with 3&times; algorithmic improvement means that the effective cost of a given capability level drops roughly 4-5&times; per year.</p>
+   <h3>Curve 3: Architecture (Stanford)</h3>
+   <p>The 142&times; model shrinkage &mdash; from 540B to 3.8B parameters for the same MMLU threshold &mdash; represents a third, distinct efficiency curve. This isn&rsquo;t about training the same architecture more cheaply; it&rsquo;s about discovering that much smaller architectures, properly trained, can reach benchmarks that previously required massive scale. <a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">Microsoft&rsquo;s</a><sup class="fn"><a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">[11]</a><span class="tip">Microsoft &mdash; Phi series and small model efficiency.</span></sup> Phi series demonstrated this most dramatically, but the pattern is widespread: open-weight models like Qwen-2.5 and DeepSeek consistently show that technique and data quality can substitute for raw scale.</p>
+   <h3>What Commoditization Means in Practice</h3>
+   <p><a href="https://www.ibm.com/think/insights/ai-leaders-goals-2026" target="_blank">IBM&rsquo;s Goodhart</a><sup class="fn"><a href="https://www.ibm.com/think/insights/ai-leaders-goals-2026" target="_blank">[4]</a><span class="tip">IBM Think &mdash; AI leaders goals for 2026.</span></sup> calls this &ldquo;the commodity point&rdquo;: the moment when the top models are functionally interchangeable for most use cases. When that happens, competitive advantage shifts to four things: <strong>workflow integration</strong> (how deeply AI is embedded in actual business processes, not bolted on as a chatbot), <strong>data quality</strong> (domain-specific, curated datasets that give your model knowledge competitors can&rsquo;t replicate), <strong>orchestration</strong> (multi-agent coordination, tool selection, cost-optimal routing between models), and <strong>governance</strong> (audit trails, compliance, cost management, reproducibility).</p>
+   <p>This is why the agents story (<a href="s3-agents.dd.html" title="AI Agents">S3</a>) and the workplace adoption story (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) matter more than the model capability story. A 5% better model is irrelevant if your agent infrastructure can&rsquo;t get past proof-of-concept. A 10&times; cheaper model is transformative if you have the integration layer to deploy it across 10,000 workflows.</p>
+   <div class="callout"><strong>The strategic implication:</strong> If you are an AI company whose primary offering is &ldquo;our model is the best,&rdquo; your business is shrinking. If your offering is &ldquo;our system deploys the right model for the right task inside your existing workflows,&rdquo; your business is growing. The deflation curve doesn&rsquo;t destroy value &mdash; it moves it from model providers to system integrators. This is exactly the pattern that played out with cloud computing (AWS didn&rsquo;t win by having the best servers), mobile (Apple didn&rsquo;t win by having the best cellular modem), and databases (Snowflake didn&rsquo;t win by having the best storage engine).</div>`,
+  `<div class="detail-header"><div class="num">04</div><h2>The <em>Gigawatt</em> Ceiling</h2></div><h3>The Physical Reality</h3>
+   <p>Every other trend in this section &mdash; cost deflation, commoditization, efficiency gains &mdash; is a story about software economics improving. This section is about the hardware reality that constrains all of it. And the hardware reality is that AI&rsquo;s appetite for electricity is growing faster than the grid can supply it.</p>
+   <p>Epoch AI curated a dataset of over 500 AI supercomputers from 2019 to 2025 and analyzed trends in performance, cost, and power. Their core finding: computational performance of leading AI supercomputers doubles every 9 months, driven by two factors that each contribute 1.6&times; annually &mdash; more chips per system and better performance per chip. But unlike Moore&rsquo;s Law, which made computing cheaper and more efficient simultaneously, AI supercomputing is getting more powerful <em>and</em> more expensive <em>and</em> more power-hungry at the same time.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="280" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">AI SUPERCOMPUTER POWER: 2019 → 2030</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <line x1="60" y1="240" x2="360" y2="240" stroke="currentColor" class="border" stroke-width="1"/>
+     <text x="80" y="255" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">2019</text>
+     <text x="150" y="255" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">2022</text>
+     <text x="235" y="255" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">2025</text>
+     <text x="340" y="255" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">2030</text>
+     <rect x="68" y="228" width="24" height="12" fill="#5b5bd6" rx="1"/>
+     <text x="80" y="222" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">13 MW</text>
+     <text x="80" y="212" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Summit</text>
+     <rect x="138" y="206" width="24" height="34" fill="#0e8fd0" rx="1"/>
+     <text x="150" y="198" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">~60 MW</text>
+     <rect x="223" y="156" width="24" height="84" fill="#7c3aed" rx="1"/>
+     <text x="235" y="148" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">280 MW</text>
+     <text x="235" y="138" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">xAI Colossus</text>
+     <rect x="323" y="56" width="34" height="184" fill="#7c3aed" rx="1" opacity="0.2" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,2"/>
+     <text x="340" y="48" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="600" class="lbl-hi" style="font-size:9px">9 GW</text>
+     <text x="340" y="72" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">= 9 nuclear</text>
+     <text x="340" y="82" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">reactors</text>
+     <text x="200" y="270" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">Power doubles every ~13 months (Epoch AI)</text>
+   </svg></div>
+   <h3>The Colossus Problem</h3>
+   <p>xAI&rsquo;s Colossus supercomputer in Memphis is the current leader: 200,000 AI chips, roughly $7 billion in hardware, 280 megawatts of power draw. That last number is the important one. 280 MW is enough to power roughly 230,000 US homes. And Memphis&rsquo;s local power grid cannot supply it &mdash; Colossus relies partly on mobile generators to bridge the gap. This is not a developing-world infrastructure problem. It is a Fortune 500 company in Tennessee unable to get enough electricity from the grid for a single facility.</p>
+   <p>Bloomberg reports that a cluster of 400,000 NVIDIA chips is currently under construction, expected to be complete by mid-2026. Assuming GB200 chips at $3 million per 72-chip server, this system costs approximately $17 billion. Its power demand will be proportionally enormous.</p>
+   <h3>The 2030 Extrapolation</h3>
+   <p><a href="https://epoch.ai/blog/ai-supercomputer-landscape" target="_blank">Epoch AI&rsquo;s</a><sup class="fn"><a href="https://epoch.ai/blog/ai-supercomputer-landscape" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; AI supercomputer landscape projections to 2030.</span></sup> projection: if current trends continue, the leading AI supercomputer in 2030 will need 2 million AI chips, cost $200 billion in hardware, and require 9 gigawatts of power. To calibrate that number: 9 GW is the output of nine large nuclear reactors. It is roughly the total electricity consumption of a country like Austria. It exceeds the total power capacity of all existing data centers in the United States as of 2022.</p>
+   <p>This is not a prediction of what <em>will</em> happen &mdash; it is a statement of what the current trajectory <em>implies</em>. The relevant question is where the trajectory breaks. Epoch AI&rsquo;s own analysis, conducted jointly with the Electric Power Research Institute (EPRI), suggests the largest individual frontier training runs in 2030 will likely draw 4-16 GW of power. The lower end is consistent with already-announced plans for multi-gigawatt campuses. The upper end would require distributed training across geographically separate facilities &mdash; which is technically feasible (Google trained Gemini 1.0 across multiple campuses) but adds significant engineering complexity.</p>
+   <h3>The Ownership Shift Nobody Discussed</h3>
+   <p>Buried in Epoch&rsquo;s data is a structural change that happened without public debate. In 2019, private industry owned about 40% of global AI compute capacity. By 2025, industry owns 80%. The public sector &mdash; governments, universities, national labs &mdash; went from controlling the majority of AI compute to controlling less than 20% in six years. The United States hosts 75% of global AI supercomputer performance, with China at 15% and the rest of the world splitting the remainder.</p>
+   <p>This concentration has implications that extend well beyond the AI industry. When a small number of private companies control the vast majority of the physical infrastructure that determines AI capability, they become de facto gatekeepers of an increasingly critical technology. The companies that can secure multi-gigawatt power agreements &mdash; through political connections, early land acquisition, or partnerships with energy providers &mdash; will have advantages that no amount of algorithmic innovation can overcome.</p>
+   <h3>Why Power Becomes Geopolitics</h3>
+   <p><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">Goldman Sachs</a><sup class="fn"><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">[12]</a><span class="tip">Goldman Sachs &mdash; seven AI predictions for 2026; hyperscaler capex analysis.</span></sup> projects $500B+ in hyperscaler capital expenditure in 2026, but notes that the &ldquo;gigawatt ceiling&rdquo; means companies will &ldquo;obsess over allocating every megawatt to activities with the highest return.&rdquo; Power allocation becomes the strategic decision. A US Executive Order (14141) has made federal lands available for frontier AI infrastructure and called for expedited permitting. The Middle East (UAE, Saudi Arabia) is investing in AI data centers partly because it has cheap energy. Multi-year lead times for new power facilities mean that the power procurement decisions being made <em>right now</em> will determine who has the compute capacity to train frontier models in 2028 and 2029.</p>
+   <div class="callout"><strong>The binding constraint hierarchy:</strong> In 2020, the constraint was <em>talent</em> &mdash; not enough ML researchers. In 2022, it was <em>compute</em> &mdash; not enough GPUs. In 2024, it was <em>data</em> &mdash; running out of high-quality training text. In 2026, it is <em>power</em> &mdash; the grid cannot grow fast enough. Each constraint is harder to solve than the last, because each one is more physical, more capital-intensive, and has longer lead times. You can hire researchers in months, manufacture GPUs in quarters, curate data in months &mdash; but building power infrastructure takes years.</div>`,
+  `<div class="detail-header"><div class="num">05</div><h2><em>Context</em> Window Plateau</h2></div><h3>The Shape of the Plateau</h3>
+   <p>Context window expansion was one of the most visible forms of LLM progress from 2022 to 2024. ChatGPT launched with 8,192 tokens in November 2022. A year later, GPT-4 Turbo offered 128K and Claude 2.1 offered 200K. By February 2024, Gemini 1.5 Pro demonstrated 1 million tokens, later extended to 2 million. Each jump felt like a new capability class: 8K meant you couldn&rsquo;t fit a long document; 128K meant you could; 1M meant you could fit an entire codebase or book.</p>
+   <p>And then it stopped. Not gradually &mdash; abruptly. Since early 2024, no major model has meaningfully exceeded the 1-2M range. More strikingly, some have <em>retreated</em>. <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic&rsquo;s</a><sup class="fn"><a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">[5]</a><span class="tip">Anthropic &mdash; SWE-bench performance and coding trends.</span></sup> Claude has been unchanged at 200K since Claude 2.1. GPT-5.2 shipped with 400K tokens &mdash; which is actually <em>smaller</em> than GPT-4.1&rsquo;s context. Google pulled back from 2M to 1M for Gemini. This pattern &mdash; simultaneous plateau across all major providers &mdash; strongly suggests a structural limit rather than a temporary pause.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">MAX CONTEXT WINDOW (FRONTIER MODELS)</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <line x1="60" y1="170" x2="350" y2="170" stroke="currentColor" class="border" stroke-width="1"/>
+     <circle cx="80" cy="160" r="5" fill="#5b5bd6"/>
+     <text x="80" y="185" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Nov 22</text>
+     <text x="80" y="148" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">8K</text>
+     <circle cx="150" cy="130" r="5" fill="#5b5bd6"/>
+     <text x="150" y="185" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Nov 23</text>
+     <text x="150" y="120" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">200K</text>
+     <circle cx="210" cy="60" r="6" fill="#14966e"/>
+     <text x="210" y="185" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Feb 24</text>
+     <text x="210" y="50" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">2M</text>
+     <line x1="210" y1="60" x2="340" y2="65" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4,3"/>
+     <circle cx="280" cy="70" r="4" fill="#7c3aed" opacity="0.5"/>
+     <text x="280" y="185" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">2025</text>
+     <text x="300" y="62" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">~1M</text>
+     <circle cx="340" cy="65" r="4" fill="#7c3aed" opacity="0.5"/>
+     <text x="340" y="185" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">2026</text>
+     <line x1="80" y1="160" x2="150" y2="130" stroke="#5b5bd6" stroke-width="1.5"/>
+     <line x1="150" y1="130" x2="210" y2="60" stroke="#5b5bd6" stroke-width="1.5"/>
+     <rect x="230" y="90" width="130" height="55" fill="rgba(124,58,237,0.06)" rx="3" stroke="#7c3aed" stroke-width="0.5"/>
+     <text x="295" y="106" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi" style="font-size:8px">PLATEAU ZONE</text>
+     <text x="295" y="120" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Claude: unchanged since 2.1</text>
+     <text x="295" y="132" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">GPT-5.2: 400K &lt; GPT-4.1</text>
+     <text x="295" y="144" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Google: 2M → 1M retreat</text>
+   </svg></div>
+   <h3>Three Structural Causes</h3>
+   <p><a href="https://www.understandingai.org/" target="_blank">Understanding AI</a><sup class="fn"><a href="https://www.understandingai.org/" target="_blank">[9]</a><span class="tip">Understanding AI &mdash; context window analysis and structural limits.</span></sup>&rsquo;s Kai Williams identifies three reasons this plateau is structural rather than temporary. First, the <strong>quadratic scaling problem</strong>: the transformer&rsquo;s self-attention mechanism computes interactions between every pair of tokens. Doubling context length roughly quadruples the computational cost. At 1M tokens, you&rsquo;re paying enormous compute for the attention calculation alone, much of it on token pairs that contribute little to the output.</p>
+   <p>Second, <strong>context rot</strong>: empirical testing shows that model quality degrades for information placed in the middle of very long contexts. The &ldquo;lost in the middle&rdquo; phenomenon &mdash; where models attend well to the beginning and end of context but lose track of material in between &mdash; means that a 1M-token window doesn&rsquo;t actually give you 1M tokens of useful context. Effective context is substantially smaller than nominal context.</p>
+   <p>Third, <strong>economics</strong>: for most real-world tasks, a smaller context window combined with good retrieval (RAG) produces equivalent results at far lower cost. If you can retrieve the 5 most relevant paragraphs from a 10,000-page corpus instead of stuffing the entire corpus into context, you get better results (because the model attends more precisely) at a tiny fraction of the compute cost.</p>
+   <h3>What Comes Next</h3>
+   <p>If context windows plateau at the transformer architecture&rsquo;s natural limit, three alternative paths open. <strong>Better retrieval</strong> (RAG systems that find exactly what&rsquo;s needed without brute-force context stuffing) is already the dominant production approach. <strong>Memory architectures</strong> (persistent state across conversations, learned summarization of past interactions) are an active research area that could give models effectively unlimited context through compression rather than expansion. And <strong>fundamentally different architectures</strong> &mdash; state-space models (Mamba, etc.), diffusion language models, or hybrid approaches &mdash; might bypass the transformer&rsquo;s quadratic bottleneck entirely.</p>
+   <p>The most provocative possibility is that the context window plateau becomes the forcing function that finally drives serious architectural innovation beyond the transformer. The transformer has dominated since 2017 partly because scaling it was easy and effective. When scaling stops working, the pressure to find alternatives becomes commercially urgent, not just academically interesting.</p>
+   <div class="callout"><strong>Prediction (80% confidence):</strong> General-purpose frontier model context windows remain at ~1M through end of 2026. Possible exception: coding-specific models where ingesting entire large codebases (100K+ lines) provides clear value. But even there, sophisticated retrieval may prove more efficient than brute-force expansion &mdash; finding the 50 relevant functions is better than feeding the model 10,000 irrelevant ones.</div>`,
+  `<div class="detail-header"><div class="num">06</div><h2>The <em>Open-Source</em> Gambit</h2></div><h3>The Irony at the Heart of AI Geopolitics</h3>
+   <p>The conventional narrative about US-China AI competition focuses on compute, capital, and export controls: the US has more money ($109B vs $9.3B in private investment), more frontier models (40 vs 15), and more supercomputer capacity (75% vs 15%). By these metrics, the US is clearly ahead. But there is a parallel story that the conventional narrative almost entirely misses, and it may prove more consequential.</p>
+   <p>Chinese AI companies &mdash; led by DeepSeek, Alibaba&rsquo;s Qwen team, Zhipu (GLM), and Moonshot (Kimi) &mdash; adopted a near-universal open-source strategy. They release competitive model weights freely. The Qwen family spans dozens of variants: different sizes (1.5B to 72B+), different specializations (math, coding, vision, instruction-following), all openly available. Qwen2.5-1.5B-Instruct alone has been downloaded 8.85 million times, making it one of the most widely deployed pretrained LLMs on Earth. DeepSeek&rsquo;s models have been forked and fine-tuned across the global open-source community.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="220" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">US vs CHINA: THE SCOREBOARD</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <rect x="45" y="44" width="150" height="28" fill="rgba(91,91,214,0.08)" rx="3"/>
+     <text x="120" y="63" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">United States</text>
+     <rect x="205" y="44" width="150" height="28" fill="rgba(14,143,208,0.08)" rx="3"/>
+     <text x="280" y="63" text-anchor="middle" font-family="'Jost',sans-serif" font-size="12" font-weight="600" class="lbl-hi">China</text>
+     <text x="120" y="92" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">40 notable models</text>
+     <text x="280" y="92" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">15 notable models</text>
+     <text x="120" y="110" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">$109B private invest</text>
+     <text x="280" y="110" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">$9.3B private invest</text>
+     <text x="120" y="128" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">75% of supercomputers</text>
+     <text x="280" y="128" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">15% of supercomputers</text>
+     <line x1="45" y1="138" x2="355" y2="138" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <text x="120" y="156" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Benchmark gap: near parity ≈</text>
+     <text x="280" y="156" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">Leads in pubs + patents</text>
+     <text x="120" y="174" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl" style="font-size:9px">Closed → opening</text>
+     <text x="280" y="174" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" style="font-size:9px">Open → trust advantage</text>
+     <rect x="45" y="187" width="310" height="28" fill="rgba(0,0,0,0.03)" rx="3"/>
+     <text x="200" y="199" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">US leads in scale. China gains through openness.</text>
+     <text x="200" y="210" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">Gap: closing fast.</text>
+   </svg></div>
+   <h3>The Benchmark Gap Collapse</h3>
+   <p>Stanford&rsquo;s data quantifies how rapidly the quality gap is closing. At the end of 2023, the performance gap between leading American and Chinese models was 17.5 percentage points on MMLU, 13.5 on MMMU, 24.3 on MATH, and 31.6 on HumanEval. By end of 2024: 0.3, 8.1, 1.6, and 3.7 respectively. On MMLU &mdash; the most widely watched general-purpose benchmark &mdash; the gap went from 17.5 points to <em>0.3 points</em>. That is effectively parity.</p>
+   <p>This happened despite US export controls on advanced AI chips and despite a 12&times; advantage in private investment. The Chinese labs achieved near-parity on a fraction of the capital, partly because open-source models allowed them to build on each other&rsquo;s work, and partly because algorithmic efficiency gains matter more than brute-force compute for catching up to a frontier someone else has already established.</p>
+   <h3>The Forced Opening of America</h3>
+   <p>Chinese open-source didn&rsquo;t just help China. It changed America&rsquo;s strategy. <a href="https://www.technologyreview.com/" target="_blank">MIT Technology Review</a><sup class="fn"><a href="https://www.technologyreview.com/" target="_blank">[6]</a><span class="tip">MIT Technology Review &mdash; Chinese open-source AI models analysis.</span></sup>: &ldquo;In 2026, expect more Silicon Valley apps to quietly ship on top of Chinese open models.&rdquo; The competitive pressure from high-quality open-weight Chinese models forced US companies to reconsider their closed postures. OpenAI &mdash; the company that went from &ldquo;Open&rdquo; AI to the most prominent advocate of closed models &mdash; released its first open-source model in August 2025. Allen AI followed with Olmo 3 in November 2025. Meta had already embraced open weights with Llama, partly in response to the same dynamic.</p>
+   <p>There is a deeper irony here that the MIT Tech Review captures: Chinese firms&rsquo; &ldquo;near-unanimous embrace of open source has earned them goodwill in the global AI community and a long-term trust advantage&rdquo; &mdash; even as US-China geopolitical tensions intensify in every other domain. Open-source, in this framing, is not just a technical strategy but a soft power instrument.</p>
+   <h3>AI Sovereignty Is Coming</h3>
+   <p><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Landay</a><sup class="fn"><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">[3]</a><span class="tip">Stanford HAI &mdash; AI sovereignty and geopolitics predictions.</span></sup> predicts &ldquo;AI sovereignty will gain huge steam this year&rdquo;: countries building their own LLMs, insisting on running foreign models on domestic GPUs, ensuring training data stays within borders. The UAE and Saudi Arabia are making massive data center investments. South Korea, Japan, India, and the EU are all pursuing some form of AI independence. NVIDIA and OpenAI are on world tours securing national partnerships. The model may be globally shared, but the infrastructure is fiercely national &mdash; and the nationality of your infrastructure determines who can access your training data, who can audit your models, and who can shut you off.</p>
+   <div class="callout"><strong>The geopolitical reversal:</strong> For decades, the US was the global champion of open innovation &mdash; open internet, open standards, open markets. In AI, the US is increasingly the closed party: proprietary models, export controls, restricted chip sales. China is the open party: published weights, shared architectures, community engagement. Whether this reflects genuine commitment to openness or strategic calculation (or both) matters less than the outcome: Chinese models are becoming embedded in global AI infrastructure in ways that export controls cannot reverse.</div>`,
+  `<div class="detail-header"><div class="num">07</div><h2><em>Beyond</em> Text</h2></div><h3>The Large World Model Thesis</h3>
+   <p><a href="https://www.nngroup.com/articles/large-world-models/" target="_blank">Nielsen&rsquo;s</a><sup class="fn"><a href="https://www.nngroup.com/articles/large-world-models/" target="_blank">[8]</a><span class="tip">Nielsen Norman Group &mdash; Large World Models thesis, January 2026.</span></sup> prediction from January 2026 is the most specific claim about LLM evolution in any of our sources: by end of 2026, &ldquo;frontier model&rdquo; will stop meaning &ldquo;text engine with a few attachments&rdquo; and start meaning &ldquo;a single system that speaks, listens, sees, imagines, and edits, with every modality treated as first-class.&rdquo; A leading AI model that is merely text-based will be &ldquo;as archaic as a DOS command line.&rdquo;</p>
+   <p>This is a bold timeline. But the evidence for the direction (if not the speed) is accumulating rapidly. Google Veo 3.1 generates video with synchronized audio and dialogue. Suno v5 produces vocal performances that professional musicians describe as emotionally convincing. GPT Image 1.5 renders text inside images at 95% accuracy. DeepMind&rsquo;s Genie 3 simulates navigable 3D environments in real time at 24 frames per second. Each modality is approaching professional grade <em>independently</em>. The convergence question is whether and when they merge into a single system.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">EARLY FUSION vs LATE FUSION</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <rect x="40" y="45" width="150" height="120" fill="rgba(91,91,214,0.06)" rx="4" stroke="#5b5bd6" stroke-width="1"/>
+     <text x="115" y="64" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Early Fusion</text>
+     <text x="115" y="80" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">One model, all modalities</text>
+     <circle cx="115" cy="108" r="24" fill="none" stroke="#5b5bd6" stroke-width="1.5"/>
+     <text x="115" y="104" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">text+img</text>
+     <text x="115" y="114" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">+audio+vid</text>
+     <text x="115" y="155" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">✓ Cross-modal insights</text>
+     <text x="115" y="163" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">✗ Rebuild everything on update</text>
+     <rect x="210" y="45" width="150" height="120" fill="rgba(14,143,208,0.06)" rx="4" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="285" y="64" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Late Fusion</text>
+     <text x="285" y="80" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl" style="font-size:8px">Separate models, integrated</text>
+     <circle cx="260" cy="108" r="12" fill="none" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="260" y="111" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl-hi" style="font-size:6px">txt</text>
+     <circle cx="285" cy="100" r="12" fill="none" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="285" y="103" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl-hi" style="font-size:6px">img</text>
+     <circle cx="310" cy="108" r="12" fill="none" stroke="#0e8fd0" stroke-width="1"/>
+     <text x="310" y="111" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl-hi" style="font-size:6px">aud</text>
+     <text x="285" y="155" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">✓ Modular updates</text>
+     <text x="285" y="163" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi" style="font-size:7px">✗ May miss cross-modal patterns</text>
+     <text x="200" y="178" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Stanford: "We may get clarity</text>
+     <text x="200" y="190" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">in the next year" — Russ Altman</text>
+   </svg></div>
+   <h3>The Architectural Question That Matters</h3>
+   <p>Stanford&rsquo;s Russ Altman frames the fundamental decision. <strong>Early fusion</strong> trains a single model on all modalities simultaneously &mdash; text, images, audio, video as interleaved tokens in one training run. The advantage: the model can discover cross-modal correlations that exist in the training data (like the relationship between what a dog looks like and the sound it makes, or between how a material looks and how it behaves under stress). The disadvantage: updating any single modality requires retraining the entire system.</p>
+   <p><strong>Late fusion</strong> trains separate specialist models for each modality and integrates them after the fact through a shared embedding space or orchestration layer. The advantage: modularity. Update your vision model without touching your language model. The disadvantage: you may miss emergent cross-modal understanding that only arises from joint training.</p>
+   <p>The current industry practice is largely late fusion: companies route different tasks to different specialized models (Veo for video, separate image models, separate audio models) and integrate the outputs. But the trend is toward early fusion, especially at Google/DeepMind where Veo and Genie build on shared foundations.</p>
+   <h3>Why the Sora Shutdown Is Relevant Here</h3>
+   <p>OpenAI&rsquo;s shutdown of Sora today (March 24, 2026) is a cautionary datapoint for the LWM thesis. Sora was the highest-profile multimodal product in the world, with impressive capabilities and a billion-dollar Disney deal. It failed not because the model couldn&rsquo;t generate good video, but because the <em>business</em> around the model &mdash; cost structure, copyright, competitive positioning &mdash; didn&rsquo;t work. Nielsen&rsquo;s prediction that multimodal becomes table stakes by end of 2026 may be right about capability but wrong about product readiness.</p>
+   <div class="callout"><strong>For scientific AI:</strong> Altman frames multimodal fusion as an opportunity for scientific discovery. A model trained jointly on text (papers), images (microscopy, medical scans), and structured data (gene expression, protein structures) might discover correlations that separate specialist models would miss. This is the strongest argument for early fusion: it&rsquo;s not about making better chatbots, it&rsquo;s about enabling a new kind of cross-disciplinary pattern recognition that no human researcher could perform because no human can simultaneously read 10,000 papers and examine 1 million images.</div>`,
+  `<div class="detail-header"><div class="num">08</div><h2><em>Small</em> Models, Big Ideas</h2></div><h3>NVIDIA Argues Against Its Own Revenue</h3>
+   <p>It is notable &mdash; and should be interpreted carefully &mdash; when the company that profits most from selling massive GPU clusters publishes a peer-reviewed paper arguing that most workloads should use much smaller models. NVIDIA&rsquo;s Belcak and Heinrich (arXiv:2506.02153) make the case that for agentic AI, the default should be Small Language Models (SLMs, typically 7B parameters or smaller) rather than frontier LLMs (70B-175B+).</p>
+   <p>Their argument is both technical and economic. Agentic systems decompose complex goals into modular sub-tasks: retrieving information, formatting data, making tool calls, summarizing results, checking constraints. Most of these sub-tasks do not require frontier-level reasoning. A 7B model fine-tuned for a specific sub-task performs equivalently to a 175B model on that sub-task, at 10-30&times; lower cost in latency, energy, and FLOPs. The paper frames this not just as a technical optimization but as &ldquo;a Humean moral ought&rdquo; given the environmental and infrastructure costs of running 175B models for tasks that don&rsquo;t need them.</p>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="180" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THE EFFICIENCY ARGUMENT</text>
+     <line x1="40" y1="32" x2="360" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+     <rect x="50" y="50" width="130" height="80" fill="rgba(124,58,237,0.08)" rx="4" stroke="#7c3aed" stroke-width="1"/>
+     <text x="115" y="70" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Frontier LLM</text>
+     <text x="115" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" class="lbl-hi">175B</text>
+     <text x="115" y="104" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">High cost, high latency</text>
+     <text x="115" y="116" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Best for: complex reasoning</text>
+     <text x="200" y="92" text-anchor="middle" font-family="'Jost',sans-serif" font-size="14" class="lbl">vs</text>
+     <rect x="220" y="50" width="130" height="80" fill="rgba(20,150,110,0.04)" rx="4" stroke="#14966e" stroke-width="1"/>
+     <text x="285" y="70" text-anchor="middle" font-family="'Jost',sans-serif" font-size="11" font-weight="600" class="lbl-hi">Efficient SLM</text>
+     <text x="285" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" class="lbl-hi">7B</text>
+     <text x="285" y="104" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">10-30× cheaper</text>
+     <text x="285" y="116" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="font-size:7px">Sufficient for most sub-tasks</text>
+     <rect x="40" y="138" width="320" height="28" fill="rgba(0,0,0,0.03)" rx="3"/>
+     <text x="200" y="149" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl-hi" style="font-size:7.5px">NVIDIA: "Insisting on LLMs for all tasks</text>
+     <text x="200" y="161" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" class="lbl-hi" style="font-size:7.5px">reflects a misallocation of resources"</text>
+   </svg></div>
+   <h3>Why NVIDIA Would Publish This</h3>
+   <p>The cynical reading is that NVIDIA benefits regardless: they sell the GPUs that run both big and small models, and a world of 100 small models running on 100 GPUs is as good for NVIDIA as a world of 1 big model running on 100 GPUs. But the paper&rsquo;s technical argument stands independently. And it aligns with a growing body of evidence from academic research.</p>
+   <h3>The Data Quality Turn</h3>
+   <p><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Landay</a> identifies what may be the most important strategic shift of 2026: &ldquo;We have huge models, but we&rsquo;ve seen better models that are smaller than the huge ones. It seems like we have reached some amount of peak data &mdash; both because we&rsquo;re running out of data and also because the data is poor quality. I expect there will be a lot more effort on curating really good datasets that are smaller.&rdquo;</p>
+   <p>This is a subtle but fundamental reframing. The 2020-2024 era was dominated by the scaling hypothesis: more data, more parameters, more compute = better models. The evidence for this was strong (GPT-2 to GPT-3 to GPT-4 each improved with scale). But by 2025, the returns to scale are diminishing. Phi-3-mini achieves 60% MMLU with 3.8B parameters because it was trained on carefully curated, high-quality data &mdash; not because someone found a way to train on more internet text. The competitive advantage is shifting from <em>how much data you have</em> to <em>how good your data is</em>.</p>
+   <h3>Evidence from the Agentic LLM Survey</h3>
+   <p>Two papers from our companion survey provide direct empirical support for the efficiency thesis. RepoNavigator (Zhang et al., 2025) showed that a 7B model trained with reinforcement learning for repository-level code navigation beat 14B multi-tool baselines &mdash; not by using more compute, but by learning more efficient tool-use strategies through RL optimization. Agent-Omit (Chen et al., 2025) demonstrated that an 8B model could match frontier agent performance by learning to <em>skip</em> 45% of redundant reasoning tokens &mdash; it got better by doing <em>less</em>, not more.</p>
+   <p>These results point toward a future where the smartest AI systems are not the biggest, but the most efficiently trained and most intelligently deployed. The 7B model that knows exactly what to attend to and what to skip may outperform the 175B model that processes everything indiscriminately &mdash; at 1/25th the cost.</p>
+   <h3>The Edge Breakout</h3>
+   <p>IBM&rsquo;s El Maghraoui frames 2026 as &ldquo;the year of frontier versus efficient model classes. GPUs will remain king, but ASIC-based accelerators, chiplet designs, analog inference and even quantum-assisted optimizers will mature. Maybe a new class of chips for agentic workloads will emerge.&rdquo; This is not just about smaller models on the same hardware &mdash; it&rsquo;s about a new hardware tier optimized specifically for the 3B-7B parameter range that dominates real-world deployment. If such chips emerge, they could make efficient models even more cost-competitive against frontier models, accelerating the bifurcation of the market into &ldquo;frontier for research and hard problems&rdquo; and &ldquo;efficient for everything else.&rdquo;</p>
+   <div class="callout"><strong>The synthesis:</strong> If the data quality thesis is right (better curation beats more volume), the SLM thesis is right (7B matches 175B for most tasks), and the efficiency hardware thesis materializes (new chips optimized for small models), then the competitive advantage in 2026-2027 is not who has the biggest model or the most compute. It is who has the best data curation pipeline, the most efficient model-task matching, and the smartest orchestration layer that routes each sub-task to the cheapest model that can handle it. Scale becomes necessary for the hardest 10% of tasks &mdash; and a waste of resources for the other 90%.</div>`,
+  `<div class="detail-header"><div class="num">09</div><h2>What <em>Everyone</em> Agrees On</h2></div><h3>Five Points of Convergence</h3>
+   <p>It is worth pausing on how remarkable this consensus is. These eight sources come from very different vantage points: an academic census (Stanford), an infrastructure research lab (Epoch), a corporate think tank (IBM), a chipmaker arguing against its own short-term interests (NVIDIA), independent analysts (<a href="https://www.understandingai.org/" target="_blank">Understanding AI</a>, <a href="https://llm-stats.com/" target="_blank">LLM-Stats</a>), a UX research firm (Nielsen), and a tech journalism outlet (MIT). They have different methodologies, different audiences, different incentive structures. And yet they converge on five findings with striking consistency.</p>
+   <p><strong>1. Cost deflation is the most robust finding.</strong> Every source confirms 10-30&times; annual cost reduction for equivalent performance. <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford</a> has the precise numbers (280&times; in 18 months for GPT-3.5-level). Epoch has the hardware curves (40%/year price-performance). IBM sees the business consequence (commodity point). This is no longer a forecast &mdash; it is an established empirical trend with multiple independent confirmations.</p>
+   <p><strong>2. Models are commoditizing.</strong> This is not a prediction about the future &mdash; it has already happened. The 5.4% gap between #1 and #10 on Chatbot Arena, the 0.7% gap between #1 and #2, the 1.7% gap between open and closed weights. These numbers describe a commodity market. The strategic competition has moved downstream to integration, data, and orchestration.</p>
+   <p><strong>3. Open-source is winning strategically.</strong> Not just technically (where the benchmark gap has collapsed) but geopolitically. Chinese firms&rsquo; trust advantage through openness, the forced opening of American companies, and the embedding of Chinese models in global infrastructure represent a shift in soft power that export controls cannot reverse.</p>
+   <p><strong>4. Power is the binding physical constraint.</strong> Not compute (which can be manufactured on 9-month cycles), not algorithms (which keep improving 3&times;/year), not data (which can be synthesized or curated). Power infrastructure requires years to build, the demand curve is doubling yearly, and the current grid cannot support the projections. This is the one constraint that cannot be solved by cleverness alone &mdash; it requires physical construction at national-infrastructure scale.</p>
+   <p><strong>5. Efficiency matters as much as scale.</strong> The 142&times; parameter reduction. The 7B models matching 175B on agentic tasks. Agent-Omit getting better by doing less. The data quality turn. The counter-narrative to &ldquo;bigger is better&rdquo; now has substantial, independently replicated evidence behind it.</p>
+   <div class="callout"><strong>The meta-finding:</strong> All five consensus points push in the same direction &mdash; away from the model as the center of value, toward the system around the model. Cost deflation means the model is cheap. Commoditization means it&rsquo;s interchangeable. Open-source means it&rsquo;s available to everyone. Efficiency means you often don&rsquo;t need the biggest one. Power means the physical infrastructure to run it is the scarce resource. The model is becoming a commodity input, like electricity or bandwidth. The value is in what you build with it.</div>`,
+  `<div class="detail-header"><div class="num">10</div><h2>Where the <em>Discourse</em> Fractures</h2></div><h3>Where Well-Informed People Disagree</h3>
+   <p>The disagreements in this section are as informative as the agreements, because they reveal where genuine uncertainty remains. These are not cases of one side being wrong and the other right. They are cases where the same data supports divergent interpretations &mdash; which tells you that the underlying system is in a genuinely unpredictable phase.</p>
+   <h3>Fault Line 1: Is This a Bubble?</h3>
+   <p><a href="https://hai.stanford.edu/news/stanford-ai-experts-predict-2026" target="_blank">Stanford&rsquo;s Landay</a>: &ldquo;I am concerned that this is getting to be a very speculative bubble.&rdquo; The case: $252 billion in corporate AI investment in 2024. <a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> reports 42% of companies abandoned most AI initiatives in 2024, up from 17% the prior year. The average organization scrapped 46% of AI proofs-of-concept. When nearly half of projects fail and investment keeps doubling, that pattern has a name in financial history.</p>
+   <p><a href="https://www.understandingai.org/" target="_blank">Understanding AI</a>&rsquo;s Timothy Lee: &ldquo;I don&rsquo;t buy it &mdash; they&rsquo;re racing to keep up with customer orders.&rdquo; The counter-case: unlike dot-com companies with no revenue, AI companies are generating real cash. The combined revenues of leading AI companies grew 9&times; in 2023-2024 (Epoch). 78% of organizations now use AI, up from 55% in 2023 (Stanford). The spending may look speculative from outside, but from inside the companies, it&rsquo;s a response to demand they can barely fulfill.</p>
+   <p>Both views are defensible. The honest answer is that we won&rsquo;t know whether this is a bubble until after the fact &mdash; that&rsquo;s the defining characteristic of bubbles. What we <em>can</em> say: the investment is concentrated (US accounts for $109B of $252B globally), the failure rate of projects is high (40-46% abandoned), and the gap between investment and realized revenue remains large at most companies. Whether the gap closes determines whether this is 1999 or 2010.</p>
+   <h3>Fault Line 2: Context Window Trajectory</h3>
+   <p>Williams argues the plateau is structural: transformer attention scales quadratically, context rot is an inherent property of the architecture, and the economic case for smaller windows + retrieval is overwhelming. This view implies that breaking through 1-2M will require architectural innovation (state-space models, etc.), not incremental transformer improvements.</p>
+   <p>Others point to coding as the exception that could drive a breakthrough. Reading a 100K-line codebase in context is qualitatively different from reading 100K lines of prose &mdash; code has structure, dependencies, and patterns that benefit from global context in ways that natural language may not. If a coding-specific model achieves 5-10M tokens of useful context, it could pull general-purpose models along.</p>
+   <p>The uncertainty here is real but bounded. We will know within 12-18 months whether the plateau holds or breaks.</p>
+   <h3>Fault Line 3: Speed of Multimodal Convergence</h3>
+   <p>Nielsen predicts that by end of 2026, text-only frontier models will be seen as archaic. <a href="https://www.ibm.com/think/" target="_blank">IBM&rsquo;s</a> Baughman echoes this with predictions of multimodal digital workers. But the gap between &ldquo;impressive demos&rdquo; and &ldquo;reliable production systems&rdquo; has historically been measured in years, not months. The Sora shutdown today &mdash; the most prominent multimodal product, backed by a billion-dollar deal, killed after six months &mdash; is a data point that complexity, cost, and copyright can torpedo even impressive capabilities.</p>
+   <p>The resolution may be that multimodal capabilities become table stakes <em>within</em> existing platforms (text models that can also see and hear) while standalone multimodal products (dedicated video generators, music apps) struggle with business model, copyright, and cost structure. The capability arrives on schedule; the standalone product does not.</p>
+   <div class="callout"><strong>What the disagreements reveal:</strong> When well-informed, data-driven analysts with access to the same evidence reach opposite conclusions, the system is in a genuinely uncertain phase transition. The honest analytical response is not to pick a side, but to describe the evidence for each and identify the specific observations that would resolve the disagreement. For the bubble question: watch project success rates and realized revenue vs. investment over the next 12 months. For context windows: watch whether any model breaks through 2M with demonstrated quality retention. For multimodal: watch whether standalone products survive or whether capability gets absorbed into general-purpose platforms.</div>`
+];
+
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">L<em>M</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> GENAI 2026 · S1 · 8 SOURCES</div>
+        <div class="hero-title">LLMs &amp; Foundation <em>Models</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Capability, cost, compute, and the geopolitics of open-source</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Vector Machines & Kernels — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Margins', title: '<em>Margins</em> Intuition' },
+  { num: '02', short: 'Feature Maps', title: '<em>Feature</em> Maps' },
+  { num: '03', short: 'Kernel Trick', title: 'The <em>Kernel</em> Trick' },
+  { num: '04', short: 'Kernel Props', title: '<em>Kernel</em> Properties' },
+  { num: '05', short: 'Max Margin', title: '<em>Optimal</em> Margin Classifier' },
+  { num: '06', short: 'Dual Form', title: '<em>Dual</em> Formulation' },
+  { num: '07', short: 'Soft Margin', title: '<em>Regularization</em> & Soft Margin' },
+  { num: '08', short: 'SMO', title: 'The <em>SMO</em> Algorithm' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // 01 Margins Intuition
+  `<p>The margin represents the geometric distance between a hyperplane and the nearest data points from either class. A larger margin improves generalization by creating a wider decision boundary, reducing sensitivity to small perturbations in training data. This principle—maximizing the margin between classes—forms the core geometric intuition behind support vector machines.</p>
+  <p>The functional margin (γ̂) measures confidence based on the decision function output, while the geometric margin (γ) normalizes by the weight vector's magnitude. For separable data, the maximum margin classifier finds weights w and bias b that maximize γ, creating the most robust linear boundary. Support vectors are the training points lying exactly on the margin boundary.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">γ</div><div class="sl">Geometric Margin</div></div>
+    <div class="st"><div class="sv">γ̂</div><div class="sl">Functional Margin</div></div>
+    <div class="st"><div class="sv">||w||</div><div class="sl">Weight Magnitude</div></div>
+    <div class="st"><div class="sv">SVs</div><div class="sl">Support Vectors</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Geometric Distance</span>
+    <span class="s-chip">Hyperplane Separation</span>
+    <span class="s-chip">Linearly Separable</span>
+  </div>`,
+
+  // 02 Feature Maps
+  `<p>Feature mapping transforms input data φ(x) into higher-dimensional spaces where previously nonlinear patterns become linearly separable. A polynomial feature map φ(x) = [x, x², x₁x₂, ...] creates quadratic features, while Gaussian features can map to infinite dimensions. The classic XOR problem—unsolvable with linear separation in 2D—becomes trivial after polynomial feature mapping to 3D space.</p>
+  <p>However, explicitly computing φ(x) becomes computationally expensive in high dimensions. For d-dimensional input with polynomial degree 2, the feature space dimensionality grows from O(d) to O(d²). This curse of dimensionality motivated the kernel trick: instead of computing features directly, we use a kernel function K(x,z) that computes inner products in feature space without materializing the transformed vectors.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Polynomial Features</h4>
+      <p>φ(x) = [x, x²] raises input dimensionality, enabling quadratic boundaries. Degree-k polynomials grow feature space exponentially.</p>
+    </div>
+    <div class="feat">
+      <h4>Gaussian Features</h4>
+      <p>RBF kernel implicitly maps to infinite dimensions through exp(-γ||x-z||²), creating flexible nonlinear separators.</p>
+    </div>
+    <div class="feat">
+      <h4>XOR Example</h4>
+      <p>Data (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0 becomes linearly separable in φ-space but not in original 2D.</p>
+    </div>
+    <div class="feat">
+      <h4>Dimensionality</h4>
+      <p>Feature maps can increase problem complexity dramatically; kernels avoid this by computing inner products implicitly.</p>
+    </div>
+  </div>`,
+
+  // 03 Kernel Trick
+  `<p>The kernel trick computes K(x,z) = φ(x)ᵀφ(z)—the inner product in feature space—without explicitly mapping to φ(x) or φ(z). This elegant insight reduces computation from O(d') to O(d), where d' is the high (or infinite) feature space dimension and d is the original input dimension. For polynomial kernels K(x,z) = (xᵀz + c)^p, the trick evaluates a p-degree polynomial in original space.</p>
+  <p>The SVM decision function becomes f(x) = sign(Σᵢ αᵢ yᵢ K(xᵢ, x) + b), depending only on kernel evaluations between the new point x and training examples xᵢ. This kernel-dependent formulation enables learning in arbitrary high-dimensional (or infinite-dimensional) feature spaces efficiently. Common kernels include polynomial K(x,z) = (xᵀz + 1)^d, Gaussian (RBF) K(x,z) = exp(-γ||x-z||²), and sigmoid K(x,z) = tanh(κxᵀz + θ).</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowKT" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" class="lbl-hi" />
+        </marker>
+      </defs>
+      <text x="50" y="30" class="node-text">Input Space</text>
+      <circle cx="80" cy="100" r="8" class="node"/>
+      <circle cx="140" cy="90" r="8" class="node"/>
+      <circle cx="110" cy="140" r="8" class="node"/>
+      <text x="65" y="165" class="lbl">x, z</text>
+
+      <path d="M160,100 L240,100" stroke-width="2" class="edge-hi" marker-end="url(#arrowKT)"/>
+      <text x="190" y="90" class="lbl-hi">φ(x), φ(z)</text>
+
+      <text x="280" y="30" class="node-text">Feature Space</text>
+      <circle cx="300" cy="60" r="6" class="node-hi"/>
+      <circle cx="330" cy="70" r="6" class="node-hi"/>
+      <circle cx="315" cy="100" r="6" class="node-hi"/>
+      <circle cx="290" cy="130" r="6" class="node-hi"/>
+      <text x="350" y="100" class="lbl">(d' dimensions)</text>
+
+      <path d="M370,100 L440,100" stroke-width="2" class="edge-hi" marker-end="url(#arrowKT)"/>
+      <text x="390" y="85" class="lbl-hi">K(x,z)</text>
+
+      <text x="480" y="30" class="node-text">Scalar</text>
+      <rect x="460" y="80" width="80" height="40" class="node-hi" rx="2"/>
+      <text x="475" y="110" class="node-text" font-size="16">φ(x)ᵀφ(z)</text>
+
+      <text x="50" y="230" class="lbl" font-size="12">Kernel trick: compute inner product without materializing φ space</text>
+    </svg>
+  </div>`,
+
+  // 04 Kernel Properties
+  `<p>A valid kernel must satisfy Mercer's theorem: the kernel matrix K (with entries K(xᵢ, xⱼ)) must be positive semi-definite (PSD). This ensures the kernel genuinely corresponds to some feature mapping φ(x) and that the optimization problem remains convex. Testing PSD is done by checking that all eigenvalues are non-negative; symmetric, real-valued kernels are PSD if and only if they can be decomposed as K = φ(x)ᵀφ(z).</p>
+  <p>Kernels can be combined using simple algebraic rules: the product of two valid kernels is valid K₁(x,z) · K₂(x,z), and positive scaling α·K(x,z) where α > 0 preserves validity. Sum and difference operations also preserve the PSD property under specific conditions. These composition rules allow engineers to design custom kernels for domain-specific problems while guaranteeing mathematical consistency and optimization convexity.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">PSD</div><div class="sl">Positive Semi-Def</div></div>
+    <div class="st"><div class="sv">λ ≥ 0</div><div class="sl">Eigenvalues</div></div>
+    <div class="st"><div class="sv">K₁·K₂</div><div class="sl">Valid Product</div></div>
+    <div class="st"><div class="sv">Mercer</div><div class="sl">Theorem</div></div>
+  </div>
+  <div class="callout">
+    <h4>Mercer's Theorem</h4>
+    <p>A symmetric function K(x,z) defined on X×X corresponds to an inner product in some feature space if and only if K is positive semi-definite: for all finite sequences x₁,...,xₙ and coefficients c₁,...,cₙ, Σᵢⱼ cᵢcⱼK(xᵢ,xⱼ) ≥ 0.</p>
+  </div>`,
+
+  // 05 Optimal Margin Classifier
+  `<p>The optimal margin classifier solves the constrained optimization problem: maximize γ subject to yᵢ(wᵀφ(xᵢ) + b) ≥ γ for all training points. This can be reformulated as: minimize ½||w||² subject to yᵢ(wᵀφ(xᵢ) + b) ≥ 1. The geometric margin γ = 1/||w||, so maximizing γ is equivalent to minimizing ||w||. The constraint ensures points stay on the correct side of the margin.</p>
+  <p>Using Lagrange multipliers, we construct L = ½||w||² - Σᵢ αᵢ[yᵢ(wᵀφ(xᵢ) + b) - 1], taking derivatives and setting them to zero. The KKT conditions require complementary slackness: αᵢ > 0 only if point i is on the margin (yᵢ(wᵀφ(xᵢ) + b) = 1). This sparse structure means only support vectors matter; non-margin points have αᵢ = 0 and don't affect the solution.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="gridKM" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+        </pattern>
+      </defs>
+      <rect x="50" y="40" width="500" height="200" fill="url(#gridKM)"/>
+
+      <!-- Separating line -->
+      <line x1="70" y1="240" x2="530" y2="80" stroke-width="2" class="edge-hi"/>
+
+      <!-- Margin lines -->
+      <line x1="90" y1="235" x2="520" y2="110" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="4,4"/>
+      <line x1="50" y1="245" x2="540" y2="50" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="4,4"/>
+
+      <!-- Positive class -->
+      <circle cx="120" cy="180" r="7" class="node-hi" fill="none" stroke-width="2"/>
+      <circle cx="200" cy="140" r="7" class="node-hi" fill="none" stroke-width="2"/>
+      <circle cx="160" cy="200" r="7" class="node-hi" fill="none" stroke-width="2"/>
+
+      <!-- Negative class -->
+      <circle cx="450" cy="90" r="7" class="node-hi" fill="none" stroke-width="2"/>
+      <circle cx="500" cy="120" r="7" class="node-hi" fill="none" stroke-width="2"/>
+      <circle cx="480" cy="160" r="7" class="node-hi" fill="none" stroke-width="2"/>
+
+      <!-- Support vectors on margin -->
+      <circle cx="180" cy="215" r="8" class="node-hi"/>
+      <circle cx="380" cy="175" r="8" class="node-hi"/>
+
+      <!-- Labels -->
+      <text x="150" y="35" class="node-text">Decision Boundary (Optimal Margin)</text>
+      <text x="70" y="270" class="lbl" font-size="11">Margin γ = 1/||w||</text>
+      <text x="350" y="270" class="lbl" font-size="11">Support Vectors (αᵢ > 0)</text>
+    </svg>
+  </div>`,
+
+  // 06 Dual Formulation
+  `<p>The dual problem reformulates the primal optimization into the space of Lagrange multipliers αᵢ: maximize Σᵢ αᵢ - ½Σᵢⱼ αᵢαⱼyᵢyⱼK(xᵢ, xⱼ) subject to Σᵢ αᵢyᵢ = 0 and αᵢ ≥ 0. This dual form depends only on kernel evaluations K(xᵢ, xⱼ), never requiring explicit feature vectors φ(xᵢ). The primal solution w = Σᵢ αᵢyᵢφ(xᵢ) becomes a weighted sum of feature-mapped support vectors.</p>
+  <p>The sparsity property emerges from complementary slackness: only points with αᵢ > 0 contribute to the solution. For most data, αᵢ = 0, meaning the decision boundary depends on a small subset of support vectors—typically 1–10% of training data. This sparsity enables efficient prediction: computing f(x) requires only evaluating K(xᵢ, x) for support vectors, not all training examples. The dual formulation naturally handles nonlinear kernels and scales better than the primal for high-dimensional feature spaces.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Dual Advantages</h4>
+      <ul>
+        <li>Kernel-based: no explicit φ(x) needed</li>
+        <li>Sparse solution: only support vectors matter</li>
+        <li>Scales to infinite-dimensional spaces</li>
+        <li>Convex optimization, globally optimal</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Dual Challenges</h4>
+      <ul>
+        <li>O(n²) kernel matrix memory for n samples</li>
+        <li>O(n³) training time (without SMO tricks)</li>
+        <li>Quadratic programming required</li>
+        <li>Not all αᵢ interpretable as confidence</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 07 Soft Margin & Regularization
+  `<p>Real-world data is rarely linearly separable, even in high-dimensional feature spaces. The soft margin SVM allows misclassifications by introducing slack variables ξᵢ ≥ 0. The modified constraint yᵢ(wᵀφ(xᵢ) + b) ≥ 1 - ξᵢ permits ξᵢ > 0 for points inside or crossing the margin. The objective becomes: minimize ½||w||² + C·Σᵢ ξᵢ, where C balances margin width against training error.</p>
+  <p>The parameter C acts as a regularization knob: large C penalizes slack heavily, fitting more aggressively to training data (risk of overfitting), while small C tolerates more errors, favoring larger margins (better generalization). The hinge loss L(y, ŷ) = max(0, 1 - y·ŷ) emerges naturally from soft-margin SVMs: it equals ξ for each point. The dual problem is identical except αᵢ ≤ C, and KKT conditions link ξᵢ to dual variables. Cross-validation selects optimal C, balancing training accuracy and test generalization.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">ξᵢ</div><div class="sl">Slack Variables</div></div>
+    <div class="st"><div class="sv">C</div><div class="sl">Regularization Param</div></div>
+    <div class="st"><div class="sv">1 - ξᵢ</div><div class="sl">Margin Constraint</div></div>
+    <div class="st"><div class="sv">Hinge</div><div class="sl">Loss Function</div></div>
+  </div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="node-text">Soft Margin SVM: C Parameter Trade-off</text>
+
+      <!-- Small C (large margin) -->
+      <g>
+        <text x="80" y="60" class="lbl" font-size="12">Small C: Large Margin</text>
+        <line x1="50" y1="140" x2="200" y2="80" stroke-width="2" class="edge-hi"/>
+        <line x1="70" y1="150" x2="190" y2="100" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="3,3"/>
+        <line x1="30" y1="130" x2="210" y2="60" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="3,3"/>
+        <circle cx="100" cy="120" r="5" class="node"/>
+        <circle cx="150" cy="100" r="5" class="node"/>
+        <circle cx="120" cy="135" r="5" fill="none" stroke="var(--red)" stroke-width="2"/>
+        <text x="50" y="180" class="lbl" font-size="11">Higher bias, lower variance</text>
+      </g>
+
+      <!-- Large C (small margin) -->
+      <g>
+        <text x="380" y="60" class="lbl" font-size="12">Large C: Tight Margin</text>
+        <line x1="350" y1="140" x2="500" y2="80" stroke-width="2" class="edge-hi"/>
+        <line x1="360" y1="137" x2="495" y2="90" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="3,3"/>
+        <line x1="340" y1="143" x2="505" y2="70" stroke-width="1" class="edge" opacity="0.5" stroke-dasharray="3,3"/>
+        <circle cx="400" cy="120" r="5" class="node"/>
+        <circle cx="450" cy="100" r="5" class="node"/>
+        <circle cx="420" cy="105" r="5" class="node"/>
+        <text x="350" y="180" class="lbl" font-size="11">Lower bias, higher variance</text>
+      </g>
+
+      <!-- C value axis -->
+      <line x1="50" y1="220" x2="550" y2="220" stroke="var(--border)" stroke-width="1"/>
+      <text x="50" y="245" class="lbl" font-size="10">C = 0.01</text>
+      <text x="280" y="245" class="lbl" font-size="10">C = 1 (balanced)</text>
+      <text x="510" y="245" class="lbl" font-size="10">C = 100</text>
+    </svg>
+  </div>`,
+
+  // 08 SMO Algorithm
+  `<p>Sequential Minimal Optimization (SMO), developed by John Platt, breaks the QP problem into subproblems. Instead of optimizing all n alphas simultaneously, SMO selects two multipliers αᵢ and αⱼ, optimizes them analytically while holding others fixed, then repeats. The two-variable problem has a closed-form solution, avoiding expensive quadratic programming. The constraint Σ αᵢyᵢ = 0 becomes: αᵢyᵢ + αⱼyⱼ = -Σₖ≠ᵢ,ⱼ αₖyₖ, reducing the problem to a single variable.</p>
+  <p>SMO works by repeatedly selecting promising pairs (i, j) to optimize. Heuristics choose variables with largest error differences: find i where yᵢ(fᵢ - yᵢ) is maximum (most violated), then find j where yⱼ(fⱼ - yⱼ) is minimum. After updating (αᵢ, αⱼ), bias b is recalculated to satisfy KKT conditions for support vectors. Convergence occurs when no pair violates KKT conditions by more than tolerance ε. SMO reduces training from O(n³) to O(n²) in practice, enabling SVMs to scale to millions of samples.</p>
+  <div class="s-chips">
+    <span class="s-chip">Coordinate Ascent</span>
+    <span class="s-chip">Working Set Selection</span>
+    <span class="s-chip">Closed-form Updates</span>
+    <span class="s-chip">KKT Convergence</span>
+    <span class="s-chip">O(n²) Complexity</span>
+  </div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Step 1</div>
+      <div class="tl-text">Choose pair (αᵢ, αⱼ) with maximum KKT violations.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Step 2</div>
+      <div class="tl-text">Solve the two-variable subproblem analytically.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Step 3</div>
+      <div class="tl-text">Update bias b using KKT conditions for SVs.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Step 4</div>
+      <div class="tl-text">Repeat until convergence (all KKT satisfied ±ε).</div>
+    </div>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - SVM Materials</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Support_vector_machine" target="_blank">Support Vector Machines - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Kernel_method" target="_blank">Kernel Methods - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 12)</a></li>
+  <li><a href="https://arxiv.org/abs/1904.10529" target="_blank">SVM Theory and Practice (Modern Perspectives)</a></li>
+</ul>`];
+
+const details = [
+  // 01 Margins Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 1</div>
+    <h2><em>Margins</em> Intuition</h2>
+  </div>
+  <p>The geometric margin γ represents the shortest perpendicular distance from any training point to a separating hyperplane wᵀx + b = 0. Maximizing this distance ensures the decision boundary is as "centered" as possible between the two classes, creating a buffer zone around the separating surface. This buffer makes the classifier robust: small perturbations in test examples are less likely to cross the boundary, improving generalization.</p>
+  <p>The functional margin γ̂ = yᵢ(wᵀxᵢ + b) measures confidence by the raw decision function value; negative values indicate misclassification. The relationship γ = γ̂/||w|| normalizes functional margin by weight magnitude. For a fixed functional margin, smaller ||w|| yields larger geometric margin. The maximum margin classifier simultaneously minimizes ||w|| and enforces yᵢ(wᵀxᵢ + b) ≥ 1, creating the widest-margin hyperplane.</p>
+  <h3>Geometric vs. Functional Margin</h3>
+  <p>Consider a simple 2D example: y₁ = +1 at (1, 0) and y₂ = -1 at (-1, 0) with boundary wᵀx + b = 0. If w = [1, 0] and b = 0, the functional margins are γ̂₁ = 1 and γ̂₂ = 1, with ||w|| = 1, giving geometric margin γ = 1. If instead w = [2, 0] and b = 0, functional margins double (γ̂₁ = 2, γ̂₂ = 2), but ||w|| = 2, so geometric margin remains γ = 1. This shows why ||w|| scaling matters: it can inflate functional margins while leaving geometry unchanged.</p>
+  <h3>Support Vectors and the Margin Boundary</h3>
+  <p>Points exactly on the margin boundary satisfy yᵢ(wᵀxᵢ + b) = 1. In the maximum margin solution, a few (often just n+1 in n dimensions) training examples touch the margin—these are support vectors. Non-margin points satisfy yᵢ(wᵀxᵢ + b) > 1 and do not affect the solution if perturbed slightly. This sparsity property is crucial: the decision boundary depends only on the handful of critical points, making SVMs memory-efficient and enabling elegant kernel-based solutions.</p>
+  <div class="callout">
+    <h4>Margin Intuition Summary</h4>
+    <p>Larger margins are better for generalization because they create robustness to small changes. The max-margin classifier finds the hyperplane that keeps the two classes as far apart as possible, reducing the risk that future test examples near the decision boundary will be misclassified.</p>
+  </div>`,
+
+  // 02 Feature Maps Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 2</div>
+    <h2><em>Feature</em> Maps</h2>
+  </div>
+  <p>A feature map φ: ℝᵈ → ℝᵈ' is a function that transforms raw input x into a higher-dimensional representation φ(x). The goal is to make nonlinear patterns in the original space become linearly separable in the feature space. For example, φ(x) = [x, x²] for univariate x maps the parabola y = x² (nonlinearly separable in 1D) into a line in 2D space.</p>
+  <p>Polynomial feature maps are defined as φ(x) = [x₁, x₂, ..., xₙ, x₁², x₁x₂, ..., xₙ²] for degree 2. For d input dimensions and degree k, the number of features grows as O(dᵏ)—exponential growth limiting practical use. Gaussian (RBF) features are implicitly infinite-dimensional: the RBF kernel corresponds to expanding x as a Taylor series of Gaussian basis functions centered at training points.</p>
+  <h3>The XOR Problem Solved by Feature Mapping</h3>
+  <p>XOR data cannot be separated linearly in 2D: (0,0)→0, (1,0)→1, (0,1)→1, (1,1)→0. No line separates the +1 points {(1,0), (0,1)} from -1 points {(0,0), (1,1)}. However, with φ(x₁, x₂) = [x₁, x₂, x₁x₂], we get φ(0,0) = [0,0,0], φ(1,0) = [1,0,0], φ(0,1) = [0,1,0], φ(1,1) = [1,1,1]. In 3D, the plane w₁ + w₂ - 3w₃ = 0.5 separates them: at (0,0,0) it gives -0.5 (negative, correct), at (1,1,1) it gives 2w₁ + 2w₂ - 3 ≈ -0.5 (negative, correct), and (1,0,0), (0,1,0) give positive values.</p>
+  <h3>Computational Cost and the Curse of Dimensionality</h3>
+  <p>If d = 100 and we use degree-2 polynomial features, the feature dimension d' = O(10,000). Computing w = Σ αᵢyᵢφ(xᵢ) requires storing a 10,000-dimensional vector. Prediction on a test point requires φ(x) to be computed (O(d') time) and then the inner product wᵀφ(x) (O(d') time). For large feature spaces, this becomes prohibitive. The kernel trick avoids this by computing K(x, z) = φ(x)ᵀφ(z) in O(d) time without materializing φ.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Explicit Features</h4>
+      <p>Compute φ(x) explicitly, then use standard linear classifiers. Simple but slow in high dimensions.</p>
+    </div>
+    <div class="feat">
+      <h4>Implicit Features</h4>
+      <p>Use kernels to compute inner products in feature space without materializing φ(x). Faster, cleaner.</p>
+    </div>
+    <div class="feat">
+      <h4>Dimensionality Growth</h4>
+      <p>Polynomial degree-k features grow as O(dᵏ). RBF features are infinite-dimensional. Trade-off between expressiveness and computation.</p>
+    </div>
+    <div class="feat">
+      <h4>Generalization</h4>
+      <p>Higher feature dimension risks overfitting unless regularized (margin-based or ridge). Kernels + soft margin control complexity.</p>
+    </div>
+  </div>`,
+
+  // 03 Kernel Trick Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 3</div>
+    <h2>The <em>Kernel</em> Trick</h2>
+  </div>
+  <p>The kernel trick is a computational sleight-of-hand: instead of explicitly mapping input x to φ(x) and computing φ(x)ᵀφ(z), define a kernel function K(x, z) that directly computes the inner product. If K(x, z) = φ(x)ᵀφ(z) holds for some feature map φ (verified later by Mercer's theorem), then K can be used everywhere the inner product appears, avoiding the cost of computing φ.</p>
+  <p>The magic becomes apparent in the SVM decision function. In the dual formulation, the solution w = Σᵢ αᵢyᵢφ(xᵢ) involves a sum of feature vectors. For prediction, f(x) = wᵀφ(x) + b = Σᵢ αᵢyᵢφ(xᵢ)ᵀφ(x) + b = Σᵢ αᵢyᵢK(xᵢ, x) + b. The weight vector never needs to be explicitly computed; the classifier is determined entirely by kernel evaluations.</p>
+  <h3>Common Kernels and Their Properties</h3>
+  <p><strong>Linear kernel:</strong> K(x, z) = xᵀz. No feature mapping, classical linear SVM.</p>
+  <p><strong>Polynomial kernel:</strong> K(x, z) = (xᵀz + c)ᵈ. Corresponds to degree-d polynomial feature expansion. The parameter d controls polynomial degree; c shifts the constant term, affecting low-degree contributions.</p>
+  <p><strong>Radial Basis Function (RBF):</strong> K(x, z) = exp(-γ||x - z||²). Nonparametric kernel with implicit infinite-dimensional mapping. γ controls the radius of the Gaussian; larger γ makes the kernel more localized (sharp peaks), smaller γ makes it smoother.</p>
+  <p><strong>Sigmoid kernel:</strong> K(x, z) = tanh(κxᵀz + θ). Motivated by neural networks; not always a valid PSD kernel for all parameter values, so care is needed.</p>
+  <h3>Kernel Evaluation Complexity</h3>
+  <p>For polynomial kernel K(x, z) = (xᵀz + 1)ᵈ with d-dimensional input: the direct approach (xᵀz computes in O(d), then raising to power d takes O(log d) by fast exponentiation, total O(d + log d) ≈ O(d)). Explicit degree-d feature mapping would give φ(x) of dimension ≈ dᵈ, impossible to compute for large d. The kernel trick evaluates in mere O(d) time.</p>
+  <p>For RBF kernel K(x, z) = exp(-γ||x - z||²): computing ||x - z||² takes O(d) time, then exp is O(1), total O(d). Without kernels, the RBF feature space is infinite-dimensional (infinite features); kernels make it tractable.</p>
+  <div class="callout">
+    <h4>Why Kernels Matter</h4>
+    <p>Kernels decouple feature engineering from the learning algorithm. Instead of hand-crafting features φ(x), practitioners choose a kernel K(x,z) that measures similarity. This separation enables flexibility: different problems use different kernels, but the optimization machinery (SVM solver) remains unchanged.</p>
+  </div>`,
+
+  // 04 Kernel Properties Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 4</div>
+    <h2><em>Kernel</em> Properties</h2>
+  </div>
+  <p>Mercer's theorem provides the bridge between kernels and feature maps. It states: a symmetric function K: X × X → ℝ is a valid kernel if and only if the kernel matrix K (with entries Kᵢⱼ = K(xᵢ, xⱼ)) is positive semi-definite for all finite sets {x₁, ..., xₙ} in X. PSD means all eigenvalues are non-negative, equivalently, for any vector c ∈ ℝⁿ, cᵀKc ≥ 0.</p>
+  <p>The importance of Mercer's theorem is that it guarantees any symmetric PSD kernel corresponds to some feature space where a valid inner product is defined. This ensures the SVM optimization problem remains convex, with a unique global minimum. Without PSD verification, a kernel might not correspond to any feature space, and the optimization could become non-convex with multiple local minima.</p>
+  <h3>Testing for Positive Semi-Definiteness</h3>
+  <p>For a finite set of training points, the kernel matrix K ∈ ℝⁿˣⁿ can be checked for PSD by computing its eigenvalues using standard linear algebra. If all eigenvalues λ₁, ..., λₙ satisfy λᵢ ≥ 0, the matrix is PSD. Alternatively, Cholesky decomposition: K = LLᵀ where L is lower triangular. If decomposition succeeds without encountering negative diagonal entries, K is PSD.</p>
+  <h3>Kernel Composition Rules</h3>
+  <p><strong>Product:</strong> If K₁ and K₂ are valid kernels, then K(x,z) = K₁(x,z) · K₂(x,z) is valid. Proof: their kernel matrices have non-negative eigenvalues; the Kronecker product of two PSD matrices is PSD.</p>
+  <p><strong>Positive scalar multiple:</strong> If K is valid and α > 0, then αK is valid (scaling a PSD matrix by α > 0 preserves PSD).</p>
+  <p><strong>Sum:</strong> If K₁ and K₂ are valid, then K₁ + K₂ is valid (sum of PSD matrices is PSD).</p>
+  <p><strong>Exponential:</strong> If K is valid, then exp(K) = I + K + K²/2! + K³/3! + ... is valid (infinite series of products and sums preserves validity).</p>
+  <h3>Kernel Design Strategies</h3>
+  <p>Engineers design custom kernels by composing simple building blocks. Start with a base kernel (polynomial, RBF, linear). Combine via products, sums, or exponentials. Test PSD by eigenvalue check on a sample of data. Validate on cross-validation: a kernel might be theoretically valid but empirically poor for a specific task. Parameter tuning (e.g., RBF's γ) is crucial; cross-validation selects γ from a grid {0.001, 0.01, 0.1, 1, 10, ...}.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>PSD Kernels Guarantee</h4>
+      <ul>
+        <li>Convex optimization (unique global minimum)</li>
+        <li>Valid feature space exists</li>
+        <li>Mercer expansion is well-defined</li>
+        <li>Robust theoretical foundation</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Non-PSD Issues</h4>
+      <ul>
+        <li>Non-convex, multiple local minima</li>
+        <li>No guaranteed feature space</li>
+        <li>Convergence is slower, unreliable</li>
+        <li>Unpredictable generalization</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 05 Optimal Margin Classifier Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 5</div>
+    <h2><em>Optimal</em> Margin Classifier</h2>
+  </div>
+  <p>The optimal margin classifier is defined by the constrained optimization problem:</p>
+  <p><code>minimize ½||w||² subject to yᵢ(wᵀφ(xᵢ) + b) ≥ 1 for all i</code></p>
+  <p>This formulation is equivalent to maximizing the geometric margin γ = 1/||w|| while ensuring all points are correctly classified with margin at least 1 (in functional margin terms). The constraint yᵢ(wᵢᵀφ(xᵢ) + b) ≥ 1 combines two requirements: (1) correct classification (sign of yᵢ · (wᵀφ(xᵢ) + b) is positive), and (2) margin (value is at least 1).</p>
+  <h3>The Lagrangian and KKT Conditions</h3>
+  <p>To solve the constrained problem, form the Lagrangian:</p>
+  <p><code>L(w, b, α) = ½||w||² - Σᵢ αᵢ[yᵢ(wᵀφ(xᵢ) + b) - 1]</code></p>
+  <p>where αᵢ ≥ 0 are Lagrange multipliers. At the optimum, the gradient with respect to w and b equals zero:</p>
+  <p><code>∂L/∂w = w - Σᵢ αᵢyᵢφ(xᵢ) = 0  ⟹  w = Σᵢ αᵢyᵢφ(xᵢ)</code></p>
+  <p><code>∂L/∂b = -Σᵢ αᵢyᵢ = 0  ⟹  Σᵢ αᵢyᵢ = 0</code></p>
+  <p>The KKT complementary slackness condition states: αᵢ > 0 only if the constraint is tight, i.e., yᵢ(wᵀφ(xᵢ) + b) = 1. This means only points on the margin boundary (support vectors) have non-zero αᵢ; interior points have αᵢ = 0.</p>
+  <h3>Support Vectors and Sparsity</h3>
+  <p>In a typical SVM solution, support vectors comprise only 1–10% of training data. For a 1000-point dataset, maybe 50–100 points are support vectors. The decision boundary is determined entirely by these few critical points: w = Σᵢ∈SV αᵢyᵢφ(xᵢ). If a non-support-vector point is moved (even deleted), the solution does not change. This sparsity property is computationally attractive: prediction f(x) = Σᵢ∈SV αᵢyᵢK(xᵢ, x) + b depends only on evaluations involving support vectors.</p>
+  <h3>Geometric Interpretation in Feature Space</h3>
+  <p>After feature mapping φ, the data becomes linearly separable (with high probability in high dimensions). The optimal hyperplane in feature space is the one that maximizes the margin. Support vectors are the points closest to the decision boundary; they are the "hardest" points to classify and determine where the boundary should be positioned. Non-support vectors are safely on the correct side with margin > 1 and do not constrain the solution.</p>
+  <div class="callout">
+    <h4>Why Margins Matter for Generalization</h4>
+    <p>The margin represents a zone of low density around the decision boundary. Large margins imply the classifier is "confident" in its predictions far from the boundary. Points in the margin zone are uncertain, but if the margin is wide, few (if any) test examples will fall there, reducing misclassification risk.</p>
+  </div>`,
+
+  // 06 Dual Formulation Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 6</div>
+    <h2><em>Dual</em> Formulation</h2>
+  </div>
+  <p>The dual problem is derived by substituting the KKT conditions w = Σᵢ αᵢyᵢφ(xᵢ) and Σᵢ αᵢyᵢ = 0 back into the Lagrangian:</p>
+  <p><code>max: Σᵢ αᵢ - ½Σᵢⱼ αᵢαⱼyᵢyⱼφ(xᵢ)ᵀφ(xⱼ) subject to Σᵢ αᵢyᵢ = 0, αᵢ ≥ 0</code></p>
+  <p>Using the kernel trick, φ(xᵢ)ᵀφ(xⱼ) = K(xᵢ, xⱼ), the dual becomes:</p>
+  <p><code>max: Σᵢ αᵢ - ½Σᵢⱼ αᵢαⱼyᵢyⱼK(xᵢ, xⱼ) subject to Σᵢ αᵢyᵢ = 0, αᵢ ≥ 0</code></p>
+  <p>This dual form depends only on kernel evaluations K(xᵢ, xⱼ), never on explicit feature vectors. The problem is a quadratic program (QP): the objective is quadratic in α, and constraints are linear.</p>
+  <h3>Sparse Solutions via Support Vectors</h3>
+  <p>Complementary slackness from KKT: αᵢ[yᵢ(wᵀφ(xᵢ) + b) - 1] = 0. So either αᵢ = 0 or yᵢ(wᵀφ(xᵢ) + b) = 1. In the solution, most αᵢ = 0 (non-support vectors). Only points with αᵢ > 0 matter; these are support vectors on the margin boundary.</p>
+  <p>Why sparsity helps: the decision boundary f(x) = Σᵢ αᵢyᵢK(xᵢ, x) + b needs only inner products involving support vectors. For n training points with m ≪ n support vectors, prediction is O(m) time instead of O(n). Storage is also O(m) instead of O(n).</p>
+  <h3>Recovery of Primal Solution</h3>
+  <p>After solving the dual (finding optimal α), the primal solution w is recovered by w = Σᵢ αᵢyᵢφ(xᵢ). The bias b is found using any support vector xₛ where yₛ(wᵀφ(xₛ) + b) = 1. Solving for b: b = yₛ - wᵀφ(xₛ) = yₛ - Σᵢ αᵢyᵢK(xᵢ, xₛ). To improve numerical stability, average over all support vectors: b = 1/|SV| Σₛ∈SV [yₛ - Σᵢ αᵢyᵢK(xᵢ, xₛ)].</p>
+  <h3>Computational Complexity</h3>
+  <p>The dual QP has n variables (α₁, ..., αₙ) and one equality constraint. Standard QP solvers (e.g., interior-point methods) take O(n³) time. For n = 10,000, this is 10¹² operations—feasible but slow. The SMO algorithm reduces this to O(n²) by solving subproblems rather than the full QP.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Dual Form Elegance</h4>
+      <p>Kernel-based, nonlinear-capable, sparsity guarantees. Decision boundary depends only on support vectors and kernel.</p>
+    </div>
+    <div class="feat">
+      <h4>Dual Form Challenge</h4>
+      <p>Quadratic program hard to solve for large n. Requires QP solver; O(n³) baseline complexity before optimizations.</p>
+    </div>
+    <div class="feat">
+      <h4>Sparse Support Vectors</h4>
+      <p>Typical: 1–10% of training data are support vectors. Prediction is fast; storage is compact.</p>
+    </div>
+    <div class="feat">
+      <h4>Hyperparameter Tuning</h4>
+      <p>Kernel parameters (e.g., RBF γ) chosen by cross-validation on dual objective, not by inspecting weight vector w.</p>
+    </div>
+  </div>`,
+
+  // 07 Soft Margin & Regularization Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 7</div>
+    <h2><em>Regularization</em> & Soft Margin</h2>
+  </div>
+  <p>The hard-margin SVM assumes data is linearly separable in feature space. In practice, data is noisy, and even high-dimensional spaces may contain outliers. The soft-margin SVM relaxes separability by introducing slack variables ξᵢ ≥ 0:</p>
+  <p><code>minimize ½||w||² + C·Σᵢ ξᵢ subject to yᵢ(wᵀφ(xᵢ) + b) ≥ 1 - ξᵢ, ξᵢ ≥ 0</code></p>
+  <p>Slack ξᵢ quantifies the margin violation: ξᵢ = 0 means the point is on the correct side of the margin; 0 < ξᵢ < 1 means the point is inside the margin but correctly classified; ξᵢ ≥ 1 means the point is misclassified. The parameter C trades off margin width against training error.</p>
+  <h3>The C Parameter: Regularization Trade-off</h3>
+  <p><strong>Large C (e.g., C = 100):</strong> Heavily penalizes slack, forcing the algorithm to fit training data tightly. The margin becomes narrower, and the solution tends to overfit. Use when data is clean and accurate modeling is critical.</p>
+  <p><strong>Small C (e.g., C = 0.01):</strong> Tolerates slack, allowing many points inside or across the margin. The margin becomes wider, promoting generalization. Use when data is noisy or when you prioritize test set accuracy over training accuracy.</p>
+  <p><strong>Balanced C (e.g., C = 1):</strong> A middle ground. Practical choice when C is unknown; cross-validation refines it.</p>
+  <h3>Connection to Hinge Loss</h3>
+  <p>The soft-margin formulation is equivalent to minimizing the hinge loss:</p>
+  <p><code>min: Σᵢ max(0, 1 - yᵢ(wᵀφ(xᵢ) + b)) + λ||w||²</code></p>
+  <p>where λ = 1/(2C). The hinge loss L(y, ŷ) = max(0, 1 - y·ŷ) is zero if the prediction ŷ is confidently correct (yŷ > 1), and linearly increases with margin violation. This loss is a convex upper bound on 0–1 loss, making the optimization tractable. The L₂ regularization term λ||w||² prevents overfitting by penalizing large weights.</p>
+  <h3>KKT Conditions for Soft Margin</h3>
+  <p>The dual QP becomes:</p>
+  <p><code>max: Σᵢ αᵢ - ½Σᵢⱼ αᵢαⱼyᵢyⱼK(xᵢ, xⱼ) subject to Σᵢ αᵢyᵢ = 0, 0 ≤ αᵢ ≤ C</code></p>
+  <p>The constraint 0 ≤ αᵢ ≤ C (instead of just αᵢ ≥ 0) caps each Lagrange multiplier. KKT conditions now include:</p>
+  <p>• If αᵢ = 0: point i is not a support vector; yᵢ(wᵀφ(xᵢ) + b) > 1 (margin satisfied with slack = 0).</p>
+  <p>• If 0 < αᵢ < C: point i is a margin support vector; yᵢ(wᵀφ(xᵢ) + b) = 1 (on margin boundary).</p>
+  <p>• If αᵢ = C: point i is a non-margin or margin-violating support vector; yᵢ(wᵀφ(xᵢ) + b) ≤ 1 (inside or across margin).</p>
+  <h3>Cross-Validation for C Selection</h3>
+  <p>C is a hyperparameter chosen by cross-validation. Grid search over C ∈ {0.001, 0.01, 0.1, 1, 10, 100, 1000} is standard. For each C, train on K-1 folds, validate on the held-out fold. Compute validation accuracy, then average over K folds. Select the C with highest average accuracy. This approach avoids overfitting to the training set.</p>
+  <div class="callout">
+    <h4>Soft Margin Philosophy</h4>
+    <p>Real data is messy. Perfect separation is neither achievable nor desirable; some training error is acceptable. The soft-margin SVM embraces this pragmatism: find a wide margin that tolerates a few misclassified training examples, achieving better test generalization.</p>
+  </div>`,
+
+  // 08 SMO Algorithm Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/></svg> Section 8</div>
+    <h2>The <em>SMO</em> Algorithm</h2>
+  </div>
+  <p>Sequential Minimal Optimization (SMO), introduced by John Platt in 1998, is a breakthrough algorithm for training SVMs efficiently. Instead of solving the entire quadratic program at once, SMO repeatedly selects a pair of Lagrange multipliers (αᵢ, αⱼ) and optimizes them jointly while holding all others fixed. The key insight: a two-variable QP problem has a closed-form analytical solution, avoiding expensive numerical optimization.</p>
+  <h3>The Two-Variable Optimization Problem</h3>
+  <p>With all αₖ (k ≠ i, j) fixed, the constraint Σᵢ αᵢyᵢ = 0 becomes: αᵢyᵢ + αⱼyⱼ = -Σₖ≠ᵢ,ⱼ αₖyₖ = γ (constant). So αⱼyⱼ = (γ - αᵢyᵢ)/yⱼ, allowing αⱼ to be expressed in terms of αᵢ. The quadratic objective in α becomes a univariate function of αᵢ; its minimum can be found analytically by taking the derivative and solving.</p>
+  <p>The updated α̂ᵢ is clipped to ensure 0 ≤ α̂ᵢ ≤ C (or 0 ≤ αᵢ ≤ C - yᵢyⱼ(C - αⱼ) due to constraints). After updating (αᵢ, αⱼ), the bias b is recalculated using KKT conditions for support vectors.</p>
+  <h3>Working Set Selection: Choosing the Pair (i, j)</h3>
+  <p>Naive approach: try all (n choose 2) pairs per iteration—expensive. SMO uses heuristics to choose promising pairs:</p>
+  <p><strong>First choice (i):</strong> Find the point with the maximum KKT violation. Define the decision function error Eᵢ = fᵢ - yᵢ = (Σₖ αₖyₖK(xₖ, xᵢ) + b) - yᵢ. The KKT conditions are violated if:</p>
+  <p>• yᵢ·Eᵢ < -τ and αᵢ < C (margin violation, should increase αᵢ), or</p>
+  <p>• yᵢ·Eᵢ > τ and αᵢ > 0 (should decrease αᵢ).</p>
+  <p>Choose i with maximum |yᵢ·Eᵢ|.</p>
+  <p><strong>Second choice (j):</strong> Find j that maximizes the step size in the two-variable update. This is typically the point with minimum Eⱼ if yᵢ > 0, or maximum Eⱼ if yᵢ < 0. The idea: make the step as large as possible to improve the objective quickly.</p>
+  <h3>Convergence and Stopping Criteria</h3>
+  <p>SMO converges when all KKT conditions are satisfied within tolerance ε (typically ε = 0.001). The algorithm iterates until no pair violates KKT by more than ε. Empirically, convergence occurs in O(n²) time instead of the O(n³) of standard QP solvers, making SVMs practical for large datasets.</p>
+  <h3>Implementation Details</h3>
+  <p>SMO caches kernel evaluations K(xᵢ, xⱼ) to avoid recomputing them; memory is O(n²) but manageable. The algorithm maintains the decision function values Eᵢ for all points, updating them incrementally after each (αᵢ, αⱼ) change. Modern libraries (libsvm, scikit-learn) use SMO with further optimizations like shrinking (reducing the working set size as training progresses).</p>
+  <div class="s-chips">
+    <span class="s-chip">Platt 1998</span>
+    <span class="s-chip">Coordinate Ascent</span>
+    <span class="s-chip">Closed-Form Updates</span>
+    <span class="s-chip">KKT Convergence Check</span>
+    <span class="s-chip">O(n²) Practical Time</span>
+  </div>
+  <div class="callout">
+    <h4>Why SMO Works</h4>
+    <p>By breaking the QP into bite-sized two-variable subproblems with closed-form solutions, SMO avoids the O(n³) cost of general QP solvers. It's a beautiful application of divide-and-conquer, making SVMs trainable on datasets with millions of examples—previously infeasible.</p>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — SVMs, kernel methods, optimal margin classifiers, and kernel trick implementation</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://en.wikipedia.org/wiki/Support_vector_machine" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Support Vector Machine</a> — Overview of SVMs, kernel methods, and optimization</p>
+<p><a href="https://www.springer.com/gp/book/9780387310732" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Bishop — Pattern Recognition and Machine Learning</a> — Chapter 7 covers SVMs, kernel methods, and related techniques</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Machine Learning</div>
+        <div class="hero-title">Support Vector <em>Machines</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 3–4 · Kernels, Margins & Optimization</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip — extends from sidebar edge
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

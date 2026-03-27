@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generative Algorithms — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+// Data: Sections metadata
+const sections = [
+  { num: '01', short: 'Discriminative vs Generative', title: '<em>Discriminative</em> vs Generative Models' },
+  { num: '02', short: 'Gaussian Discriminant Analysis', title: '<em>Gaussian</em> Discriminant Analysis' },
+  { num: '03', short: 'GDA Model Fitting', title: '<em>GDA</em> Model Fitting' },
+  { num: '04', short: 'GDA vs Logistic Regression', title: '<em>GDA</em> vs Logistic Regression' },
+  { num: '05', short: 'Naive Bayes Classifier', title: '<em>Naive</em> Bayes Classifier' },
+  { num: '06', short: 'Laplace Smoothing', title: '<em>Laplace</em> Smoothing' },
+  { num: '07', short: 'Event Models for Text', title: '<em>Event</em> Models for Text' },
+  { num: '08', short: 'Practical Applications', title: '<em>Practical</em> Applications' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  `<p>Discriminative models directly estimate the posterior class probability p(y|x) given the data x. Generative models instead estimate the class-conditional likelihood p(x|y) and class prior p(y), then use Bayes rule to compute p(y|x). Discriminative models often require fewer assumptions about the distribution of features, while generative models capture the underlying data distribution. The choice between them depends on application requirements, data availability, and computational constraints.</p>
+   <p>When discriminative models are preferred: abundant labeled data, computational efficiency is critical. When generative models are preferred: modeling the data distribution, handling missing data, generation tasks, strong prior knowledge about feature distributions. Both approaches have their merits, and modern machine learning often combines ideas from both paradigms for optimal performance.</p>`,
+
+  `<p>Gaussian Discriminant Analysis assumes that the feature vectors in each class are drawn from a multivariate Gaussian (normal) distribution. The model assumes that p(x|y=0) and p(x|y=1) are both multivariate Gaussians with shared covariance matrix Σ but different means μ₀ and μ₁. This strong assumption allows for closed-form maximum likelihood solutions and interpretable decision boundaries. GDA is particularly effective when this Gaussian assumption is reasonable and samples are limited.</p>
+   <p>The shared covariance assumption leads to a linear decision boundary between classes, making GDA interpretable and efficient. Each feature's contribution is weighted by the inverse covariance, which captures correlations between features. For well-separated, normally distributed data, GDA provides excellent generalization. However, if the Gaussian assumption is violated, model performance may suffer relative to more flexible approaches.</p>`,
+
+  `<p>Fitting the GDA model involves computing maximum likelihood estimates for the class means μ₀ and μ₁, shared covariance Σ, and class prior φ. The prior φ is simply the empirical proportion of positive examples: φ = (1/m) Σ I(y⁽ⁱ⁾=1). The means are computed as the average of feature vectors within each class. The shared covariance is the pooled sample covariance across both classes. These closed-form solutions avoid iterative optimization, making GDA computationally efficient and suitable for real-time applications.</p>
+   <p>Once fitted, the decision boundary is determined by comparing class-conditional densities weighted by the prior. The boundary is the set of points where p(y=1|x) = 0.5, which forms a linear hyperplane in the feature space (or a quadratic boundary if covariances are not shared). This linearity of the decision boundary is a key characteristic of GDA, providing interpretability and stability on test data with similar distributions to the training data.</p>`,
+
+  `<p>GDA and logistic regression both produce linear decision boundaries but via different routes. GDA makes stronger distributional assumptions (multivariate Gaussian with shared covariance), while logistic regression makes weaker assumptions and directly optimizes the log-likelihood of the posterior. With sufficient data and correct model assumptions, both approaches asymptotically converge to the same decision boundary. However, with finite data, they can differ significantly in their estimates.</p>
+   <p>GDA excels when the Gaussian assumption holds and data is limited, as it leverages the assumed structure. Logistic regression is more robust to model misspecification and generally performs better when the Gaussian assumption is violated. Logistic regression requires iterative optimization but is more flexible. In practice, logistic regression is often preferred due to its robustness, but GDA remains valuable when strong assumptions are justified by domain knowledge or exploratory data analysis.</p>`,
+
+  `<p>Naive Bayes simplifies the feature model by assuming conditional independence: given the class y, all features x₁, x₂, ..., xₙ are independent. This allows the joint likelihood p(x|y) to factor as ∏ᵢ p(xᵢ|y), dramatically reducing the number of parameters from O(n²) to O(n). While the conditional independence assumption is often violated in practice ("naive"), Naive Bayes remains effective due to this efficiency and its natural fit to classification. It is particularly powerful for high-dimensional discrete data like text.</p>
+   <p>Naive Bayes predictions are made by computing the posterior for each class using Bayes rule and selecting the class with maximum posterior probability. For text classification, each feature typically represents word counts or presence, and the conditional probabilities are estimated from training data. The simplicity of Naive Bayes makes it interpretable—feature probabilities directly show which words are indicative of each class. Despite violating its core assumption in most applications, Naive Bayes achieves competitive performance and scales linearly with both training set size and feature count.</p>`,
+
+  `<p>The zero-frequency problem arises when a word never appears in the training data for a given class. The naive estimate for p(word|class) would be zero, which causes the entire class probability to become zero even if other features strongly support that class. Laplace smoothing (add-one smoothing) avoids this by adding a count of one to each feature in each class, effectively treating each feature as if it appeared at least once. This simple regularization has a profound impact on Naive Bayes text classification performance.</p>
+   <p>Formally, with smoothing: p(xᵢ|y) = (count(xᵢ,y) + 1) / (count(y) + |V|), where |V| is the vocabulary size. This ensures all probabilities are positive and sums to one. While this biases probability estimates toward uniform distributions, it prevents zero probabilities and improves generalization to unseen words. Laplace smoothing is a practical necessity for Naive Bayes on text, making the difference between models that catastrophically fail on new words and robust classifiers.</p>`,
+
+  `<p>Two event models describe how text is generated: the multivariate Bernoulli model treats each word as present or absent (1 or 0), while the multinomial model treats text as a sequence of word occurrences (bag-of-words with counts). In the Bernoulli model, φᵢ|ᵧ = P(word i appears | class y). In the multinomial model, word positions are sampled independently from a per-class vocabulary distribution, and φᵢ|ᵧ = P(word i is chosen | class y). The multinomial model typically outperforms Bernoulli because it captures word frequency information, though Bernoulli is computationally simpler and sometimes preferred for sparse text.</p>
+   <p>Both models enable feature selection and dimensionality reduction by pruning low-information words. Information gain or mutual information scores identify discriminative words that differ significantly between classes. Removing uninformative words reduces noise, improves computational efficiency, and sometimes improves generalization. The choice between models, smoothing parameters, and features to include defines the Naive Bayes pipeline and requires careful tuning via cross-validation. Despite these details, the core algorithm remains elegant and interpretable.</p>`,
+
+  `<p>Naive Bayes powers real-world systems across domains. Spam filtering is the canonical application: emails are classified as spam or ham based on word presence/frequency, where strong spam indicators (pharmaceutical keywords, money-related phrases) have high p(word|spam). Sentiment analysis treats reviews or tweets as documents, classifying them as positive or negative based on emotional language. The learned word probabilities reveal sentiment: positive words like "excellent" have high p(word|positive), while "disappointing" has high p(word|negative). Document classification assigns documents to categories (news topics, support tickets) based on their content.</p>
+   <p>Modern production systems often use Naive Bayes as a baseline or combine it with deep learning models for ensemble performance. Its speed makes it suitable for streaming or real-time systems. Interpretability is a key advantage: explaining why a document was classified requires showing which words triggered each class. This transparency is valuable in regulated domains (e.g., credit decisions) and for model debugging. Naive Bayes also handles imbalanced datasets gracefully and naturally extends to multi-class problems, making it a durable foundation for text classification pipelines.</p>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Generative Models</a></li>
+  <li><a href="https://arxiv.org/abs/0810.4521" target="_blank">Ng & Jordan - Discriminative vs. Generative Classifiers</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Gaussian_discriminant_analysis" target="_blank">Gaussian Discriminant Analysis - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier" target="_blank">Naive Bayes Classifier - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Elements of Statistical Learning</a></li>
+</ul>`];
+
+const details = [
+  `<div class="detail-header"><span class="num">01</span><h2><em>Discriminative</em> vs Generative Models</h2></div>
+   <p>Discriminative models directly model the posterior class probability p(y|x), making them well-suited for classification tasks. They estimate decision boundaries by learning what separates one class from another, without explicitly modeling how the data in each class is distributed. Logistic regression is the prototypical discriminative model: it learns the parameters θ that maximize the log-likelihood of the observed labels given the features. This direct approach to the task at hand often requires less data and can be more computationally efficient than modeling the full joint distribution.</p>
+   <p>Generative models take a different approach by modeling the full joint distribution p(x,y) through the factorization p(x,y) = p(x|y)p(y). They estimate the class-conditional likelihood p(x|y) and class prior p(y), then use Bayes rule to compute the posterior: p(y|x) = p(x|y)p(y) / p(x). This approach captures the underlying data generation process and allows for rich modeling of the features. Generative models can generate new synthetic samples, impute missing values, and perform other tasks beyond classification.</p>
+   <p>The key trade-off: discriminative models focus computational resources on the classification boundary, often achieving better performance with limited data. Generative models must model the entire feature distribution, which requires more samples but enables additional applications. Discriminative models make fewer assumptions and are more robust to model misspecification. Generative models leverage strong structural assumptions (e.g., Gaussian distributions) to achieve efficiency and interpretability when those assumptions hold.</p>
+   <h3>Making the choice</h3>
+   <p>Choose discriminative models (e.g., logistic regression, SVMs) when: you have abundant labeled data, computational efficiency is critical, features may have complex dependencies, the data distribution is unclear or non-standard. Choose generative models (e.g., Naive Bayes, GDA) when: labeled data is limited, you need to model the data distribution, you want interpretable probabilistic estimates, the feature distributions are well-understood or restricted (discrete, Gaussian), or you need to generate synthetic samples or handle missing data.</p>
+   <div class="diagram-wrap">
+     <svg width="600" height="300" viewBox="0 0 600 300">
+       <defs>
+         <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+           <path d="M0,0 L0,6 L9,3 z" fill="#2e6ab4"/>
+         </marker>
+       </defs>
+       <text x="150" y="30" class="node-text" text-anchor="middle" font-weight="600">Discriminative</text>
+       <rect x="50" y="50" width="200" height="100" class="node" rx="4"/>
+       <text x="150" y="85" class="node-sub" text-anchor="middle">p(y|x)</text>
+       <text x="150" y="105" class="node-sub" text-anchor="middle">Decision boundary</text>
+       <text x="150" y="125" class="node-sub" text-anchor="middle">Logistic Regression</text>
+       <text x="450" y="30" class="node-text" text-anchor="middle" font-weight="600">Generative</text>
+       <rect x="350" y="50" width="200" height="100" class="node" rx="4"/>
+       <text x="450" y="85" class="node-sub" text-anchor="middle">p(x|y), p(y)</text>
+       <text x="450" y="105" class="node-sub" text-anchor="middle">Full distribution</text>
+       <text x="450" y="125" class="node-sub" text-anchor="middle">Bayes Rule → p(y|x)</text>
+       <text x="300" y="200" class="lbl" text-anchor="middle" font-style="italic">Bayes Rule</text>
+       <path d="M 260,100 L 340,100" class="edge" marker-end="url(#arrowAccent)"/>
+       <text x="30" y="240" class="lbl">Limited Data:</text>
+       <text x="30" y="260" class="lbl" font-weight="600">← Generative wins</text>
+       <text x="480" y="240" class="lbl">Abundant Data:</text>
+       <text x="420" y="260" class="lbl" font-weight="600">Discriminative wins →</text>
+     </svg>
+   </div>
+   <h3>Practical workflow</h3>
+   <p>Start with exploratory data analysis: visualize class distributions, check for Gaussian-like shapes, examine feature correlations. If the data appears well-structured and Gaussian, GDA is a strong candidate. If the relationships are complex or the data is high-dimensional and sparse (like text), Naive Bayes or logistic regression are better choices. In practice, implement both and evaluate via cross-validation. Combine both approaches in an ensemble: use the class probability from a discriminative model as a feature in a generative model, or vice versa. Modern systems often use generative models for feature engineering (embeddings) and discriminative models for final classification.</p>`,
+
+  `<div class="detail-header"><span class="num">02</span><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
+   <p>Gaussian Discriminant Analysis (GDA) is a generative classifier that models each class as a multivariate Gaussian distribution. The model assumes that given the class label y, the feature vector x is drawn from a normal distribution: p(x|y=k) = N(μₖ, Σ), where μₖ is the class-specific mean and Σ is the shared covariance matrix. This assumption is powerful because multivariate Gaussians are well-understood, admit closed-form MLEs, and produce linear decision boundaries—a powerful combination for interpretability and efficiency.</p>
+   <p>The multivariate Gaussian PDF is: p(x) = (1/(2π)^(n/2) |Σ|^(1/2)) exp(-1/2 (x-μ)ᵀ Σ⁻¹ (x-μ)). For a two-class problem with shared covariance, the decision boundary (where p(y=1|x) = p(y=0|x)) simplifies to a linear equation: θ₀ + θ₁x₁ + ... + θₙxₙ = 0, where θ = Σ⁻¹(μ₁ - μ₀). This linearity is striking: despite the Gaussian assumption being about the conditional distributions, the resulting boundary is a hyperplane.</p>
+   <p>GDA is particularly powerful when the Gaussian assumption is valid. Real-world data such as iris measurements, neural activations, and image features often approximate Gaussians. The shared covariance assumption (homoscedasticity) is restrictive but enables closed-form solutions. When covariances are allowed to differ per class, the boundary becomes quadratic, which can overfit on small datasets but sometimes better reflects reality. The linear boundary in the standard GDA case leads to a natural connection with logistic regression, which we explore later.</p>
+   <h3>Geometric intuition</h3>
+   <p>In the feature space, each class occupies a region centered around its mean μₖ, with spread determined by Σ. The inverse covariance Σ⁻¹ (the precision matrix) defines the metric—directions with low variance (high precision) have steep decision boundaries perpendicular to them. Points equidistant (in the Mahalanobis sense) from both means lie on the decision hyperplane. Features with high variance contribute less to the decision (lower precision), while correlated features are automatically deweighted by the Σ⁻¹ term.</p>
+   <div class="diagram-wrap">
+     <svg width="600" height="350" viewBox="0 0 600 350">
+       <defs>
+         <ellipse id="e1" cx="150" cy="175" rx="80" ry="60" fill="none" stroke="#2e6ab4" stroke-width="1.5" opacity="0.4"/>
+         <ellipse id="e2" cx="450" cy="175" rx="80" ry="60" fill="none" stroke="#9b7aed" stroke-width="1.5" opacity="0.4"/>
+       </defs>
+       <use href="#e1"/>
+       <use href="#e2"/>
+       <circle cx="150" cy="175" r="4" fill="#2e6ab4"/>
+       <text x="150" y="220" class="node-text" text-anchor="middle">μ₀</text>
+       <circle cx="450" cy="175" r="4" fill="#9b7aed"/>
+       <text x="450" y="220" class="node-text" text-anchor="middle">μ₁</text>
+       <path d="M 300,80 L 300,270" stroke="#2e6ab4" stroke-width="2" stroke-dasharray="4,4"/>
+       <text x="310" y="175" class="lbl-hi">Decision</text>
+       <text x="310" y="190" class="lbl-hi">Boundary</text>
+       <text x="90" y="280" class="lbl">Class 0</text>
+       <text x="410" y="280" class="lbl">Class 1</text>
+       <text x="300" y="30" class="node-text" font-weight="600">p(x|y=0) vs p(x|y=1)</text>
+     </svg>
+   </div>
+   <h3>Parameter significance</h3>
+   <p>The prior φ = P(y=1) biases the decision boundary: if one class is much more common, the boundary shifts toward the minority class to account for the base rate. The difference (μ₁ - μ₀) determines the direction of the boundary. The covariance Σ controls its shape and orientation—high-variance directions allow points far from the mean to still have reasonable likelihood, affecting how far the boundary extends. Understanding these components helps diagnose when GDA is appropriate and how to interpret learned models in terms of feature importance and class structure.</p>`,
+
+  `<div class="detail-header"><span class="num">03</span><h2><em>GDA</em> Model Fitting</h2></div>
+   <p>Fitting GDA means estimating the parameters φ, μ₀, μ₁, and Σ via maximum likelihood estimation. Given m training examples {(x⁽ⁱ⁾, y⁽ⁱ⁾)}, the closed-form MLEs are elegant. The prior is: φ = (1/m) Σᵢ I(y⁽ⁱ⁾=1). The means are computed per-class: μ₁ = (Σᵢ:y⁽ⁱ⁾=1 x⁽ⁱ⁾) / (# examples in class 1), and similarly for μ₀. The shared covariance is: Σ = (1/m) Σᵢ (x⁽ⁱ⁾ - μ_{y⁽ⁱ⁾})(x⁽ⁱ⁾ - μ_{y⁽ⁱ⁾})ᵀ, pooling residuals from both classes.</p>
+   <p>These closed-form solutions are major advantages of GDA: no iterative optimization (unlike logistic regression), no hyperparameter tuning, and computational cost O(nm² + m³) dominated by the covariance matrix inversion. Training is fast even on large datasets. Making a prediction on a new point x amounts to: computing p(x|y=1) and p(x|y=0) from the Gaussian PDFs, multiplying by priors φ, and selecting argmax_y p(y|x). This simplicity makes GDA practical for real-time systems and suitable for situations where retraining must be fast.</p>
+   <p>The MLE is consistent and asymptotically efficient for data actually drawn from the assumed model. If the Gaussian assumption holds, GDA recovers the true parameters with enough data. However, if the true distribution differs from Gaussian, the estimates may be biased. A key observation: the MLE for Σ is biased (dividing by m instead of m-2), but this bias decreases with sample size and is often acceptable in practice. For small samples, using m-1 or m-2 as the divisor can reduce bias.</p>
+   <h3>Implementation recipe</h3>
+   <p>To fit GDA: (1) compute φ as the fraction of positive examples; (2) compute μ₀ and μ₁ as class means; (3) compute Σ as the pooled covariance; (4) invert Σ to get Σ⁻¹ (the precision matrix). For numerical stability, add a small regularization term λI to Σ before inverting, or use a robust inversion algorithm (LU decomposition, SVD). After fitting, compute the learned linear boundary θ = Σ⁻¹(μ₁ - μ₀) and bias θ₀ = (1/2) θᵀ(μ₁ + μ₀) + log(φ/(1-φ)). For new data, classify as y=1 if θᵀx + θ₀ > 0, else y=0.</p>
+   <div class="diagram-wrap">
+     <svg width="600" height="280" viewBox="0 0 600 280">
+       <rect x="20" y="30" width="160" height="80" class="node" rx="4"/>
+       <text x="100" y="55" class="node-text" text-anchor="middle" font-weight="600">Training Data</text>
+       <text x="100" y="75" class="node-sub" text-anchor="middle">{(x⁽ⁱ⁾, y⁽ⁱ⁾)}</text>
+       <path d="M 200,80 L 250,80" class="edge" marker-end="url(#arrowAccent)" stroke="#2e6ab4"/>
+       <rect x="250" y="30" width="160" height="80" class="node" rx="4"/>
+       <text x="330" y="55" class="node-text" text-anchor="middle" font-weight="600">Compute Parameters</text>
+       <text x="330" y="75" class="node-sub" text-anchor="middle">μ₀, μ₁, Σ, φ</text>
+       <path d="M 420,80 L 470,80" class="edge" marker-end="url(#arrowAccent)" stroke="#2e6ab4"/>
+       <rect x="470" y="30" width="110" height="80" class="node" rx="4"/>
+       <text x="525" y="55" class="node-text" text-anchor="middle" font-weight="600">Inference</text>
+       <text x="525" y="75" class="node-sub" text-anchor="middle">p(y|x)</text>
+       <text x="100" y="150" class="lbl" font-style="italic">Step 1: φ = #pos / m</text>
+       <text x="330" y="150" class="lbl" font-style="italic">Step 2: Invert Σ</text>
+       <text x="525" y="150" class="lbl" font-style="italic">Bayes Rule</text>
+       <text x="100" y="200" class="lbl">O(n²)</text>
+       <text x="330" y="200" class="lbl">O(n³)</text>
+       <text x="525" y="200" class="lbl">O(n)</text>
+       <rect x="50" y="240" width="480" height="25" class="callout"/>
+       <text x="60" y="258" class="node-sub">Key: Closed-form MLEs → No iterative optimization needed</text>
+     </svg>
+   </div>
+   <p>Robustness considerations: if Σ is singular or nearly singular, the inversion fails. Solutions: add regularization λI (Σ_reg = Σ + λI), use pseudoinverse, or add a small amount of noise to the data. If classes have very different covariances, the shared-Σ assumption is violated; consider using separate covariances (QDA, Quadratic Discriminant Analysis) at the cost of more parameters. Regularization and robustness are practical concerns that make the difference between working and broken code.</p>`,
+
+  `<div class="detail-header"><span class="num">04</span><h2><em>GDA</em> vs Logistic Regression</h2></div>
+   <p>Both GDA and logistic regression produce linear decision boundaries, but via different paths. GDA models p(x|y) and p(y), then uses Bayes rule to compute p(y|x). Logistic regression directly models p(y|x) as σ(θᵀx) where σ is the sigmoid function. A remarkable fact: if the class-conditional densities p(x|y=0) and p(x|y=1) are Gaussian with shared covariance Σ, then the posterior p(y=1|x) is logistic. That is, p(y=1|x) can be written as σ(θ₀ + θ₁x₁ + ... + θₙxₙ) for some θ values determined by μ₀, μ₁, Σ, and φ.</p>
+   <p>This connection runs deep: the linear logit log(p(y=1|x) / p(y=0|x)) is exactly θᵀx + θ₀ for both models. With infinite data and correct model assumptions, GDA and logistic regression converge to the same decision boundary. However, with finite data, they differ. GDA is a parametric model that makes stronger assumptions about the feature distribution. Logistic regression makes weaker assumptions, only assuming linearity of the decision boundary. This fundamental difference shapes their empirical performance.</p>
+   <p>GDA excels when: the Gaussian assumption is accurate and sample size is small (≤ 100 examples per class), because it leverages the structure encoded in the Gaussian model. When the Gaussian assumption is violated, logistic regression typically outperforms GDA because it doesn't waste modeling capacity on incorrect distributional assumptions. GDA also requires estimating O(n²) parameters (the covariance matrix), while logistic regression estimates O(n). For high-dimensional data with limited samples, logistic regression generalizes better.</p>
+   <h3>Empirical comparison</h3>
+   <p>On data where p(x|y) is actually Gaussian: GDA wins with small samples (fewer parameters to learn, structure helps), similar performance with large samples (enough data to overcome the assumption). On data where p(x|y) is not Gaussian: logistic regression typically wins, especially when features have heavy tails, multimodal distributions, or are discrete. In practice, logistic regression is often the safer default because the Gaussian assumption is restrictive. However, GDA remains useful for small-data regimes, interpretable probabilistic modeling, and domains where the Gaussian assumption is justified by theory or prior work.</p>
+   <div class="verdict">
+     <div class="v-col pro">
+       <h4>GDA Advantages</h4>
+       <ul>
+         <li>Closed-form MLEs, fast to fit</li>
+         <li>Fewer iterations needed (no optimization)</li>
+         <li>Better with small datasets</li>
+         <li>Probabilistic interpretation</li>
+         <li>Can generate synthetic samples</li>
+       </ul>
+     </div>
+     <div class="v-col con">
+       <h4>GDA Limitations</h4>
+       <ul>
+         <li>Strong Gaussian assumption</li>
+         <li>More parameters (n² covariance)</li>
+         <li>Fails if Σ is singular</li>
+         <li>Sensitive to outliers</li>
+         <li>Assumes shared covariance</li>
+       </ul>
+     </div>
+   </div>
+   <h3>When to use each</h3>
+   <p>Use GDA: small datasets (< 500 examples), clearly Gaussian-like features, need interpretable probabilistic model, fast training is critical, or you want to model the feature distribution. Use logistic regression: large datasets, high-dimensional features, non-Gaussian distributions expected, robustness to outliers is important, or when parsimony (fewer parameters) is valued. In modern practice, logistic regression is the default for most classification problems due to its robustness and effectiveness. GDA is most valuable in specialized domains (e.g., bioinformatics) where Gaussian assumptions are reasonable and data is limited.</p>`,
+
+  `<div class="detail-header"><span class="num">05</span><h2><em>Naive</em> Bayes Classifier</h2></div>
+   <p>Naive Bayes is a probabilistic classifier that applies Bayes rule to compute p(y|x). The key simplifying assumption is conditional independence: given the class y, all features x₁, x₂, ..., xₙ are independent. Formally, p(x₁, x₂, ..., xₙ | y) = ∏ᵢ p(xᵢ | y). While this "naive" assumption is rarely true in real data (words in text are correlated, pixels in images are correlated), it leads to a simple, scalable model that often performs surprisingly well. The independence assumption reduces the parameter count from O(2ⁿ) (one parameter per possible feature combination) to O(n) (one parameter per feature per class).</p>
+   <p>The classifier computes the posterior as: p(y|x) ∝ p(y) ∏ᵢ p(xᵢ|y). To classify a new instance, compute this posterior for each class and select argmax_y. The model naturally handles missing features (just omit them from the product) and scales to high-dimensional data. For text classification, each xᵢ might be the count or presence of word i, p(xᵢ|y) is estimated from training data, and the algorithm learns which words are indicative of each class.</p>
+   <p>Despite the conditional independence assumption being violated in nearly all applications, Naive Bayes achieves strong empirical performance. Theoretically, this is understood through multiple lenses: the model is a good approximation under certain conditions, the parameters compensate for the independence violation, and the 0/1 loss function is forgiving (only the sign of the log-posterior matters, not its magnitude). Practically, this robustness is one of Naive Bayes' greatest strengths—it works well across diverse domains despite its naive assumptions.</p>
+   <h3>Variants for different data</h3>
+   <p>Gaussian Naive Bayes assumes each feature xᵢ|y is Gaussian: p(xᵢ|y) = N(μᵢᵧ, σᵢᵧ²). This is suitable for continuous features like measurements, image pixels, or normalized counts. Multinomial Naive Bayes models word counts: p(x|y) ∝ ∏ᵢ φᵢ|ᵧˣⁱ where φᵢ|ᵧ is the probability of word i in class y. This is the standard for bag-of-words text classification. Bernoulli Naive Bayes treats features as binary: present or absent in the document. Each variant has its use case, and the choice should match the data type and generation model.</p>
+   <div class="diagram-wrap">
+     <svg width="600" height="280" viewBox="0 0 600 280">
+       <circle cx="100" cy="80" r="30" class="node-hi"/>
+       <text x="100" y="85" class="node-text" text-anchor="middle">y</text>
+       <circle cx="60" cy="160" r="25" class="node"/>
+       <text x="60" y="168" class="node-sub" text-anchor="middle">x₁</text>
+       <circle cx="140" cy="160" r="25" class="node"/>
+       <text x="140" y="168" class="node-sub" text-anchor="middle">x₂</text>
+       <circle cx="200" cy="160" r="25" class="node"/>
+       <text x="200" y="168" class="node-sub" text-anchor="middle">x₃</text>
+       <line x1="90" y1="110" x2="70" y2="135" class="edge"/>
+       <line x1="100" y1="110" x2="140" y2="135" class="edge"/>
+       <line x1="110" y1="110" x2="200" y2="135" class="edge"/>
+       <text x="100" y="240" class="node-text" text-anchor="middle" font-weight="600">Naive Bayes Graphical Model</text>
+       <text x="100" y="260" class="lbl" text-anchor="middle">y → xᵢ are independent given y</text>
+       <text x="400" y="80" class="lbl" font-weight="600">p(y|x) ∝</text>
+       <text x="400" y="105" class="lbl">p(y) × ∏ p(xᵢ|y)</text>
+       <text x="400" y="145" class="lbl-hi">Each xᵢ factorizes</text>
+       <text x="400" y="165" class="lbl-hi">→ O(n) parameters</text>
+     </svg>
+   </div>`,
+
+  `<div class="detail-header"><span class="num">06</span><h2><em>Laplace</em> Smoothing</h2></div>
+   <p>The zero-frequency problem is critical in Naive Bayes. Suppose a word like "discombobulate" never appears in the training data for the "positive" class. The naive empirical estimate is p(word="discombobulate" | y=1) = 0. When predicting on a new document containing this word, the entire posterior p(y=1|x) becomes zero because it contains a factor of zero. This is problematic: the model fails catastrophically on any document with an unseen word, even if other words strongly support a class. In text classification, unseen words are inevitable due to the zipfian distribution of natural language.</p>
+   <p>Laplace smoothing (add-one smoothing) fixes this by adding a count of one to every word in every class, as if each word appeared at least once. The smoothed probability is: p(xᵢ|y) = (count(xᵢ, y) + 1) / (count(y) + |V|), where count(y) is the total word count in class y and |V| is the vocabulary size. This ensures all probabilities are positive, prevents zero probabilities, and allows the model to handle unseen words gracefully. The denominator includes |V| to ensure probabilities sum to one: Σᵢ (count(xᵢ,y) + 1) / (count(y) + |V|) = 1.</p>
+   <p>While add-one smoothing introduces bias (it biases estimates toward 0.5 for each feature), it dramatically improves generalization. A generalized version, add-α smoothing, uses: p(xᵢ|y) = (count(xᵢ, y) + α) / (count(y) + α|V|). When α=1, this is Laplace smoothing; when α → 0, we approach empirical counts; when α increases, probabilities become more uniform. In practice, α is often tuned via cross-validation. For most text datasets, α=1 (Laplace) works well, though some domains benefit from α < 1 (less smoothing when data is abundant).</p>
+   <h3>Impact on classification</h3>
+   <p>Without smoothing, Naive Bayes on text fails: unseen words cause zero posteriors. With smoothing, the model gracefully handles new vocabulary. The smoothed probability of an unseen word is small (1 / (count(y) + |V|)) but nonzero, allowing documents with rare words to still be classified based on other evidence. This is subtle but powerful: Laplace smoothing makes the difference between a classifier that crashes on new data and one that robustly generalizes. Empirically, text classification with Naive Bayes typically shows 5-10% accuracy improvement with smoothing on out-of-domain test sets.</p>
+   <div class="diagram-wrap">
+     <svg width="600" height="280" viewBox="0 0 600 280">
+       <text x="50" y="35" class="node-text" font-weight="600">Without Smoothing:</text>
+       <rect x="30" y="50" width="240" height="100" class="node" rx="4"/>
+       <text x="150" y="75" class="node-sub">p(unseen | class) = 0</text>
+       <text x="150" y="95" class="node-sub">p(y | doc w/ unseen)</text>
+       <text x="150" y="115" class="node-sub">= 0 (catastrophic!)</text>
+       <text x="380" y="35" class="node-text" font-weight="600">With Laplace Smoothing:</text>
+       <rect x="330" y="50" width="240" height="100" class="node" rx="4"/>
+       <text x="450" y="75" class="node-sub">p(unseen | class)</text>
+       <text x="450" y="95" class="node-sub">= 1/(count+|V|)</text>
+       <text x="450" y="115" class="node-sub">> 0 (robust!)</text>
+       <text x="150" y="200" class="lbl" text-anchor="middle">Empirical: count(word, y)</text>
+       <text x="450" y="200" class="lbl" text-anchor="middle">Smoothed: count + α</text>
+       <rect x="50" y="230" width="520" height="35" class="callout" rx="4"/>
+       <text x="60" y="255" class="node-sub">Result: Handles new vocabulary, prevents zero probabilities, enables generalization</text>
+     </svg>
+   </div>`,
+
+  `<div class="detail-header"><span class="num">07</span><h2><em>Event</em> Models for Text</h2></div>
+   <p>Two event models formalize how text is generated, each defining p(x|y) differently. The multivariate Bernoulli model treats each position in the vocabulary as a binary random variable: xᵢ ∈ {0, 1} indicates whether word i appears in the document. The likelihood is: p(x|y) = ∏ᵢ (φᵢ|ᵧ)^(xᵢ) (1 - φᵢ|ᵧ)^(1-xᵢ), where φᵢ|ᵧ = P(word i appears | y). This model ignores word frequency: a document with one occurrence of "excellent" and one with ten occurrences look the same. For short documents or when word presence/absence matters more than frequency, Bernoulli Naive Bayes is suitable.</p>
+   <p>The multinomial model treats text as a bag of words with counts. The document is generated by drawing words one at a time from a multinomial distribution. Given document length d and class y, the likelihood is: p(x|y) ∝ ∏ᵢ (φᵢ|ᵧ)^(xᵢ), where xᵢ is the count of word i and ∑ᵢ xᵢ = d. The multinomial model captures word frequency: seeing "excellent" ten times versus once is meaningful. For longer documents and tasks where frequency matters (e.g., distinguishing formal vs. casual writing), multinomial Naive Bayes typically outperforms Bernoulli.</p>
+   <p>Empirically, multinomial Naive Bayes achieves better performance on standard text classification benchmarks. The frequency information is informative: spam often repeats certain keywords, positive reviews emphasize good words repeatedly, and topic classification benefits from word frequency. However, Bernoulli is simpler (fewer parameters to estimate), sometimes preferred for sparse text, and occasionally competitive when combined with feature engineering. The choice should be guided by data characteristics: use Bernoulli for binary word presence, multinomial for word counts. Both benefit from Laplace smoothing and feature selection.</p>
+   <h3>Feature selection and engineering</h3>
+   <p>Not all words are useful. Stopwords (the, a, an, is) appear in all documents and provide little discriminative signal. Rare words might be noise or class-specific jargon. Information gain or mutual information scores measure how much each word reduces uncertainty about the class: IG(word) = ∑_y P(y) [∑_{w∈{0,1}} P(w|y) log(P(w|y)/P(w))]. Selecting the top k words (typically 1000-10000) by information gain reduces noise, speeds up training, and often improves generalization. This feature selection step is practical in production systems where computational efficiency and model interpretability are important.</p>
+   <div class="feat-grid">
+     <div class="feat">
+       <h4>Bernoulli Model</h4>
+       <p>Binary presence/absence, simpler, lower memory, suitable for very sparse text, ignores frequency information.</p>
+     </div>
+     <div class="feat">
+       <h4>Multinomial Model</h4>
+       <p>Word counts, captures frequency, better empirical performance, more parameters, suitable for standard documents.</p>
+     </div>
+   </div>`,
+
+  `<div class="detail-header"><span class="num">08</span><h2><em>Practical</em> Applications</h2></div>
+   <p>Spam filtering is the canonical application of Naive Bayes. Emails are documents, features are words, and classes are {spam, ham}. The classifier learns that certain keywords (pharmaceutical terms, money-related phrases, urgency language) are strongly indicative of spam: p(word | spam) >> p(word | ham). Similarly, legitimate words (recipient's name, official company domains, common greetings) appear more in ham: p(word | ham) >> p(word | spam). Laplace smoothing is essential: new spam variants use novel keywords, and the model must handle unseen words gracefully. Modern email filters still use Naive Bayes as a core component, often combined with other signals (sender reputation, authentication checks, deep learning features).</p>
+   <p>Sentiment analysis classifies text as positive, negative, or neutral. A review corpus is labeled, and Naive Bayes learns sentiment-indicative words. Positive reviews frequently contain "excellent," "love," "wonderful," while negative reviews contain "terrible," "waste," "disappointing." The learned word probabilities p(word | sentiment) directly reveal what the model considers. This interpretability is valuable: stakeholders understand why a review was classified as negative by pointing to specific words. More advanced systems combine Naive Bayes scores with syntactic and semantic features, but Naive Bayes remains a strong baseline for sentiment tasks.</p>
+   <p>Document classification assigns documents to predefined categories (news topics, support tickets, legal documents). Naive Bayes learns topic-specific vocabulary: sports documents contain "game," "team," "score," while business documents contain "revenue," "profit," "market." Because Naive Bayes handles multiclass naturally (not just binary), it directly extends to k classes by computing p(y=j | x) for each j and selecting argmax. The model scales linearly in both training set size and vocabulary, making it practical for large document collections.</p>
+   <h3>Production systems and engineering</h3>
+   <p>Naive Bayes is widely used in production because of its speed, simplicity, and interpretability. Training happens offline: scan the corpus, compute word frequencies per class, apply smoothing. Inference is O(d × |V|) where d is document length, enabling real-time classification. The probabilistic outputs p(y|x) naturally serve as confidence scores: high-confidence predictions can be trusted, while borderline cases may require human review. This is especially valuable in content moderation, where false positives (blocking legitimate content) are costly.</p>
+   <p>Ensemble methods combine Naive Bayes with other classifiers: a discriminative model (logistic regression, SVM) handles the decision boundary, while Naive Bayes provides robust probability estimates. Neural networks learn semantic embeddings that capture word similarity beyond bag-of-words, and Naive Bayes operates on top of these embeddings. The modularity of Naive Bayes—it factorizes into independent word models—allows easy integration into larger systems. Modern systems often use Naive Bayes not as the final classifier but as a feature engineer or baseline, establishing performance expectations and providing interpretable signals.</p>
+   <div class="timeline">
+     <div class="tl-item">
+       <span class="tl-date">Classical Era (1960s–1990s)</span>
+       <span class="tl-text">Naive Bayes pioneered by Minsky; applied to text with Bayesian text models.</span>
+     </div>
+     <div class="tl-item">
+       <span class="tl-date">Email Filtering (1990s–2000s)</span>
+       <span class="tl-text">Paul Graham's spam filter made Naive Bayes famous; became standard in email systems.</span>
+     </div>
+     <div class="tl-item">
+       <span class="tl-date">Web Era (2000s–2010s)</span>
+       <span class="tl-text">Document classification at scale; Naive Bayes in search engines and recommendation systems.</span>
+     </div>
+     <div class="tl-item">
+       <span class="tl-date">Deep Learning (2010s–present)</span>
+       <span class="tl-text">Neural networks became dominant; Naive Bayes remains valuable for interpretability and baselines.</span>
+     </div>
+   </div>
+   <div class="chips" style="margin: 20px 0;">
+     <span class="chip">Spam detection</span>
+     <span class="chip">Sentiment analysis</span>
+     <span class="chip">Document categorization</span>
+     <span class="chip">Content moderation</span>
+     <span class="chip">Intent classification</span>
+     <span class="chip">Information retrieval</span>
+   </div>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — Coverage of generative learning algorithms including Gaussian Discriminant Analysis and Naive Bayes</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://arxiv.org/abs/0810.4521" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Ng & Jordan — On Discriminative vs Generative Classifiers</a> — Theoretical analysis comparing generative and discriminative models with formal asymptotic arguments</p>
+<p><a href="https://www.springer.com/gp/book/9780387310732" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Bishop — Pattern Recognition and Machine Learning</a> — Chapter 8 covers graphical models and generative approaches to modeling data</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Machine Learning</div>
+        <div class="hero-title">Generative <em>Algorithms</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 3–4 · GDA, Naive Bayes & Text Classification</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+</head>
+<body data-theme="light">
+</body>
+</html>

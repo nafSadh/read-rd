@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Science of Humor: Why We Laugh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 20px 24px; transition: all 0.2s;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .deliverable-card .section-title { margin-bottom: 6px; }
+    .deliverable-card .section-desc { margin-bottom: 10px; }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body data-theme="light">
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Cognitive Science &middot; Research Project</div>
+    <h1>The Science of Humor: <em>Why We Laugh</em></h1>
+    <div class="subtitle">Theories of humor, the neuroscience of laughter, comedy craft, dark humor, cultural variation, health effects, and the question of whether machines can be funny.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>Humor is one of the few human universals that resists clean explanation. This project surveys the science of humor across <strong>7 dimensions</strong> and <strong>50+ sources</strong> &mdash; from incongruity theory and benign violation through the neural circuitry of laughter, the craft of comedy writing, dark humor and taboo, cultural comedy styles, humor&rsquo;s health effects, and the frontier of computational humor and AI.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a> &middot;
+        <a href="notes/00-synthesis.md">Synthesis Notes</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Comprehensive survey synthesizing all 7 dimensions. 55 sources, SVG diagram, tension cards, section source footers.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+          <a href="survey-slides.html">Slides &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Position <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Humor Is Irreducibly Social &mdash; argues the cognitive theories have the emphasis backwards. 9 lines of evidence, counterarguments.</div>
+        <div class="section-links">
+          <a href="position-paper.html">Paper &rarr;</a>
+          <a href="position-slides.html">Slides &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Overview</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Science of Humor <em>Overview</em> <span class="status done">done</span></div>
+          <div class="section-desc">Comprehensive overview covering all 7 dimensions: theories, neuroscience, craft, dark humor, culture, health, and computational humor.</div>
+          <div class="section-links">
+            <a href="overview.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Theories of <em>Humor</em> <span class="status done">done</span></div>
+          <div class="section-desc">8+ sources. Incongruity theory, superiority theory, relief theory, benign violation theory, evolutionary approaches, and why no single theory captures the full phenomenon.</div>
+          <div class="section-links">
+            <a href="s1-theories.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title"><em>Neuroscience</em> of Laughter <span class="status done">done</span></div>
+          <div class="section-desc">7+ sources. Neural circuitry of humor appreciation, reward pathways, the distinction between voluntary and involuntary laughter, gelotophobia, and what brain imaging reveals.</div>
+          <div class="section-links">
+            <a href="s2-neuroscience.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">Comedy Structure &amp; <em>Craft</em> <span class="status done">done</span></div>
+          <div class="section-desc">8+ sources. Setup-punchline mechanics, timing and delivery, callback structures, the rule of three, misdirection techniques, and what separates professional comedy from amateur attempts.</div>
+          <div class="section-links">
+            <a href="s3-comedy-craft.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Dark Humor &amp; <em>Taboo</em> <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. Freud&rsquo;s tendentious jokes, gallows humor as ego defense, the Willinger intelligence study, BVT distance framework, and the Overton window of comedy.</div>
+          <div class="section-links">
+            <a href="s4-dark-humor.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Cultural <em>Comedy</em> <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. British dry wit, American stand-up, Japanese manzai, the untranslatability problem, internet memes as global humor, and self-deprecation norms across cultures.</div>
+          <div class="section-links">
+            <a href="s5-cultural.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Humor, Health &amp; <em>Social Bonding</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Norman Cousins, laughter yoga, meta-analyses, Dunbar&rsquo;s social grooming theory, mate selection, Martin&rsquo;s four humor styles, and the evidence quality problem.</div>
+          <div class="section-links">
+            <a href="s6-health.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">AI &amp; <em>Computational</em> Humor <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. Five requirements for humor, the prediction problem, HumorBench results, pre-LLM computational humor, and humor as the truest Turing test for machine intelligence.</div>
+          <div class="section-links">
+            <a href="s7-ai-humor.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Key Tensions</h2>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">01</span> <strong>Theory unification:</strong> Incongruity, superiority, and relief theories each capture something real but no framework unifies them</li>
+      <li class="tension-item"><span class="tension-num">02</span> <strong>Humor and offense:</strong> The benign violation boundary is subjective and culturally contingent &mdash; one person&rsquo;s comedy is another&rsquo;s cruelty</li>
+      <li class="tension-item"><span class="tension-num">03</span> <strong>Craft vs. spontaneity:</strong> Professional comedy is highly structured, but the best humor often feels effortless and spontaneous</li>
+      <li class="tension-item"><span class="tension-num">04</span> <strong>AI humor:</strong> LLMs can generate joke structures but consistently fail at genuine funniness &mdash; what does this reveal about understanding?</li>
+    </ul>
+
+    <div class="footer">
+      <p>Project: <strong>The Science of Humor</strong> &middot; 7 of 7 sections complete &middot; March 2026</p>
+      <p>Built with the <a href="../../.project/deep-dive-template.md">deep-dive template</a> &middot; <a href="../../.project/methodology.md">Paper-drive methodology</a></p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.body.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.body.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S3: Social Media Aesthetics &mdash; Fashionable Despair</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  </style>
+</head>
+<body>
+<script>
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);else document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')})();
+
+
+const sections = [
+  { num: '01', short: 'Genealogy', title: 'Tumblr to <em>TikTok</em>' },
+  { num: '02', short: 'Grammar', title: 'The Visual <em>Grammar</em>' },
+  { num: '03', short: 'Wollen', title: 'Sad Girl <em>Theory</em>' },
+  { num: '04', short: 'Whiteness', title: 'Whose Sadness <em>Counts</em>' },
+  { num: '05', short: 'Algorithm', title: 'The Algorithmic <em>Loop</em>' },
+  { num: '06', short: 'Gender', title: 'The Gender <em>Asymmetry</em>' },
+  { num: '07', short: 'Numbers', title: 'The CDC <em>Numbers</em>' },
+  { num: '08', short: 'Tensions', title: 'Expression vs. <em>Production</em>' }
+];
+
+
+
+const summaries = [
+  `<p>The sad girl aesthetic has a clear platform lineage. On Tumblr (2010&ndash;2016), it emerged organically: teenagers posting into a void, sharing Lana Del Rey lyrics and black-and-white photos with sad captions. As Mina Le noted, it &ldquo;felt more like coincidence than a calculated attempt to aestheticize our own identities.&rdquo;</p>
+  <p>When it migrated to TikTok and Instagram, everything changed. &ldquo;Depressed girl aesthetic&rdquo; became its own auto-fill search with 17.6 million posts. The hashtag #sadgirl accumulated over 16 billion views. The key transformation: from documentation to production. On Tumblr, being sad was something you recorded. On TikTok, being sad is something you <em>perform</em>.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">16B+</div><div class="sl">#sadgirl Views</div></div>
+    <div class="st"><div class="sv">17.6M</div><div class="sl">TikTok Posts</div></div>
+    <div class="st"><div class="sv">1.5M</div><div class="sl">Playlist Likes</div></div>
+    <div class="st"><div class="sv">2010</div><div class="sl">Tumblr Origin</div></div>
+  </div>`,
+
+  `<p>The sad girl aesthetic has specific, documented visual rules. Color palette: greyscale or muted pastels. Soundtrack: Lana Del Rey, Billie Eilish, Fiona Apple, boygenius. Literary references: Sylvia Plath, Oscar Wilde. Film canon: Sofia Coppola, <em>Skins</em>, <em>Euphoria</em>.</p>
+  <p>The beauty dimension is particularly telling: &ldquo;crying girl makeup&rdquo; &mdash; blush-heavy, mimicking post-cry glow &mdash; became a TikTok trend after Bella Hadid&rsquo;s crying selfies. Spotify&rsquo;s &ldquo;sad girl starter pack&rdquo; has 1.5 million likes. There is a &ldquo;Sad Girl Winter&rdquo; candle that smells like lavender.</p>
+  <div class="s-chips">
+    <span class="s-chip">Lana Del Rey</span>
+    <span class="s-chip">Sylvia Plath</span>
+    <span class="s-chip">Billie Eilish</span>
+    <span class="s-chip">Sofia Coppola</span>
+    <span class="s-chip">boygenius</span>
+    <span class="s-chip">Euphoria</span>
+    <span class="s-chip">Bella Hadid</span>
+  </div>`,
+
+  `<p>The most intellectually ambitious framing comes from Audrey Wollen, who coined &ldquo;Sad Girl Theory&rdquo; in 2014. Core claim: female sadness should be &ldquo;witnessed and re-historicized as an act of resistance, of political protest.&rdquo; Girls being sad has been &ldquo;categorized as this act of passivity, and therefore, discounted from the history of activism.&rdquo;</p>
+  <p>The critical tension: Wollen&rsquo;s theory treats sadness as agency. The aesthetic that borrowed her language treats it as commodity. She eventually deleted her Instagram. The Harvard Crimson&rsquo;s verdict: &ldquo;Simply put, the Sad Girl reeks of complacency.&rdquo;</p>`,
+
+  `<p>Multiple sources converge on an uncomfortable finding: the sad girl aesthetic is overwhelmingly white, thin, and conventionally beautiful. The Daily Cal: the aesthetic &ldquo;can make girls who don&rsquo;t fit that category feel even more alienated, or like they can&rsquo;t be sad in the &lsquo;good&rsquo; way.&rdquo; The Harvard Crimson: it &ldquo;represents a very white kind of beauty.&rdquo;</p>
+  <p>This is <a href="s1-historical-melancholy.dd.html" title="Historical Melancholy">S1&rsquo;s</a> class filter reborn: whose sadness counts as interesting depends on who is doing the suffering and whether they fit the visual template.</p>`,
+
+  `<p>The most honest source on algorithmic reinforcement comes from Trill Mag&rsquo;s first-person account. TikTok&rsquo;s algorithm detected the author&rsquo;s depression and &ldquo;inundated&rdquo; her with sad girl content. Initially comforting, then dangerous: &ldquo;What if I get better and I lose my beauty? What if I become boring?&rdquo;</p>
+  <p>When depression becomes identity and aesthetic, recovery threatens not just your condition but your self-concept and social position. The algorithm reinforces this by feeding you more of what you engage with.</p>`,
+
+  `<p>Lucy Dacus (boygenius): &ldquo;Sadness can be meaningful, but I got a bone to pick with the &lsquo;sad girl indie&rsquo; genre, not the music that gets labeled as that, but the classification and commodification and perpetual expectation of women&rsquo;s pain.&rdquo;</p>
+  <p>The asymmetry: sad music by men is cathartic, intentional vulnerability. Sad music by women is trivialized, romanticized, reduced to aesthetic. Wollen: &ldquo;We get stuck in a catch 22: if you act &lsquo;strong,&rsquo; you&rsquo;re a bitch; if you act emotional you&rsquo;re weak and pathetic.&rdquo;</p>`,
+
+  `<p>Behind the aesthetic, the numbers are real. CDC data: 57% of teenage girls reported feeling persistently sad or hopeless in 2021, up from 36% in 2011. That is a 21-percentage-point increase in a decade &mdash; an epidemic by any measure.</p>
+  <p>UCLA Professor Francis Steen: &ldquo;If you&rsquo;re feeling sad, maybe it&rsquo;s comforting to some degree to see that you&rsquo;re not alone... But there&rsquo;s a limit to that. It&rsquo;s not such a nice thing to find out that lots of people are feeling sad and lonely, and it&rsquo;s actually an epidemic society is not getting a handle on.&rdquo;</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">57%</div><div class="sl">Teen Girls Sad (2021)</div></div>
+    <div class="st"><div class="sv">36%</div><div class="sl">Teen Girls Sad (2011)</div></div>
+    <div class="st"><div class="sv">+21</div><div class="sl">Point Increase</div></div>
+    <div class="st"><div class="sv">#1</div><div class="sl">Cause of Death 15-19 (Global)</div></div>
+  </div>`,
+
+  `<p>The central question: Is the sad girl aesthetic a response to real suffering (destigmatization) or a contributor to it (romanticization)? The honest answer is almost certainly both, simultaneously &mdash; and this dual nature is what makes it so resistant to simple critique.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Expression &rarr; Production</h4><p>Tumblr documented sadness. TikTok produces it. The platform shift changed the relationship between feeling and content.</p></div>
+    <div class="feat"><h4>Theory &rarr; Commodity</h4><p>Wollen&rsquo;s Sad Girl Theory was activism. The aesthetic that adopted it is commerce. The intellectual content was stripped by scale.</p></div>
+    <div class="feat"><h4>Community &rarr; Identity</h4><p>Finding others who feel the same is healing. Making the feeling your whole identity is a trap. The line is invisible from inside.</p></div>
+    <div class="feat"><h4>Visible &rarr; Beautiful</h4><p>Making sadness visible is destigmatization. Making it beautiful is romanticization. The difference is in the filter.</p></div>
+  </div>`
+];
+
+
+
+const details = [
+  // 01 — Genealogy
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div>
+    <h2>Tumblr to <em>TikTok</em></h2>
+  </div>
+  <p>The platform genealogy matters because it explains a transformation in the relationship between suffering and content. On <a href="https://lifebonder.com/blog/2024/02/10/tumblrs-early-2010s-sad-girl-aesthetic-self-harm-culture/" target="_blank">Tumblr in the early 2010s</a>, the sad girl aesthetic emerged from genuine emotional overflow. Teenagers &mdash; mostly girls, mostly between 13 and 19 &mdash; posted into a functionally anonymous void. The platform&rsquo;s architecture rewarded vulnerability: no real names, no follower counts on the main feed, no algorithmic optimization. You posted a Lana Del Rey lyric or a black-and-white photo of yourself crying because you <em>felt</em> something, and the act of posting was the act of processing.</p>
+  <p>The visual vocabulary crystallized quickly: cigarettes, runny mascara, vintage filters, rainy windows, serene landscapes overlaid with text about loneliness. These weren&rsquo;t chosen for engagement metrics &mdash; they were chosen because they felt right, because they matched an internal state that teenagers lacked other vocabulary for. The hashtags (#prettywhenyoucry, #sadgirl) functioned as tribal markers, not content categories. Finding them was finding community: <em>other people feel this way too</em>.</p>
+  <h3>The Platform Shift</h3>
+  <p>The migration to TikTok and Instagram changed everything structurally. These platforms optimize for engagement, which means they optimize for <em>performance</em>. The algorithm rewards content that generates response, not content that processes emotion. A Tumblr post could sit unnoticed and still serve its purpose (the poster felt heard by the act of posting). A TikTok that sits unnoticed is a failed TikTok. The platform&rsquo;s incentive structure transforms the emotional content from self-expression into a product that must find an audience.</p>
+  <p>The numbers tell the story of scale. <a href="https://thebatt.com/opinion/opinion-depression-isnt-aesthetic/" target="_blank">The Batt</a> reports that &ldquo;depressed girl aesthetic&rdquo; became its own auto-fill search on TikTok with over 17.6 million posts. <a href="https://carolinianuncg.com/2023/09/05/the-sad-girl-aesthetic-from-shakespeare-to-tumblr/" target="_blank">The Carolinian</a> counts over 16 billion views on the #sadgirl hashtag. At that scale, the aesthetic is no longer a subculture &mdash; it is an industry.</p>
+  <h3>Expression vs. Production</h3>
+  <p>The key distinction is between <em>expression</em> (making your internal state visible) and <em>production</em> (creating content that matches an external template). On Tumblr, a sad post was raw material: messy, unpolished, often incoherent. On TikTok, a sad post requires editing choices, music selection, caption writing, filter application, and aesthetic consistency. The person posting must simultaneously feel sad and evaluate whether their sadness meets the visual standard. This dual consciousness &mdash; experiencing and monitoring &mdash; is itself a form of alienation from the original feeling.</p>
+  <div class="callout">
+    <h4>The Platform Paradox</h4>
+    <p>Tumblr let you be sad in public. TikTok requires you to be sad <em>correctly</em> in public. The shift from expression to production is the shift from processing emotion to performing it.</p>
+  </div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)"/>
+      <text x="200" y="18" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="600" class="lbl-hi" letter-spacing="2">THE PLATFORM SHIFT</text>
+      <rect x="20" y="35" width="170" height="70" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1"/>
+      <text x="105" y="55" text-anchor="middle" font-family="Jost,sans-serif" font-size="12" font-weight="500" class="lbl-hi">Tumblr (2010&ndash;16)</text>
+      <text x="105" y="72" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">anonymous &middot; void posting</text>
+      <text x="105" y="85" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">expression &middot; processing</text>
+      <text x="105" y="98" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">audience: optional</text>
+      <rect x="210" y="35" width="170" height="70" rx="3" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+      <text x="295" y="55" text-anchor="middle" font-family="Jost,sans-serif" font-size="12" font-weight="500" class="lbl-hi">TikTok (2019&ndash;)</text>
+      <text x="295" y="72" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">algorithmic &middot; performance</text>
+      <text x="295" y="85" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">production &middot; engagement</text>
+      <text x="295" y="98" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">audience: required</text>
+      <line x1="190" y1="70" x2="210" y2="70" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="60" y="130" width="280" height="50" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="1"/>
+      <text x="200" y="150" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl">feeling &rarr; content &rarr; engagement &rarr; identity</text>
+      <text x="200" y="168" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">the feedback loop that makes recovery threatening</text>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b5bd6"/></marker></defs>
+    </svg>
+  </div>`,
+
+  // 02 — Visual Grammar
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div>
+    <h2>The Visual <em>Grammar</em></h2>
+  </div>
+  <p>Every aesthetic is a grammar &mdash; a set of rules for combining elements to produce meaning. The sad girl aesthetic has specific, documented rules that determine what counts as &ldquo;sad in the right way.&rdquo; Understanding these rules matters because they reveal what the aesthetic includes and excludes, and who it is designed to be legible to.</p>
+  <h3>The Canon</h3>
+  <p>The musical canon is well-established: Lana Del Rey sits at the center, with &ldquo;Pretty When You Cry&rdquo; and &ldquo;Sad Girl&rdquo; as literal anthems. <a href="https://machronicle.com/the-facade-of-the-sad-girl-aesthetic/" target="_blank">The M-A Chronicle</a> notes that Del Rey has &ldquo;often been criticized as one of the major proponents of this aesthetic.&rdquo; Around her: Billie Eilish, Fiona Apple, Lorde, and boygenius. The literary canon: Sylvia Plath above all (her daughter&rsquo;s words haunt the discourse: &ldquo;The point of anguish at which my mother killed herself has been taken over by strangers, possessed, and reshaped&rdquo;). The film canon: Sofia Coppola&rsquo;s entire filmography, but especially <em>The Virgin Suicides</em> and <em>Marie Antoinette</em>. In television: Effy Stonem from <em>Skins</em>, Rue from <em>Euphoria</em>.</p>
+  <h3>The Beauty Standard</h3>
+  <p>The beauty dimension is where the aesthetic becomes most explicitly exclusionary. &ldquo;Crying girl makeup&rdquo; &mdash; a blush-heavy look designed to mimic a post-cry glow &mdash; became a TikTok trend after model Bella Hadid posted crying selfies. The coquette micro-trend (bows, pastels, sad facial expression) boils down to the quintessential Sad Girl. Spotify&rsquo;s &ldquo;sad girl starter pack&rdquo; playlist has 1.5 million likes, its description currently referencing sapphic yearning. There is a <a href="https://brittanypaige.com/products/sad-girl-winter-candle" target="_blank">&ldquo;Sad Girl Winter&rdquo; candle</a> that smells like &ldquo;cotton clean fragrance with lavender.&rdquo;</p>
+  <p>What the grammar excludes is as telling as what it includes. <a href="https://www.dailycal.org/2022/07/17/social-medias-sad-girl-depression-its-aesthetic" target="_blank">The Daily Cal</a> observes: &ldquo;There aren&rsquo;t posts of messy rooms, unwashed hair and yellowing teeth. What is shown is typically more delicate than that.&rdquo; Actual depression &mdash; the inability to shower, the pile of dishes, the three-day-old clothes &mdash; is not aesthetically viable. The grammar permits only the <em>beautiful</em> symptoms of sadness, which are not actually symptoms of depression at all but of the aesthetic itself.</p>
+  <div class="callout">
+    <h4>The Grammar&rsquo;s Exclusion</h4>
+    <p>There are no messy rooms in the sad girl aesthetic. No unwashed hair, no yellowing teeth, no inability to get out of bed. The grammar permits only the symptoms of sadness that photograph well &mdash; which are, by definition, not symptoms of depression.</p>
+  </div>`,
+
+  // 03 — Wollen
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div>
+    <h2>Sad Girl <em>Theory</em></h2>
+  </div>
+  <p>Audrey Wollen (born 1992, Los Angeles; parents: writer Leslie Dick and film theorist Peter Wollen) developed Sad Girl Theory while a student at CalArts, proliferating it primarily through Instagram and in interviews between 2014 and 2016. The theory is a serious intellectual proposition, grounded in feminist art history and critical theory, that has been almost completely consumed by the aesthetic it inadvertently enabled.</p>
+  <p>The core argument, from <a href="https://www.nylon.com/articles/audrey-wollen-sad-girl-theory" target="_blank">Wollen&rsquo;s Nylon interview</a>: &ldquo;Sad Girl Theory is the proposal that the sadness of girls should be witnessed and re-historicized as an act of resistance, of political protest. Girls being sad has been categorized as this act of passivity, and therefore, discounted from the history of activism.&rdquo; The claim is that political protest need not be &ldquo;external to the body&rdquo; &mdash; not marches, noise, violence, rupture &mdash; but can be a &ldquo;long history of girls who have used their own anguish, their own suffering, as tools for resistance and political agency.&rdquo;</p>
+  <h3>The Intellectual Lineage</h3>
+  <p>Wollen draws on a specific canon of &ldquo;tragic queens&rdquo;: Judy Garland, Sylvia Plath, Ana Mendieta, Frida Kahlo, Virginia Woolf. She positions the Instagram selfie as continuous with art historical traditions: &ldquo;The selfie is slightly different because it is mediated by tech and the internet rather than a man with a paintbrush, but it still serves a similar function.&rdquo; Her hospital selfies &mdash; photographing herself in hospital gowns alongside feminist theory books &mdash; explicitly reclaim autonomy in a space of objectification.</p>
+  <p>The theory is sophisticated in ways the aesthetic that adopted it is not. Wollen explicitly addresses the risk of reinforcing stereotypes: &ldquo;I&rsquo;m interested in the idea that objectification itself has radical potential &mdash; we can use the products of oppression as the tools to dismantle it.&rdquo; She chose Instagram deliberately because &ldquo;I&rsquo;m having a conversation about Eve Kosofsky Sedgwick with a 14-year-old girl in Kansas, and she&rsquo;s teaching me about her experience of girlhood. That&rsquo;s so precious.&rdquo;</p>
+  <h3>The Co-optation</h3>
+  <p>What happened to Sad Girl Theory between 2014 and 2024 is a case study in how the internet strips intellectual content from aesthetically viable ideas. The <a href="https://networkcultures.org/longform/2024/01/16/revisiting-sad-girl-sentiments/" target="_blank">INC Longform piece</a> traces the trajectory: Wollen&rsquo;s ironic, self-aware theory became detached from its theoretical framework and was absorbed into the general visual vocabulary of the aesthetic. Commercial institutions adopted the imagery without the politics. The result, as <a href="https://www.thecrimson.com/article/2022/10/27/sad-girl-aesthetic/" target="_blank">the Harvard Crimson&rsquo;s Amber Levis</a> puts it: &ldquo;Simply put, the Sad Girl reeks of complacency. Yes, the sadness is visible through hashtags, but it is not in any way subversive; rather than challenging the systems that oppress her, the Sad Girl beautifies her suffering, and makes us want to as well.&rdquo;</p>
+  <p>Wollen eventually deleted her Instagram. The INC Longform piece suggests she did so partly because the commercialization of the aesthetic had fundamentally altered the reception context. Her images, designed as interventions in feminist art discourse, were being consumed as lifestyle content.</p>
+  <div class="callout">
+    <h4>Theory &rarr; Aesthetic &rarr; Commodity</h4>
+    <p>Wollen intended Sad Girl Theory as activism. The internet stripped the theory and kept the aesthetic. Commerce stripped the aesthetic and sold the candle. Each layer of adoption removed a layer of meaning.</p>
+  </div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)"/>
+      <text x="200" y="18" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="600" class="lbl-hi" letter-spacing="2">THE WOLLEN TRAJECTORY</text>
+      <rect x="15" y="40" width="100" height="50" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1.5"/>
+      <text x="65" y="60" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="500" class="lbl-hi">Theory</text>
+      <text x="65" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">feminist protest</text>
+      <rect x="150" y="40" width="100" height="50" rx="3" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+      <text x="200" y="60" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="500" class="lbl-hi">Aesthetic</text>
+      <text x="200" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">visual lifestyle</text>
+      <rect x="285" y="40" width="100" height="50" rx="3" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="1"/>
+      <text x="335" y="60" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="500" class="lbl-hi">Commodity</text>
+      <text x="335" y="78" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">candle + playlist</text>
+      <line x1="115" y1="65" x2="150" y2="65" stroke="#5b5bd6" stroke-width="1.2" marker-end="url(#arr)"/>
+      <line x1="250" y1="65" x2="285" y2="65" stroke="#7c3aed" stroke-width="1.2" marker-end="url(#arr)"/>
+      <text x="133" y="52" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl">-politics</text>
+      <text x="268" y="52" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl">-meaning</text>
+      <rect x="60" y="120" width="280" height="55" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="1"/>
+      <text x="200" y="140" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">Wollen deletes Instagram</text>
+      <text x="200" y="158" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">the theory cannot survive its own success</text>
+      <text x="200" y="170" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">because scale strips the context that makes it coherent</text>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b5bd6"/></marker></defs>
+    </svg>
+  </div>`,
+
+  // 04 — Whiteness
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div>
+    <h2>Whose Sadness <em>Counts</em></h2>
+  </div>
+  <p>The sad girl aesthetic inherits <a href="s1-historical-melancholy.dd.html" title="Historical Melancholy">S1&rsquo;s</a> oldest pattern: the class filter on whose suffering gets to be interesting. In the 18th century, only the &ldquo;well-to-do, the sedentary, and the studious&rdquo; qualified as melancholic. In the 21st century, only the white, thin, and conventionally beautiful qualify as sad girls.</p>
+  <p>The evidence is consistent across sources. The Daily Cal: &ldquo;The aesthetic is overwhelmingly dominated by people who are white and attractive, which can make girls who don&rsquo;t fit that category feel even more alienated, or like they can&rsquo;t be sad in the &lsquo;good&rsquo; way.&rdquo; The Harvard Crimson&rsquo;s Amber Levis: it &ldquo;represents a very white kind of beauty.&rdquo; Watch Us Rise describes its &ldquo;heroin chic beauty standard.&rdquo;</p>
+  <h3>The Double Exclusion</h3>
+  <p>The whiteness problem creates a double exclusion. Girls of color who are depressed are excluded from the aesthetic community that might otherwise provide recognition and solidarity. But they are also excluded from the cultural currency that the aesthetic generates &mdash; the social rewards of being seen as interestingly sad rather than just sad. Their depression remains in the register of clinical problem rather than aesthetic identity, which means it gets less visibility, less engagement, and less of the parasocial support that the aesthetic community provides.</p>
+  <p>This connects directly to <a href="s6-who-gets-sad.dd.html" title="Who Gets to Be Sad">S6: Who Gets to Be Sad</a>, where epidemiological data shows that Black and Latina women experience higher rates of persistent depression while receiving less treatment and less cultural recognition of their suffering.</p>
+  <div class="callout">
+    <h4>The Aesthetic Filter</h4>
+    <p>The sad girl aesthetic doesn&rsquo;t just represent sadness &mdash; it filters it. Only sadness that meets the visual standard (white, thin, beautiful, literary) becomes culturally legible as interesting rather than merely pathological.</p>
+  </div>`,
+
+  // 05 — Algorithm
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div>
+    <h2>The Algorithmic <em>Loop</em></h2>
+  </div>
+  <p>The most honest account of what the sad girl aesthetic does to an actually depressed person comes from <a href="https://www.trillmag.com/life/opinion/how-the-sadgirl-aesthetic-affects-my-mental-health/" target="_blank">Trill Mag</a>. The author, diagnosed with depression in college, describes how TikTok&rsquo;s algorithm detected her emotional state and began feeding her #sadgirl content. The initial response was relief: &ldquo;I related to some of the content, which provided a sense of community to someone who felt very alone at the time.&rdquo;</p>
+  <p>But the feedback loop quickly became destructive. The aesthetic taught her that sadness, properly curated, could be beautiful. And beauty, in the logic of social media, is the highest form of value. This created a perverse incentive structure: &ldquo;What if I get better and I lose my beauty? What if I become boring? I&rsquo;ve certainly been afraid of this. If my aesthetic is of the #sadgirl, then what aesthetic will I have if I&rsquo;m no longer sad?&rdquo;</p>
+  <h3>The Recovery Paradox</h3>
+  <p>This is the single most important finding in the entire section, and possibly in the entire project. When depression becomes an aesthetic identity, recovery is not just a medical challenge but an <em>identity crisis</em>. The person recovering must not only heal from their condition but also construct a new self-concept that doesn&rsquo;t depend on suffering for its coherence. The algorithm makes this harder by continually surfacing content that reinforces the sadness-as-identity model &mdash; because that content generates engagement, and engagement is the algorithm&rsquo;s only metric.</p>
+  <p>The Trill Mag author&rsquo;s most devastating observation: &ldquo;Another thing about the #sadgirl aesthetic: it&rsquo;s stupid. If you&rsquo;re a sad girl, chances are that you mean that you are depressed. But depression isn&rsquo;t a pretty enough word to be a hashtag, and it is not aesthetic. If my depression were an aesthetic, it would be yellow teeth (too tired to brush them every day), big t-shirts, and everything would be dark and dull and gray.&rdquo; The gap between actual depression and the aesthetic&rsquo;s representation of it is not just visual but ontological: the aesthetic is not about depression at all, but about a curated fantasy of what depression looks like to someone who has never experienced the inability to brush their teeth.</p>
+  <div class="callout">
+    <h4>The Recovery Paradox</h4>
+    <p>&ldquo;What if I get better and I lose my beauty? What if I become boring?&rdquo; When depression is your aesthetic, recovery threatens not just your illness but your identity, your community, and your social media presence.</p>
+  </div>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="400" height="220" fill="rgba(0,0,0,0.025)"/>
+      <text x="200" y="18" text-anchor="middle" font-family="Jost,sans-serif" font-size="10" font-weight="600" class="lbl-hi" letter-spacing="2">THE ALGORITHMIC LOOP</text>
+      <rect x="130" y="35" width="140" height="35" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1"/>
+      <text x="200" y="57" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi">feel sad</text>
+      <rect x="280" y="85" width="105" height="35" rx="3" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+      <text x="332" y="107" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">engage content</text>
+      <rect x="130" y="135" width="140" height="35" rx="3" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="1"/>
+      <text x="200" y="157" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">algo feeds more</text>
+      <rect x="15" y="85" width="105" height="35" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="1"/>
+      <text x="67" y="107" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">sadness = self</text>
+      <path d="M 245 70 Q 310 75 310 85" stroke="#5b5bd6" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+      <path d="M 310 120 Q 310 135 270 150" stroke="#7c3aed" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+      <path d="M 130 150 Q 60 145 60 120" stroke="#0e8fd0" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+      <path d="M 60 85 Q 60 70 130 55" stroke="#14966e" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+      <rect x="110" y="185" width="180" height="25" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1.5"/>
+      <text x="200" y="201" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi">recovery = identity loss</text>
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b5bd6"/></marker></defs>
+    </svg>
+  </div>`,
+
+  // 06 — Gender
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div>
+    <h2>The Gender <em>Asymmetry</em></h2>
+  </div>
+  <p>The sad girl aesthetic is, by definition, gendered. The &ldquo;girl&rdquo; in the name is not incidental &mdash; it marks a specific relationship between femininity and suffering that has no male equivalent. There is no &ldquo;sad boy aesthetic&rdquo; with 16 billion views, no Spotify &ldquo;sad boy starter pack&rdquo; with 1.5 million likes, no crying boy makeup trend.</p>
+  <p>Lucy Dacus of boygenius articulates the core problem: &ldquo;Sadness can be meaningful, but I got a bone to pick with the &lsquo;sad girl indie&rsquo; genre, not the music that gets labeled as that, but the classification and commodification and perpetual expectation of women&rsquo;s pain.&rdquo; The word &ldquo;expectation&rdquo; is crucial. The aesthetic doesn&rsquo;t just permit female sadness &mdash; it <em>expects</em> it, creating a norm that women artists must perform suffering to be taken seriously or commercially viable.</p>
+  <h3>The Double Standard</h3>
+  <p>The <a href="https://machronicle.com/the-facade-of-the-sad-girl-aesthetic/" target="_blank">M-A Chronicle</a> draws a sharp distinction: &ldquo;Sad music by men is portrayed as cathartic, intentional vulnerability, while sad music by women is trivialized and subject to romanticization.&rdquo; When Frank Ocean sings about heartbreak, it is art. When Lana Del Rey sings about heartbreak, it is aesthetic &mdash; a category that carries less prestige and more suspicion of inauthenticity.</p>
+  <p>Wollen addresses this directly: &ldquo;We get stuck in a catch 22: if you act &lsquo;strong,&rsquo; you&rsquo;re a bitch; if you act emotional you&rsquo;re weak and pathetic. Once you&rsquo;ve accepted that you are going to be affirming a sexist clich&eacute; no matter what you do, because those clich&eacute;s are designed to swallow our entire existence, you can do what you actually feel like.&rdquo;</p>
+  <p>This connects to <a href="s1-historical-melancholy.dd.html" title="Historical Melancholy">S1&rsquo;s</a> finding about the gender dynamics of historical melancholy: male melancholy is genius, female melancholy is madness or decoration. The sad girl aesthetic operates within this exact structure, even as it attempts to subvert it.</p>
+  <div class="callout">
+    <h4>The Expectation</h4>
+    <p>The sad girl aesthetic doesn&rsquo;t just permit female sadness &mdash; it expects it. The &ldquo;perpetual expectation of women&rsquo;s pain&rdquo; turns suffering from a response to circumstances into a performance requirement.</p>
+  </div>`,
+
+  // 07 — CDC Numbers
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div>
+    <h2>The CDC <em>Numbers</em></h2>
+  </div>
+  <p>It would be a mistake to discuss the sad girl aesthetic as if it exists in a vacuum of cultural performance. Behind the aesthetic, there is a genuine crisis. The CDC&rsquo;s Youth Risk Behavior Survey data is unambiguous: 57% of teenage girls reported feeling persistently sad or hopeless in 2021, up from 36% in 2011. That is a 21-percentage-point increase in a single decade. Wollen herself noted in 2015 that &ldquo;the number-one cause of death globally for girls between 15 to 19 is suicide.&rdquo;</p>
+  <p>UCLA Psychology Professor Francis Steen, cited in the M-A Chronicle, captures the ambiguity: &ldquo;If you&rsquo;re feeling sad, maybe it&rsquo;s comforting to some degree to see that you&rsquo;re not alone and other people feel this way. But there&rsquo;s a limit to that. It&rsquo;s not such a nice thing to find out that lots of people are feeling sad and lonely, and it&rsquo;s actually an epidemic society is not getting a handle on.&rdquo;</p>
+  <h3>The Chicken-and-Egg</h3>
+  <p>The causal relationship between the aesthetic and the crisis is genuinely unclear. Did the sad girl aesthetic emerge because teenage girls are more depressed (the aesthetic as symptom)? Or does the aesthetic contribute to depression by romanticizing it and creating algorithmic feedback loops (the aesthetic as cause)? Or is the relationship non-causal &mdash; both driven by a third factor, such as social media&rsquo;s general impact on adolescent mental health?</p>
+  <p>The honest answer is that the current evidence does not permit a strong causal claim in either direction. What can be said: the aesthetic exists alongside a genuine epidemic, it draws energy from that epidemic, and it may complicate recovery by making depression an identity rather than a condition. Whether it also <em>produces</em> depression is a question that would require longitudinal data that does not yet exist.</p>
+  <div class="callout">
+    <h4>The Honest Position</h4>
+    <p>The sad girl aesthetic is not <em>just</em> performance. Behind it is a genuine crisis &mdash; 57% of teenage girls reporting persistent sadness. The aesthetic may be symptom, contributor, or both. What it is not is fiction.</p>
+  </div>`,
+
+  // 08 — Tensions
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08 &mdash; Details</div>
+    <h2>Expression vs. <em>Production</em></h2>
+  </div>
+  <p>Four paired tensions structure the debate around the sad girl aesthetic. Each is a version of the same underlying question: can you make suffering visible without making it desirable?</p>
+  <h3>Expression &rarr; Production</h3>
+  <p>Tumblr documented sadness; TikTok produces it. The platform shift changed the relationship between feeling and content. On Tumblr, a sad post was an output of emotion. On TikTok, a sad post is an input to an engagement algorithm. The production model requires monitoring your sadness for aesthetic compliance while experiencing it &mdash; a form of emotional alienation that the expression model did not.</p>
+  <h3>Theory &rarr; Commodity</h3>
+  <p>Wollen&rsquo;s Sad Girl Theory was an intellectual proposition grounded in feminist art history. The aesthetic that adopted its language retained the visual vocabulary but discarded the critical framework. By the time the concept reaches the &ldquo;Sad Girl Winter&rdquo; candle, every layer of meaning has been stripped. The trajectory is: activism &rarr; aesthetic &rarr; lifestyle brand &rarr; commodity. Each transition subtracts politics and adds commerce.</p>
+  <h3>Community &rarr; Identity</h3>
+  <p>Finding others who feel the same is healing. Making the feeling your entire identity is a trap. The line between these is invisible from inside the experience, and the algorithm has no interest in helping you find it &mdash; because the identity model generates more engagement than the community model. A person who is part of a community of people recovering from depression will eventually leave the community. A person whose identity IS depression will stay forever.</p>
+  <h3>Visible &rarr; Beautiful</h3>
+  <p>Making sadness visible is destigmatization: <em>it&rsquo;s okay to not be okay</em>. Making sadness beautiful is romanticization: <em>not being okay is interesting</em>. The difference is in the filter &mdash; literally, in the Instagram and TikTok filters that turn actual emotional distress into aesthetically curated content. Destigmatization says: you can be sad and still be human. Romanticization says: you can be sad and be <em>more</em> human, <em>more</em> interesting, <em>more</em> beautiful. The first is liberation. The second is <a href="s1-historical-melancholy.dd.html" title="Historical Melancholy">Ficino&rsquo;s move</a>, repeated on a platform with 16 billion views.</p>
+  <div class="callout">
+    <h4>The Core Question</h4>
+    <p>Can you make suffering visible without making it desirable? The sad girl aesthetic suggests the answer is no &mdash; at least not at scale, not on platforms optimized for engagement, and not in a culture that has been equating depth with suffering since Aristotle.</p>
+  </div>`
+];
+
+
+const HERO_BADGE = 'FASHIONABLE DESPAIR &middot; S3 &middot; 10 SOURCES';
+const HERO_TITLE = 'Social Media <em>Aesthetics</em>';
+const HERO_SUB_LEFT = 'The Sad Girl Pipeline: From Tumblr to TikTok';
+const HERO_SUB_RIGHT = '16 billion views and counting';
+const SIDEBAR_LOGO = 'F<em>D</em>';
+
+// ════════════════════════════════════════════════
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">D<em>D</em></div><!-- ← CHANGE: 1-3 char logo, <em> for accent -->
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> CATEGORY · LABEL</div><!-- ← CHANGE -->
+        <div class="hero-title">Your Topic <em>Title</em></div><!-- ← CHANGE -->
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Subtitle · Additional Context</span></div><!-- ← CHANGE -->
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+</body>
+</html>

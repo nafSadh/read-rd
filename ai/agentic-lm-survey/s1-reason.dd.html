@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REASON — Model-Native Reasoning & Agentic RL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Wikipedia-style superscript citations with hover tooltips */
+  sup.fn{position:relative;cursor:pointer;font-family:var(--sans);font-size:11px;line-height:0;vertical-align:super}
+  sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+  sup.fn:hover>a{color:var(--bright)}
+  sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+  sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+  sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+const sections = [
+  { num: '01', short: 'Overview', title: 'From <em>Scaffolds</em> to Weights' },
+  { num: '02', short: 'ARL Survey', title: 'The <em>Landscape</em> of Agentic RL' },
+  { num: '03', short: 'Agent-R1', title: '<em>Agent-R1</em> — MDP Formalization' },
+  { num: '04', short: 'Scaling', title: '<em>RL</em> Post-Training Scaling Laws' },
+  { num: '05', short: 'Agent-Omit', title: '<em>Agent-Omit</em> — Learning to Skip' },
+  { num: '06', short: 'Demystifying', title: '<em>Demystifying</em> Agentic RL' },
+  { num: '07', short: 'OpenClaw-RL', title: '<em>OpenClaw-RL</em> — Next-State Signals' },
+  { num: '08', short: 'Themes', title: '<em>Cross-Cutting</em> Themes' }
+];
+
+const summaries = [
+  // 01 Overview
+  `<p>Between January 2025 (DeepSeek-R1)<sup class="fn"><a>[1]</a><span class="tip">DeepSeek-R1: Incentivizing Reasoning via RL (arXiv:2501.12948, Jan 2025)</span></sup> and March 2026, reasoning in agentic LLMs underwent a paradigm shift. Capabilities previously implemented as external prompt scaffolding&mdash;Chain-of-Thought, ReAct, Reflexion&mdash;are being internalized into model weights via reinforcement learning. A full academic ecosystem has formed around this shift.</p>
+  <p>The formal distinction: traditional RLHF is a <em>degenerate single-step MDP</em> (horizon T=1, deterministic transitions, single scalar reward). Agentic RL is a <em>temporally extended POMDP</em> (horizon T&gt;1, stochastic transitions via tool use, step-wise rewards, partial observability). This is not a gradual evolution&mdash;it is a categorical change in the mathematical structure of the learning problem.<sup class="fn"><a>[2]</a><span class="tip">Zhang et al. &ldquo;The Landscape of Agentic RL for LLMs&rdquo; (arXiv:2509.02547v4, TMLR Jan 2026)</span></sup></p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">500+</div><div class="sl">Works synthesized (ARL Survey)</div></div>
+    <div class="st"><div class="sv">63</div><div class="sl">Models in scaling experiments</div></div>
+    <div class="st"><div class="sv">95pp</div><div class="sl">ARL Survey length</div></div>
+    <div class="st"><div class="sv">4B</div><div class="sl">Smallest competitive agent model</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">POMDP</span>
+    <span class="s-chip">GRPO</span>
+    <span class="s-chip">model-native</span>
+    <span class="s-chip">scaffold-to-weights</span>
+  </div>`,
+
+  // 02 ARL Survey
+  `<p>The most comprehensive survey in this space: 25 authors across Oxford, Shanghai AI Lab, NUS, UIUC, UCL, and 9 other institutions. Published in TMLR January 2026.<sup class="fn"><a>[2]</a><span class="tip">Zhang et al. &ldquo;The Landscape of Agentic RL for LLMs&rdquo; (arXiv:2509.02547v4, TMLR Jan 2026)</span></sup> Synthesizes over 500 recent works into a twofold taxonomy: capabilities (planning, tool use, memory, reasoning, self-improvement, perception) &times; applications (search, code, math, GUI, vision, embodied, multi-agent).</p>
+  <p>Central thesis: &ldquo;Reinforcement learning serves as the critical mechanism for transforming these capabilities from static, heuristic modules into adaptive, robust agentic behavior.&rdquo; The paper provides the most detailed comparison of RL algorithm variants (PPO, DPO, GRPO families with 20+ variants each).</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Capability Taxonomy</h4>
+      <p>Planning, Tool Use, Memory, Self-Improvement, Reasoning, Perception &mdash; each analyzed as scaffold-based vs. RL-optimized.</p>
+    </div>
+    <div class="feat">
+      <h4>Task Taxonomy</h4>
+      <p>Search, Code (generation/refinement/SWE), Math (informal/formal), GUI, Vision, Embodied, Multi-Agent.</p>
+    </div>
+    <div class="feat">
+      <h4>Algorithm Landscape</h4>
+      <p>PPO family (6 variants), DPO family (8 variants), GRPO family (7 variants) &mdash; comprehensive comparison table.</p>
+    </div>
+    <div class="feat">
+      <h4>Open Challenges</h4>
+      <p>Trustworthiness, Scaling Training, Scaling Environments, The Mechanistic Debate (amplifier vs. creator).</p>
+    </div>
+  </div>`,
+
+  // 03 Agent-R1
+  `<p>Agent-R1 (USTC, Nov 2025)<sup class="fn"><a>[3]</a><span class="tip">Cheng et al. &ldquo;Agent-R1&rdquo; (arXiv:2511.14460, Nov 2025)</span></sup> makes the MDP&rarr;POMDP extension concrete and practical. The key conceptual move: distinguishing &ldquo;cognitive actions&rdquo; (reasoning steps&mdash;deterministic) from &ldquo;environmental actions&rdquo; (tool calls&mdash;stochastic). The RL training loop must handle both types within a single policy.</p>
+  <p>The paper provides a clean three-level architecture taxonomy: <strong>Workflows</strong> (human-designed routing) &rarr; <strong>Agentic Workflows</strong> (ReAct-style iterative loops, still with prompt engineering) &rarr; <strong>Fully Autonomous Agents</strong> (no predefined workflow, end-to-end RL, proactive environment interaction). Agent-R1 is a modular training framework validated on multi-hop QA benchmarks.</p>
+  <div class="s-chips">
+    <span class="s-chip">MDP extension</span>
+    <span class="s-chip">cognitive vs environmental actions</span>
+    <span class="s-chip">modular framework</span>
+  </div>`,
+
+  // 04 Scaling Laws
+  `<p>The first systematic scaling law study for RL post-training (USTC, Shanghai AI Lab, Oxford, Imperial, Dec 2025).<sup class="fn"><a>[4]</a><span class="tip">Tan et al. &ldquo;Scaling Behaviors of LLM RL Post-Training&rdquo; (arXiv:2509.25300v3, Dec 2025)</span></sup> 63 models across the full Qwen2.5 dense series (0.5B to 72B) trained with RL on 50,000 math problems. Discovers a predictive power-law: <code>log L(N,X) = -k(N)&middot;log X + E(N)</code>.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">0.5B&ndash;72B</div><div class="sl">Model size range</div></div>
+    <div class="st"><div class="sv">50K</div><div class="sl">Math problems for RL</div></div>
+    <div class="st"><div class="sv">4</div><div class="sl">Key findings</div></div>
+  </div>
+  <p>Critical finding: learning efficiency k(N) <em>saturates</em> as model size increases. Larger models are more efficient but with diminishing returns. Data reuse is surprisingly effective&mdash;total optimization steps matter more than unique data volume.</p>`,
+
+  // 05 Agent-Omit
+  `<p>Agent-Omit (HKUST(GZ) + DiDi, Feb 2026)<sup class="fn"><a>[5]</a><span class="tip">Ning et al. &ldquo;Agent-Omit&rdquo; (arXiv:2602.04284, Feb 2026)</span></sup> addresses a practical problem: 97.3% of agent token cost comes from thoughts (45.1%) and observations (52.2%), not actions (2.7%). Not all thoughts and observations contribute equally&mdash;early planning is critical, but later reasoning becomes redundant once execution is clear.</p>
+  <p>The framework trains agents to <em>adaptively skip</em> unnecessary reasoning via a two-stage approach: cold-start omission data synthesis, then omit-aware agentic RL with dual sampling and a tailored omission reward. Agent-Omit-8B matches seven frontier LLM agents while achieving best efficiency.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">45.1%</div><div class="sl">Token cost: thoughts</div></div>
+    <div class="st"><div class="sv">52.2%</div><div class="sl">Token cost: observations</div></div>
+    <div class="st"><div class="sv">2.7%</div><div class="sl">Token cost: actions</div></div>
+    <div class="st"><div class="sv">8B</div><div class="sl">Model matches frontier</div></div>
+  </div>`,
+
+  // 06 Demystifying
+  `<p>This practitioner-oriented paper (NUS + Princeton + UIUC, Oct 2025)<sup class="fn"><a>[6]</a><span class="tip">Yu et al. &ldquo;Demystifying RL in Agentic Reasoning&rdquo; (arXiv:2510.11701, Oct 2025)</span></sup> systematically investigates three dimensions of agentic RL: data curation, algorithm design, and reasoning mode. The key finding that defies conventional wisdom: a deliberative strategy with <em>fewer</em> tool calls outperforms both frequent tool calling and verbose self-reasoning.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Data: Real &gt; Synthetic</h4>
+      <p>Real end-to-end trajectories dramatically outperform synthetic stitched data for SFT initialization. High-diversity datasets sustain RL exploration.</p>
+    </div>
+    <div class="feat">
+      <h4>Algorithm: Exploration-Friendly</h4>
+      <p>&ldquo;Clip higher&rdquo; (relax upper bound), overlong reward shaping, and maintaining policy entropy improve training efficiency.</p>
+    </div>
+    <div class="feat">
+      <h4>Reasoning: Deliberate &gt; Verbose</h4>
+      <p>Fewer, more strategic tool calls beat both frequent calling (dependency) and long CoT without verification (hallucination).</p>
+    </div>
+    <div class="feat">
+      <h4>4B Models Compete</h4>
+      <p>With proper recipes, 4B models achieve strong results on AIME2024/2025, GPQA-Diamond, LiveCodeBench-v6.</p>
+    </div>
+  </div>`,
+
+  // 07 OpenClaw-RL
+  `<p>OpenClaw-RL (Princeton + NUS, Mar 2026)<sup class="fn"><a>[7]</a><span class="tip">Wang et al. &ldquo;OpenClaw-RL&rdquo; (arXiv:2603.10165, Mar 2026)</span></sup> makes a simple but powerful observation: every deployed AI agent already discards the training signal it needs to improve. After each action, the agent receives a next-state signal (user reply, tool output, GUI change) that encodes both <em>evaluative</em> (how well it performed) and <em>directive</em> (how it should change) information.</p>
+  <p>The framework is fully asynchronous: policy serving, PRM judging, and training run concurrently with zero coordination overhead. It unifies personal agents (OpenClaw conversations) with general agents (terminal, GUI, SWE, tool-call settings) under a single learning infrastructure.</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Evaluative</div>
+      <div class="tl-text">User re-query signals dissatisfaction. Passing test signals success. Error trace signals failure. Natural process reward, no annotation needed.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Directive</div>
+      <div class="tl-text">&ldquo;You should have checked the file first&rdquo; specifies not just what was wrong but how to fix it at the token level. Recovered via On-Policy Distillation.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Async</div>
+      <div class="tl-text">Policy Server (SGLang) + PRM Server + Training Engine (Megatron) + Environment Server &mdash; all decoupled, none blocking.</div>
+    </div>
+  </div>`,
+
+  // 08 Cross-Cutting
+  `<p>Four themes emerge across the seven works in this section:</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Scaffold &rarr; Weights</h4>
+      <p>Planning, tool use, memory, self-improvement, and context management are all moving from prompt engineering to RL-trained model capabilities.</p>
+    </div>
+    <div class="feat">
+      <h4>Training Stability Crisis</h4>
+      <p>Entropy collapse, reward hacking, mode collapse, training collapse. ARLArena/SAMPO and algorithmic recipes (clip higher, entropy management) are responses.</p>
+    </div>
+    <div class="feat">
+      <h4>The Data Question</h4>
+      <p>Real trajectories beat synthetic for SFT. Data reuse is effective for RL (optimization steps &gt; unique data). Invest in quality cold-start data, then RL with reuse.</p>
+    </div>
+    <div class="feat">
+      <h4>Efficiency as Objective</h4>
+      <p>Agent-Omit shows efficiency can be a training objective. The shift from &ldquo;maximize accuracy&rdquo; to &ldquo;maximize accuracy per token&rdquo; signals production maturity.</p>
+    </div>
+  </div>`
+];
+
+
+const defined_num_svg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>`;
+
+const details = [
+  // 01 Overview
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 01</div>
+    <h2>From <em>Scaffolds</em> to Weights</h2>
+  </div>
+  <p>The most consequential shift in agentic AI between early 2025 and early 2026 is not any single model release. It is a change in where agent capabilities <em>live</em>. In 2024, an agent's ability to plan, use tools, manage memory, and reflect was implemented as external code&mdash;prompt templates, retrieval pipelines, orchestration logic. By early 2026, these capabilities are increasingly being internalized into model weights via reinforcement learning.</p>
+  <p>The formal distinction, laid out most clearly by Zhang et al. in the Agentic RL Landscape survey (TMLR 2026)<sup class="fn"><a>[2]</a><span class="tip">Zhang et al. &ldquo;The Landscape of Agentic RL for LLMs&rdquo; (arXiv:2509.02547v4, TMLR Jan 2026)</span></sup>, is between a degenerate single-step MDP (what RLHF does) and a temporally extended POMDP (what agentic RL does). In the single-step case, the model sees a prompt, generates a response, and receives a scalar reward. In the agentic case, the model acts over multiple time steps in a partially observable environment, receiving stochastic feedback from tools and the world, and accumulating rewards over an extended horizon.</p>
+  <h3>What Changed and When</h3>
+  <p>DeepSeek-R1 (January 2025)<sup class="fn"><a>[1]</a><span class="tip">DeepSeek-R1: Incentivizing Reasoning via RL (arXiv:2501.12948, Jan 2025)</span></sup> was the catalyst. By applying GRPO&mdash;a critic-free RL algorithm that uses group-relative advantages&mdash;to LLM training, the DeepSeek team demonstrated that self-reflection behavior could emerge <em>without being explicitly trained</em>. The model spontaneously learned to check its own reasoning, backtrack, and verify answers.</p>
+  <p>Kimi k1.5 (Moonshot AI) reinforced the generalizability. By late 2025, a full ecosystem had formed: Agent-R1 providing formal MDP extensions, scaling law studies characterizing RL behavior across model sizes, efficiency work like Agent-Omit showing agents can learn to reason <em>less</em> when appropriate, and practitioner work like &ldquo;Demystifying RL&rdquo; identifying concrete algorithmic recipes.</p>
+  <div class="callout">
+    <h4>The Mechanistic Debate</h4>
+    <p>A fundamental open question runs through all these papers: does RL merely <em>amplify</em> capabilities that already exist in the pretrained weights (the &ldquo;sharpening&rdquo; view), or does it <em>create</em> genuinely new reasoning patterns (the &ldquo;discovery&rdquo; view)? The ARL Landscape survey flags this as unresolved and fundamental. The answer determines what the ceiling of RL training might be.</p>
+  </div>
+  <h3>Papers in This Section</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">TMLR 01/2026</div><div class="tl-text"><strong>The Landscape of Agentic RL for LLMs</strong> &mdash; Zhang et al. (25 authors, 14 institutions). 95pp survey, 500+ works. The canonical reference.</div></div>
+    <div class="tl-item"><div class="tl-date">Nov 2025</div><div class="tl-text"><strong>Agent-R1</strong> &mdash; Cheng et al. (USTC). MDP formalization for multi-turn agents. Modular training framework.</div></div>
+    <div class="tl-item"><div class="tl-date">Dec 2025</div><div class="tl-text"><strong>Scaling Behaviors of LLM RL Post-Training</strong> &mdash; Tan et al. 63 models, power-law discovery, saturation effect.</div></div>
+    <div class="tl-item"><div class="tl-date">Feb 2026</div><div class="tl-text"><strong>Agent-Omit</strong> &mdash; Ning et al. (HKUST/DiDi). Adaptive thought and observation omission via RL.</div></div>
+    <div class="tl-item"><div class="tl-date">Oct 2025</div><div class="tl-text"><strong>Demystifying RL in Agentic Reasoning</strong> &mdash; Yu et al. (NUS/Princeton/UIUC). Practitioner recipes for data, algorithm, reasoning mode.</div></div>
+    <div class="tl-item"><div class="tl-date">Mar 2026</div><div class="tl-text"><strong>OpenClaw-RL</strong> &mdash; Wang et al. (Princeton/NUS). Async RL from live conversation signals.</div></div>
+    <div class="tl-item"><div class="tl-date">Oct 2025</div><div class="tl-text"><strong>A Survey of RL for Large Reasoning Models</strong> &mdash; Zhang et al. (Tsinghua/Shanghai AI Lab). 120pp reference on RL algorithms.</div></div>
+  </div>`,
+
+  // 02 ARL Survey detail
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 02 &mdash; Zhang et al. TMLR 2026</div>
+    <h2>The <em>Landscape</em> of Agentic RL</h2>
+  </div>
+  <p>This 95-page survey (arXiv:2509.02547v4, published TMLR January 2026)<sup class="fn"><a>[2]</a><span class="tip">Zhang et al. &ldquo;The Landscape of Agentic RL for LLMs&rdquo; (arXiv:2509.02547v4, TMLR Jan 2026)</span></sup> is the canonical reference. 25 authors from 14 institutions, synthesizing 500+ works. The paper explicitly cites Plaat et al. as a predecessor that &ldquo;emphasizes the core capabilities of reasoning, acting, and interacting&rdquo;&mdash;but argues that a unified RL-centric framework was missing.</p>
+  <h3>The POMDP Formalization</h3>
+  <p>The paper&rsquo;s most lasting contribution is the formal seven-element tuple: &lang;S, O, A, P, R, T, &gamma;&rang;.</p>
+  <p><strong>Action space decomposition:</strong> A_agent = A_text &cup; A_action. Text actions generate natural language without altering environment state. Structured actions (delimited by special tokens &lt;action_start&gt; and &lt;action_end&gt;) invoke tools or modify the environment. Critically, A_action is recursively constructed&mdash;a single action may itself be a sequence of primitive actions.</p>
+  <p><strong>Dual transition dynamics:</strong> Text actions produce deterministic transitions. Environmental actions produce stochastic transitions P(s_{t+1} | s_t, a_t). This makes the learning problem fundamentally harder than standard RLHF.</p>
+  <p><strong>Rich reward structure:</strong> Task completion rewards (sparse), step-level progress rewards (dense), and zero otherwise. This contrasts with RLHF&rsquo;s single scalar.</p>
+  <h3>The RL Algorithm Zoo</h3>
+  <p>The paper catalogs 20+ algorithm variants across three families. The GRPO family has dominated because it eliminates the critic network. Key GRPO mechanism: sample a group of outputs, use their <em>relative</em> rewards to compute advantages. Advantage for sample g:</p>
+  <pre>A_hat(s_t, a_t) = (R(s_t, a_t) - mean(R_group)) / std(R_group)</pre>
+  <p>Sample-efficient but vulnerable to high variance when the group contains similar-quality outputs.</p>
+  <h3>Memory Taxonomy (Table 3)</h3>
+  <p>Perhaps the most underappreciated contribution. Classifies agent memory as: RAG-style external stores (MemoryBank, HippoRAG), RL-guided retrieval (Prospect, Memory-R1, Mem-&alpha;), Token-level explicit (MemAgent, MEM1, ReSum, Context Folding), Token-level latent (MemoryLLM, M+, MemGen), Structured (Zep temporal graphs, A-MEM atomic notes, G-Memory hierarchical). The RL-guided category&mdash;where RL controls what to store, retrieve, and forget&mdash;is the frontier.</p>
+  <h3>Open Challenges</h3>
+  <p><strong>Trustworthiness:</strong> Agents have expanded attack surface via tools, memory, planning modules. Multi-agent systems compound risks. Sycophancy is dangerous in agentic settings.</p>
+  <p><strong>Scaling Training:</strong> Agent RL Scaling Law shows longer training improves tool-use frequency, reasoning depth, accuracy. But entropy collapse and capability narrowing threaten larger models.</p>
+  <p><strong>Scaling Environments:</strong> ALFWorld and ScienceWorld insufficient. Solutions: automate reward design (explorer agents), automate curriculum generation (EnvGen-style feedback loops).</p>
+  <p><strong>The Mechanistic Debate:</strong> RL as &ldquo;amplifier&rdquo; (surfaces existing capabilities) vs. &ldquo;creator&rdquo; (teaches new patterns). Unresolved and fundamental.</p>
+  <div class="security-box">
+    <h4>Coverage Gap</h4>
+    <p>This survey does not cover the agentic coding tool ecosystem (Claude Code, Antigravity, etc.) or the protocol standardization wave (MCP/A2A). It treats multi-agent systems primarily as research, not production engineering. These are the gaps our survey addresses.</p>
+  </div>`,
+
+  // 03 Agent-R1
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 03 &mdash; Cheng et al. Nov 2025</div>
+    <h2><em>Agent-R1</em> &mdash; MDP Formalization</h2>
+  </div>
+  <p>Agent-R1 (arXiv:2511.14460, USTC, 13 pages)<sup class="fn"><a>[3]</a><span class="tip">Cheng et al. &ldquo;Agent-R1&rdquo; (arXiv:2511.14460, Nov 2025)</span></sup> makes the POMDP formalization implementation-ready. Its Table 1 is one of the clearest side-by-side comparisons of static LLM vs. LLM Agent MDP components.</p>
+  <h3>State Space</h3>
+  <p>Static LLM: s_t = (w_p, w_1, &hellip;, w_t)&mdash;prompt plus generated tokens. LLM Agent: s_t = (w_p, T_1, &hellip;, T_k, T_{k+1}^partial)&mdash;prompt plus <em>full turns of interaction</em>, where each T_i is an agent action <em>and</em> environment response. Qualitatively different: bidirectional interaction history vs. unidirectional generation.</p>
+  <h3>Transition Decomposition</h3>
+  <p>Two types coexist in a single policy: <strong>P_G</strong> (generative, deterministic&mdash;appending tokens) and <strong>P_E</strong> (environmental, potentially stochastic&mdash;triggered by tool invocations). The RL algorithm must handle both within the same trajectory.</p>
+  <h3>Process Rewards</h3>
+  <p>Beyond final outcome reward r_f, Agent-R1 uses intermediate process rewards r_p for tool-call success. This provides more frequent feedback for credit assignment in long trajectories. Validated on multi-hop QA requiring chained tool calls.</p>
+  <h3>Architecture Taxonomy</h3>
+  <p>Three-level progression: <strong>Workflows</strong> (human-designed routing/planning) &rarr; <strong>Agentic Workflows</strong> (ReAct-style iterative reasoning-acting loops, but still prompt-engineered) &rarr; <strong>Fully Autonomous Agents</strong> (no predefined workflow, end-to-end RL, proactive environment interaction through action-feedback cycles).</p>
+  <div class="callout">
+    <h4>Design Philosophy</h4>
+    <p>Agent-R1 is deliberately modular&mdash;designed for &ldquo;straightforward adaptation across diverse task scenarios and interactive environments.&rdquo; Different agent tasks share the same RL training loop but need different environment interfaces.</p>
+  </div>`,
+
+  // 04 Scaling Laws
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 04 &mdash; Tan et al. Dec 2025</div>
+    <h2><em>RL</em> Post-Training Scaling Laws</h2>
+  </div>
+  <p>This paper (arXiv:2509.25300v3, 27 pages)<sup class="fn"><a>[4]</a><span class="tip">Tan et al. &ldquo;Scaling Behaviors of LLM RL Post-Training&rdquo; (arXiv:2509.25300v3, Dec 2025)</span></sup> does for RL post-training what Chinchilla did for pretraining: establishes empirical scaling laws that predict performance. 63 models across Qwen2.5 (0.5B to 72B), all RL-trained on 50,000 math problems.</p>
+  <h3>The Core Formula</h3>
+  <pre>log L(N, X) = -k(N) &middot; log X + E(N)</pre>
+  <p>L = test loss, N = model size, X = resource budget (compute C or data D), k(N) = learning efficiency, E(N) = initial performance baseline.</p>
+  <h3>Finding 1: Larger Models Are More Efficient</h3>
+  <p>Consistent across both compute and data metrics. A 72B model extracts more value from the same compute budget than a 7B model. Validated by fitting on 0.5B&ndash;32B and extrapolating to 72B with good accuracy.</p>
+  <h3>Finding 2: Efficiency Saturates</h3>
+  <p>k(N) follows a saturation formula: k(N) = k_&infin; &middot; (1 - e^{-N/N_0}). Learning efficiency increases with scale but <em>asymptotically approaches a ceiling</em>. A hypothetical 720B model wouldn&rsquo;t be proportionally better than 72B for RL training. This is the most practically important finding.</p>
+  <h3>Finding 3: Data Reuse Works</h3>
+  <p>&ldquo;Repeated exposure to a small dataset is nearly as effective as using larger corpora.&rdquo; Performance governed by total optimization steps, not unique data volume. Teams don&rsquo;t need massive unique RL datasets&mdash;a well-curated small set trained longer can match.</p>
+  <h3>Finding 4: Predictive Across Conditions</h3>
+  <p>Robust for both base and instruction-tuned starting points. Enables compute-optimal allocation: given fixed FLOPs, predict optimal model size and training duration.</p>
+  <div class="callout">
+    <h4>The Agentic Scaling Question</h4>
+    <p>The paper flags a key open question: these laws were measured for pure reasoning RL. When agents use tools, &ldquo;offloading deterministic computations to tools and focusing learning on high-level decision making&rdquo; should shift the curve upward. Measuring agentic scaling laws is critical future work.</p>
+  </div>`,
+
+  // 05 Agent-Omit
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 05 &mdash; Ning et al. Feb 2026</div>
+    <h2><em>Agent-Omit</em> &mdash; Learning to Skip</h2>
+  </div>
+  <p>Agent-Omit (arXiv:2602.04284, 20 pages)<sup class="fn"><a>[5]</a><span class="tip">Ning et al. &ldquo;Agent-Omit&rdquo; (arXiv:2602.04284, Feb 2026)</span></sup> starts with a quantitative analysis using Qwen3-8B on WebShop: 45.1% of tokens are thoughts, 52.2% observations, and only 2.7% actions. The bottleneck isn&rsquo;t executing&mdash;it&rsquo;s thinking and reading.</p>
+  <h3>Turn-Level Analysis (Monte Carlo Rollouts)</h3>
+  <p><strong>Thoughts:</strong> Front-loaded. Heavy token consumption in early turns for high-level planning. Later thoughts redundant once execution is clear.</p>
+  <p><strong>Observations:</strong> Linear growth from stacking. Early observations critical for reasoning; later ones noise during answer generation.</p>
+  <p><strong>Accuracy contribution:</strong> Early turns critical (high Pass@8). Later turns often fall <em>below</em> Pass@1 baseline&mdash;actively hurting performance.</p>
+  <h3>Two-Stage Training</h3>
+  <p><strong>Stage 1 (Cold-start):</strong> Forward traversal through trajectories. At each turn, test whether omitting thought/observation preserves accuracy. If yes, mark as omittable. Generate single-turn and multi-turn omission examples.</p>
+  <p><strong>Stage 2 (Omit-aware RL):</strong> Dual sampling generates standard and omission-aware trajectories. Tailored omission reward incentivizes skipping. Theoretical guarantee: deviation of omission policy upper-bounded by KL-divergence.</p>
+  <h3>Benchmarks</h3>
+  <p>Tested on DeepSearch (knowledge-intensive), WebShop (e-commerce), TextCraft (Minecraft long-horizon), BabyAI (grid-world), SciWorld (scientific discovery). Agent-Omit-8B matches frontier agents while achieving best efficiency trade-off.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>First principled turn-level omission for agentic RL</li>
+        <li>Theoretical KL-divergence bound on policy deviation</li>
+        <li>8B model matching frontier agents on efficiency</li>
+        <li>Evaluated across 5 diverse benchmarks</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations</h4>
+      <ul>
+        <li>Cold-start requires access to full trajectories</li>
+        <li>Binary omission (keep/skip), not partial compression</li>
+        <li>May miss tasks where late observations carry novel info</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 06 Demystifying
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 06 &mdash; Yu et al. Oct 2025</div>
+    <h2><em>Demystifying</em> Agentic RL</h2>
+  </div>
+  <p>This paper (arXiv:2510.11701, NUS + Princeton + UIUC, 24 pages)<sup class="fn"><a>[6]</a><span class="tip">Yu et al. &ldquo;Demystifying RL in Agentic Reasoning&rdquo; (arXiv:2510.11701, Oct 2025)</span></sup> is the practitioner&rsquo;s guide. While other papers focus on theory or specific innovations, this one asks: &ldquo;What actually works, and why?&rdquo;</p>
+  <h3>Axis 1: Data Curation</h3>
+  <p><strong>Real end-to-end trajectories dramatically outperform synthetic stitched data</strong> for SFT initialization. Current pipelines (e.g., ReTool) replace reasoning steps with tool invocations via template editing. This misses critical decision cues&mdash;&ldquo;not only how to call a tool, but also when, why, and what to do next.&rdquo;</p>
+  <p>They compare real vs. synthetic on Qwen2.5-7B and Qwen3-4B. Real data is qualitatively richer. For RL stage, high-diversity, model-aware datasets sustain exploration and prevent mode collapse.</p>
+  <h3>Axis 2: Algorithm Design</h3>
+  <p>Three GRPO techniques compared: loss aggregation granularity, reward shaping, clipping strategy. The key: <strong>exploration-friendly techniques matter most.</strong></p>
+  <p><strong>&ldquo;Clip higher&rdquo;</strong>&mdash;relaxing the upper clip bound in GRPO allows more exploration. <strong>Overlong reward shaping</strong>&mdash;shaped rewards guide appropriate length instead of simple penalties. <strong>Entropy management</strong>&mdash;preventing premature convergence by maintaining policy entropy.</p>
+  <h3>Axis 3: Reasoning Mode</h3>
+  <p>The surprising result: <strong>a deliberative strategy with fewer tool calls outperforms both frequent tool calling and verbose self-reasoning.</strong> Too many calls create dependency and overhead. Too much internal reasoning leads to hallucination accumulation. The sweet spot is deliberate, strategic tool use with concise reasoning.</p>
+  <h3>Practical Impact</h3>
+  <p>4B models achieve competitive results on AIME2024, AIME2025, GPQA-Diamond, LiveCodeBench-v6. They release SFT and RL datasets plus the DemyAgent-4B model.</p>
+  <div class="callout">
+    <h4>The Meta-Lesson</h4>
+    <p>Success comes from getting <em>many small things right simultaneously</em>. Real data, proper clipping, entropy management, deliberate reasoning&mdash;each helps individually but the combination is multiplicative. You can&rsquo;t just plug in GRPO and expect agentic behavior to emerge.</p>
+  </div>`,
+
+  // 07 OpenClaw-RL
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 07 &mdash; Wang et al. Mar 2026</div>
+    <h2><em>OpenClaw-RL</em> &mdash; Next-State Signals</h2>
+  </div>
+  <p>OpenClaw-RL (arXiv:2603.10165, Princeton + NUS, 24 pages)<sup class="fn"><a>[7]</a><span class="tip">Wang et al. &ldquo;OpenClaw-RL&rdquo; (arXiv:2603.10165, Mar 2026)</span></sup> is the most recent and ambitious paper in this section. Core observation: &ldquo;Every deployed AI agent is already collecting the data it needs to improve&mdash;and discarding it.&rdquo;</p>
+  <h3>The Two Wastes</h3>
+  <p><strong>Evaluative signals:</strong> After each action, the next-state implicitly scores performance. A user re-query means dissatisfaction. A passing test means success. This is a natural process reward&mdash;no annotation needed. Yet systems ignore it or use it only offline.</p>
+  <p><strong>Directive signals:</strong> Beyond scoring, next-states carry <em>directional</em> information. &ldquo;You should have checked the file first&rdquo; specifies not just what was wrong but how to fix it at the token level. This is richer than any scalar reward.</p>
+  <h3>Hindsight-Guided On-Policy Distillation (OPD)</h3>
+  <p>The novel method: after an action and its next-state, construct an enhanced &ldquo;teacher context&rdquo; including the hindsight information. Generate token-level directional advantage supervision. Key difference from standard RL: instead of just a scalar &ldquo;that was bad,&rdquo; OPD provides token-by-token guidance on what the output <em>should</em> have looked like.</p>
+  <h3>Architecture</h3>
+  <p>Four decoupled async components: Policy Server (SGLang), PRM Server (judge model/API), Training Engine (Megatron), Environment Server (sessions/channels/tools). The policy serves while training runs. Judging happens concurrently. Zero coordination overhead.</p>
+  <h3>Unified Agent Types</h3>
+  <p>Same framework for personal agents (OpenClaw chat) and general agents (terminal, GUI, SWE, tool-call). Demonstrated with: student homework, teacher grading, developer debugging. Builds on SLiMe (Megatron training), SGLang (inference), SETA (terminal RL), OSWorld (GUI RL), mini-swe-agent (SWE RL).</p>
+  <div class="security-box">
+    <h4>Note on OpenClaw Security</h4>
+    <p>This paper covers the <em>training</em> infrastructure. The deployment security issues (exposed gateways, malicious skills, prompt injection via messaging) are documented in the OPERATE section. The tension between capability and safety runs through the entire agentic ecosystem.</p>
+  </div>`,
+
+  // 08 Cross-cutting
+  `<div class="detail-header">
+    <div class="num">${defined_num_svg}Section 08 &mdash; Synthesis</div>
+    <h2><em>Cross-Cutting</em> Themes & Reading List</h2>
+  </div>
+  <h3>Theme 1: Scaffold &rarr; Weights Migration</h3>
+  <p>Every paper documents the same story. Planning: from CoT prompting to RL-trained policies. Tool use: from ReAct to RL-optimized TIR. Memory: from static RAG to RL-controlled management (Memory-R1, MemAgent). Self-improvement: from verbal reflection to RL-driven correction. Context management: from file scaffolding to RLM code delegation (Prime Intellect).</p>
+  <h3>Theme 2: Training Stability Crisis</h3>
+  <p>Entropy collapse, reward hacking, mode collapse, training collapse&mdash;documented across multiple papers. ARLArena/SAMPO proposes systematic stability analysis. &ldquo;Demystifying RL&rdquo; prescribes algorithmic recipes. Scaling laws show efficiency saturates. This is the field&rsquo;s central engineering challenge.</p>
+  <h3>Theme 3: The Data Question</h3>
+  <p>Two complementary findings: (1) Real end-to-end trajectories are far better than synthetic for SFT&mdash;quality matters at cold start. (2) Data reuse is effective for RL&mdash;optimization steps matter more than unique volume. Recipe: invest in quality trajectory collection, then RL with reuse.</p>
+  <h3>Theme 4: Efficiency as First-Class</h3>
+  <p>Agent-Omit demonstrates efficiency isn&rsquo;t just operational&mdash;it&rsquo;s a training objective. The shift from &ldquo;maximize accuracy&rdquo; to &ldquo;maximize accuracy per token&rdquo; signals production maturity, connecting directly to the OPERATE section&rsquo;s economics.</p>
+  <h3>Prioritized Reading List</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Must-Read</div>
+      <div class="tl-text"><strong>Zhang et al. &ldquo;Landscape of Agentic RL&rdquo;</strong> (TMLR 2026)&mdash;the 95-page canonical survey. <strong>Yu et al. &ldquo;Demystifying RL&rdquo;</strong>&mdash;practitioner recipes.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Important</div>
+      <div class="tl-text"><strong>Tan et al. &ldquo;Scaling Behaviors&rdquo;</strong>&mdash;scaling laws. <strong>Ning et al. &ldquo;Agent-Omit&rdquo;</strong>&mdash;efficiency. <strong>Wang et al. &ldquo;OpenClaw-RL&rdquo;</strong>&mdash;async training.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Reference</div>
+      <div class="tl-text"><strong>Zhang et al. &ldquo;RL for LRMs&rdquo;</strong>&mdash;120pp deep reference. <strong>Cheng et al. &ldquo;Agent-R1&rdquo;</strong>&mdash;MDP formalization. <strong>Prime Intellect RLM</strong>&mdash;future direction.</div>
+    </div>
+  </div>`
+];
+
+
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">R<em>1</em></div><!-- ← CHANGE: 1-3 char logo, <em> for accent -->
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY SECTION 01 &middot; LITERATURE DEEP-DIVE</div><!-- ← CHANGE -->
+        <div class="hero-title">REASON &mdash; Model-Native <em>Reasoning</em> &amp; Agentic RL</div><!-- ← CHANGE -->
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>7 papers &middot; ~300 pages read &middot; Covering Jan 2025&ndash;Mar 2026</span></div><!-- ← CHANGE -->
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Section navigation
+const navDiv = document.createElement('div');
+navDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase';
+navDiv.innerHTML = `
+  <span style="color:var(--dim)">&larr; <a href="index.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">Survey Index</a></span>
+  <span style="color:var(--dim)"><a href="s2-act.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S2: Act</a> &rarr;</span>
+`;
+mainInner.appendChild(navDiv);
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+</script>
+</body>
+</html>

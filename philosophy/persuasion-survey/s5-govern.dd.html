@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules for the Persuasion Machine — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#2e6ab406;--grad2:#9b7aed04;--sidebar-bg:var(--bg2);--right-bg:var(--bg2);--grain-opacity:0.015;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);--edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;--close-text:"✕";--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#9b7aed06;--grad2:#4ee8d004;--sidebar-bg:var(--bg);--right-bg:var(--bg2);--grain-opacity:0.02;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--bg3);--edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;--link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;--close-size:17px;--close-ls:1px;--close-weight:300;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;--list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}.ctrl-btn.detail-btn .icon-open{display:block}.detail-open .ctrl-btn.detail-btn .icon-open{display:none}.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}.sidebar-item:hover{background:var(--bg3)}.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}.detail-open .sidebar-label{opacity:0;width:0}.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}.section-block .s-list.pro li{padding-left:20px}.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent),transparent 70%);transition:border .2s}a:hover{border-bottom-color:var(--accent)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}.detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:10px;color:var(--accent);font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'The Challenge', title: '<em>Governing</em> Automated Influence' },
+  { num: '02', short: 'EU AI Act', title: '<em>Transparency</em> Mandates' },
+  { num: '03', short: 'U.S. Federal', title: '<em>Criminal</em> Prohibitions' },
+  { num: '04', short: 'U.S. States', title: 'The <em>Legislative</em> Patchwork' },
+  { num: '05', short: 'International', title: '<em>Global</em> Approaches' },
+  { num: '06', short: 'Technical', title: '<em>Detection</em> & Provenance' },
+  { num: '07', short: 'Ethics', title: '<em>When</em> Is Persuasion Legitimate?' },
+  { num: '08', short: 'Synthesis', title: '<em>Defense</em> Is Harder Than Attack' }
+];
+
+const summaries = [
+  `<p>The governance landscape for AI-driven persuasion is fragmented, reactive, and struggling to keep pace with technological advance. Persuasion machines—AI systems designed to maximize behavioral compliance through psychological optimization—operate in a regulatory void. Laws lag behind capabilities, definitions conflict across jurisdictions, and enforcement mechanisms remain underdeveloped.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">46</div><div class="sl">States with Laws</div></div>
+    <div class="st"><div class="sv">169</div><div class="sl">Laws Enacted</div></div>
+    <div class="st"><div class="sv">Aug 2026</div><div class="sl">EU Deadline</div></div>
+    <div class="st"><div class="sv">Fragmented</div><div class="sl">Coordination</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">regulatory gap</span>
+    <span class="s-chip">jurisdictional conflict</span>
+    <span class="s-chip">technical outpaced by policy</span>
+  </div>`,
+
+  `<p>The EU AI Act Article 50 mandates transparency in AI-generated content, effective August 2026. High-risk systems must disclose their AI use, including persuasion optimization. The Code of Practice on Transparency (December 2025 draft) requires labeling of AI-generated content. This represents the most aggressive regulatory approach globally—but enforcement challenges loom.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Article 50</div><div class="sl">Transparency</div></div>
+    <div class="st"><div class="sv">Aug 2026</div><div class="sl">Enforceable</div></div>
+    <div class="st"><div class="sv">Mandatory</div><div class="sl">Labeling</div></div>
+    <div class="st"><div class="sv">High-Risk</div><div class="sl">Systems</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">transparency requirement</span>
+    <span class="s-chip">disclosure mandate</span>
+    <span class="s-chip">enforcement begins 2026</span>
+  </div>`,
+
+  `<p>The TAKE IT DOWN Act (Public Law 119-12, May 2025) criminalizes non-consensual intimate deepfakes with up to 2 years imprisonment. Platforms must comply with takedown requests within 48 hours. The DEFIANCE Act (Senate, January 2026) extends federal remedies to victims. These laws target sexual abuse—but persuasion machines pose equally serious harms outside sexual content.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">2 yrs</div><div class="sl">Max Sentence</div></div>
+    <div class="st"><div class="sv">48 hrs</div><div class="sl">Takedown Window</div></div>
+    <div class="st"><div class="sv">May 2026</div><div class="sl">Deadline</div></div>
+    <div class="st"><div class="sv">DEFIANCE</div><div class="sl">Federal Right</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">criminal prohibition</span>
+    <span class="s-chip">content removal</span>
+    <span class="s-chip">deepfake focused</span>
+  </div>`,
+
+  `<p>46 states have enacted deepfake legislation; 169 laws total since 2022; 146 bills in 2025 alone. State laws vary wildly: some require consent, others mandate labels, others focus on deception intent. This patchwork creates compliance nightmares for platforms and inconsistent protection for citizens. The U.S. lacks federal coordination, leaving regulatory gaps.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">46</div><div class="sl">States</div></div>
+    <div class="st"><div class="sv">169</div><div class="sl">Total Laws</div></div>
+    <div class="st"><div class="sv">146</div><div class="sl">2025 Bills</div></div>
+    <div class="st"><div class="sv">Varied</div><div class="sl">Approaches</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">state-level regulation</span>
+    <span class="s-chip">inconsistent standards</span>
+    <span class="s-chip">compliance complexity</span>
+  </div>`,
+
+  `<p>China mandates labeling of all AI-generated content; Japan imposes criminal penalties for non-consensual AI images. These approaches differ from the EU transparency model and U.S. criminal focus. China's approach is broader (all AI content); Japan's is narrow (sexual abuse). International coordination remains minimal, creating global governance asymmetry where bad actors exploit jurisdictional gaps.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">China</div><div class="sl">Mandatory Labeling</div></div>
+    <div class="st"><div class="sv">Japan</div><div class="sl">Criminal Penalties</div></div>
+    <div class="st"><div class="sv">EU</div><div class="sl">Transparency</div></div>
+    <div class="st"><div class="sv">U.S.</div><div class="sl">Criminal/Civil</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">inconsistent regulation</span>
+    <span class="s-chip">global enforcement gap</span>
+    <span class="s-chip">labeling vs penalties</span>
+  </div>`,
+
+  `<p>Technical defenses lag behind generation capabilities. C2PA content provenance standards allow tracing AI-generated content, but adoption remains low. Watermarking techniques are easily circumvented. Detection tools like Reality Defender work post-hoc, catching violations after distribution. The fundamental asymmetry: attack is faster and cheaper than defense.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">C2PA</div><div class="sl">Provenance Standard</div></div>
+    <div class="st"><div class="sv">Watermark</div><div class="sl">Circumventable</div></div>
+    <div class="st"><div class="sv">Detection</div><div class="sl">Reactive</div></div>
+    <div class="st"><div class="sv">Asymmetry</div><div class="sl">Offense > Defense</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">detection lag</span>
+    <span class="s-chip">provenance tracking</span>
+    <span class="s-chip">technical limitations</span>
+  </div>`,
+
+  `<p>Persuasion is ethically legitimate only under strict conditions: informed consent (target knows they are being persuaded), disclosure (mechanism is transparent), benefit alignment (target benefits or consents willingly), and absence of manipulation (no exploitation of cognitive biases or vulnerabilities). Health campaigns, education, ethical marketing meet these criteria. Deepfakes, coercive messaging, and exploitative optimization do not.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Consent</div><div class="sl">Required</div></div>
+    <div class="st"><div class="sv">Disclosure</div><div class="sl">Mandatory</div></div>
+    <div class="st"><div class="sv">No Manipulation</div><div class="sl">Essential</div></div>
+    <div class="st"><div class="sv">Benefit</div><div class="sl">Shared</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">informed consent</span>
+    <span class="s-chip">transparency mandate</span>
+    <span class="s-chip">harm prevention</span>
+  </div>`,
+
+  `<p>The synthesis: three governance approaches exist—transparency mandates (EU), criminal prohibitions (U.S.), and technical defenses—but none alone is sufficient. Transparency is unenforceable without detection. Criminal laws are slow and reactive. Technical defenses are circumvented. Defense is fundamentally harder than attack. Effective governance requires all three plus institutional coordination, detection infrastructure, and rapid international alignment.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Transparency</div><div class="sl">Insufficient</div></div>
+    <div class="st"><div class="sv">Criminal</div><div class="sl">Reactive</div></div>
+    <div class="st"><div class="sv">Technical</div><div class="sl">Circumventable</div></div>
+    <div class="st"><div class="sv">All Three</div><div class="sl">Necessary</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">governance asymmetry</span>
+    <span class="s-chip">multi-layered defense</span>
+    <span class="s-chip">institutional coordination</span>
+  </div>`
+];
+
+const details = [
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 — Details</div>
+    <h2><em>Governing</em> Automated Persuasion</h2>
+  </div>
+  <p>Persuasion machines—AI systems optimized to maximize behavioral compliance through psychological profiling, emotional manipulation, and cognitive bias exploitation—operate in a regulatory void. The governance challenge is not theoretical: deepfakes, synthetic media, algorithmic micro-targeting, and emotional AI are already deployed. Policy has not caught up.</p>
+  <h3>The Regulatory Lag</h3>
+  <p>AI capabilities advance quarterly; legislation advances in years. Deepfake detection tools emerge, then circumvention methods follow weeks later. By the time a country drafts regulation, the technology has evolved beyond the proposed controls. This fundamental asymmetry—innovation faster than governance—means regulation is always reactive, always behind.</p>
+  <h3>Definitional Chaos</h3>
+  <p>What counts as a "persuasion machine"? Does it require AI? Intent to manipulate? Measurable behavioral change? EU law defines "high-risk AI systems" broadly; U.S. law focuses on specific harms (deepfakes, non-consensual images); China requires labeling of "all AI-generated content." These definitions don't align, creating jurisdictional arbitrage: bad actors operate where definitions are narrowest.</p>
+  <h3>Fragmentation Across Levels</h3>
+  <p>EU acts at bloc level; U.S. governs federal + state + platform levels simultaneously; China centralizes. Within the U.S., 46 states have enacted 169 laws with contradictory requirements. A platform cannot comply with all—meeting California's standard may violate Texas's. This fragmentation enables evasion: distribute content where enforcement is weakest.</p>
+  <h3>The Arup Precedent: Governance Failure</h3>
+  <p>In 2024, the architecture firm Arup fell victim to a $25 million fraud orchestrated by deepfake video calls impersonating executives. The fraud was technically sophisticated but governance-simple: no verification protocol existed. Arup had no detection system, no alerting mechanism, no institutional defense. This was governance failure, not technical failure. The lesson: institutional and legal frameworks must exist before technical solutions deploy.</p>
+  <h3>Enforcement Capacity</h3>
+  <p>Regulators lack capacity to enforce. The EU has published AI Act timelines but few inspection mechanisms. U.S. Federal Trade Commission is understaffed. Most countries have zero dedicated deepfake prosecution teams. Enforcement is aspirational, not operational. Laws exist; enforcement doesn't.</p>
+  <div class="callout">
+    <h4>The Core Problem</h4>
+    <p>Persuasion machines are designed to optimize behavioral compliance. They will exploit any regulatory gap. The challenge isn't writing laws—it's writing enforceable laws faster than technology evolves, across jurisdictions that disagree on definitions, with agencies that lack capacity.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 — Details</div>
+    <h2><em>EU</em> AI Act Article 50 & Transparency Mandates</h2>
+  </div>
+  <p>The EU AI Act<sup class="fn"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj">[1]</a><span class="tip"><a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj" target="_blank">EU Regulation 2024/1689 &mdash; AI Act, Official Journal of the EU (2024) &rarr;</a></span></sup> represents the most comprehensive AI regulation globally. Article 50 specifically addresses transparency in AI-generated content: high-risk AI systems must clearly disclose their AI use, labeling requirements for synthetic media, and transparency about optimization methods. The regulation becomes enforceable August 2026—a deadline approaching rapidly with limited enforcement infrastructure prepared.</p>
+  <h3>Article 50: Transparency Requirements</h3>
+  <p>High-risk AI systems must inform users they are interacting with AI. Content generated by AI (images, video, text) must be labeled. Persuasion systems must disclose what psychological variables they optimize for. This sounds straightforward—but "persuasion system" isn't defined in EU law. Does it include recommendation algorithms? Personalized ad targeting? Algorithmic curation? The ambiguity creates loopholes.</p>
+  <h3>The Code of Practice (December 2025 Draft)</h3>
+  <p>The EU published a Code of Practice on Transparency of AI-Generated Content, focusing on labeling mechanisms. Signatories commit to tagging synthetic media, including deepfakes. But adoption is voluntary, enforcement is light-touch, and platforms can choose labeling methods. Consumers may see one label format on TikTok, another on Instagram, a third on YouTube. Consistency—essential for effectiveness—is absent.</p>
+  <h3>Enforcement Challenges</h3>
+  <p>The EU Digital Services Act creates enforcement mechanisms: up to 6% of global revenue in fines. This is teeth. But enforcement requires identifying violations first. Detecting non-consensual deepfakes in real-time, across billions of posts, in dozens of languages, using no detection standard? That infrastructure doesn't exist. Regulators will prosecute egregious cases; ordinary violations will slip through.</p>
+  <h3>The Labeling Problem</h3>
+  <p>Labels are circumventable. Deepfake detection is imperfect; manually adding labels creates false positives and negatives; bad actors will mislabel content or use unlabeled platforms. Users may ignore labels ("This video was AI-generated" next to a convincing executive deepfake—does the user believe the label or the video?). Labels are necessary but not sufficient for protection.</p>
+  <h3>Extraterritorial Reach</h3>
+  <p>The EU AI Act applies to companies operating in the EU, regardless of origin. This creates compliance pressure globally—U.S. and Chinese platforms must meet EU standards to access the EU market. This is powerful governance leverage, but it also incentivizes regulatory arbitrage: some companies may pull out of Europe rather than comply.</p>
+  <h3>Timeline Pressure</h3>
+  <p>August 2026 is nine months away. Most platforms have no comprehensive labeling infrastructure. Regulators have published guidance but not detailed implementation standards. This creates simultaneous regulatory uncertainty and compliance urgency—companies must guess at interpretation while racing to implement.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>First comprehensive AI governance framework globally</li>
+        <li>Strong enforcement mechanisms (up to 6% revenue fines)</li>
+        <li>Extraterritorial reach pressures global compliance</li>
+        <li>Transparency orientation aligns with public interest</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Weaknesses</h4>
+      <ul>
+        <li>Vague definitions of "high-risk" and "persuasion"</li>
+        <li>Detection infrastructure incomplete</li>
+        <li>Labels are circumventable and user-ignorable</li>
+        <li>Enforcement capacity lags regulatory scope</li>
+      </ul>
+    </div>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 — Details</div>
+    <h2><em>TAKE</em> IT DOWN & Criminal Prohibition</h2>
+  </div>
+  <p>The TAKE IT DOWN Act (Public Law 119-12, signed May 2025)<sup class="fn"><a href="https://www.congress.gov/bill/119th-congress/senate-bill/146">[2]</a><span class="tip"><a href="https://www.congress.gov/bill/119th-congress/senate-bill/146" target="_blank">TAKE IT DOWN Act &mdash; Pub. L. 119-12, 119th Congress (2025) &rarr;</a></span></sup> criminalizes non-consensual intimate images and deepfakes. Penalties: up to 2 years imprisonment, fines, and civil liability. Platforms must remove flagged content within 48 hours or face penalties. The DEFIANCE Act (Senate, January 2026) extends federal rights of action to victims. This represents the U.S. criminal-law approach: specific harm categories, criminal penalties, removal requirements.</p>
+  <h3>TAKE IT DOWN: The Mechanics</h3>
+  <p>The law applies to sexual abuse material (CSAM), non-consensual intimate images (revenge porn), and deepfakes depicting real people in sexual scenarios. Victims can report to platforms and law enforcement. Platforms have 48 hours to remove or disable access, or face criminal liability for "hosting." The 48-hour window is tight—platforms must evaluate legality, consent, authenticity within two days. Over-removal risks fair use violations; under-removal risks criminal liability.</p>
+  <h3>Criminal Liability for Producers</h3>
+  <p>Creating non-consensual deepfakes: up to 2 years prison. Intent is not required in some states; recklessness is sufficient. A person who deepfakes a co-worker into sexual scenarios, distributing to coworkers as "joke," faces federal felony charges. This is significant deterrent—but only for sophisticated perpetrators. Coordinated state-level enforcement? Lacking. International extradition? Rarely invoked.</p>
+  <h3>Platform Liability & Safe Harbor</h3>
+  <p>Section 230 provides platforms immunity from user-generated content liability under some conditions. TAKE IT DOWN creates an exception: platforms that negligently fail to remove content face liability. "Negligence" is ambiguous. What detection standard must platforms meet? How much AI investment is required? Platforms will over-remove to avoid negligence liability, harming free expression.</p>
+  <h3>The DEFIANCE Act Extension</h3>
+  <p>Senate DEFIANCE Act (January 2026) creates federal private right of action: deepfake victims can sue platforms, creators, and distributors. This shifts burden from state prosecutors (who lack capacity) to civil suits (easier threshold of proof). But civil suits require victims to identify perpetrators, hire lawyers, fund litigation. Many victims cannot afford this route.</p>
+  <h3>Scope Limitations</h3>
+  <p>TAKE IT DOWN focuses narrowly on sexual deepfakes. What about political deepfakes? Fraud deepfakes (the Arup case)? Non-sexual manipulations? These fall outside federal coverage, leaving them to state law—which is fragmented. A deepfake of a politician engaging in corruption, used for political advantage, may not violate federal law in many states.</p>
+  <h3>International Limitations</h3>
+  <p>U.S. law has no extraterritorial reach. Deepfakes created in Russia, distributed in Hong Kong, impacting Americans—U.S. law cannot prosecute the creators. Platforms (U.S.-based) can remove content, but prosecution requires international cooperation, which is rare for non-violent crimes.</p>
+  <div class="security-box">
+    <h4>Enforcement Reality</h4>
+    <p>Criminal prohibition is powerful on paper; enforcement is weak in practice. FBI has deepfake task forces in a few districts. Most local law enforcement has zero training. Prosecution requires digital evidence collection, authentication, perpetrator identification. This is resource-intensive. Most deepfake creators will not face prosecution.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 — Details</div>
+    <h2><em>State-Level</em> Legislation Patchwork</h2>
+  </div>
+  <p>46 U.S. states have enacted deepfake legislation. 169 laws total since 2022. 146 bills introduced in 2025 alone. This legislative explosion creates regulatory patchwork: California criminalizes knowing distribution; Texas criminalizes creation; Florida requires consent for political deepfakes; New York focuses on victim rights. Platforms face 169 conflicting requirements. Compliance is mathematically complex.</p>
+  <h3>Categorical Variation</h3>
+  <p>State laws vary on key elements: (1) Intent—some require knowing creation/distribution, others only negligence. (2) Consent—some focus on consent of the depicted person, others on consent of platforms. (3) Remedy—some criminalize, others create civil liability, others mandate labeling. (4) Scope—some apply only to sexual content, others to any deceptive content. This variation is not accidental; it reflects state policy disagreement on what persuasion machine harms matter most.</p>
+  <h3>Colorado's AI Act: Risk Assessment Model</h3>
+  <p>Colorado passed an AI Act requiring "detailed impact assessments" for AI systems used in consequential decisions (hiring, benefits, credit). Enforcement begins February 2026. This is broader than deepfake-focused laws—it targets persuasion systems generally. But "detailed impact assessment" is undefined. What standard should companies use? How detailed is "detailed"? Ambiguity creates compliance uncertainty.</p>
+  <h3>California's Approach: Victimization Focus</h3>
+  <p>California criminalizes non-consensual sexual deepfakes and requires platforms to remove within 10 days (tighter than federal 48-hour window). The law is victim-centric: focusing on harm to depicted person, with civil rights of action. But the 10-day window is arguably tighter than feasible for content verification across billions of posts.</p>
+  <h3>Texas, Florida, Others: Political Deepfakes</h3>
+  <p>Several states criminalize "deceptive" AI-generated content in political contexts. Texas law makes it illegal to distribute AI-generated political content that "deceives." Florida requires labeling of political deepfakes 30 days before elections. These are content-specific regulations—attacking deceptive persuasion directly. But "deceptive" is subjective. What is true persuasion, and what is deceptive manipulation? The line blurs.</p>
+  <h3>Compliance Impossibility</h3>
+  <p>A platform operating nationwide faces: remove within 10 days (CA) vs. 48 hours (federal) vs. 30 days (other states). Criminal liability in TX, civil in CA, labeling-only in FL. To comply with all, a platform must: (1) monitor all content in real-time, (2) assess legality under 46+ state frameworks, (3) remove or label within varying timelines, (4) document decisions for liability defense. This is operationally impossible. Platforms will choose a single standard (usually most restrictive or most profitable) and accept non-compliance elsewhere.</p>
+  <h3>The Legislative Escalation</h3>
+  <p>146 bills in 2025 indicates escalating legislative effort. States are competing to be "tough on deepfakes," leading to regulatory creep: broader definitions, shorter timelines, higher penalties. This competition generates stronger-looking laws that are harder to enforce and more likely to infringe on legitimate speech.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Criminal Approach</h4>
+      <p>TX, CA: Criminalize creation/distribution. Deterrent-focused. Slow enforcement.</p>
+    </div>
+    <div class="feat">
+      <h4>Civil Approach</h4>
+      <p>CA, NY: Enable victim lawsuits. Victim-empowering. Requires resources.</p>
+    </div>
+    <div class="feat">
+      <h4>Labeling Approach</h4>
+      <p>FL, others: Require disclosure/labeling. Transparency-focused. Easily circumvented.</p>
+    </div>
+    <div class="feat">
+      <h4>Assessment Approach</h4>
+      <p>CO: Impact assessments for AI systems. Preventive. Vaguely defined.</p>
+    </div>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 — Details</div>
+    <h2><em>International</em> Divergence</h2>
+  </div>
+  <p>Governance of persuasion machines varies radically across countries. China mandates labeling of all AI-generated content; Japan imposes criminal penalties for non-consensual AI images; EU requires transparency; U.S. criminalizes specific harms. There is no international coordination, no unified standard, no mutual recognition agreements. This creates opportunities for regulatory arbitrage and jurisdictional gaps.</p>
+  <h3>China: Mandatory AI Content Labeling</h3>
+  <p>China's approach is the broadest globally: all AI-generated content must be labeled. Not just deepfakes—all synthetic media. This includes text generated by language models, images by diffusion models, videos by generative AI. The requirement is binding, enforced by the CAC (Cyberspace Administration of China). Non-compliance risks platform shutdown. This is strong enforcement but also content surveillance: labeling creates a registry of AI-generated content useful for censorship.</p>
+  <h3>Japan: Criminal Penalties for Non-Consensual AI Images</h3>
+  <p>Japan focuses narrowly on non-consensual sexual imagery. Criminal penalties for creating/distributing AI-generated sexual images without consent. This is similar to U.S. approach but earlier adopted and more aggressively enforced. Japan has prosecuted creators, creating deterrent effect. But scope is narrow: political or financial deepfakes fall outside coverage.</p>
+  <h3>EU: Transparency + Risk Assessment</h3>
+  <p>EU emphasizes transparency (disclosure) and risk assessment (impact evaluation). High-risk systems require pre-deployment assessment. The philosophy: informed choice and preventive governance. But enforcement is resource-intensive. EU regulators must evaluate impact assessments, audit compliance, prosecute violations. Without capacity, transparency mandates become theater.</p>
+  <h3>U.S.: Criminal Prohibition of Specific Harms</h3>
+  <p>U.S. approach is criminal-law focused: define specific harms (sexual deepfakes, CSAM, fraud), criminalize, prosecute. This is reactive—waiting for harm before punishing. But criminal law has constitutional limits: it cannot punish speech based on falsity alone (First Amendment). Only non-consensual intimate imagery, fraud, and narrow categories are criminalized. Political disinformation remains largely unregulated.</p>
+  <h3>Jurisdictional Gaps & Arbitrage</h3>
+  <p>A deepfake creator in a country with no AI regulation can distribute globally. Platforms (often U.S.-based) apply U.S. law, creating a global standard. But this is de facto, not de jure. Countries can't legally enforce their laws extraterritorially; platforms can't legally violate national laws. This creates tension: a video legal to create in Country A, illegal in Country B, subject to removal by a U.S. platform operating under U.S. law. Who decides? Platform policy, de facto.</p>
+  <h3>Mutual Recognition Failure</h3>
+  <p>Countries recognize each other's laws in trade, finance, copyright. AI governance has no mutual recognition. EU standards don't transfer to Asia; U.S. laws don't apply in Europe. A company compliant in California may be non-compliant in Germany. Platforms must navigate 50+ national regulatory frameworks with no coordination mechanism.</p>
+  <h3>The Coordination Vacuum</h3>
+  <p>No international body governs AI persuasion. UNESCO has published recommendations (non-binding). UN groups discuss governance (slow, consensus-driven). No treaty, no trade agreement linkage, no enforcement mechanism exists. This vacuum enables regulatory races-to-the-bottom: some countries will weaken AI regulation to attract platforms; others will strengthen it for competitive advantage.</p>
+  <div class="callout">
+    <h4>The International Asymmetry</h4>
+    <p>Persuasion machines operate globally; governance remains national. A bad actor exploits this gap. A protective governance framework (EU transparency) is sidestepped by creators operating outside EU or platforms that treat EU rules as advisory. Effective governance requires international coordination, which is politically infeasible.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 — Details</div>
+    <h2><em>Technical</em> Defenses: Detection & Provenance</h2>
+  </div>
+  <p>Technical defenses against persuasion machines fall into three categories: detection (identifying deepfakes post-creation), provenance tracking (tracing origin and authenticity), and watermarking (embedding authenticity markers in generated content). None is foolproof. All are circumventable. The fundamental problem: detection lags behind generation capabilities.</p>
+  <h3>Content Provenance: C2PA Standard</h3>
+  <p>The Coalition for Content Provenance and Authenticity (C2PA)<sup class="fn"><a href="https://c2pa.org">[3]</a><span class="tip"><a href="https://c2pa.org" target="_blank">C2PA: Content Provenance &amp; Authenticity Technical Specification (2024) &rarr;</a></span></sup> developed a technical standard for content authentication: a digital signature embedded in media files indicating creator, modification history, and authenticity. C2PA allows tracing "who created this and what has it been edited." This is powerful for institutional use—news organizations can verify source images, archives can authenticate documents. But adoption is voluntary, circumvention is feasible (strip metadata, re-encode), and consumer platforms haven't widely deployed.</p>
+  <h3>Watermarking: Fragile & Circumventable</h3>
+  <p>Watermarks embed invisible information in generated content (text, images, video) indicating AI origin. Theoretically, detection algorithms identify the watermark, confirming AI generation. In practice: (1) attackers remove watermarks through re-encoding, compression, cropping; (2) watermarks are content-sensitive (strong watermarks degrade quality, weak ones are removed); (3) multiple watermarking standards compete, creating interoperability problems. Watermarking is partial defense, not robust protection.</p>
+  <h3>Deepfake Detection Tools</h3>
+  <p>Companies like Reality Defender, Sensity, and academic researchers publish deepfake detection algorithms. These typically use forensic analysis: detecting artifacts of generation (facial tics, blinking patterns, audio-visual desync). But: (1) detection accuracy is 95% at best, 85% typical—5-15% false negatives pass detection; (2) detection is reactive—content must be flagged, analyzed, evaluated before removal; (3) detection algorithms improve, but so do generation methods. The arms race favors attackers: generation is easier to improve than detection.</p>
+  <h3>The Asymmetry Problem</h3>
+  <p>Creating a deepfake: $500 software, 1 day training. Detecting that deepfake: $100K ML infrastructure, teams of researchers, ongoing algorithm improvement. Defense is 100x more expensive than attack. This cost asymmetry means defense will always lag, and resource-constrained defenders (smaller platforms, developing countries) cannot afford adequate defense. Wealthy platforms (Google, Meta) can invest in detection; smaller platforms cannot.</p>
+  <h3>Real-Time Detection: Infeasible</h3>
+  <p>Platforms receive billions of uploads daily. Real-time detection of all content would require: (1) running deepfake detection on every image/video upload, (2) processing at scale (billions per day), (3) maintaining <1% false positive rate (false positives risk removing legitimate content), (4) doing so instantly (removal delays enable viral spread). This is computationally infeasible with current technology. Detection will remain post-hoc (catching violations hours/days after upload), not preventive.</p>
+  <h3>Watermarking Adoption: Slow</h3>
+  <p>C2PA adoption remains low. Reasons: (1) adds complexity to content creation workflows, (2) provides no benefit to creators (only to downstream verifiers), (3) interoperability problems limit utility, (4) optional adoption means bad actors don't adopt. Mandatory watermarking could address this—but who can mandate it? Only platforms and governments. Platforms resist mandates; governments lack authority over open-source tools.</p>
+  <div class="security-box">
+    <h4>Technical Defense Limitations</h4>
+    <p>No technical defense is foolproof. All are circumventable with sufficient resources. Technical approaches are necessary but not sufficient—they must be paired with legal and institutional defenses. Relying on technology alone is governance failure. The Arup case: no amount of deepfake detection would have helped without institutional verification procedures (calling back to verify requests, cross-checking with executives).</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 — Details</div>
+    <h2><em>Ethical</em> Boundaries: When Is Persuasion Legitimate?</h2>
+  </div>
+  <p>Not all persuasion is harmful. Public health campaigns persuade people to vaccinate, exercise, stop smoking—and these are ethically laudable. Education persuades students to learn; ethical marketing persuades consumers. The question is: what distinguishes legitimate persuasion from manipulative exploitation? The answer lies in consent, transparency, benefit alignment, and absence of bias exploitation.</p>
+  <h3>Four Conditions for Legitimate Persuasion</h3>
+  <p><strong>1. Informed Consent:</strong> The target knows they are being persuaded and consents to the persuasion attempt. A health campaign explicitly labeled "Persuasion: We want to convince you to exercise" meets this. A deepfake pretending authenticity does not. <strong>2. Transparency:</strong> The mechanism of persuasion is disclosed. How the persuader is trying to convince you (appeals to authority, emotional imagery, social proof) is made explicit. <strong>3. Benefit Alignment:</strong> The target benefits or at minimum consents willingly. Persuading someone to buy a useful product, adopt a healthy habit, or educate themselves aligns benefits. Persuading someone into financial fraud, emotional abuse, or self-harm does not. <strong>4. Absence of Bias Exploitation:</strong> The persuasion does not exploit documented cognitive biases, vulnerabilities, or psychological weaknesses specific to the target.</p>
+  <h3>Health Campaigns: Legitimate Persuasion</h3>
+  <p>Public health persuasion ("Stop Smoking: Your Children Need You") uses emotional appeals and social proof. It is labeled as persuasion (source is clearly a public health authority). It seeks benefit alignment (the target's health benefit). It does not exploit individual vulnerabilities—it uses principles that apply broadly (parental love, social approval). This is legitimate persuasion.</p>
+  <h3>Ethical Marketing: Conditional Legitimacy</h3>
+  <p>Marketing persuades consumers to buy products. When marketing: (1) makes truthful claims, (2) clearly identifies itself as promotional, (3) does not target vulnerable populations (children, elderly) with age-inappropriate persuasion, (4) respects user choice (can opt-out, unsubscribe)—it is ethical. When marketing: (1) makes false claims (fraud), (2) mimics neutral content (deception), (3) targets children with addiction-optimized persuasion (exploitation), (4) creates manipulative FOMO or scarcity (cognitive bias exploitation)—it is unethical.</p>
+  <h3>Deepfakes & Non-Consensual Persuasion</h3>
+  <p>Deepfakes violate all four conditions. No informed consent (target doesn't know the content is synthetic). No transparency (deepfakes masquerade as authentic). No benefit alignment (deepfakes exploit target for perpetrator benefit). Explicit bias exploitation (deepfakes leverage human tendency to trust video evidence). Deepfakes are illegitimate persuasion by definition.</p>
+  <h3>Algorithmic Microtargeting: Gray Zone</h3>
+  <p>Platforms use behavioral targeting: showing ads/content tailored to individual psychological profiles, purchase history, emotional states. Is this legitimate? (1) Consent is weak—users don't know what data is collected or how they're targeted. (2) Transparency is minimal—algorithms are opaque, optimization criteria unknown. (3) Benefit alignment is unclear—the platform benefits more than the user. (4) Bias exploitation is systematic—algorithms specifically find and exploit individual vulnerabilities. Algorithmic microtargeting exploits consent and transparency gaps, putting it in the unethical category—even when the underlying content is truthful.</p>
+  <h3>Political Persuasion: Context-Dependent</h3>
+  <p>Political campaigns persuade people to vote for candidates. Is this legitimate? (1) Consent: voters expect political persuasion (implicit consent). (2) Transparency: political source is usually disclosed (mostly). (3) Benefit alignment: depends—if the candidate would genuinely serve voters' interests, benefit aligns; if purely exploiting fears for power, it does not. (4) Bias exploitation: political persuasion often exploits tribalism, outrage, fear—cognitive biases. This is ethically questionable. Deepfake political advertising (synthetic videos of candidates) crosses from ethically gray into clearly unethical: it adds deception on top of bias exploitation.</p>
+  <h3>The Intent-Outcome Distinction</h3>
+  <p>Intent matters but is insufficient. A campaign intending to persuade people toward beneficial behavior (health, learning, ethical consumption) is ethically distinct from a campaign intending exploitation or deception. But outcomes matter too. A health campaign with bad intent (profiting from placebo effect) is still unethical even if the health outcome is positive. Ethical evaluation requires both: legitimate intent and beneficial (or at minimum, consented) outcome.</p>
+  <div class="callout">
+    <h4>The Ethical Test</h4>
+    <p>Ask: Would I consent to this persuasion if I had full information about its mechanism and intent? Would I benefit or at minimum not be harmed? Does this respect my autonomy or exploit my vulnerabilities? If the answers are yes-yes-yes, the persuasion is legitimate. If they are no-no-no, it is clearly unethical. Most real cases fall in between, requiring judgment.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08 — Details</div>
+    <h2><em>Synthesis</em>: Why Defense Is Harder Than Attack</h2>
+  </div>
+  <p>Three approaches to governing persuasion machines exist: transparency mandates (disclose AI use), criminal prohibitions (punish harms), and technical defenses (detect/prevent). Each has advocates. Each is necessary. None alone is sufficient. The synthesis: all three are required simultaneously, paired with institutional capacity and international coordination. The challenge: this is exponentially harder than it sounds.</p>
+  <h3>Transparency Mandates: Necessary But Unenforceable</h3>
+  <p>Requiring disclosure of persuasion systems is ethically justified (consumers have right to know) and strategically necessary (informed choice is precondition for defense). But: (1) enforcement requires detection (how do you prove a system is optimizing for persuasion if it's hidden?), (2) disclosure is circumventable (companies label content "educational" when it's persuasive, mislabel origin, bury disclosures in terms of service), (3) consumers ignore disclosures (a label "This content is AI-optimized for engagement" next to a viral video doesn't change consumption). Transparency is aspirational without enforcement capacity.</p>
+  <h3>Criminal Prohibitions: Reactive & Resource-Intensive</h3>
+  <p>Criminalizing deepfakes creates deterrent effect and gives prosecutors tools. But: (1) criminal law is slow (investigation, prosecution, conviction take years; harm is immediate), (2) enforcement is reactive (waiting for reports before investigating), (3) prosecution requires perpetrator identification (difficult in anonymous/distributed contexts), (4) most perpetrators operate internationally (beyond jurisdiction). Criminal prohibition is powerful but incomplete. It deters some actors (those who fear prosecution) but not all (those who operate outside reach of prosecution).</p>
+  <h3>Technical Defenses: Circumventable & Expensive</h3>
+  <p>Detection, watermarking, and provenance tracking are necessary defensive tools. But: (1) all are circumventable (adversarial attacks bypass detection; watermarks are removed; provenance is faked), (2) they are expensive relative to attack cost (defense costs 100x more), (3) they require institutional adoption (platforms must deploy, creators must watermark, consumers must verify)—adoption is slow and inconsistent. Technical defenses raise the cost of attack but don't prevent it.</p>
+  <h3>The Asymmetry: Why Defense Is Harder</h3>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="220" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" class="lbl" letter-spacing="1.5">THE GOVERNANCE ASYMMETRY</text>
+    <line x1="30" y1="32" x2="370" y2="32" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="30" y="44" width="160" height="150" fill="rgba(139,32,32,0.06)" rx="4" stroke="rgba(139,32,32,0.3)" stroke-width="1"/>
+    <text x="110" y="64" text-anchor="middle" class="node-text" font-size="11">ATTACK</text>
+    <text x="110" y="82" text-anchor="middle" class="lbl" font-size="8">Fast: hours to deploy</text>
+    <text x="110" y="96" text-anchor="middle" class="lbl" font-size="8">Cheap: $50-500</text>
+    <text x="110" y="110" text-anchor="middle" class="lbl" font-size="8">Distributed: any laptop</text>
+    <text x="110" y="124" text-anchor="middle" class="lbl" font-size="8">Innovative: immediate deploy</text>
+    <text x="110" y="138" text-anchor="middle" class="lbl" font-size="8">Exploits ambiguity</text>
+    <text x="110" y="152" text-anchor="middle" class="lbl" font-size="8">Anonymous: hard to trace</text>
+    <text x="110" y="170" text-anchor="middle" class="lbl-hi" font-size="8">All defenses bypassed 78%+</text>
+    <text x="110" y="184" text-anchor="middle" class="lbl" font-size="7">(Maloyan et al. 2026)</text>
+    <rect x="210" y="44" width="160" height="150" fill="rgba(46,110,62,0.06)" rx="4" stroke="rgba(46,110,62,0.3)" stroke-width="1"/>
+    <text x="290" y="64" text-anchor="middle" class="node-text" font-size="11">DEFENSE</text>
+    <text x="290" y="82" text-anchor="middle" class="lbl" font-size="8">Slow: years to legislate</text>
+    <text x="290" y="96" text-anchor="middle" class="lbl" font-size="8">Expensive: 100x attack cost</text>
+    <text x="290" y="110" text-anchor="middle" class="lbl" font-size="8">Centralized: requires institutions</text>
+    <text x="290" y="124" text-anchor="middle" class="lbl" font-size="8">Standardized: slow adoption</text>
+    <text x="290" y="138" text-anchor="middle" class="lbl" font-size="8">Requires legal clarity</text>
+    <text x="290" y="152" text-anchor="middle" class="lbl" font-size="8">Jurisdictional: national scope</text>
+    <text x="290" y="170" text-anchor="middle" class="lbl-hi" font-size="8">Coordination: fragmented</text>
+    <text x="290" y="184" text-anchor="middle" class="lbl" font-size="7">(46 states, 169 laws, no alignment)</text>
+    <rect x="80" y="200" width="240" height="16" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="212" text-anchor="middle" class="lbl" font-size="7.5">Attack benefits from speed and distribution; defense requires coordination and resources</text>
+  </svg></div>
+  <p>Attack is fast, cheap, and distributed: one person with $500 software creates a deepfake in hours. Defense is slow, expensive, and centralized: platforms must detect, verify, and remove content across billions of posts with finite resources. Attack benefits from continuous innovation: new generation methods are deployed immediately upon creation. Defense requires standard-setting: detection improvements are developed slowly and adopted inconsistently across platforms. Attack exploits regulatory ambiguity (deepfakes without precise legal definition spread freely). Defense requires legal clarity (regulation must precisely define what counts as harmful persuasion before enforcement can begin).</p>
+  <h3>The Institutional Challenge</h3>
+  <p>Even if all three governance approaches were perfect, institutional capacity is insufficient. Regulators (EU, U.S., national governments) lack personnel trained in AI detection, deepfake forensics, platform auditing. Detection requires AI expertise; prosecution requires digital forensics; civil rights enforcement requires platform access. Most countries have zero personnel dedicated to persuasion machine governance. This capacity gap is not closable quickly—building expertise takes years, and political will to fund it is weak.</p>
+  <h3>The Coordination Problem</h3>
+  <p>Effective governance requires: (1) international alignment (agreeing on definitions, timelines, remedies), (2) platform coordination (shared detection infrastructure, consistent content policies), (3) law enforcement coordination (cross-border prosecution, evidence sharing). None of these exist. Jurisdictions compete; platforms operate independently; law enforcement treats AI crimes as low-priority. Without coordination, governance remains fragmented and ineffective.</p>
+  <h3>What Sufficient Governance Would Require</h3>
+  <p><strong>1. Transparency + Detection:</strong> Mandatory disclosure of persuasion optimization, paired with technical standards for verification. This requires agreed-upon definitions and audit protocols. <strong>2. Criminal + Civil Liability:</strong> Criminal prosecution for intentional deepfakes, plus civil rights of action for victims, plus platform liability for negligent hosting. This requires enforcement capacity and jurisdictional alignment. <strong>3. Technical Standards:</strong> Mandatory watermarking for generated content, open-source detection tools, provenance tracking infrastructure, funding for defensive research. This requires platform investment and interoperability standards. <strong>4. Institutional Capacity:</strong> Specialized law enforcement teams, regulatory inspectors trained in AI, platform security auditors, funding for detection research. This requires political will and sustained budgets.</p>
+  <h3>The Reality: Insufficient Governance</h3>
+  <p>Current governance has fragments of each approach but none completely. Transparency mandates exist without enforcement. Criminal laws exist without prosecution capacity. Technical standards exist without adoption. Institutional capacity is minimal. The result: persuasion machines proliferate in a governance gap. Defense is harder than attack, and institutional defenses are underdeveloped.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>What We Have</h4>
+      <ul>
+        <li>EU AI Act transparency framework (good start)</li>
+        <li>U.S. criminal laws against deepfakes (deterrent)</li>
+        <li>Technical detection tools (imperfect but improving)</li>
+        <li>Growing international awareness (late but growing)</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>What We Lack</h4>
+      <ul>
+        <li>Enforcement capacity (regulators understaffed)</li>
+        <li>Technical infrastructure (detection at scale infeasible)</li>
+        <li>International coordination (governance remains national)</li>
+        <li>Adequate deterrent (cost of attack < cost of defense)</li>
+      </ul>
+    </div>
+  </div>`
+];
+
+// ════════════════════════════════════════════════
+// DOM BUILDER
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">A<em>I</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY · SECTION 05</div>
+        <div class="hero-title">Rules for the <em>Persuasion Machine</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>EU AI Act · TAKE IT DOWN Act · Technical Defenses · The Governance Gap</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+
+// Build main content
+const mainScroll = document.getElementById('main-scroll');
+const mainScrollInner = document.createElement('div');
+mainScrollInner.className = 'main-scroll-inner';
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num">
+      <span>${sec.num} · ${sec.short}</span>
+      <button class="s-detail-btn" onclick="viewDetail(${idx})"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button>
+    </div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainScrollInner.appendChild(block);
+});
+mainScroll.appendChild(mainScrollInner);
+
+// Build detail panels
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detail = document.createElement('div');
+  detail.className = 'detail';
+  detail.innerHTML = details[idx];
+  rightInner.appendChild(detail);
+});
+
+// Theme toggle
+function toggleTheme() {
+  const theme = document.body.getAttribute('data-theme');
+  document.body.setAttribute('data-theme', theme === 'light' ? 'dark' : 'light');
+}
+
+// Detail panel
+let currentDetail = 0;
+function viewDetail(idx) {
+  currentDetail = idx;
+  document.body.classList.add('detail-open');
+  const mainHead = document.querySelector('.main-head');
+  mainHead.classList.add('compact');
+  updateDetails();
+  document.getElementById('right').classList.remove('closed');
+  updateRightScroll();
+}
+
+function toggleDetail() {
+  document.body.classList.toggle('detail-open');
+  document.querySelector('.main-head').classList.toggle('compact');
+  document.getElementById('right').classList.toggle('closed');
+  if(!document.body.classList.contains('detail-open')) {
+    currentDetail = 0;
+  }
+  updateDetails();
+}
+
+function updateDetails() {
+  const details = document.querySelectorAll('.detail');
+  details.forEach(d => d.style.display = 'none');
+  details[currentDetail].style.display = 'block';
+}
+
+// Sidebar scrolling
+function scrollToSection(idx) {
+  currentDetail = idx;
+  const blocks = document.querySelectorAll('.section-block');
+  blocks[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+    item.classList.toggle('active', i === idx);
+  });
+}
+
+// Right panel scroll
+const rightPanel = document.getElementById('right');
+const rightTopbar = document.querySelector('.right-topbar');
+const stickyTitle = document.getElementById('right-sticky-title');
+const detailEls = document.querySelectorAll('.detail');
+
+function updateRightScroll() {
+  if(rightPanel.scrollTop > 20) {
+    rightTopbar.classList.add('scrolled');
+    stickyTitle.classList.add('visible');
+    stickyTitle.textContent = sections[currentDetail].short;
+  } else {
+    rightTopbar.classList.remove('scrolled');
+    stickyTitle.classList.remove('visible');
+  }
+}
+
+rightPanel.addEventListener('scroll', updateRightScroll);
+
+// Sidebar hover
+let sidebarHoverTimeout;
+document.addEventListener('mousemove', (e) => {
+  const item = e.target.closest('.sidebar-item');
+  if(item && document.body.classList.contains('detail-open')) {
+    const label = item.getAttribute('data-label');
+    clearTimeout(sidebarHoverTimeout);
+    sidebarTip.classList.add('visible');
+    sidebarTip.textContent = label;
+    const rect = item.getBoundingClientRect();
+    sidebarTip.style.top = (rect.top + rect.height/2 - 12) + 'px';
+    sidebarTip.style.left = (rect.right + 12) + 'px';
+  } else {
+    sidebarHoverTimeout = setTimeout(() => {
+      sidebarTip.classList.remove('visible');
+    }, 100);
+  }
+});
+</script>
+</body>
+</html>

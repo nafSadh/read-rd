@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Myth to Matter — Sophie's World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Further Reading */
+  .further-reading{margin-top:32px;padding-top:20px;border-top:1px solid var(--border)}
+  .further-reading h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:12px}
+  .further-reading ul{list-style:none;padding:0;margin:0}
+  .further-reading li{padding:6px 0;font-size:14px;line-height:1.6;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+  .further-reading li:last-child{border-bottom:none}
+  .further-reading .fr-source{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.5px;margin-left:6px}
+
+  /* Cross-Section Navigation */
+  .section-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:40px;border-top:1px solid var(--border);font-family:var(--sans);font-size:12px;letter-spacing:.5px}
+  .section-nav a{color:var(--dim);text-decoration:none;border-bottom:none;transition:color .2s;display:flex;align-items:center;gap:6px}
+  .section-nav a:hover{color:var(--accent);border-bottom:none}
+  .section-nav .nav-prev::before{content:'\2190';font-size:14px}
+  .section-nav .nav-next::after{content:'\2192';font-size:14px}
+  .section-nav .nav-index{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase}
+
+  </style>
+</head>
+<body data-theme="light">
+  <nav class="sidebar"><div class="sidebar-nav" id="sidebar-nav"></div></nav>
+  <div class="main" id="main-scroll">
+    <div class="main-head">
+      <div class="hero">
+        <div class="hero-badge">Sophie's World · Section 2</div>
+        <h1>From Myth to Matter</h1>
+        <p class="hero-sub">The Birth of Reason (c. 600–300 BC)</p>
+      </div>
+      <div class="topbar-row">
+        <button class="topbar-btn" onclick="toggleTheme()" aria-label="Toggle theme">◐</button>
+        <button class="topbar-btn toggle-detail-btn" onclick="toggleDetail()" aria-label="Toggle detail panel">☰</button>
+      </div>
+    </div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><button class="close-btn" onclick="closeRight()">✕</button><span class="right-sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+
+  <script>
+const sections = [
+  { num: "01", short: "Mythology", title: "Before Reason: The Mythic Mind" },
+  { num: "02", short: "Natural Philosophers", title: "The Basic Substance Question" },
+  { num: "03", short: "Democritus", title: "The Lego Question" }
+];
+
+const summaries = [
+  `
+<p>Before philosophy, humans explained the world through myths. Thor's hammer causes thunder. Ragnarök explains the seasons. Myths aren't random stories—they're attempts to answer real questions about how things work.</p>
+
+<p>The shift from myth to philosophy around 600 BC wasn't a replacement of stories with facts. It was a shift in how questions are asked. Instead of "Which god causes the storm?" philosophers asked "What is the natural process?" This tiny change in how we frame questions launched science, reason, and philosophy as we know them.</p>
+
+<div class="callout">
+  <h4>Myths Persist</h4>
+  <p>Even today, mythological thinking lingers. We explain what we don't understand through half-beliefs and reassuring stories. The question is whether we're aware of it.</p>
+</div>
+`,
+  `
+<p>The first philosophers asked: What is everything made of? Thales said water. Anaximander said the Boundless. Anaximenes said air. Each philosopher had a project—a specific question they were trying to answer.</p>
+
+<p>This wasn't random guessing. Each thinker observed the world and tried to find the fundamental reality beneath the diversity of things. Their answers were wrong by modern standards, but their method was revolutionary: observe, reason, propose a natural explanation.</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="tl-date">c. 624–546 BC</div>
+    <div class="tl-text"><strong>Thales</strong> — Everything is water. Observed: life needs moisture, seeds are wet, nile floods bring fertility.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-date">c. 610–546 BC</div>
+    <div class="tl-text"><strong>Anaximander</strong> — Everything is the Boundless (apeiron). If one element creates all, it can't be limited.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-date">c. 585–528 BC</div>
+    <div class="tl-text"><strong>Anaximenes</strong> — Everything is air/vapor. Air condenses to water/earth, rarefies to fire.</div>
+  </div>
+</div>
+`,
+  `
+<p>Sophie receives a puzzle: "Why is Lego the most ingenious toy in the world?" She builds with Lego blocks and discovers: they're indivisible, varied in shape, solid, connectable, and endlessly reusable.</p>
+
+<p>Democritus answered the same question 2,400 years earlier. Everything, he said, is built from tiny invisible atoms (a-tomos = "uncuttable"). They combine and recombine infinitely. When you die, your atoms scatter and reform into new things. Nothing is created or destroyed—only rearranged.</p>
+
+<div class="verdict">
+  <div class="v-col pro">
+    <h4>Elegant</h4>
+    <ul>
+      <li>Explains change without contradiction</li>
+      <li>Resolves ancient debates</li>
+      <li>Purely mechanical—no soul-force needed</li>
+    </ul>
+  </div>
+  <div class="v-col con">
+    <h4>Problems</h4>
+    <ul>
+      <li>Atoms are invisible—unverifiable</li>
+      <li>Reduces everything to mechanics</li>
+      <li>No room for purpose or value</li>
+    </ul>
+  </div>
+</div>
+`
+];
+
+const details = [
+  `
+<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>01 — Mythology</div>
+  <h2>Before Reason: The Mythic Mind</h2>
+</div>
+
+<p>The mythological worldview is not primitive or stupid. It's a sophisticated attempt to make sense of the world using narrative, emotion, and symbol. Myths explain natural phenomena through divine actors. They encode moral lessons, psychological truths, and cultural values.</p>
+
+<h3>The Functions of Myth</h3>
+
+<p>Myths answered real questions: Why does winter come and go? Why do people die? Where do babies come from? Why is there suffering? In Norse mythology, Ragnarök (the twilight of the gods) explains seasonal cycles—the death and rebirth that comes with winter and spring. Prometheus stealing fire for humans explains the origin of technology and the price of progress.</p>
+
+<p>Myths also functioned as psychology before modern psychology existed. They dramatized internal conflicts (the battle of gods mirrors the conflict of impulses in the human soul) and provided templates for how to live (the hero's journey, the wise elder, the trickster).</p>
+
+<h3>The Philosophical Revolution (~600 BC)</h3>
+
+<p>Around the 6th century BCE, in Greek city-states, something shifted. Thinkers began asking questions differently. Instead of "Who rules the gods?" they asked "What is everything made of?" Instead of "Why did the gods punish us?" they asked "What are the natural causes of disease?"</p>
+
+<p>This wasn't a rejection of gods—many early philosophers believed in gods. It was a shift in the kind of questions they asked. They demanded natural, not supernatural, explanations. They insisted on reasoning, not revelation. They challenged authority and custom, asking: How do you know? What's your evidence?</p>
+
+<div class="diagram-wrap">
+  <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" class="fig">
+    <!-- Myth arrow -->
+    <g>
+      <text x="50" y="30" font-family="Jost" font-size="14" font-weight="600" fill="#1a1a1a">MYTHOLOGY</text>
+      <text x="30" y="80" font-family="EB Garamond" font-size="13" fill="#6e6b64">"Why" = Gods</text>
+      <text x="30" y="100" font-family="EB Garamond" font-size="13" fill="#6e6b64">Authority: Tradition</text>
+      <text x="30" y="120" font-family="EB Garamond" font-size="13" fill="#6e6b64">Answer: Revealed</text>
+      <rect x="20" y="50" width="140" height="100" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="4,4"/>
+    </g>
+
+    <!-- Arrow -->
+    <path d="M 180 100 L 220 100" stroke="#1a1a1a" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="185" y="90" font-family="Jost" font-size="11" fill="#6e6b64">~600 BC</text>
+
+    <!-- Philosophy arrow -->
+    <g>
+      <text x="340" y="30" font-family="Jost" font-size="14" font-weight="600" fill="#1a1a1a">PHILOSOPHY</text>
+      <text x="310" y="80" font-family="EB Garamond" font-size="13" fill="#6e6b64">"Why" = Natural causes</text>
+      <text x="310" y="100" font-family="EB Garamond" font-size="13" fill="#6e6b64">Authority: Reason</text>
+      <text x="310" y="120" font-family="EB Garamond" font-size="13" fill="#6e6b64">Answer: Discovered</text>
+      <rect x="300" y="50" width="140" height="100" fill="none" stroke="#5b5bd6" stroke-width="2"/>
+    </g>
+
+    <!-- Marker for arrow -->
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#1a1a1a"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+`,
+  `
+<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>02 — Natural Philosophers</div>
+  <h2>The Basic Substance Question</h2>
+</div>
+
+<p>The Pre-Socratic philosophers (thinkers before Socrates) shared a common project: identify the basic substance or principle underlying all things. Their approach was radically new—no gods, no myths, just observation and reasoning.</p>
+
+<h3>The Milesian School</h3>
+
+<p><strong>Thales of Miletus (c. 624–546 BC)</strong> is conventionally called the first philosopher in the Western tradition. Why? Because he asked for natural explanations. Everything is made of water, he proposed. Why water? He observed that all living things contain moisture, that seeds are wet, that the Nile's floods bring fertility. Water seemed fundamental to life.</p>
+
+<p><strong>Anaximander (c. 610–546 BC)</strong> reasoned differently. If one element creates all other things, it can't be water, air, or fire—because those are particular, limited. The source must be something indefinite, unlimited: the Boundless (apeiron). Anaximander also proposed that our world is one among many worlds that come and go infinitely.</p>
+
+<p><strong>Anaximenes (c. 585–528 BC)</strong> proposed air as the basic substance. Through condensation and rarefaction, air becomes all other things: condense it and you get water, further condense it and you get earth. Rarefy it and you get fire. This was elegant because it showed how one substance could explain transformation without losing its essential unity.</p>
+
+<h3>The Problem of Change</h3>
+
+<p>A crucial tension emerged. If everything is made of one basic substance, how do things change? How does water become fire, or a seed become a tree?</p>
+
+<p><strong>Parmenides (c. 515–450 BC)</strong> took the radical position: nothing really changes. His argument: something cannot come from nothing (there's no reason why it should), and something cannot become nothing (that which exists cannot cease). Therefore, all apparent change is illusion. Our senses deceive us. Reality, properly understood through reason, is eternal, unchanging, and indivisible.</p>
+
+<p><strong>Heraclitus (c. 535–475 BC)</strong> said the opposite: Everything flows (panta rhei). "You cannot step twice into the same river." The world is characterized by constant flux and change. Opposites are necessary: day and night, war and peace, sickness and health. But behind the flux is Logos—universal reason, divine intelligence, a pattern holding everything together.</p>
+
+<div class="diagram-wrap">
+  <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg" class="fig">
+    <!-- Parmenides side -->
+    <g>
+      <rect x="20" y="40" width="180" height="180" fill="none" stroke="#5b5bd6" stroke-width="2"/>
+      <text x="110" y="30" text-anchor="middle" font-family="Jost" font-size="13" font-weight="600" fill="#5b5bd6">PARMENIDES</text>
+      <text x="110" y="80" text-anchor="middle" font-family="Jost" font-size="12" fill="#1a1a1a">Nothing Real Changes</text>
+      <text x="110" y="110" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">"All change is</text>
+      <text x="110" y="130" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">illusion. Reason says</text>
+      <text x="110" y="150" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">reality is eternal &amp;</text>
+      <text x="110" y="170" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">unchanging."</text>
+      <text x="110" y="210" text-anchor="middle" font-family="Jost" font-size="10" fill="#6e6b64">RATIONALISM</text>
+    </g>
+
+    <!-- VS -->
+    <text x="250" y="145" text-anchor="middle" font-family="Jost" font-size="14" font-weight="600" fill="#1a1a1a">VS</text>
+
+    <!-- Heraclitus side -->
+    <g>
+      <rect x="300" y="40" width="180" height="180" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+      <text x="390" y="30" text-anchor="middle" font-family="Jost" font-size="13" font-weight="600" fill="#0ea5e9">HERACLITUS</text>
+      <text x="390" y="80" text-anchor="middle" font-family="Jost" font-size="12" fill="#1a1a1a">Everything Flows</text>
+      <text x="390" y="110" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">"You cannot step</text>
+      <text x="390" y="130" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">twice into the same</text>
+      <text x="390" y="150" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">river. Change is</text>
+      <text x="390" y="170" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="#6e6b64">fundamental."</text>
+      <text x="390" y="210" text-anchor="middle" font-family="Jost" font-size="10" fill="#6e6b64">EMPIRICISM</text>
+    </g>
+  </svg>
+</div>
+
+<h3>The Solutions</h3>
+
+<p><strong>Empedocles (c. 490–430 BC)</strong> proposed that both Parmenides and Heraclitus were half-right. The error was assuming one basic substance. Instead, there are four eternal, unchanging elements: earth, air, fire, and water. Change occurs when these elements combine and separate—like mixing paint colors. The elements themselves never change.</p>
+
+<p><strong>Anaxagoras (c. 500–428 BC)</strong> went further: not four elements, but infinite tiny seeds (spermata). "There is something of everything in everything." Each fragment contains traces of all other things—like a hologram where each part contains the whole pattern. A mysterious force—Mind or Intelligence (Nous)—orders these seeds into structured forms.</p>
+`,
+  `
+<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>03 — Democritus</div>
+  <h2>The Lego Question</h2>
+</div>
+
+<p>Democritus (c. 460–370 BC) synthesized centuries of Pre-Socratic thought into the most powerful image: everything is made of atoms.</p>
+
+<h3>Atoms: The Building Blocks</h3>
+
+<p>Atomos means "uncuttable." Atoms are eternal, indivisible, indestructible particles. They differ in shape, size, and movement, but not in substance—they're all made of the same basic matter. They move through the void (empty space), colliding, linking, forming structures.</p>
+
+<p>When atoms unite, they create objects. When objects decay, atoms scatter and recombine into new objects. Your body is a temporary arrangement of atoms. When you die, your atoms will become part of other things—trees, soil, other animals. Nothing is lost, only rearranged.</p>
+
+<h3>Materialism</h3>
+
+<p>Democritus is history's first uncompromising materialist. Only atoms and void exist. There is no soul, no divine force, no purpose built into nature. The universe operates mechanically, governed by necessity. Everything that happens is determined by the motion and collision of atoms.</p>
+
+<p>Even perception is mechanical: atoms from objects enter our sense organs. Moon-atoms enter the eye, allowing us to see the moon. Sound is made of tiny atoms striking the ear.</p>
+
+<h3>A Revolutionary Implication</h3>
+
+<p>Democritus's atomism removes purpose from nature. The Pre-Socratic philosophers often assumed things have a telos (purpose)—that seeds grow into plants for a reason, that the sun shines for a purpose. Democritus denies this. Atoms have no purpose. They simply move according to physical laws. Any appearance of design is accidental, not intentional.</p>
+
+<p>This is why Plato and Aristotle, who came later, rejected atomism. They thought it left out something essential—the purposefulness they saw everywhere in nature. It took 2,000 years for science to vindicate Democritus. The modern atom theory is fundamentally his theory.</p>
+
+<div class="diagram-wrap">
+  <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" class="fig">
+    <!-- Empty space (void) -->
+    <rect x="20" y="30" width="460" height="240" fill="#f5f5f5" stroke="#d6d0c4" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="250" y="50" text-anchor="middle" font-family="Jost" font-size="12" fill="#6e6b64">THE VOID (Empty Space)</text>
+
+    <!-- Atoms - various shapes and arrangements -->
+    <!-- Group 1: scattered atoms -->
+    <circle cx="80" cy="100" r="6" fill="#5b5bd6" stroke="#1a1a1a" stroke-width="1"/>
+    <circle cx="120" cy="110" r="5" fill="#5b5bd6" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="140" y="95" width="10" height="10" fill="#5b5bd6" stroke="#1a1a1a" stroke-width="1"/>
+    <circle cx="170" cy="105" r="4" fill="#5b5bd6" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="80" y="135" font-family="Jost" font-size="11" fill="#6e6b64">Atoms</text>
+    <text x="75" y="150" font-family="Jost" font-size="11" fill="#6e6b64">Scattered</text>
+
+    <!-- Arrow -->
+    <path d="M 200 110 L 250 110" stroke="#1a1a1a" stroke-width="2" marker-end="url(#atomarrow)"/>
+    <text x="215" y="100" font-family="Jost" font-size="10" fill="#6e6b64">Combine</text>
+
+    <!-- Group 2: atoms forming object -->
+    <circle cx="280" cy="95" r="6" fill="#0ea5e9" stroke="#1a1a1a" stroke-width="1.5"/>
+    <circle cx="300" cy="100" r="6" fill="#0ea5e9" stroke="#1a1a1a" stroke-width="1.5"/>
+    <circle cx="320" cy="95" r="6" fill="#0ea5e9" stroke="#1a1a1a" stroke-width="1.5"/>
+    <circle cx="310" cy="115" r="6" fill="#0ea5e9" stroke="#1a1a1a" stroke-width="1.5"/>
+    <text x="300" y="135" font-family="Jost" font-size="11" fill="#6e6b64">Object</text>
+    <text x="295" y="150" font-family="Jost" font-size="11" fill="#6e6b64">Forms</text>
+
+    <!-- Arrow down -->
+    <path d="M 300 160 L 300 200" stroke="#1a1a1a" stroke-width="2" marker-end="url(#atomarrow)"/>
+    <text x="310" y="185" font-family="Jost" font-size="10" fill="#6e6b64">Decay</text>
+
+    <!-- Group 3: atoms scattered again -->
+    <circle cx="270" cy="230" r="5" fill="#7c3aed" stroke="#1a1a1a" stroke-width="1"/>
+    <circle cx="295" cy="225" r="4" fill="#7c3aed" stroke="#1a1a1a" stroke-width="1"/>
+    <circle cx="320" cy="235" r="6" fill="#7c3aed" stroke="#1a1a1a" stroke-width="1"/>
+    <circle cx="340" cy="220" r="5" fill="#7c3aed" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="300" y="260" font-family="Jost" font-size="11" fill="#6e6b64">Atoms</text>
+    <text x="290" y="275" font-family="Jost" font-size="11" fill="#6e6b64">Recombine</text>
+
+    <!-- Legend -->
+    <text x="30" y="290" font-family="Jost" font-size="10" fill="#6e6b64">Same atoms, different arrangements → infinite possibilities</text>
+
+    <defs>
+      <marker id="atomarrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#1a1a1a"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+`
+];
+
+
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+// Further reading — append to last detail
+const furtherReading = document.createElement('div');
+furtherReading.className = 'further-reading';
+furtherReading.innerHTML = `<h3>Further Reading</h3><ul>
+<li><a href="https://plato.stanford.edu/entries/presocratics/" target="_blank" rel="noopener">Presocratic Philosophy</a> <span class="fr-source">Stanford Encyclopedia of Philosophy</span></li>
+<li><a href="https://en.wikipedia.org/wiki/Thales_of_Miletus" target="_blank" rel="noopener">Thales of Miletus</a> <span class="fr-source">Wikipedia</span></li>
+<li><a href="https://plato.stanford.edu/entries/heraclitus/" target="_blank" rel="noopener">Heraclitus</a> <span class="fr-source">Stanford Encyclopedia of Philosophy</span></li>
+<li><a href="https://plato.stanford.edu/entries/democritus/" target="_blank" rel="noopener">Democritus</a> <span class="fr-source">Stanford Encyclopedia of Philosophy</span></li>
+<li><a href="https://en.wikipedia.org/wiki/Parmenides" target="_blank" rel="noopener">Parmenides</a> <span class="fr-source">Wikipedia</span></li>
+</ul>`;
+const lastDetail0 = document.getElementById('detail-' + (details.length - 1));
+if (lastDetail0) lastDetail0.appendChild(furtherReading);
+
+// Cross-section navigation
+const navBar = document.createElement('div');
+navBar.className = 'section-nav';
+navBar.innerHTML = `<a class="nav-prev" href="01-awakening.dd.html">The Awakening</a><a class="nav-index" href="index.html">Index</a><a class="nav-next" href="03-athens.dd.html">Athens &amp; the Good Life</a>`;
+mainInner.appendChild(navBar);
+
+</script>
+</body>
+</html>

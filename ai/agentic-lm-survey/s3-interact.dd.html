@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INTERACT — Protocols & Multi-Agent Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Wikipedia-style superscript citations with hover tooltips */
+  sup.fn{position:relative;cursor:pointer;font-family:var(--sans);font-size:11px;line-height:0;vertical-align:super}
+  sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+  sup.fn:hover>a{color:var(--bright)}
+  sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+  sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+  sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+
+const sections = [
+  { num: '01', short: 'Overview', title: 'The <em>Protocol</em> Era' },
+  { num: '02', short: 'Protocols', title: '<em>MCP</em>, A2A, ACP, ANP' },
+  { num: '03', short: 'Collaboration', title: '<em>Multi-Agent</em> Collaboration' },
+  { num: '04', short: 'Orchestration', title: '<em>Orchestration</em> Evidence' },
+  { num: '05', short: 'DAAO', title: '<em>Difficulty-Aware</em> Routing' },
+  { num: '06', short: 'Architecture', title: 'Agentic <em>Architectures</em>' },
+  { num: '07', short: 'Governance', title: '<em>AAIF</em> &amp; Governance' },
+  { num: '08', short: 'Themes', title: '<em>Cross-Cutting</em> Themes' }
+];
+
+const summaries = [
+  `<p>Plaat et al.&rsquo;s &ldquo;Interact&rdquo; category treated multi-agent systems as a research topic. By March 2026, interaction is primarily an engineering and governance problem. Standardized protocols (MCP, A2A, ACP, ANP) govern agent communication. The Linux Foundation&rsquo;s AAIF&mdash;co-founded by six competing AI companies&mdash;manages these standards.</p>
+  <p>Simultaneously, multi-agent orchestration moved from design patterns to production architectures. Graph-based flow engineering replaces chat loops. Difficulty-aware routing assigns different LLMs to different subtasks. Empirical evidence shows multi-agent systems achieve deterministic quality impossible with single agents.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">97M+</div><div class="sl">MCP monthly SDK downloads</div></div>
+    <div class="st"><div class="sv">100%</div><div class="sl">Multi-agent actionable rate</div></div>
+    <div class="st"><div class="sv">6</div><div class="sl">AAIF founding companies</div></div>
+    <div class="st"><div class="sv">41%</div><div class="sl">DAAO inference cost vs baselines</div></div>
+  </div>
+  <div class="s-chips"><span class="s-chip">MCP</span><span class="s-chip">A2A</span><span class="s-chip">AAIF</span><span class="s-chip">flow engineering</span><span class="s-chip">heterogeneous routing</span></div>`,
+
+  `<p>Four protocols address agent interoperability at different layers. MCP (Anthropic, Nov 2024) standardizes agent-to-tool communication via JSON-RPC. A2A (Google, Apr 2025) enables agent-to-agent discovery and task delegation via Agent Cards. ACP (IBM, merged into A2A Aug 2025) adds REST-native multimodal messaging. ANP enables decentralized peer-to-peer agent networking via W3C DIDs.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>MCP &mdash; Agent &rarr; Tool</h4><p>JSON-RPC 2.0. Four primitives: Tools, Resources, Prompts, Sampling. 97M+ monthly downloads. De facto standard.</p></div>
+    <div class="feat"><h4>A2A &mdash; Agent &rarr; Agent</h4><p>Agent Cards for discovery. HTTPS + SSE. Peer-to-peer delegation, dynamic negotiation, standardized identity.</p></div>
+    <div class="feat"><h4>ACP &mdash; REST-Native</h4><p>IBM&rsquo;s protocol. MIME-typed multipart messages. Merged into A2A at Linux Foundation Aug 2025.</p></div>
+    <div class="feat"><h4>ANP &mdash; Decentralized</h4><p>W3C DIDs + JSON-LD. Peer-to-peer without centralized infrastructure. Open-network agent discovery.</p></div>
+  </div>`,
+
+  `<p>The most comprehensive survey of LLM multi-agent collaboration (UCC/Pusan/Trinity, Jan 2025, 35 pages).<sup class="fn"><a>[1]</a><span class="tip">Tran et al. &ldquo;Multi-Agent Collaboration Mechanisms&rdquo; (arXiv:2501.06322, Jan 2025)</span></sup> Proposes a five-dimensional framework: actors (homo/heterogeneous), types (cooperation/competition/coopetition), structures (centralized/decentralized/hierarchical), strategies (role/rule/model-based), and coordination protocols.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Cooperation</h4><p>Agents work toward shared goals. Most common in task-solving systems (MetaGPT, ChatDev).</p></div>
+    <div class="feat"><h4>Competition</h4><p>Agents oppose each other (debate, adversarial verification). Improves reasoning quality via disagreement.</p></div>
+    <div class="feat"><h4>Coopetition</h4><p>Cooperate on some dimensions, compete on others. Least studied but arguably most realistic.</p></div>
+    <div class="feat"><h4>Structures</h4><p>Centralized (AutoGen), Decentralized (CAMEL), Hierarchical (MetaGPT SOP waterfall), Dynamic graph (DyLAN).</p></div>
+  </div>`,
+
+  `<p>348 controlled trials (Drammeh, Jan 2026)<sup class="fn"><a>[2]</a><span class="tip">Drammeh, &ldquo;Multi-Agent Orchestration&rdquo; (arXiv:2511.15755v2, Jan 2026)</span></sup> comparing single-agent vs. multi-agent on incident response. Using TinyLlama 1B for reproducibility. Result: multi-agent achieves <strong>100% actionable recommendations vs 1.7%</strong> for single-agent, with <strong>80&times; specificity</strong> and <strong>140&times; correctness</strong> improvement. Zero quality variance.</p>
+  <p>The reframing: multi-agent orchestration is a <em>production-readiness requirement</em>, not a performance optimization. Both achieve ~40s latency. The value is deterministic quality.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">100%</div><div class="sl">Multi-agent actionable</div></div>
+    <div class="st"><div class="sv">1.7%</div><div class="sl">Single-agent actionable</div></div>
+    <div class="st"><div class="sv">80&times;</div><div class="sl">Specificity improvement</div></div>
+    <div class="st"><div class="sv">0</div><div class="sl">Quality variance (multi)</div></div>
+  </div>`,
+
+  `<p>DAAO (WWW &rsquo;26)<sup class="fn"><a>[3]</a><span class="tip">Su et al. &ldquo;DAAO: Difficulty-Aware Agentic Orchestration&rdquo; (WWW 2026)</span></sup> dynamically generates query-specific multi-agent workflows based on predicted difficulty. Three modules: VAE difficulty estimator (no manual labels), modular operator allocator, and cost-aware LLM router. Matches different models to different subtasks.</p>
+  <p>Result: +3.2&ndash;10.2% accuracy at 41% inference cost vs baselines. Generalizes to unseen LLM backbones. The key insight: matching workflow complexity to query difficulty matters more than uniformly powerful pipelines.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">+10.2%</div><div class="sl">Max accuracy gain</div></div>
+    <div class="st"><div class="sv">41%</div><div class="sl">Inference cost vs SOTA</div></div>
+    <div class="st"><div class="sv">65%</div><div class="sl">Training cost vs SOTA</div></div>
+    <div class="st"><div class="sv">6</div><div class="sl">Benchmarks tested</div></div>
+  </div>`,
+
+  `<p>A unified taxonomy (Anna U/NIT/Melbourne, Jan 2026, 28 pages)<sup class="fn"><a>[4]</a><span class="tip">Arunkumar et al. &ldquo;Agentic Architectures&rdquo; (arXiv, Anna U/NIT/Melbourne, Jan 2026)</span></sup> breaking agents into Perception, Brain, Planning, Action, Tool Use, and Collaboration. Compares 8 multi-agent frameworks. Identifies the shift from open-ended chat loops to graph-based &ldquo;flow engineering&rdquo; (LangGraph-style state machines).</p>
+  <p>Proposes CLASSic evaluation: Cost, Latency, Accuracy, Security, Stability. Notes that MCP &ldquo;further increases the need for governance at integration boundaries.&rdquo; Computer use agents amplify prompt injection risk via high-bandwidth observation channels.</p>
+  <div class="s-chips"><span class="s-chip">POMDP control loop</span><span class="s-chip">CLASSic eval</span><span class="s-chip">flow engineering</span><span class="s-chip">8 frameworks compared</span></div>`,
+
+  `<p>The Linux Foundation&rsquo;s Agentic AI Foundation (AAIF), launched December 2025, represents an unprecedented act of co-governance. Six competing companies&mdash;OpenAI, Anthropic, Google, Microsoft, AWS, Block&mdash;agreed to jointly steward interoperability standards.</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Nov 2024</div><div class="tl-text">Anthropic launches MCP specification</div></div>
+    <div class="tl-item"><div class="tl-date">Apr 2025</div><div class="tl-text">Google launches A2A protocol</div></div>
+    <div class="tl-item"><div class="tl-date">Jun 2025</div><div class="tl-text">Google contributes A2A to Linux Foundation</div></div>
+    <div class="tl-item"><div class="tl-date">Aug 2025</div><div class="tl-text">IBM&rsquo;s ACP merged into A2A</div></div>
+    <div class="tl-item"><div class="tl-date">Dec 2025</div><div class="tl-text">AAIF launched under Linux Foundation. MCP, Goose, Agents.md donated.</div></div>
+    <div class="tl-item"><div class="tl-date">Jan 2026</div><div class="tl-text">LangGraph v0.2: first-class MCP + A2A. MCP hits 97M+ monthly downloads.</div></div>
+  </div>`,
+
+  `<p>Four themes emerge across this section:</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Infrastructure, Not Research</h4><p>Interaction is now a protocol and governance problem. Who controls the standards? How are agents authenticated? What happens with malicious agents?</p></div>
+    <div class="feat"><h4>Compose, Not Compete</h4><p>MCP (tool layer) + A2A (agent layer) compose like HTTP + TCP. Multiple protocols at different layers, not one protocol to rule them all.</p></div>
+    <div class="feat"><h4>Flow Engineering &gt; Full Autonomy</h4><p>Production shift toward controllable orchestration (state machines, guardrails). Developers define structure; agents fill in decisions.</p></div>
+    <div class="feat"><h4>Heterogeneous &gt; Homogeneous</h4><p>DAAO shows matching different LLMs to different subtasks by difficulty produces better results at lower cost. Fleets, not monoliths.</p></div>
+  </div>`
+];
+
+const details = [
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01</div><h2>The <em>Protocol</em> Era</h2></div>
+  <p>When Plaat et al. wrote their survey in early 2025, the protocols that now define agent interaction barely existed. MCP had been announced by Anthropic just months earlier (November 2024). A2A wouldn&rsquo;t launch until April 2025. The idea of a Linux Foundation governance body co-founded by six competing AI companies was unthinkable.</p>
+  <p>By March 2026, these protocols have become infrastructure. MCP has 97M+ monthly SDK downloads. Every major AI provider supports it. A2A is the de facto standard for agent-to-agent communication. And the AAIF provides neutral governance that enterprises require before committing to protocol adoption.</p>
+  <p>This section covers: the protocol specifications themselves (what they do, how they differ, where they compose), the academic evidence for multi-agent orchestration, the production frameworks that implement these patterns, and the governance structure that ensures no single company controls the stack.</p>
+  <h3>The Layer Model</h3>
+  <p>The emerging consensus, articulated by Cisco and others, is that agentic AI needs a protocol <em>stack</em>, not a single protocol:</p>
+  <div class="callout"><h4>The TCP/IP Analogy</h4><p>MCP operates at the resource layer (like HTTP for content). A2A operates at the network layer (like TCP for reliable delivery). They compose cleanly. An agent uses A2A to discover and delegate to a specialist agent, which then uses MCP to invoke the specific tools it needs. Neither protocol replaces the other.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02&mdash;Ehtesham et al. May 2025</div><h2>The <em>Four</em> Protocols</h2></div>
+  <p>The Agent Interoperability Protocols survey (arXiv:2505.02279v2, 21 pages)<sup class="fn"><a>[5]</a><span class="tip">Ehtesham et al. &ldquo;Agent Interoperability Protocols&rdquo; (arXiv:2505.02279v2, May 2025)</span></sup> is the only paper covering all four emerging protocols in a unified framework. It provides architecture diagrams, security analysis, and a phased adoption roadmap for each.</p>
+  <h3>MCP Architecture</h3>
+  <p>Three-layer stack: Protocol layer (JSON-RPC 2.0 semantics), Transport layer (Stdio for local, HTTP+SSE for network), Capability layer (Tools, Resources, Prompts, Sampling). The four capability primitives differ in who controls invocation: Tools are model-controlled, Resources are application-controlled, Prompts are user-controlled, Sampling is server-initiated.</p>
+  <h3>A2A Architecture</h3>
+  <p>Agent Cards are the key innovation. Unlike MCP&rsquo;s detailed tool descriptions, Agent Cards describe <em>what an agent can do</em> at a high level without exposing implementation. This enables discovery across organizational boundaries. The task lifecycle: Discovery &rarr; Authorization &rarr; Communication (via HTTPS + JSON-RPC + SSE).</p>
+  <h3>Security Landscape</h3>
+  <p>The paper&rsquo;s Table 3 catalogs threats across MCP&rsquo;s lifecycle: installer spoofing, supply-chain backdoors, tool poisoning, credential theft, sandbox escape, command injection, tool redefinition (&ldquo;rug pull&rdquo;), cross-server shadowing. Mitigations include SBOMs, digital signatures, OAuth 2.1 + PKCE, syscall filters, scoped namespaces. This security taxonomy directly feeds the OPERATE section.</p>
+  <h3>Phased Adoption</h3>
+  <p>Start with MCP (most mature) &rarr; Add A2A when cross-agent collaboration needed &rarr; Layer ACP for multimodal/REST environments &rarr; Integrate ANP for fully decentralized scenarios. Practical advice for teams navigating the protocol landscape.</p>
+  <div class="security-box"><h4>ANP: The Decentralized Option</h4><p>ANP uses W3C Decentralized Identifiers (DIDs) and JSON-LD for peer-to-peer agent communication without centralized infrastructure. It&rsquo;s the most ambitious protocol but also the least adopted. For cross-organizational agent networks where no single trust authority exists, ANP may become essential.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03&mdash;Tran et al. Jan 2025</div><h2><em>Multi-Agent</em> Collaboration Mechanisms</h2></div>
+  <p>This 35-page survey (arXiv:2501.06322, UCC/Pusan/Trinity)<sup class="fn"><a>[1]</a><span class="tip">Tran et al. &ldquo;Multi-Agent Collaboration Mechanisms&rdquo; (arXiv:2501.06322, Jan 2025)</span></sup> provides the most systematic taxonomy of how LLM agents actually collaborate. Five dimensions: actors, types, structures, strategies, coordination protocols.</p>
+  <h3>The Coopetition Gap</h3>
+  <p>Most multi-agent systems are purely cooperative (work toward shared goals) or purely competitive (debate/adversarial). Coopetition&mdash;cooperating on some dimensions while competing on others&mdash;is least studied but arguably the most realistic model. Real teams have members who collaborate on the task but compete for recognition, resources, or influence. Modeling this could improve agent realism.</p>
+  <h3>Structural Patterns</h3>
+  <p>The survey identifies three dominant structures: centralized (one coordinator managing all agents), decentralized/peer-to-peer (agents communicate directly), and hierarchical (supervisor-worker patterns). The industry trend is toward hierarchical with dynamic elements&mdash;a coordinator that can spawn specialist agents as needed.</p>
+  <h3>The Missing Protocol Layer</h3>
+  <p>This survey was written in January 2025, just as MCP was gaining traction and before A2A existed. It covers collaboration <em>mechanisms</em> (how agents coordinate) but not the <em>protocol infrastructure</em> that enables coordination at scale. The gap between this academic taxonomy and the production protocol stack is exactly what our survey section bridges.</p>
+  <div class="callout"><h4>From Mechanisms to Infrastructure</h4><p>The collaboration patterns described in this survey (cooperation, competition, role-based, hierarchical) are now being implemented in production via MCP and A2A. The theoretical framework maps onto concrete protocols: A2A&rsquo;s Agent Cards enable capability-based discovery; MCP&rsquo;s tool primitives enable shared tool access; LangGraph&rsquo;s state machines encode coordination strategies.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04&mdash;Drammeh, Jan 2026</div><h2><em>Orchestration</em> Evidence</h2></div>
+  <p>This paper (arXiv:2511.15755v2, 10 pages)<sup class="fn"><a>[2]</a><span class="tip">Drammeh, &ldquo;Multi-Agent Orchestration&rdquo; (arXiv:2511.15755v2, Jan 2026)</span></sup> provides the cleanest empirical evidence for multi-agent orchestration. 348 controlled trials, single scenario, TinyLlama 1B, fully reproducible.</p>
+  <h3>The DQ Metric</h3>
+  <p>Decision Quality decomposes into Validity (technically feasible?), Specificity (contains version numbers, exact commands?), and Correctness (aligns with ground truth?). Both systems achieve Validity = 1.0. The difference is entirely in Specificity (0.007 vs 0.557) and Correctness (0.003 vs 0.417).</p>
+  <h3>Why Single Agents Fail</h3>
+  <p>Single agents produce &ldquo;check logs&rdquo; and &ldquo;investigate recent changes&rdquo; 98.3% of the time. They <em>know</em> what the problem is (validity is 1.0) but can&rsquo;t produce <em>specific, actionable</em> remediation. The multi-agent decomposition&mdash;diagnosis specialist &rarr; remediation planner &rarr; risk assessor&mdash;forces each agent to produce specific output because its prompt is narrowly focused.</p>
+  <h3>Zero Variance</h3>
+  <p>The most surprising finding: multi-agent quality variance is &sigma; &asymp; 0. Every trial produces the same quality output. Single-agent variance is &sigma; = 0.023 (5.7% coefficient of variation). This determinism is critical for production SLAs&mdash;you can guarantee consistent quality, not just average quality.</p>
+  <div class="verdict">
+    <div class="v-col pro"><h4>Implications</h4><ul><li>Decomposition produces determinism</li><li>Narrowly-focused prompts force specificity</li><li>Quality, not speed, is the architectural value</li><li>Works even with 1B parameter models</li></ul></div>
+    <div class="v-col con"><h4>Caveats</h4><ul><li>Single incident scenario only</li><li>TinyLlama 1B only</li><li>Automated evaluation, no human judges</li><li>Phase 2 (generalization) in progress</li></ul></div>
+  </div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05&mdash;Su et al. WWW &rsquo;26</div><h2><em>Difficulty-Aware</em> Routing</h2></div>
+  <p>DAAO (12 pages, WWW &rsquo;26)<sup class="fn"><a>[3]</a><span class="tip">Su et al. &ldquo;DAAO: Difficulty-Aware Agentic Orchestration&rdquo; (WWW 2026)</span></sup> introduces three innovations that together solve the static-workflow problem: a learned difficulty estimator, adaptive operator selection, and heterogeneous LLM routing.</p>
+  <h3>The VAE Difficulty Estimator</h3>
+  <p>Maps queries to a k-dimensional latent difficulty representation. No manual difficulty labels&mdash;learns from workflow success/failure. When a workflow solves a query, its predicted difficulty decreases slightly. When it fails, difficulty increases. Over time, the estimator calibrates to the actual difficulty distribution.</p>
+  <h3>Operator Allocation via Confidence Thresholding</h3>
+  <p>Operators (reasoning tools) are ranked by score and activated in descending order until cumulative confidence exceeds threshold &tau;. This produces adaptive layer width: high aggregate confidence activates more operators; low confidence activates fewer. Simple queries get simple workflows; hard queries get complex ones.</p>
+  <h3>Heterogeneous LLM Routing</h3>
+  <p>Each operator is paired with a specific LLM via temperature-scaled softmax. The router considers query difficulty, operator type, and model capability. Expensive models (GPT-5) handle hard subtasks; cheap models (Qwen 7B) handle easy ones. This is the economic insight: you don&rsquo;t need frontier models for every step.</p>
+  <h3>Results</h3>
+  <p>On six benchmarks (GSM8K, MATH, HumanEval, MBPP, GAIA, HotpotQA): +3.2&ndash;10.2% accuracy, 41% inference cost, 65% training cost vs best baselines. Strong generalization to unseen LLM backbones and cross-dataset transfer.</p>
+  <div class="callout"><h4>The Cost-Performance Frontier</h4><p>DAAO demonstrates that the cost-performance frontier for multi-agent systems is not a fixed curve&mdash;it&rsquo;s a function of how intelligently you allocate resources across queries and subtasks. This has direct implications for the &ldquo;FinOps for agents&rdquo; topic in the OPERATE section.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06&mdash;Arunkumar et al. Jan 2026</div><h2>Agentic <em>Architectures</em></h2></div>
+  <p>This 28-page paper<sup class="fn"><a>[4]</a><span class="tip">Arunkumar et al. &ldquo;Agentic Architectures&rdquo; (arXiv, Anna U/NIT/Melbourne, Jan 2026)</span></sup> provides the most engineering-focused taxonomy in the INTERACT section. It maps the full design space: perception, memory, reasoning/planning, action, tool use, and collaboration&mdash;and then evaluates concrete frameworks against this taxonomy.</p>
+  <h3>The Framework Comparison</h3>
+  <p>Table 5 compares 8 frameworks: CAMEL (1-to-1 ideation), AutoGen (star/mesh prototyping), MetaGPT (waterfall SOP for SE), ChatDev (chain app generation), DyLAN (dynamic graph reasoning), LangGraph (production flow engineering), Swarm (lightweight specialists), MAKER (hierarchical verification). Each makes different tradeoffs between autonomy and control.</p>
+  <h3>Flow Engineering</h3>
+  <p>The paper identifies the critical shift: from open-ended chat loops to explicit workflow graphs. LangGraph exemplifies this&mdash;agent execution as graph traversal with typed state and developer-defined transitions. The motivation: &ldquo;controllable orchestration, where developers specify explicit state transitions and guardrails, and models fill in local decisions.&rdquo; This prioritizes debuggability over full autonomy.</p>
+  <h3>CLASSic Evaluation</h3>
+  <p>Five evaluation dimensions: Cost, Latency, Accuracy, Security, Stability. Hierarchical agents achieve superior reasoning depth and tool proficiency but incur significant cost and latency penalties vs standard LLMs. The paper&rsquo;s Figure 4 visualizes this tradeoff across architectures.</p>
+  <p>On security: &ldquo;Standardized connector layers (e.g., MCP) further increase the need for governance at integration boundaries, including allowlists, authentication, and audit logging.&rdquo; Computer-use agents amplify prompt injection risk via &ldquo;high-bandwidth observation channels.&rdquo;</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07&mdash;Industry</div><h2><em>AAIF</em> &amp; Protocol Governance</h2></div>
+  <p>The Agentic AI Foundation (AAIF), launched December 2025 under the Linux Foundation, is historically significant. Six directly competing companies&mdash;OpenAI, Anthropic, Google, Microsoft, AWS, and Block&mdash;agreed to co-govern the interoperability standards their agents will use.</p>
+  <h3>What AAIF Governs</h3>
+  <p>Three initial projects: MCP (from Anthropic), Goose (from Block, an open-source developer agent), and Agents.md (from OpenAI, an agent configuration standard). A2A is separately governed under the Linux Foundation, having been contributed by Google in June 2025.</p>
+  <h3>Why This Matters</h3>
+  <p>Enterprises won&rsquo;t adopt protocols controlled by single vendors. AAIF provides neutral governance that de-risks adoption. The closest historical analogy is early web standards (W3C, IETF), but compressed into months rather than years. The competitive dynamics are intense&mdash;Anthropic created MCP, Google created A2A&mdash;but both are now under shared governance.</p>
+  <h3>Emerging Protocols</h3>
+  <p>UCP (Universal Commerce Protocol) and AP2 (Agent Payments Protocol) from Google address agent-to-business commerce. A2UI from Anthropic standardizes agent-to-user interfaces. These signal the expansion from tool/agent communication to full economic activity by agents.</p>
+  <div class="callout"><h4>The Security Gap</h4><p>As Mitra notes: &ldquo;I see three structural gaps: MCP has its own auth model (recently upgraded to OAuth 2.1), A2A has its own auth scheme, A2UI handles client-side trust differently. There&rsquo;s no unified identity that flows across all three layers.&rdquo; Context provenance (tracing where information came from) and agent governance (monitoring agents for policy violations) are unsolved.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08&mdash;Synthesis</div><h2><em>Cross-Cutting</em> Themes</h2></div>
+  <h3>Theme 1: Infrastructure, Not Research</h3>
+  <p>Plaat et al. asked: can agents collaborate? What emergent behaviors arise? By 2026, the question is: what protocols do agents speak, who governs the standards, how are agents discovered and authenticated, and what happens when a malicious agent enters the network? Interaction has become an infrastructure and governance challenge.</p>
+  <h3>Theme 2: Compose, Not Compete</h3>
+  <p>MCP and A2A are not VHS vs Betamax. They operate at different layers and compose cleanly. MCP for precise tool-level execution, A2A for scalable agent-level routing. LangGraph v0.2 supports both as first-class targets. The lesson: agentic AI needs a protocol <em>stack</em>, not a single protocol.</p>
+  <h3>Theme 3: Flow Engineering &gt; Full Autonomy</h3>
+  <p>The production shift is toward controllable orchestration (LangGraph state machines, explicit transitions, developer guardrails) rather than fully autonomous agent loops. This trades theoretical capability for practical reliability. The Drammeh paper validates this: decomposition produces determinism.</p>
+  <h3>Theme 4: Heterogeneous &gt; Homogeneous</h3>
+  <p>DAAO demonstrates that orchestrating different LLMs for different subtasks based on difficulty produces better results at 41% of the cost. The future isn&rsquo;t one giant model&mdash;it&rsquo;s fleets of specialized models, dynamically routed by difficulty. This connects to the &ldquo;small specialist models&rdquo; trend in the broader industry.</p>
+  <h3>Reading Priority</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Must-Read</div><div class="tl-text"><strong>Ehtesham et al.</strong> &ldquo;Agent Interoperability Protocols&rdquo;&mdash;all four protocols compared. <strong>Drammeh</strong> &ldquo;Multi-Agent Orchestration&rdquo;&mdash;decomposition &rarr; determinism.</div></div>
+    <div class="tl-item"><div class="tl-date">Important</div><div class="tl-text"><strong>Tran et al.</strong> &ldquo;Collaboration Mechanisms&rdquo;&mdash;comprehensive taxonomy. <strong>Su et al.</strong> &ldquo;DAAO&rdquo;&mdash;difficulty-aware routing. <strong>Arunkumar et al.</strong> &ldquo;Agentic Architectures&rdquo;&mdash;engineering lens.</div></div>
+    <div class="tl-item"><div class="tl-date">Industry</div><div class="tl-text">Cisco blog (compose pattern), Mitra blog (protocol stack), AAIF announcement (governance), The Register (landscape overview).</div></div>
+  </div><div class="security-box"><h4>Web Research Update (Mar 25, 2026)</h4><p><strong>AAIF Governance:</strong> The Linux Foundation&rsquo;s Agentic AI Foundation now governs both MCP and A2A with neutral oversight. Six co-founders (OpenAI, Anthropic, Google, Microsoft, AWS, Block) plus Cisco and others. Open RFC process for community-driven features. Enterprise trust through protocol neutrality.</p><p><strong>A2A Protocol:</strong> Now at v0.3.0 with extension support for vendor-specific features. Layer 2 (abstract operations) + Layer 3 (concrete bindings: JSON-RPC, gRPC, HTTP/REST). Agent Cards enable capability-based discovery and delegation across organizations.</p><p><strong>MCP Ecosystem:</strong> 97M+ monthly SDK downloads (Feb 2026). Server count grew from 1,000 (early 2025) to <strong>10,000+ active servers</strong>. MCP gives agents &ldquo;hands&rdquo; (tool access); A2A gives agents &ldquo;colleagues&rdquo; (peer communication).</p></div>`
+];
+
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">I<em>3</em></div><!-- ← CHANGE: 1-3 char logo, <em> for accent -->
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY SECTION 03 &middot; LITERATURE DEEP-DIVE</div><!-- ← CHANGE -->
+        <div class="hero-title">INTERACT &mdash; <em>Protocols</em> &amp; Multi-Agent Systems</div><!-- ← CHANGE -->
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>5 papers + protocol specs + industry sources &middot; ~106 pages &middot; Nov 2024&ndash;Mar 2026</span></div><!-- ← CHANGE -->
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Section navigation
+const navDiv = document.createElement('div');
+navDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase';
+navDiv.innerHTML = `
+  <span style="color:var(--dim)">&larr; <a href="s2-act.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S2: Act</a></span>
+  <a href="index.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">Index</a>
+  <span style="color:var(--dim)"><a href="s4-operate.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S4: Operate</a> &rarr;</span>
+`;
+mainInner.appendChild(navDiv);
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+</script>
+</body>
+</html>

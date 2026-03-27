@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCS229 Problem Set 5: PCA, EM & ICA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'PS5 Overview', title: '<em>Problem</em> Set 5 Overview' },
+  { num: '02', short: 'PCA Implementation', title: '<em>PCA</em> Implementation' },
+  { num: '03', short: 'PCA Analysis', title: '<em>PCA</em> Analysis' },
+  { num: '04', short: 'Semi-supervised EM', title: '<em>Semi-supervised</em> EM' },
+  { num: '05', short: 'Semi-supervised Analysis', title: '<em>Semi-supervised</em> Analysis' },
+  { num: '06', short: 'ICA Source Separation', title: '<em>ICA</em> Source Separation' },
+  { num: '07', short: 'Implicit Regularization', title: '<em>Implicit</em> Regularization' },
+  { num: '08', short: 'Key Takeaways', title: 'Key <em>Takeaways</em>' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 PS5 Overview
+  `<p>XCS229 Problem Set 5 is a 55-point assignment spanning weeks 8–10 and focusing on unsupervised learning and modern generalization theory. Four comprehensive problems cover Principal Component Analysis (PCA), semi-supervised learning with Expectation–Maximization (EM), Independent Component Analysis (ICA), and implicit regularization in neural networks. Together, they form a unified exploration of dimensionality reduction, learning from limited labeled data, source separation, and the theoretical underpinnings of why overparameterized models generalize.</p>
+  <p>This problem set bridges classical unsupervised learning with contemporary machine learning practice. Students implement core algorithms from scratch, analyze their mathematical properties, and apply them to real data. The emphasis is on understanding latent structure, combining labeled and unlabeled information efficiently, and discovering why simple learning rules (like SGD) work so well in practice.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">55</div><div class="sl">Total Points</div></div>
+    <div class="st"><div class="sv">4</div><div class="sl">Problems</div></div>
+    <div class="st"><div class="sv">3</div><div class="sl">Weeks</div></div>
+    <div class="st"><div class="sv">Unsupervised</div><div class="sl">Focus</div></div>
+  </div>`,
+
+  // 02 PCA Implementation
+  `<p>Problem 01 requires implementing Principal Component Analysis from first principles. Students derive the eigendecomposition of the covariance matrix, compute principal components, and make informed decisions about the number of components k. The implementation involves centering data, computing the covariance matrix, solving the eigenvalue problem, and projecting data onto the principal subspace to achieve dimensionality reduction.</p>
+  <p>The problem emphasizes the mathematical intuition: PCA finds the directions of maximum variance in the data. Students compute reconstruction error to measure information loss, visualize the principal components and their loadings, and understand how variance explained relates to the eigenvalues. This foundation prepares for downstream analysis of how well PCA captures the true latent structure.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Eigendecomposition</h4>
+      <p>Solve U Λ U<sup>T</sup> = Σ for the covariance matrix using numpy or scipy.</p>
+    </div>
+    <div class="feat">
+      <h4>Choosing k</h4>
+      <p>Use cumulative explained variance to decide dimensionality, typically 90%+ of total.</p>
+    </div>
+    <div class="feat">
+      <h4>Reconstruction Error</h4>
+      <p>Measure ||X − X̂|| to quantify information loss from dimensionality reduction.</p>
+    </div>
+    <div class="feat">
+      <h4>Visualization</h4>
+      <p>Plot original 2D/3D data and PCA projections to inspect cluster structure.</p>
+    </div>
+  </div>`,
+
+  // 03 PCA Analysis
+  `<p>Problem 01 continues with detailed analysis of PCA's behavior on real datasets. Students produce scree plots showing eigenvalues (or cumulative explained variance) and interpret them: steep drops indicate lower-dimensional structure, while flat tails suggest noise. The analysis reveals whether the dataset is intrinsically low-rank or genuinely high-dimensional.</p>
+  <p>Students also investigate how PCA discovers latent structure: do the principal components align with known class labels? How well do they separate clusters? What aspects of the data does each component capture? This interpretive work bridges theory and application, demonstrating that PCA is not just a black-box tool but a lens for understanding data geometry and hidden factors.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Scree Plot</div><div class="sl">Diagnostic</div></div>
+    <div class="st"><div class="sv">Variance</div><div class="sl">Explained</div></div>
+    <div class="st"><div class="sv">Component</div><div class="sl">Loadings</div></div>
+    <div class="st"><div class="sv">Intrinsic Dim.</div><div class="sl">Estimation</div></div>
+  </div>`,
+
+  // 04 Semi-supervised EM
+  `<p>Problem 02 introduces the Expectation–Maximization algorithm extended to semi-supervised learning. Given a small set of labeled examples and a large set of unlabeled examples, students implement a modified EM that simultaneously fits a mixture model (or other latent-variable model) and leverages the labeled data to guide cluster assignment. The E-step incorporates both labeled and unlabeled likelihoods; the M-step updates parameters using the expected sufficient statistics from both groups.</p>
+  <p>The key innovation is that unlabeled data provides information about the global structure—the location and covariance of clusters—while labeled data provides anchor points. Students implement the convergence criterion (log-likelihood or parameter changes), handle the cold-start problem, and compare the semi-supervised fit to fully unsupervised and fully supervised baselines. This is where theory meets practice in learning with limited labels.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Modified E-Step</h4>
+      <p>Compute posterior responsibilities using both labeled constraints and soft assignments.</p>
+    </div>
+    <div class="feat">
+      <h4>M-Step Integration</h4>
+      <p>Update means, covariances, and mixing weights from weighted labeled/unlabeled contributions.</p>
+    </div>
+    <div class="feat">
+      <h4>Convergence</h4>
+      <p>Monitor log-likelihood or parameter changes; typically 10–50 iterations suffice.</p>
+    </div>
+    <div class="feat">
+      <h4>Baseline Comparison</h4>
+      <p>Benchmark against pure unsupervised and supervised methods to validate benefit.</p>
+    </div>
+  </div>`,
+
+  // 05 Semi-supervised Analysis
+  `<p>Problem 02 concludes with analysis of when and why semi-supervised learning works. Students measure label efficiency: how much does adding unlabeled data improve over using only a small labeled set? They explore the regime where unlabeled data helps most (cluster structure is strong, label budget is tight) versus when it adds little (data is noise-like or labels are abundant). The analysis also examines sensitivity to initialization and hyperparameters like the mixture model order k.</p>
+  <p>This section bridges theory and practice by investigating practical considerations: computational cost, robustness to model misspecification (e.g., true clusters don't match the assumed mixture model), and the "when does unlabeled help?" question that machine learning practitioners face daily. Understanding these tradeoffs is essential for deploying semi-supervised methods responsibly.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Label Efficiency</div><div class="sl">Gain</div></div>
+    <div class="st"><div class="sv">Optimal k</div><div class="sl">Selection</div></div>
+    <div class="st"><div class="sv">Convergence</div><div class="sl">Speed</div></div>
+    <div class="st"><div class="sv">Robustness</div><div class="sl">Eval</div></div>
+  </div>`,
+
+  // 06 ICA Source Separation
+  `<p>Problem 03 focuses on Independent Component Analysis (ICA), a technique to recover independent source signals from their mixed observations—the classic "cocktail party" problem. Unlike PCA which finds directions of variance, ICA finds directions of statistical independence. Students implement or use an ICA algorithm (e.g., FastICA) on synthetic or real data: given a mixed signal matrix X = AS where A is unknown mixing matrix and S contains independent sources, recover S and A.</p>
+  <p>The problem covers preprocessing (whitening via PCA to pre-condition the data), the non-Gaussianity assumption (ICA exploits higher-order moments, not just covariance), and the lack of identifiability up to permutation and sign. Students verify solution quality by checking how well recovered sources are independent (via mutual information or kurtosis) and compare recovered sources to ground truth. This problem demonstrates a radically different perspective on dimensionality and latent structure.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Whitening</h4>
+      <p>Pre-process via PCA to make covariance identity; reduces complexity of ICA.</p>
+    </div>
+    <div class="feat">
+      <h4>Non-Gaussianity</h4>
+      <p>Maximize kurtosis or negentropy to find independent components from mixed signals.</p>
+    </div>
+    <div class="feat">
+      <h4>FastICA Algorithm</h4>
+      <p>Fixed-point iteration to find independent components; numerically efficient and stable.</p>
+    </div>
+    <div class="feat">
+      <h4>Permutation Ambiguity</h4>
+      <p>Recovered components may appear in any order; loss of identifiability is unavoidable.</p>
+    </div>
+  </div>`,
+
+  // 07 Implicit Regularization
+  `<p>Problem 04 investigates implicit regularization in overparameterized neural networks—why do models with far more parameters than training examples still generalize? The problem guides students through empirical and theoretical exploration: train neural networks on synthetic data, measure training and test loss, study how early stopping affects generalization, and compare SGD's implicit bias with explicit regularization (L2, dropout).</p>
+  <p>Key insights include: SGD finds a solution biased toward small norm (minimum norm solution among those that fit training data), early stopping acts as a regularizer by interrupting the trajectory before overfitting, and overparameterization provides a beneficial implicit bias without the computational cost of explicit regularization. This problem bridges classical learning theory and modern deep learning, showing why simple algorithms work surprisingly well.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">SGD Bias</div><div class="sl">Toward Simplicity</div></div>
+    <div class="st"><div class="sv">Early Stopping</div><div class="sl">Regularization</div></div>
+    <div class="st"><div class="sv">Overparameterization</div><div class="sl">Generalization</div></div>
+    <div class="st"><div class="sv">Implicit vs. Explicit</div><div class="sl">Regularization</div></div>
+  </div>`,
+
+  // 08 Key Takeaways
+  `<p>Across these four problems, several unifying themes emerge. Unsupervised methods (PCA, ICA) discover latent structure without labels, enabling data exploration and feature engineering. Semi-supervised learning combines labeled and unlabeled data synergistically, dramatically improving efficiency in label-scarce regimes. Implicit regularization explains why modern neural networks generalize despite overparameterization, fundamentally changing our understanding of learning.</p>
+  <p>The problem set reinforces that machine learning is not purely algorithmic: success requires understanding data geometry (PCA), leveraging structure assumptions (ICA's non-Gaussianity), designing learning objectives (semi-supervised EM's hybrid loss), and appreciating optimization dynamics (SGD's implicit bias). These principles generalize far beyond PS5, underpinning practical machine learning and ongoing research in representation learning, weakly-supervised learning, and neural network theory.</p>
+  <div class="callout">
+    <h4>Big Picture</h4>
+    <p>XCS229 Problem Set 5 is a capstone on unsupervised and semi-supervised learning. By implementing, analyzing, and comparing these methods, students gain deep intuition for when each technique applies, how to interpret results, and why modern machine learning works so well in practice.</p>
+  </div>`,
+
+  // 09 References
+  `<p>Key resources for PCA, EM algorithm, semi-supervised learning, ICA, and implicit regularization theory. Stanford CS229 lectures on unsupervised learning and regularization cover all four problem areas. Murphy's textbook provides intuitive explanations of PCA and EM. ESL Chapter 14 covers unsupervised learning. For implicit regularization, consult modern deep learning theory papers and Belkin et al.'s work on benign overfitting extended to unsupervised settings.</p><p>Wikipedia articles establish definitions for PCA, eigendecomposition, expectation-maximization, and independent component analysis. Research papers on implicit bias of SGD (Liang et al., Barrett & Hardt) and neural network implicit regularization are essential for understanding Problem 04. Scikit-learn documentation provides practical implementation examples for PCA and clustering.</p>`
+];
+
+const details = [
+  // 01 PS5 Overview (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>01</span></div>
+    <h2><em>Problem</em> Set 5 Overview</h2>
+  </div>
+  <p>XCS229 Problem Set 5 is a comprehensive exploration of unsupervised and semi-supervised learning, with 55 points distributed across four main problems. Each problem builds on core concepts from earlier problem sets while introducing new algorithmic and theoretical challenges. The assignment spans weeks 8–10 and serves as a bridge between classical statistical learning and modern deep learning practice.</p>
+  <p>The four problems are tightly integrated: PCA provides dimensionality reduction and feature discovery; semi-supervised EM shows how to leverage unlabeled data; ICA demonstrates an alternative notion of latent structure based on independence rather than variance; and implicit regularization explains why overparameterized models generalize. Together, they form a coherent narrative about learning from complex, high-dimensional data with limited supervision.</p>
+  <h3>Problem Structure</h3>
+  <p><strong>Problem 01 (PCA):</strong> Implement PCA from scratch, analyze scree plots, and investigate latent structure discovery. Approximately 15 points.</p>
+  <p><strong>Problem 02 (Semi-supervised EM):</strong> Extend EM to combine labeled and unlabeled data. Analyze label efficiency and convergence. Approximately 15 points.</p>
+  <p><strong>Problem 03 (ICA):</strong> Apply or implement ICA for source separation, understanding independence as an alternative to variance. Approximately 15 points.</p>
+  <p><strong>Problem 04 (Implicit Regularization):</strong> Study why overparameterized networks generalize and how SGD implicitly regularizes. Approximately 10 points.</p>
+  <h3>Learning Objectives</h3>
+  <ul class="s-list">
+    <li>Understand the mathematics of dimensionality reduction via eigendecomposition and variance maximization.</li>
+    <li>Implement and extend probabilistic latent-variable models (mixture models, EM algorithm).</li>
+    <li>Discover and interpret latent structure in unlabeled and semi-labeled data.</li>
+    <li>Appreciate the diversity of approaches to finding structure: variance, independence, implicit bias.</li>
+    <li>Gain intuition for when unsupervised, semi-supervised, and supervised learning are appropriate.</li>
+  </ul>
+  <h3>Resources & Prerequisites</h3>
+  <p>Strong familiarity with linear algebra (eigendecomposition, matrix decomposition), probability (mixture models, expectation-maximization), and numpy/scipy is essential. References include Murphy's "Machine Learning: A Probabilistic Perspective" (chapters on PCA, EM, ICA) and recent papers on implicit regularization in neural networks (e.g., Bartlett et al., Gunasekar et al.).</p>`,
+
+  // 02 PCA Implementation (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>02</span></div>
+    <h2><em>PCA</em> Implementation</h2>
+  </div>
+  <p>The PCA implementation problem asks students to build a complete PCA pipeline: data centering, covariance computation, eigendecomposition, and projection. This foundational work develops intuition for how PCA discovers the directions of maximum variance and why these directions form an effective low-dimensional representation.</p>
+  <h3>Algorithm Steps</h3>
+  <p><strong>Step 1: Center the Data</strong> Subtract the mean from each feature so that the data is centered at the origin. This ensures the covariance matrix is computed correctly.</p>
+  <p><strong>Step 2: Compute Covariance Matrix</strong> Calculate Σ = (1/n) X<sup>T</sup> X (for centered data) or use numpy's cov function. This captures pairwise feature correlations.</p>
+  <p><strong>Step 3: Eigendecomposition</strong> Solve Σ v = λ v using numpy.linalg.eig or scipy.linalg.eigh. Sort eigenvalues in descending order and corresponding eigenvectors; these are the principal components.</p>
+  <p><strong>Step 4: Select k Components</strong> Choose k by examining cumulative explained variance. Typical heuristics: retain 90% of variance, elbow method on scree plot, or domain knowledge about target dimensionality.</p>
+  <p><strong>Step 5: Project Data</strong> Compute Z = X U_k where U_k contains the top k eigenvectors. This k-dimensional representation preserves the most variance in the original data.</p>
+  <p><strong>Step 6: Reconstruction & Error</strong> Reconstruct via X̂ = Z U_k<sup>T</sup> and compute MSE loss ||X − X̂||<sup>2</sup>. Lower reconstruction error indicates the chosen k captures essential structure.</p>
+  <h3>Practical Considerations</h3>
+  <ul class="s-list">
+    <li><strong>Numerical Stability:</strong> Use scipy.linalg.eigh (symmetric eigendecomposition) rather than numpy.linalg.eig when possible; it's more stable.</li>
+    <li><strong>Centering:</strong> Always center data before computing covariance, and store the mean to apply the same transformation at test time.</li>
+    <li><strong>Interpretation:</strong> Examine the loadings (entries of U_k) to understand which original features contribute most to each principal component.</li>
+    <li><strong>Scaling:</strong> If features have different units or ranges, standardize (divide by std. dev.) before PCA to avoid bias toward high-variance features.</li>
+  </ul>
+  <h3>Expected Outcomes</h3>
+  <p>On well-behaved datasets (e.g., MNIST, Iris), PCA should recover meaningful structure: clusters separate in 2D or 3D projections, reconstruction error plateaus, and scree plots show clear elbows. Reconstruction error decreases as k increases, asymptotically approaching zero as k approaches the original dimension.</p>`,
+
+  // 03 PCA Analysis (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>03</span></div>
+    <h2><em>PCA</em> Analysis</h2>
+  </div>
+  <p>The analysis phase turns PCA implementation into interpretation. Students produce detailed plots, compute diagnostic statistics, and draw conclusions about the latent structure revealed by principal components. This is where the algorithm becomes a tool for data understanding.</p>
+  <h3>Scree Plot & Explained Variance</h3>
+  <p>Plot eigenvalues λ_i (or cumulative explained variance Σ_{j≤i} λ_j / Σ_j λ_j) against component index. Steep drops indicate a low-intrinsic-dimensional structure; flat tails suggest the data is genuinely high-dimensional or noisy. Interpret the plot: if the curve elbows sharply at k=5, the data is well-approximated in 5 dimensions.</p>
+  <h3>Visualization of Projections</h3>
+  <p>For datasets with known class labels, plot projections onto the first two or three principal components and color-code by class. Do clusters separate cleanly? Are there overlaps or outliers? Perfect separation suggests PCA has discovered the true underlying structure; overlap indicates either non-linear structure (where PCA fails) or noisy data.</p>
+  <h3>Component Loadings</h3>
+  <p>Analyze the loadings matrix U_k: each column is a principal component (direction in original feature space). Visualize as a heatmap or bar chart: large positive/negative loadings indicate features that strongly influence that component. This reveals which original features are "important" for capturing variance.</p>
+  <h3>Intrinsic Dimensionality</h3>
+  <p>Use PCA results to estimate the intrinsic dimensionality of the data. If 90% of variance is captured by k = 5 components out of 100, the intrinsic dimension is approximately 5, suggesting the data lies near a 5-dimensional subspace of the full ambient space. This has profound implications for downstream learning and generalization.</p>
+  <h3>Comparative Analysis</h3>
+  <p>Compare PCA on the full dataset versus PCA per-class, PCA on subsamples, or PCA after adding noise. How robust is the structure? How sensitive are the principal directions to data perturbations? This builds confidence in findings and identifies potential artifacts.</p>
+  <h3>Interpretation Template</h3>
+  <ul class="s-list">
+    <li>Summarize the scree plot: at what k do you see diminishing returns?</li>
+    <li>Describe cluster structure in the 2D/3D projection: well-separated, overlapping, non-convex?</li>
+    <li>Identify the top 3 principal components and interpret their loadings in terms of the original features.</li>
+    <li>Estimate intrinsic dimensionality and discuss what this means for the data.</li>
+    <li>Discuss any surprising findings or aspects of the data not captured by PCA.</li>
+  </ul>`,
+
+  // 04 Semi-supervised EM (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>04</span></div>
+    <h2><em>Semi-supervised</em> EM</h2>
+  </div>
+  <p>Semi-supervised learning bridges unsupervised and supervised learning by combining a small set of labeled examples with a much larger set of unlabeled examples. The semi-supervised EM algorithm leverages both: the labeled data anchors the cluster centers, while the unlabeled data refines the estimates by providing information about the overall density and structure.</p>
+  <h3>Problem Setup</h3>
+  <p>Given: X_L (labeled data, n_L examples with known cluster assignments), X_U (unlabeled data, n_U examples). Assume a mixture model p(x,z) = Σ_k π_k N(x | μ_k, Σ_k) where z ∈ {1,...,K} is the cluster assignment. Goal: estimate θ = {π_k, μ_k, Σ_k} leveraging both labeled and unlabeled information.</p>
+  <h3>Modified E-Step</h3>
+  <p>For <strong>labeled examples</strong>: responsibility r_{ik} is deterministic. If x_i has known label z_i = k, set r_{ik} = 1 and r_{ij} = 0 for j ≠ k. For <strong>unlabeled examples</strong>: compute soft responsibilities using Bayes' rule: r_{ik} = π_k N(x_i | μ_k, Σ_k) / Σ_j π_j N(x_i | μ_j, Σ_j). This blends hard (labeled) and soft (unlabeled) assignments.</p>
+  <h3>Modified M-Step</h3>
+  <p>Update parameters using weighted contributions from both groups. For cluster k: <br />π_k ← (Σ_i r_{ik}) / (n_L + n_U) (averaged over all examples)<br />μ_k ← (Σ_i r_{ik} x_i) / (Σ_i r_{ik}) (weighted mean)<br />Σ_k ← (Σ_i r_{ik} (x_i − μ_k)(x_i − μ_k)<sup>T</sup>) / (Σ_i r_{ik}) (weighted covariance)<br />The labeled examples "vote" with certainty; unlabeled examples "vote" softly.</p>
+  <h3>Convergence & Implementation</h3>
+  <p>Iterate E and M steps until convergence, typically monitored by log-likelihood change < ε or parameter changes < ε. Log-likelihood combines labeled and unlabeled likelihoods: <br />ℓ = Σ_i log p(x_i, z_i | θ) + Σ_i log p(x_i | θ). Typical runtime: 10–50 iterations on most datasets. Initialize using k-means on unlabeled data or by centering labeled examples at their cluster means.</p>
+  <h3>Practical Issues</h3>
+  <ul class="s-list">
+    <li><strong>Initialization:</strong> Sensitive to starting point; try multiple random initializations and select the best log-likelihood.</li>
+    <li><strong>Covariance Singularity:</strong> If a cluster has few examples, Σ_k can become singular. Regularize by adding a small diagonal term (e.g., 0.01 * I).</li>
+    <li><strong>Unlabeled Data Help:</strong> Significant gains occur when clusters are well-separated and label budget is tight (e.g., 5 labels per class with 1000s of unlabeled). Diminishing returns if labels are abundant or clusters overlap severely.</li>
+    <li><strong>Model Mismatch:</strong> If the true data distribution is not a mixture of Gaussians, the method may underperform. Consider non-parametric alternatives (e.g., semi-supervised k-NN) if Gaussian assumption is violated.</li>
+  </ul>
+  <h3>Evaluation Metrics</h3>
+  <p>Compare semi-supervised EM against: (1) fully supervised learning on X_L alone; (2) fully unsupervised EM on X_L ∪ X_U; (3) standard supervised baselines (logistic regression, SVM). Metric: classification accuracy on a held-out test set, or log-likelihood on test data. Gains from semi-supervised learning are most pronounced in low-label regimes.</p>`,
+
+  // 05 Semi-supervised Analysis (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>05</span></div>
+    <h2><em>Semi-supervised</em> Analysis</h2>
+  </div>
+  <p>The analysis phase examines when, why, and how much semi-supervised learning helps. By varying the number of labeled examples and evaluating performance, students gain intuition for the label efficiency gains and the conditions under which unlabeled data is most beneficial.</p>
+  <h3>Label Efficiency Curves</h3>
+  <p>Plot test accuracy as a function of the number of labeled examples (e.g., 1, 5, 10, 50, 100 per class). Compare three curves: (1) supervised learning using only labeled data; (2) semi-supervised EM using labeled + unlabeled; (3) fully supervised baseline (e.g., using all data as labeled). The gap between (1) and (2) quantifies the benefit of unlabeled data. Typical finding: semi-supervised is strongest when labeled budget is 1–10% of total, converging toward supervised performance as labeled data increases.</p>
+  <h3>Data Regime Analysis</h3>
+  <p><strong>Helpful Regime:</strong> Clear cluster structure, well-separated classes, and tight label budget. Unlabeled data provides strong prior on cluster geometry; combining with few labels yields near-supervised performance.<br /><strong>Unhelpful Regime:</strong> Highly overlapping clusters, non-Gaussian data, or abundant labels. Unlabeled data provides little new information; method approaches supervised baseline.<br /><strong>Harmful Regime:</strong> Model misspecification (true data is not a mixture of Gaussians). Wrong cluster structure can degrade performance compared to supervised-only; label budget is wasted fitting incorrect models.</p>
+  <h3>Sensitivity to k (number of clusters)</h3>
+  <p>Evaluate semi-supervised EM for k = 2, 3, ..., 20 on a fixed labeled/unlabeled split. Plot accuracy vs. k. Ideally, peak accuracy occurs at the true number of clusters. If the peak is sharp, the method is sensitive to k (requiring careful tuning); if broad, the method is robust. Use model selection criteria (BIC, AIC, held-out validation) to select k automatically.</p>
+  <h3>Convergence & Stability</h3>
+  <p>Plot log-likelihood vs. iteration number for both labeled and unlabeled portions. Monitor for: (1) smooth convergence (sign of stable algorithm); (2) log-likelihood plateaus (sign of convergence); (3) oscillations or divergence (sign of numerical issues or poor initialization). Test multiple random initializations and report the mean and std. dev. of final accuracy.</p>
+  <h3>Visualization of Learned Structure</h3>
+  <p>After fitting semi-supervised EM, visualize the learned cluster centers (μ_k) and covariances (Σ_k) in PCA space (using PCA from the full unlabeled dataset as a pre-processing step). Color-code labeled examples by their true labels; color-code unlabeled examples by their soft cluster assignments (e.g., assign to the argmax_k r_{ik} cluster). Do the learned clusters align with true labels? Are there misaligned unlabeled examples?</p>
+  <h3>Comparative Analysis</h3>
+  <p>Compare semi-supervised EM against:</p>
+  <ul class="s-list">
+    <li><strong>k-NN (supervised):</strong> Simple baseline using only labeled data.</li>
+    <li><strong>Semi-supervised k-NN:</strong> Use unlabeled examples as pseudo-labeled neighbors; measure accuracy.</li>
+    <li><strong>Self-training:</strong> Iteratively label high-confidence unlabeled examples and re-train; compare with EM approach.</li>
+    <li><strong>Co-training:</strong> If features split naturally, train separate classifiers and iteratively label; measure performance.</li>
+  </ul>
+  <p>Summarize which methods work best in which regimes and why. Discuss computational cost: semi-supervised EM is O(n_L + n_U) × K per iteration, making it scalable to large n_U; k-NN is O(n_U × n_L) for inference, potentially slower.</p>`,
+
+  // 06 ICA Source Separation (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>06</span></div>
+    <h2><em>ICA</em> Source Separation</h2>
+  </div>
+  <p>Independent Component Analysis (ICA) seeks to recover independent source signals from their linear mixture. Unlike PCA which finds directions of maximum variance, ICA finds directions of maximum independence. The problem is framed as: given X = A S where X is observed (n × m), A is unknown mixing (n × k), and S is unknown sources (k × m), recover S and A (up to permutation and scaling).</p>
+  <h3>Mathematical Formulation</h3>
+  <p>Assume each source s_j is independently distributed with non-Gaussian distribution p(s_j). The ICA model is x_i = Σ_j a_{ij} s_j + noise. The goal is to find a demixing matrix W such that y_j = Σ_i w_{ji} x_i estimates the sources s_j. If W = A<sup>−1</sup> (up to permutation/scaling), we recover the sources.</p>
+  <h3>Non-Gaussianity & Independence</h3>
+  <p><strong>Why Non-Gaussianity?</strong> By the Central Limit Theorem, a sum of independent random variables approaches Gaussianity. Therefore, the mixture X (a sum of independent non-Gaussian sources) is "more Gaussian" than the original sources S. ICA exploits this: find directions where data is least Gaussian (most non-Gaussian).</p>
+  <p><strong>Measures of Non-Gaussianity:</strong> Kurtosis (4th moment), negentropy (differential entropy relative to Gaussian), or mutual information. Typical approach: maximize absolute kurtosis or negentropy subject to orthogonality (after whitening).</p>
+  <h3>Algorithm: FastICA</h3>
+  <p><strong>Step 1: Whitening</strong> Apply PCA to X to obtain X̃ = X U D<sup>−1/2</sup> U<sup>T</sup> where U D U<sup>T</sup> is eigendecomposition of Cov(X). This decorrelates X and normalizes variance to 1, pre-conditioning the problem.</p>
+  <p><strong>Step 2: Initialization</strong> Start with random orthogonal matrix W₀ (via QR decomposition of random matrix).</p>
+  <p><strong>Step 3: Fixed-Point Iteration</strong> For each component j, iterate:<br />w_j ← E[x̃ g(w_j<sup>T</sup> x̃)] − E[g'(w_j<sup>T</sup> x̃)] w_j<br />where g is the non-linearity (e.g., g(u) = tanh(u), g'(u) = 1 − tanh²(u)), then orthogonalize w_j against other components. Repeat until convergence (typically 10–50 iterations).</p>
+  <p><strong>Step 4: De-mixing</strong> Recover sources: S = W X̃ (for whitened data) or transform back to original scale if needed.</p>
+  <h3>Identifiability Issues</h3>
+  <p>ICA recovers sources up to: (1) <strong>Permutation</strong> (component order is arbitrary); (2) <strong>Scaling</strong> (source amplitude is ambiguous: s_j and −s_j are equally valid). The model cannot distinguish which source appeared first or whether a source is scaled by ±λ. These are fundamental identifiability limits, not algorithmic failures.</p>
+  <h3>Evaluation & Validation</h3>
+  <p>On synthetic data (e.g., mixed audio signals or natural images): <br />1. <strong>Independence Check:</strong> Compute mutual information between recovered components; should be near zero for truly independent sources. Alternatively, compute correlation or higher-order dependence measures.<br />2. <strong>Signal Quality:</strong> If ground-truth sources are available, measure MSE or correlation between recovered and true sources (up to permutation and sign).<br />3. <strong>Permutation Matching:</strong> Recovered components may appear in any order; match them to ground truth via max-correlation / min-distance heuristics.</p>
+  <h3>Practical Challenges</h3>
+  <ul class="s-list">
+    <li><strong>Non-Gaussianity Requirement:</strong> ICA fails if sources are Gaussian (e.g., pure noise); other methods needed.</li>
+    <li><strong>Scaling Ambiguity:</strong> Source magnitude is recovered up to sign/scale; absolute amplitude cannot be determined from data alone.</li>
+    <li><strong>Initialization Sensitivity:</strong> FastICA can converge to local optima; try multiple random initializations and select best by non-Gaussianity criterion.</li>
+    <li><strong>Number of Sources:</strong> Must specify k (number of sources) in advance; over/underspecifying k degrades results.</li>
+  </ul>
+  <h3>Applications</h3>
+  <p>ICA is powerful for: cocktail party effect (separating mixed speech signals), biomedical signal processing (EEG, fMRI artifact removal), image separation, and anomaly detection (directions of independence may reveal hidden structure).</p>`,
+
+  // 07 Implicit Regularization (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>07</span></div>
+    <h2><em>Implicit</em> Regularization</h2>
+  </div>
+  <p>A striking modern phenomenon: neural networks with far more parameters than training examples (e.g., 1M parameters, 10K examples) generalize well despite having zero training error. Traditional theory predicts severe overfitting. The explanation: Stochastic Gradient Descent (SGD) has an implicit bias toward simple solutions, finding the minimum-norm solution that fits the data—a form of automatic regularization.</p>
+  <h3>Empirical Setup</h3>
+  <p>Train a neural network (e.g., 2-3 hidden layers, widths much larger than dataset size) on a classification or regression task. Plot training loss and test loss vs. iteration. Typical pattern: training loss decreases to zero; test loss initially decreases, then plateaus or increases slightly (overfitting). Measure final test accuracy and compare to explicit L2 regularization (weight decay), dropout, or early stopping.</p>
+  <h3>The Implicit Bias of SGD</h3>
+  <p>Theory (Bartlett et al., Gunasekar et al.) shows: over sufficiently many iterations, SGD finds a solution close to the minimum-norm solution—the parameter vector θ* = argmin ||θ|| subject to fitting the training data. This is as if SGD automatically applied L2 regularization, but without tuning a regularization coefficient. The norm ||θ|| correlates with model complexity; simpler models generalize better.</p>
+  <h3>Early Stopping as Regularization</h3>
+  <p>Instead of running SGD to convergence, stop early (e.g., when validation loss plateaus or after a fixed number of iterations). Early stopping interrupts the optimization before SGD converges to the minimum-norm solution, landing at a nearby point with better test performance. This is equivalent to implicit regularization without explicit regularization machinery.</p>
+  <p>Measure test accuracy for different stopping times: t = 10, 50, 100, 500, 1000, ... iterations. Typically, there is an "Goldilocks" zone where test accuracy peaks; stopping too early gives high bias, stopping too late gives high variance.</p>
+  <h3>Explicit Regularization Comparison</h3>
+  <p>Train the same network with explicit L2 regularization (weight decay λ = 0, 0.01, 0.1, 1.0) and measure test accuracy. How do SGD's implicit regularization and explicit L2 regularization compare? Typical finding: explicit regularization helps a little, but SGD's implicit bias is the dominant effect. The two mechanisms are complementary.</p>
+  <h3>Overparameterization & Generalization</h3>
+  <p>Train networks of increasing width (width = 50, 100, 500, 1000, 5000) on the same dataset. Plot test accuracy vs. width. Classical theory predicts accuracy decreases (overfitting). However, modern empirical results often show: test accuracy improves with width, even to extreme overparameterization. This reversal of classical understanding is explained by implicit regularization: wider networks are easier to optimize (SGD finds good minima faster) and implicitly regularize toward simpler solutions.</p>
+  <h3>Theoretical Framework</h3>
+  <p>For linear models y = θ<sup>T</sup> x, SGD finds the minimum-norm solution θ* = argmin ||θ|| s.t. Xθ = y (least-squares fit). For nonlinear models, the implicit bias is toward solutions with small norm in a particular metric (related to the network's activation patterns). The bias strength depends on step size, number of iterations, and data geometry.</p>
+  <h3>Practical Implications</h3>
+  <ul class="s-list">
+    <li><strong>Implicit Regularization is Free:</strong> Neural networks regularize automatically; no need to carefully tune L2 coefficients.</li>
+    <li><strong>Early Stopping Matters:</strong> Generalization often improves by stopping before convergence; monitor validation performance.</li>
+    <li><strong>Overparameterization Helps:</strong> Wider networks have implicit regularization and easier optimization landscape; don't fear overfitting.</li>
+    <li><strong>Step Size & Iterations:</strong> Implicit regularization depends on both; larger step sizes and more iterations lead to sparser, simpler solutions.</li>
+  </ul>
+  <h3>Research Frontiers</h3>
+  <p>Current research extends these ideas: characterizing implicit bias for different optimizers (Adam, momentum), understanding when implicit bias fails (e.g., double descent), connecting implicit regularization to data geometry and model architecture. This is an active frontier bridging optimization, statistics, and deep learning.</p>`,
+
+  // 08 Key Takeaways (detail view)
+  `<div class="detail-header">
+    <div class="num"><span>08</span></div>
+    <h2>Key <em>Takeaways</em></h2>
+  </div>
+  <p>XCS229 Problem Set 5 synthesizes four major areas of machine learning, each offering a distinct lens on learning from data. Together, they form a comprehensive view of modern machine learning practice.</p>
+  <h3>Unsupervised Learning: Discovering Structure</h3>
+  <p><strong>PCA & ICA</strong> are foundational unsupervised methods that discover latent structure without labels. PCA finds directions of maximum variance; ICA finds independent components. Both reveal hidden structure, enable visualization, and provide features for downstream supervised learning. The lesson: not all structure is about predicting labels; understanding data geometry is intrinsically valuable.</p>
+  <h3>Semi-supervised Learning: Leveraging Unlabeled Data</h3>
+  <p><strong>Semi-supervised EM</strong> shows how to combine labeled and unlabeled data synergistically. The key insight: unlabeled data reveals the global structure (cluster locations, densities), while labeled data anchors this structure. This regime—abundant unlabeled data, scarce labels—is increasingly common in practice (e.g., web-scale data, pre-training). Semi-supervised learning is a practical necessity, not just a theoretical curiosity.</p>
+  <h3>Implicit Regularization: Why Simple Algorithms Work</h3>
+  <p><strong>Implicit regularization</strong> explains a fundamental mystery of modern machine learning: why do overparameterized neural networks generalize despite fitting all training data? The answer: optimization algorithms (SGD) have built-in bias toward simple solutions. This has profound implications: we don't need complex regularization machinery; we can trust simple, fast algorithms; and overparameterization is not inherently bad—it aids both optimization and generalization.</p>
+  <h3>Unifying Themes</h3>
+  <p><strong>1. Structure & Inductive Bias:</strong> All methods encode assumptions about data structure: PCA assumes low-rank structure, ICA assumes independence, semi-supervised EM assumes mixture structure, SGD assumes simplicity. Success requires matching the method's assumptions to the true data structure.</p>
+  <p><strong>2. Latent Variables & Representation Learning:</strong> Beneath complex high-dimensional data lie simpler latent factors. Discovering these factors (via PCA, ICA, EM) is at the heart of representation learning, increasingly central to modern deep learning (autoencoders, VAEs, diffusion models).</p>
+  <p><strong>3. Scaling & Practical Considerations:</strong> Algorithms that scale to large data (e.g., online EM, approximate ICA, SGD) often have advantages beyond speed. They naturally regularize, avoid overfitting to the full dataset, and adapt to streaming settings. Theory and practice align: scalable algorithms often have the best generalization.</p>
+  <h3>When to Use What</h3>
+  <ul class="s-list">
+    <li><strong>PCA:</strong> Dimensionality reduction, visualization, preprocessing for other algorithms, understanding variance-based structure.</li>
+    <li><strong>ICA:</strong> Source separation (cocktail party problem), artifact removal, discovering independent factors that PCA would miss.</li>
+    <li><strong>Semi-supervised EM:</strong> Learning with few labels but abundant unlabeled data; mixture model assumptions are reasonable; need probabilistic outputs (e.g., cluster probabilities).</li>
+    <li><strong>Implicit Regularization / SGD:</strong> Training deep neural networks; expect generalization despite overfitting; monitor test performance for early stopping.</li>
+  </ul>
+  <h3>Looking Forward</h3>
+  <p>These four problem areas are not isolated. Modern deep learning combines unsupervised pre-training (learning representations without labels, akin to PCA/ICA), semi-supervised fine-tuning (leveraging limited labeled data), and implicit regularization (via SGD). Representation learning, self-supervised learning, and zero-shot/few-shot learning all build on concepts from PS5. Mastering these fundamentals prepares for research and practice at the frontier of machine learning.</p>
+  <h3>Resources for Further Learning</h3>
+  <ul class="s-list">
+    <li><strong>Books:</strong> Murphy "Machine Learning: A Probabilistic Perspective", Goodfellow et al. "Deep Learning"</li>
+    <li><strong>Papers:</strong> Bartlett et al. on implicit regularization, Gunasekar et al. on gradient flow, Cohen et al. on implicit bias of overparameterization</li>
+    <li><strong>Courses:</strong> Stanford CS229 (full course), Stanford CS224N/231N (deep learning), MIT 6.869 (advanced vision)</li>
+    <li><strong>Practice:</strong> Kaggle competitions, academic datasets (UCI, OpenML), preprints on arxiv.org</li>
+  </ul>
+`,
+
+  // 09 References Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Details</div>
+    <h2>References & <em>Further</em> Reading</h2>
+  </div>
+  <h3>Stanford CS229 Course Materials</h3>
+  <p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course page with complete lectures on unsupervised learning, including PCA, clustering, EM algorithm, ICA, and regularization theory.</p>
+  <p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Detailed notes on all unsupervised learning topics and advanced generalization theory. Weeks 8-10 materials directly support Problem Set 5.</p>
+  <h3>Dimensionality Reduction & PCA</h3>
+  <p><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">Wikipedia: Principal Component Analysis</a> — Comprehensive treatment of PCA, eigendecomposition, variance explained, and interpretation of principal components.</p>
+  <p><a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors" target="_blank">Wikipedia: Eigenvalues and Eigenvectors</a> — Mathematical foundations essential for understanding PCA's eigendecomposition of the covariance matrix.</p>
+  <h3>Expectation-Maximization & Mixture Models</h3>
+  <p><a href="https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm" target="_blank">Wikipedia: Expectation-Maximization Algorithm</a> — Detailed treatment of EM algorithm, convergence properties, and applications to latent variable models.</p>
+  <p><a href="https://en.wikipedia.org/wiki/Mixture_model" target="_blank">Wikipedia: Mixture Model</a> — Overview of mixture models, Gaussian mixture models, and their role in unsupervised learning.</p>
+  <h3>Source Separation & ICA</h3>
+  <p><a href="https://en.wikipedia.org/wiki/Independent_component_analysis" target="_blank">Wikipedia: Independent Component Analysis</a> — Introduction to ICA, independence assumption, contrast functions, and blind source separation problem.</p>
+  <p><a href="https://en.wikipedia.org/wiki/Blind_source_separation" target="_blank">Wikipedia: Blind Source Separation</a> — Applications of ICA including cocktail party problem and artifact removal in signal processing.</p>
+  <h3>Regularization & Implicit Bias</h3>
+  <p><a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)" target="_blank">Wikipedia: Regularization</a> — Mathematical foundations of regularization, L1/L2 penalties, and their effects on learning.</p>
+  <p><a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent" target="_blank">Wikipedia: Stochastic Gradient Descent</a> — Overview of SGD algorithm, learning rate schedules, and implicit regularization properties.</p>
+  <h3>Comprehensive References</h3>
+  <p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Authoritative reference covering unsupervised learning (Chapter 14), dimensionality reduction, clustering, and regularization theory. Essential reading for all PS5 topics.</p>
+  <p><a href="https://www.deeplearningbook.org/" target="_blank">Deep Learning by Goodfellow, Bengio, Courville</a> — Modern textbook covering neural networks, regularization techniques, and implicit bias in deep learning.</p>
+  <p><a href="https://probml.github.io/pml-book/" target="_blank">Machine Learning: A Probabilistic Perspective by Kevin Murphy</a> — Comprehensive probabilistic treatment of EM, mixture models, latent variable models, and dimensionality reduction.</p>
+  <h3>Research Papers on Implicit Regularization</h3>
+  <p><a href="https://arxiv.org/" target="_blank">arXiv.org</a> — Search for: "implicit regularization" + "SGD", "benign overfitting", "implicit bias gradient descent". Key authors: Bartlett, Belkin, Liang, Gunasekar, Cohen.</p>
+  <div class="callout"><h4>Study Roadmap for PS5</h4><p>Start with Stanford CS229 lectures on unsupervised learning. Review PCA and eigendecomposition fundamentals via Wikipedia. For EM algorithm, consult CS229 notes and ESL Chapter 8. For ICA, study contrast functions and independence testing. For implicit regularization, read recent papers on benign overfitting and SGD bias. Finally, synthesize all topics by understanding how modern deep learning combines unsupervised pre-training, semi-supervised fine-tuning, and implicit regularization from SGD.</p></div>
+`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · PROBLEM SET 5</div>
+        <div class="hero-title">PS5: PCA, EM & <em>ICA</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>55 Points · Unsupervised Learning & Implicit Regularization</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip — extends from sidebar edge
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script></body>
+</html>

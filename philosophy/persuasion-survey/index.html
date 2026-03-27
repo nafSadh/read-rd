@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Architecture of Influence: A Survey of Persuasion from Aristotle to AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule {
+      height: 1px; background: var(--border); margin: 32px 0;
+    }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .description {
+      font-size: 15px; color: var(--text); line-height: 1.6;
+      margin-bottom: 32px; font-family: var(--serif);
+    }
+    .stats {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin-bottom: 32px; padding: 24px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr; }
+    }
+    .stat-item { padding: 8px 0; }
+    .stat-label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 24px; font-weight: 500; color: var(--bright);
+      font-family: var(--sans);
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip {
+      color: var(--border); border-bottom-color: transparent; cursor: default;
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-header {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      margin-top: 32px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> SURVEY &middot; PHILOSOPHY OF PERSUASION</div>
+    <h1>The Architecture <em>of Influence</em></h1>
+    <div class="subtitle">A survey of persuasion from Aristotle to AI &mdash; Rhetoric, Exploitation, Defense, Automation, Governance</div>
+    <div class="rule"></div>
+
+    <div class="description">
+      This survey traces the architecture of human persuasion across 2,350 years, from Aristotle's rhetorical proofs through cognitive psychology to machine-generated influence. It examines how persuasion works, how it fails, how we defend against it, and what happens when machines automate the process. Five deep dives: the grammar of persuasion itself, the dark psychology of exploitation, the counter-technologies of human resilience, the emerging landscape of AI-driven influence, and the governance frameworks emerging to regulate it all.
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-label">Sources Collected</div>
+        <div class="stat-value">65+</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Years Spanned</div>
+        <div class="stat-value">2,350</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Deep-Dive Sections</div>
+        <div class="stat-value">5</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Disciplines Bridged</div>
+        <div class="stat-value">4</div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <div class="section-header">DEEP-DIVE SECTIONS</div>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">01</div>
+        <div class="section-body">
+          <div class="section-title">RHETORIC &mdash; The <em>Grammar of Persuasion</em> <span class="status done">complete</span></div>
+          <div class="section-desc">Aristotle's three proofs (ethos, pathos, logos) through Cialdini's seven principles to Kahneman's dual-system thinking. 8 analytical subsections with SVG diagrams tracing 2,350 years of persuasion theory from the Assembly to the algorithm.</div>
+          <div class="section-links">
+            <a href="s1-rhetoric.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">02</div>
+        <div class="section-body">
+          <div class="section-title">EXPLOIT &mdash; <em>Weaponizing</em> the Grammar <span class="status done">complete</span></div>
+          <div class="section-desc">Dark Triad personality, cognitive biases as attack surfaces, manipulation tactics, social engineering, propaganda, Cambridge Analytica, coercive control. 8 subsections with SVG diagrams mapping exploitation from individual to population scale.</div>
+          <div class="section-links">
+            <a href="s2-exploit.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">03</div>
+        <div class="section-body">
+          <div class="section-title">DEFEND &mdash; Counter-<em>Technologies</em> of Mind <span class="status done">complete</span></div>
+          <div class="section-desc">Stoicism to CBT to inoculation theory to prebunking. The 4-layer defense stack: 2,300 years of cognitive resilience training from Epictetus's dichotomy of control to population-scale digital prebunking. 8 subsections with defense architecture diagram.</div>
+          <div class="section-links">
+            <a href="s3-defend.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">04</div>
+        <div class="section-body">
+          <div class="section-title">AUTOMATE &mdash; The <em>Machine Persuader</em> <span class="status done">complete</span></div>
+          <div class="section-desc">The four discontinuities (automated + personalized + interactive + at scale). LLM persuasion research, deepfakes, prompt injection, political microtargeting. 8 subsections covering why AI persuasion is qualitatively different from all prior forms.</div>
+          <div class="section-links">
+            <a href="s4-automate.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">05</div>
+        <div class="section-body">
+          <div class="section-title">GOVERN &mdash; Rules <em>for</em> the Persuasion Machine <span class="status done">complete</span></div>
+          <div class="section-desc">EU AI Act, TAKE IT DOWN Act, state legislation patchwork, international approaches, technical detection, C2PA provenance. The governance asymmetry: why defense is harder than attack. 8 subsections with regulatory landscape diagram.</div>
+          <div class="section-links">
+            <a href="s5-govern.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Survey <em>Paper</em> (Draft)</div>
+          <div class="section-desc">Full survey essay synthesizing all five axes into a coherent argument about the nature of influence in the age of AI.</div>
+          <div class="section-links">
+            <a href="survey-paper.md">Read &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Project <em>Methodology</em></div>
+          <div class="section-desc">How this survey was structured: source selection, taxonomy design, depth-of-reading protocol, interdisciplinary integration.</div>
+          <div class="section-links">
+            <a href=".project/methodology.md">Methodology &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Literature <em>Collection</em></div>
+          <div class="section-desc">65+ sources across five domains with quality ratings (T1&ndash;T4). Ancient texts, peer-reviewed empirical studies, legislation, and industry sources.</div>
+          <div class="section-links">
+            <a href="literature-collection.md">Bibliography &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Presentation <em>Slides</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Slide deck summarizing the five findings and research agenda for presentation contexts.</div>
+          <div class="section-links">
+            <a href="#" class="wip">Coming Soon</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Predecessor: <em>Dark Psychology</em> Deep-Dive</div>
+          <div class="section-desc">This survey began as an extended exploration of the dark-psychology.dd.html deep-dive, which focused on exploitation and cognitive biases. That work became Section 02 (Exploit), and then the framework expanded to cover the full historical arc and contemporary AI landscape.</div>
+          <div class="section-links">
+            <a href="../dark-psychology.dd.html">Dark Psychology Deep-Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      Survey structure and essay generation assisted by Claude<br>
+      Synthesizing philosophy, psychology, communication theory, computer science, and policy
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">◐</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system'; // system, dark, light
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '◐';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '☀' : '☽';
+    }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'system') state = sys === 'dark' ? 'light' : 'dark';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+})();
+</script>
+</body>
+</html>

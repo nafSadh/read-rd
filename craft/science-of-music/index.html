@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Science of Music: Sound, Brain, and Emotion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Craft &middot; Research Project</div>
+    <h1>The Science of Music: <em>Sound, Brain, and Emotion</em></h1>
+    <div class="subtitle">From the physics of vibrating strings through harmony, rhythm, emotion, memory, cultural variation, and the future of music &mdash; what science reveals about humanity&rsquo;s universal art form.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>Music is simultaneously a physical phenomenon, a cognitive process, and a cultural practice. This project surveys the science of music across <strong>7 planned dimensions</strong> and <strong>50+ sources</strong> &mdash; from acoustics and the harmonic series through consonance perception, rhythm and entrainment, how music triggers emotion, music and memory, cross-cultural universals and differences, and the technological future of music creation.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a> &middot;
+        <a href="notes/00-synthesis.md">Synthesis Notes</a>
+      </p>
+    </div>
+
+    <h2>Overview</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Science of Music <em>Overview</em> <span class="status done">done</span></div>
+          <div class="section-desc">Comprehensive overview covering all 7 dimensions: physics, harmony, rhythm, emotion, memory, culture, and the future of music.</div>
+          <div class="section-links">
+            <a href="overview.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Physics of <em>Sound</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Vibration, frequency, amplitude, waveforms, the harmonic series, overtones and timbre, resonance, the inverse-square law, and why a piano and a violin playing the same note sound different.</div>
+          <div class="section-links">
+            <a href="s1-physics.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">Harmony &amp; <em>Consonance</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Why some intervals sound pleasant and others grate, frequency ratios and beating, the consonance-dissonance continuum, tuning systems, equal temperament as compromise, microtonal music.</div>
+          <div class="section-links">
+            <a href="s2-harmony.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">Rhythm &amp; the <em>Brain</em> <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. Neural entrainment, beat perception, the motor system&rsquo;s role in rhythm, groove and the urge to move, polyrhythm processing, timing precision, and rhythmic universals.</div>
+          <div class="section-links">
+            <a href="s3-rhythm.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Musical <em>Emotion</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. How music induces chills, the BRECVEMA framework, dopamine and musical anticipation, sad music paradox, emotional contagion through sound, music therapy evidence.</div>
+          <div class="section-links">
+            <a href="s4-emotion.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Music &amp; <em>Memory</em> <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. Why songs stick in memory, the reminiscence bump, music and Alzheimer&rsquo;s, earworms, musical mnemonics, the Proust effect, voluntary vs. involuntary recall.</div>
+          <div class="section-links">
+            <a href="s5-memory.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Music Across <em>Cultures</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Musical universals vs. cultural specifics, pentatonic ubiquity, non-Western tuning systems, evolutionary theories, cross-cultural emotion recognition, the WEIRD bias.</div>
+          <div class="section-links">
+            <a href="s6-cultures.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Future of <em>Music</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. AI composition, algorithmic homogenization, the streaming attention economy, brain-computer interfaces, the democratization paradox, and music as the first AI-disrupted art.</div>
+          <div class="section-links">
+            <a href="s7-future.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Synthesis</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Why Music <em>Works</em> <span class="status done">done</span></div>
+          <div class="section-desc">Synthesis paper tracing the central argument across all 7 dimensions: from overtone series through dopamine reward to cultural diversity and AI homogenization. 22 inline citations.</div>
+          <div class="section-links">
+            <a href="synthesis.dd.html">Synthesis Paper &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Key Tensions</h2>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">01</span> <strong>Nature vs. culture:</strong> Some musical features (octave equivalence, beat perception) appear universal; others (scales, harmony rules) are culturally constructed</li>
+      <li class="tension-item"><span class="tension-num">02</span> <strong>Consonance theories:</strong> Helmholtz&rsquo;s beating explanation vs. frequency-ratio simplicity vs. learned familiarity &mdash; no consensus after 150 years</li>
+      <li class="tension-item"><span class="tension-num">03</span> <strong>Music and emotion:</strong> Does music genuinely induce emotions or merely represent them? The felt vs. perceived distinction remains debated</li>
+      <li class="tension-item"><span class="tension-num">04</span> <strong>AI composition:</strong> AI can generate convincing music, but whether this constitutes creativity or sophisticated pattern matching is unresolved</li>
+    </ul>
+
+    <div class="footer">
+      <p>Project: <strong>The Science of Music</strong> &middot; 7 of 7 sections complete &middot; March 2026</p>
+      <p>Built with the <a href="../../.project/deep-dive-template.md">deep-dive template</a> &middot; <a href="../../.project/methodology.md">Paper-drive methodology</a></p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.documentElement;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>

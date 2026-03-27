@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluating Generative Models — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Why Hard', title: 'Why <em>Evaluation</em> Is Hard' },
+  { num: '02', short: 'Likelihood', title: '<em>Log-Likelihood</em> Metrics' },
+  { num: '03', short: 'FID', title: '<em>Fr</em>échet Inception Distance' },
+  { num: '04', short: 'IS', title: '<em>Inception</em> Score' },
+  { num: '05', short: 'P&R', title: '<em>Precision</em> & Recall' },
+  { num: '06', short: 'Perceptual', title: '<em>Perceptual</em> Metrics' },
+  { num: '07', short: 'Downstream', title: '<em>Downstream</em> Tasks' },
+  { num: '08', short: 'Composite', title: '<em>Comprehensive</em> Evaluation' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 Why Evaluation Is Hard
+  `<p>Evaluating generative models is fundamentally challenging because there is no single "ground truth" metric that captures all aspects of quality. Unlike supervised learning where we optimize for accuracy against labeled targets, generative models must balance multiple competing objectives: sample quality (are generated images realistic?), diversity (does the model cover the entire data distribution?), and mode coverage (does it generate from all semantic categories). A metric that achieves high quality might produce repetitive, low-diversity outputs. Conversely, high diversity could mean sacrificing image realism.</p>
+  <p>The challenge is exacerbated by the subjective nature of "quality" in generative tasks. Visual quality is inherently perceptual; what humans prefer varies based on context, artistic style, and use case. Additionally, computational efficiency and scalability constraints mean evaluators must choose between comprehensive human studies (expensive, slow) and automatic metrics (fast but sometimes misaligned with human judgment). Different application domains—art generation, scientific imaging, medical synthesis—may require entirely different evaluation priorities.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Multiple</div><div class="sl">Quality Dimensions</div></div>
+    <div class="st"><div class="sv">Subjective</div><div class="sl">Perceptual Quality</div></div>
+    <div class="st"><div class="sv">Trade-offs</div><div class="sl">Diversity vs. Fidelity</div></div>
+    <div class="st"><div class="sv">Context</div><div class="sl">Domain-Dependent</div></div>
+  </div>`,
+
+  // 02 Log-Likelihood
+  `<p>Log-likelihood (LL) is a theoretically principled metric grounded in probability: it measures how likely the model is to have generated observed data from the true distribution. For a set of held-out test images, we compute the negative log-likelihood (NLL), expressed in bits per dimension (BPD). Lower NLL indicates the model assigns higher probability to real data—a direct measure of how well the learned distribution approximates the true data distribution. This metric is particularly useful because it provides a rigorous, probabilistically interpretable score without requiring reference to a separate dataset or feature extractor.</p>
+  <p>However, log-likelihood has significant practical limitations for image generation. Computing exact LL requires tractable density estimation, which is feasible for flow-based and autoregressive models but not for GANs or diffusion models without additional machinery (e.g., importance-weighted bounds). For images with high-dimensional, continuous distributions, LL can be dominated by low-frequency image properties, potentially giving high scores to blurry but probabilistically coherent samples. Bits-per-dimension scaling makes comparisons across different image resolutions non-trivial. Additionally, models with similar LL can produce visually different outputs, suggesting LL captures different information than perceptual quality.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Held-out</div><div class="sl">NLL Test Set</div></div>
+    <div class="st"><div class="sv">Bits/Dim</div><div class="sl">Standard Unit</div></div>
+    <div class="st"><div class="sv">Tractable</div><div class="sl">Some Models</div></div>
+    <div class="st"><div class="sv">Orthogonal</div><div class="sl">To Perception</div></div>
+  </div>`,
+
+  // 03 Fréchet Inception Distance
+  `<p>Fréchet Inception Distance (FID) is one of the most widely adopted metrics in generative modeling. The core idea is to extract feature representations from both real and generated images using an InceptionV3 network (pretrained on ImageNet), compute the mean and covariance of these feature distributions, and measure the Wasserstein-2 distance between them. Formally, FID = ||μ_real − μ_gen||^2 + Tr(Σ_real + Σ_gen − 2(Σ_real·Σ_gen)^{1/2}). Lower FID indicates better alignment between generated and real distributions. FID is appealing because it captures both distribution mean (quality) and covariance (diversity) without requiring paired ground truth.</p>
+  <p>FID has well-known limitations that practitioners must understand. It depends entirely on InceptionV3 features, which were optimized for object classification on ImageNet—not necessarily aligned with human perceptual preferences or generative quality. The metric can fail for out-of-distribution domains (e.g., medical imaging, artwork) where ImageNet features are less informative. FID is sensitive to the specific test set and feature dimension reduction; swapping the covariance computation or using different layer activations yields different results. High FID can also result from mode dropping (low diversity) while still producing realistic individual samples. Finally, FID cannot assess fine-grained perceptual properties like text legibility in generated scenes, making it an incomplete quality measure.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Inception</div><div class="sl">Feature Space</div></div>
+    <div class="st"><div class="st"><div class="sv">Wasserstein</div><div class="sl">Distance</div></div></div>
+    <div class="st"><div class="sv">Fast</div><div class="sl">Computation</div></div>
+    <div class="st"><div class="sv">Limited</div><div class="sl">Domain Transfer</div></div>
+  </div>`,
+
+  // 04 Inception Score
+  `<p>Inception Score (IS) quantifies both sample quality and diversity using a single number derived from an InceptionV3 classifier. The metric is based on KL divergence: IS = exp(E_x[KL(p(y|x) || p(y))]). For each generated image x, we extract the predicted class distribution p(y|x). Across all generated images, we compute the marginal class distribution p(y). High IS occurs when p(y|x) is confident (sharp, peaked distribution—indicating recognizable samples) and p(y) is uniform (diverse class coverage). IS ranges from 1 (worst: uniform predictions) to number of classes (best: perfect coverage), making it interpretable and scale-invariant compared to raw likelihood.</p>
+  <p>Despite its elegance, IS has profound failure modes that limit its reliability. The metric assumes that high classifier confidence indicates high sample quality—a problematic assumption for adversarial examples and out-of-distribution images. IS biases toward generating ImageNet classes, making it uninformative for non-natural-image domains. It cannot distinguish between genuine diversity and classifier confusion; a generator that produces slightly blurry but confidently classified images often scores better than one that generates diverse but slightly harder-to-classify variations. IS also ignores intra-class quality differences and cannot assess fine details. Consequently, high IS has proven to correlate poorly with human perception in many cases, and researchers increasingly view IS as a coarse proxy rather than a reliable quality metric.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1 – K</div><div class="sl">Score Range</div></div>
+    <div class="st"><div class="sv">KL Divergence</div><div class="sl">Quality + Diversity</div></div>
+    <div class="st"><div class="sv">Classifier</div><div class="sl">Bias Prone</div></div>
+    <div class="st"><div class="sv">Poor</div><div class="sl">Human Correlation</div></div>
+  </div>`,
+
+  // 05 Precision & Recall
+  `<p>Precision and Recall metrics directly address mode coverage and quality trade-offs by treating generative evaluation as a manifold estimation problem. The approach (Kynkäänniemi et al., 2019) defines both real and generated samples as points in a feature space and uses nearest-neighbor statistics. Precision measures the fraction of generated samples that have a real neighbor within a distance threshold—high precision means most generated samples land near real data (quality-focused). Recall measures the fraction of real samples that have a generated neighbor—high recall means the generator covers the real data manifold comprehensively (diversity/mode-coverage-focused). This pair naturally decouples the quality-diversity trade-off, allowing researchers to see exactly where their models underperform.</p>
+  <p>Precision-Recall are theoretically cleaner than FID in some respects: they directly measure coverage and don't depend on distance metrics being meaningful in the original feature space. However, they introduce new complexities. The approach requires choosing a distance threshold (often set as the k-th nearest neighbor distance in real data for normalization), which significantly impacts results and requires care. Computing nearest neighbors in high dimensions is computationally expensive and prone to curse-of-dimensionality artifacts. The metrics are also sensitive to the specific feature extractor and can still be misaligned with human judgment in edge cases. Despite these limitations, P&R have become increasingly popular because they provide interpretable, disentangled insights into model performance that single-number metrics lack.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Precision</div><div class="sl">Quality → NN</div></div>
+    <div class="st"><div class="sv">Recall</div><div class="sl">Coverage → Manifold</div></div>
+    <div class="st"><div class="sv">0–1</div><div class="sl">Each Metric</div></div>
+    <div class="st"><div class="sv">Interpretable</div><div class="sl">Trade-offs</div></div>
+  </div>`,
+
+  // 06 Perceptual Metrics
+  `<p>Perceptual metrics aim to align automated evaluation with human visual perception by either using pretrained neural networks or directly collecting human judgments. LPIPS (Learned Perceptual Image Patch Similarity, Zhang et al., 2018) computes L2 distance in deep feature spaces (VGG, AlexNet, or SqueezeNet) with learned per-layer weights, capturing perceptual differences humans find salient. SSIM (Structural Similarity) measures luminance, contrast, and structure similarity, working well for small distribution shifts but less so for diverse generative tasks. Human preference studies, while computationally expensive, provide the ground truth: researchers show images to annotators and ask which is higher quality, establishing empirical benchmarks that metrics should ultimately match.</p>
+  <p>The tension between automatic metrics and human evaluation is fundamental. Automatic metrics are reproducible, fast, and enable large-scale model comparisons—essential for research velocity. However, they inevitably lose nuance: LPIPS depends on feature extractors trained on specific datasets, human preference is context-dependent and subjective, and preferences vary across demographic groups and use cases. Recent work on preference-based evaluations (e.g., ranking-based human studies) shows better alignment with user satisfaction than single-number quality scores. Best practice increasingly involves combining multiple metrics: use FID/Precision-Recall for broad comparisons, LPIPS for perceptual fine-tuning, and human studies for final validation, especially in deployed systems where preferences matter.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">LPIPS</div><div class="sl">Neural Distance</div></div>
+    <div class="st"><div class="sv">SSIM</div><div class="sl">Structure-Based</div></div>
+    <div class="st"><div class="sv">Human</div><div class="sl">Ground Truth</div></div>
+    <div class="st"><div class="sv">Context</div><div class="sl">Dependent</div></div>
+  </div>`,
+
+  // 07 Downstream Tasks
+  `<p>Downstream task evaluation tests whether generated or learned representations actually enable good performance on practical applications. A natural approach is to use generated images to train classifiers or use learned feature representations (e.g., from diffusion models or VAEs) as inputs to downstream tasks. High FID but low downstream accuracy suggests the metric is misleading; conversely, models with strong downstream performance are demonstrably useful. Common downstream benchmarks include: training image classifiers on synthetic data and measuring accuracy, using learned features for semi-supervised learning, or evaluating representation quality via linear probes (training a simple classifier on frozen features). This approach directly connects evaluation to business value—a model that produces diverse, high-FID samples but learns poor feature representations may be less useful than one with modest FID but strong linear-probe accuracy.</p>
+  <p>Downstream evaluation reveals important gaps between automatic metrics and practical utility. A generator might achieve excellent FID by producing a narrow, high-quality mode that covers common ImageNet classes—sufficient for FID but insufficient for tasks requiring diverse poses, lighting, or compositions. Feature representations from generative models show varied quality: some generative pretraining approaches (e.g., masked image modeling) learn excellent features, while others focus purely on sample quality without learning transfer-useful representations. The key insight is that generative and representation quality are not always aligned. Modern evaluation practice increasingly emphasizes downstream tasks for generative models in real applications, especially in domains like scientific imaging or medical synthesis where practical downstream utility is paramount. However, computational cost means full downstream evaluation is often reserved for final model selection rather than hyperparameter tuning.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Classification</div><div class="sl">On Synthetic Data</div></div>
+    <div class="st"><div class="sv">Linear Probe</div><div class="sl">Feature Quality</div></div>
+    <div class="st"><div class="sv">Practical</div><div class="sl">Utility Test</div></div>
+    <div class="st"><div class="sv">Task-Dependent</div><div class="sl">Metric Alignment</div></div>
+  </div>`,
+
+  // 08 Comprehensive Evaluation
+  `<p>Best-practice generative model evaluation combines multiple metrics to form a comprehensive picture. Start with automatic metrics that are fast and scalable: report FID (de-facto standard for image comparison), Precision-Recall (interpretable trade-off insights), and log-likelihood (where tractable, for theoretical grounding). Layer perceptual metrics like LPIPS or domain-specific structural measures as appropriate. For visual fidelity assessment, include SSIM or other reference-based metrics when you have paired data. Always report sample diversity metrics alongside quality metrics—a single number hides critical trade-offs. Use these for iterative model development and hyperparameter tuning.</p>
+  <p>For final validation and model selection, conduct human evaluation studies: ask annotators to rate quality on ordinal scales or perform pairwise comparisons. In production systems, track downstream task performance (e.g., classifier accuracy on synthetic training data, or downstream model quality when generative outputs are used as inputs). Benchmark datasets are essential: ImageNet-derived datasets (for FID/IS evaluation), domain-specific datasets (for perceptual alignment), and holdout human preference sets (for human correlation). When publishing or deploying, report multiple metrics with confidence intervals (where possible), disclose which datasets were used for evaluation, and acknowledge metric limitations. Avoid cherry-picking metrics that favor your approach; instead, present a balanced view including metrics where competitors excel. Emerging best practices emphasize open-source evaluation code, standardized evaluation protocols, and community benchmarks (e.g., GenEval, HPSv2) to improve reproducibility and comparability across research groups.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">4–6</div><div class="sl">Auto Metrics</div></div>
+    <div class="st"><div class="sv">Human</div><div class="sl">Validation</div></div>
+    <div class="st"><div class="sv">Downstream</div><div class="sl">Task Tests</div></div>
+    <div class="st"><div class="sv">Reproducible</div><div class="sl">Reporting</div></div>
+  </div>`,
+
+  // 09 References
+  `<p>Evaluating generative models remains one of the most challenging aspects of the field. This section compiles key papers, benchmark datasets, and practical guidelines for comprehensive evaluation combining likelihood metrics, perceptual quality measures, and downstream task performance.</p>
+   <p>From foundational work on FID and IS to modern composite evaluation strategies, these materials guide rigorous assessment of generative model quality across multiple dimensions.</p>`
+];
+
+const details = [
+  // 01 Why Evaluation Is Hard
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>No Single Metric</div><h2>Why <em>Evaluation</em> Is Hard</h2></div>
+  <p>Evaluating generative models is uniquely challenging because generative tasks lack a clear, singular objective function. In supervised learning, we evaluate classifiers against labeled test data; in reinforcement learning, we optimize for cumulative reward. Generative modeling, by contrast, asks: "Can we learn to sample from an unknown, high-dimensional distribution?" Success is multi-faceted and context-dependent.</p>
+  <p>The primary challenge is the quality-diversity trade-off. A generator can produce incredibly realistic samples of a narrow subset of categories—achieving high quality but low diversity. Alternatively, it can produce moderately realistic samples across all categories—high diversity but lower per-sample quality. Traditional metrics like FID or Inception Score conflate these dimensions, making it hard to diagnose where models fail. Furthermore, "quality" itself is subjective: a surrealist artist might prefer diverse, imaginative outputs; a photographer might prioritize photorealism; a scientist generating synthetic training data prioritizes semantic accuracy of scene composition. No single metric simultaneously optimizes for all priorities.</p>
+  <p>A secondary challenge is the computational cost of comprehensive evaluation. Human preference studies—the gold standard for alignment with user intent—require recruiting annotators, building interfaces, and managing quality control. Large-scale studies (hundreds or thousands of images) are expensive and slow. Automatic metrics are fast but often imperfectly correlated with human judgment. Choosing between speed and accuracy creates a constant trade-off in practice. Researchers must balance rigorous evaluation (multiple metrics, human studies) against experimental velocity (quick iteration on models and hyperparameters).</p>
+  <p>Domain shift is another critical consideration. Metrics trained on natural images (ImageNet) often fail in specialized domains—medical imaging, scientific visualization, artwork, architectural renderings. A metric like FID may give high scores to medical images with ImageNet-like statistical properties but poor clinical utility. This has driven growing interest in domain-specific evaluation protocols and custom metrics tailored to particular applications. The absence of a universal evaluation standard means each research group and industry application must make explicit choices about which metrics to prioritize and validate against domain-specific ground truth.</p>
+  <p>Finally, generative models are often used in conditional or guided settings (text-to-image, semantic layout guidance), introducing additional evaluation complexity. Conditional generation requires assessing alignment between input conditions and outputs—a dimension entirely absent from unconditional metrics. The space of possible evaluation approaches is vast, and no standard protocol covers all scenarios. This fragmentation makes cross-paper comparisons difficult and rewards selective metric reporting by researchers.</p>
+  <h3>Key Evaluation Dimensions</h3>
+  <p>Quality (realism, clarity, adherence to conditions) and Diversity (coverage of modes, semantic variety, intra-class variation) are the primary axes. Mode coverage (does the generator produce from all semantic categories?) is closely related to diversity but focuses on categorical completeness. Efficiency (speed of generation, memory footprint) matters for deployment. Stability (does the training process converge reliably?) and controllability (can outputs be guided by input conditions?) are also important. A comprehensive evaluation framework must explicitly address each dimension with appropriate metrics and often requires multiple metrics per dimension to avoid single-metric pitfalls.</p>`,
+
+  // 02 Log-Likelihood
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Tractable Density</div><h2><em>Log-Likelihood</em> Metrics</h2></div>
+  <p>Log-likelihood is a fundamental, theoretically grounded metric rooted in probability theory. Given a model p_θ(x) and held-out test set X_test = {x_1, ..., x_n}, negative log-likelihood (NLL) is computed as: NLL = −(1/n) Σ_i log p_θ(x_i). Lower NLL indicates the model assigns higher probability to observed real data, meaning the learned distribution p_θ better matches the true data distribution p_data. This metric is dimensionless and directly interpretable: if NLL decreases during training, the model is provably improving its density estimation.</p>
+  <p>For comparison across image resolutions and dimensions, researchers normalize by the number of dimensions (bits, pixels, or bytes), yielding bits-per-dimension (BPD): BPD = NLL / (d * log(2)), where d is the input dimension. A model that achieves 4.5 BPD on CIFAR-10 (32x32x3 images) means it allocates roughly 4.5 bits on average per pixel. This scaling enables fair comparison across different resolutions and modalities. Theoretical appeal is significant: if the goal is to learn a distribution that assigns high probability to observed data, NLL directly measures success without reference to external features or networks.</p>
+  <p>However, NLL has substantial practical limitations. Many generative models—particularly GANs and diffusion models—do not have tractable density functions. Computing exact NLL is infeasible without additional machinery. For diffusion models, alternative approaches like importance-weighted bounds or Hamiltonian MCMC-based estimates are required, adding computational overhead and approximation error. For GANs, NLL is essentially undefined without implicit density estimation techniques. This immediately disqualifies NLL as a universal metric for all modern architectures.</p>
+  <p>A second limitation is the perceptual relevance of likelihood. High likelihood can coexist with perceptually poor images. A blurry image—which assigns moderate probability to all pixels via a smooth distribution—may have lower NLL than a sharp image with occasional pixel errors (low-probability outliers). NLL is dominated by low-frequency image statistics (broad color distributions) and can be nearly blind to high-frequency details (edges, textures) that humans find critical. This fundamental misalignment means a model with high NLL may generate visually inferior samples compared to a model with lower NLL but better perceptual features.</p>
+  <p>Additionally, likelihood of different models in different continuous spaces is not directly comparable. A model trained on discrete, 8-bit images (256 levels per channel) will have different NLL scaling than one trained on continuous [0,1] values or latent codes. Comparative claims require careful normalization and often involve implicit assumptions about which model class is being compared. In practice, researchers rarely compare NLL across different architectures for these reasons.</p>
+  <h3>When to Use Log-Likelihood</h3>
+  <p>NLL is most valuable for models with tractable densities: autoregressive models (PixelCNN, WaveNet), flow-based models (Glow, RealNVP), and some VAE variants. Within a single model class trained on identical data, NLL provides a principled metric for tracking density estimation progress. For theoretical papers on likelihood modeling, NLL is essential. However, for comparing across architectures, evaluating perceptual quality, or working with GANs and diffusion models, relying solely on NLL is insufficient. Best practice treats NLL as one signal among many, acknowledging both its theoretical grounding and practical limitations.</p>`,
+
+  // 03 Fréchet Inception Distance
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Feature Space Distance</div><h2><em>Fr</em>échet Inception Distance</h2></div>
+  <p>FID (Heuse et al., 2017) has become the de-facto standard for evaluating image-generation quality. The metric compares the distribution of real and generated images in the feature space of an InceptionV3 network (typically using the final pooling layer, 2048-dimensional). Given a set of real images X_real and generated images X_gen, compute feature activations f_real and f_gen. Assume these features are multivariate Gaussian distributed (a simplifying assumption) and fit Gaussians: N(μ_real, Σ_real) and N(μ_gen, Σ_gen). FID then measures the Wasserstein-2 (Fréchet) distance between these distributions:</p>
+  <p>FID = ||μ_real − μ_gen||_2^2 + Tr(Σ_real + Σ_gen − 2(Σ_real Σ_gen)^{1/2}). Lower FID indicates closer alignment. The first term captures difference in feature means (gross distribution shift); the second term captures covariance mismatch (fine-grained structure and diversity). FID has advantages: it's differentiable, fast to compute (no per-image comparison required), and produces a single interpretable number. The reliance on ImageNet-pretrained features provides transfer-learning benefits—features learned on large-scale natural images contain priors useful for evaluating other image generation tasks.</p>
+  <p>FID has well-documented failure modes and limitations. First, InceptionV3 was optimized for object classification, not image generation quality assessment. Features learned via object classification may not align with human preferences for generative fidelity. Second, FID is entirely dependent on the ImageNet-trained feature space; for out-of-distribution domains (medical imaging, artwork, satellite imagery, scientific renderings), InceptionV3 features are potentially uninformative or misleading. A model producing medically unrealistic but ImageNet-feature-aligned images might score well on FID but be clinically useless.</p>
+  <p>Third, FID can be gamed or produce misleading results. Mode dropping (generating only a subset of modes) reduces diversity but can maintain or improve FID if the selected modes are high-quality and have high probability. Conversely, overfitting to ImageNet statistics—generating images that look like ImageNet samples but lack semantic coherence—can improve FID without improving actual sample quality. The Gaussian assumption underlying Wasserstein distance is often violated for real image features; higher-dimensional feature spaces show non-Gaussian tails and outliers that the metric ignores. Different layer choices, different sample sizes, or different random seeds can yield notably different FID values, introducing variability that practitioners often overlook.</p>
+  <p>Fourth, FID is insensitive to some quality degradations. Fine details (legible text, sharp edges) matter little to FID if low-frequency structure is correct. Adversarial perturbations invisible to humans can shift FID significantly. Conversely, imperceptible lossy JPEG compression might decrease FID if it removes artifacts that disrupt feature statistics. This suggests FID captures different information than human visual perception.</p>
+  <p>Finally, FID is not robust across dataset sizes or computational settings. Using 50,000 real images versus 10,000 yields different feature statistics and thus different FID values for the same generator. Computing FID requires storing features for all real and generated images in memory, making it memory-intensive for large-scale evaluation. Different implementations (PyTorch, TensorFlow, official vs. community versions) sometimes yield slightly different results due to numerical precision and random seed handling.</p>
+  <h3>Practical Recommendations</h3>
+  <p>Despite limitations, FID remains invaluable for tracking progress during model development and for broad cross-model comparisons within natural images. Always report both FID and complementary metrics (Precision-Recall, LPIPS, downstream tasks). When evaluating out-of-distribution domains, consider domain-specific feature extractors or metrics rather than relying on InceptionV3. Be explicit about FID computation details: number of real/generated samples, which layer's features, implementation details, and random seeds. Use FID as one signal among many, not as the sole evaluation criterion. For fine-grained quality assessment, supplement with LPIPS or human studies. FID is best used for rapid iteration during development; replace with more comprehensive evaluation for final model selection.</p>`,
+
+  // 04 Inception Score
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Classifier Confidence</div><h2><em>Inception</em> Score</h2></div>
+  <p>Inception Score (Salimans et al., 2016) combines quality and diversity into a single, elegant metric based on a simple intuition: good generated images should be confidently classified by a pretrained classifier (indicating recognizability and quality), and diverse images should cover many classes (indicating mode coverage). Formally, for generated images X_gen and a pretrained InceptionV3 classifier, compute the conditional class distribution p(y|x) for each image. Across all images, compute the marginal class distribution p(y). IS is defined as:</p>
+  <p>IS = exp(E_x[KL(p(y|x) || p(y))]).</p>
+  <p>Intuitively: if p(y|x) is sharply peaked on one class (high confidence) and this varies across x while p(y) is spread uniformly (diverse coverage), then KL divergence is large, and IS is high. IS ranges from 1 (uniform predictions, worst case) to the number of classes K (perfect coverage with perfect confidence, best case). For ImageNet (1000 classes), perfect IS is 1000. The metric is scale-invariant and interpretable, making it attractive for comparing models.</p>
+  <p>However, IS suffers from profound, well-documented failure modes. The most serious is the conflation of classifier confidence with sample quality. Adversarial examples can fool classifiers into high-confidence wrong predictions; similarly, a generator might produce images that fool classifiers but are objectively poor in human judgment. IS rewards confidence without assessing correctness. A GAN that generates blurry dogs uniformly across all breeds could score very high on IS (confident classification + diverse coverage) while being perceptually inferior to a model generating sharper but less diverse dogs.</p>
+  <p>Second, IS inherits all biases from ImageNet classification. It strongly biases generators toward producing ImageNet-like images (common objects, typical compositions) and entirely ignores quality dimensions outside ImageNet's scope. For artistic generation, medical imaging, scientific visualization, or other non-natural-image domains, IS becomes nearly meaningless. A generator producing semantically wrong but confidently classified images scores better than one producing correct but ambiguous outputs.</p>
+  <p>Third, IS cannot distinguish between genuine diversity and classifier confusion. If a generator produces images with subtle variations that shift classifier predictions due to noise or adversarial artifacts rather than semantic variation, IS increases despite no real semantic diversity. Similarly, IS ignores intra-class variation: two generators, one producing all variations of "golden retriever" and another producing equal numbers of poodles, huskies, and retrievers, might have very different ISs even if perceptual quality is equivalent.</p>
+  <p>Fourth, IS is sensitive to the specific classifier, layer choice, and data preprocessing. Different InceptionV3 implementations yield different results. Using a different pretrained classifier entirely changes the metric. These implementation details are often unreported, making IS comparisons across papers unreliable. Empirical studies have shown that models achieving high IS often score much lower in human preference studies, indicating poor alignment with human judgment. This revelation was a major factor in the field's shift toward FID and other metrics during the mid-to-late 2010s.</p>
+  <h3>Current Status</h3>
+  <p>IS is now primarily used as a legacy metric for backward compatibility with older papers rather than as a primary evaluation criterion. Researchers still report IS for comparability with prior work, but interpreting IS in isolation is discouraged. The metric's failure to correlate with human judgment and its narrow focus on ImageNet statistics make it unsuitable as the sole evaluation metric. Modern practice treats IS as a cautionary tale in metric design: a metric that seems elegant theoretically can be profoundly misleading in practice.</p>`,
+
+  // 05 Precision & Recall
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Manifold Coverage</div><h2><em>Precision</em> & Recall</h2></div>
+  <p>Precision and Recall metrics (Kynkäänniemi et al., 2019) decouple the quality-diversity trade-off by directly measuring mode coverage and sample quality. Unlike FID (which conflates both dimensions into a single distance) or IS (which conflates confidence with correctness), Precision and Recall provide two complementary, interpretable metrics. The approach treats generative evaluation as a manifold estimation problem: real data and generated data each lie on a learned manifold in feature space; evaluation assesses how well the generated manifold aligns with and covers the real manifold.</p>
+  <p>Algorithm: Extract features f_real and f_gen from a pretrained network (e.g., InceptionV3). For each generated sample, find its k-nearest neighbor in real samples. If that distance is within a threshold τ (typically set as the k-th neighbor distance in the real set for normalization), the generated sample counts toward Precision. Similarly, for each real sample, check if it has a generated neighbor within τ; those contribute to Recall. Formally:</p>
+  <p>Precision = |{g_i : ∃r_j s.t. d(f(g_i), f(r_j)) ≤ τ}| / |G|. Recall = |{r_i : ∃g_j s.t. d(f(r_i), f(g_j)) ≤ τ}| / |R|. High Precision means generated samples land near the real data manifold (quality-centric). High Recall means all real modes are covered by generated samples (diversity/coverage-centric). A generator can achieve high Precision by generating few high-quality samples; it achieves high Recall by covering many real modes even if some are lower quality. This natural decoupling directly reveals model trade-offs.</p>
+  <p>Conceptually, Precision-Recall are cleaner than FID in several ways. They directly measure coverage (does the generator reproduce all real modes?) and don't require assuming feature distributions are Gaussian. They are invariant to the overall scale of the feature space because they use relative distance thresholds. They provide actionable diagnostic insights: a model with high Precision but low Recall is overfitting to a few high-quality modes; a model with high Recall but low Precision generates diverse but lower-quality samples. This diagnostic capability is invaluable for understanding where models fail.</p>
+  <p>However, Precision-Recall introduce new complexities. The threshold τ is a critical hyperparameter; different choices yield very different results. Using the k-th nearest neighbor distance in the real set is one normalization approach, but others exist, and sensitivity analysis often reveals significant dependence. Computing nearest neighbors in high-dimensional feature spaces is computationally expensive and susceptible to curse-of-dimensionality artifacts; approximate nearest neighbor methods introduce additional approximation error. The distance metric itself is non-trivial: Euclidean distance in feature space may not be perceptually meaningful; different distance functions yield different Precision-Recall curves.</p>
+  <p>Additionally, like FID, Precision-Recall depend entirely on the feature extractor. InceptionV3 features may be poorly aligned with domains outside natural images. The metrics can also miss certain quality degradations invisible to the feature extractor (e.g., if a generator produces pixel-level artifacts that don't shift InceptionV3 features). A generated sample might be considered "close to real" in feature space but perceptually poor. Precision-Recall operate in feature space and thus share FID's limitation of being somewhat decoupled from human visual perception.</p>
+  <h3>Usage and Interpretation</h3>
+  <p>Precision-Recall have become increasingly popular in recent generative modeling papers because they offer interpretable insights that single-number metrics lack. Plot Precision-Recall curves as thresholds vary, not just single operating points. Use multiple threshold settings (k=3, 5, 10) to assess robustness. Compute using the same feature extractor across all models for fair comparison. Combine with FID (which captures more global distribution information) and perceptual metrics (which better align with human judgment) for comprehensive evaluation. The rise of Precision-Recall reflects a field-wide shift toward more interpretable, diagnostic evaluation approaches.</p>`,
+
+  // 06 Perceptual Metrics
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Human Alignment</div><h2><em>Perceptual</em> Metrics</h2></div>
+  <p>Perceptual metrics explicitly aim to align automatic evaluation with human visual perception. The rationale is straightforward: ultimately, if a generative model is used in a real application, users care about whether outputs match their preferences. Automatic metrics—FID, IS, Precision-Recall—make assumptions about what quality means; perceptual metrics either use neural networks trained to predict human preferences or directly measure human preferences themselves. Several approaches exist, each with trade-offs.</p>
+  <p>LPIPS (Learned Perceptual Image Patch Similarity, Zhang et al., 2018) computes perceptual distance as L2 distance in learned feature spaces, with per-layer weighting optimized to match human perception. Given two images, LPIPS extracts features at multiple layers from a pretrained network (VGG, AlexNet, or SqueezeNet), computes layer-wise L2 distances, weights them (learned from human preference data), and sums. The result is a single number ∈ [0, ∞) indicating perceptual distance. Lower LPIPS means images are perceptually more similar. Key advantage: LPIPS is trained on human judgments (from a relatively small study of ~500 image comparisons), making it more aligned with human perception than ImageNet-classification-derived metrics. LPIPS also works for full-reference comparison (comparing a generated image against a reference) and no-reference variants have been developed.</p>
+  <p>SSIM (Structural Similarity, Wang et al., 2004) measures luminance, contrast, and structural similarity between images, producing a score ∈ [−1, 1] where 1 is identical. SSIM is reference-based and requires paired ground truth (e.g., original image vs. slightly degraded version). SSIM works well for small distribution shifts (e.g., compression artifacts, slight color changes) but performs poorly for diverse generative tasks where output may be semantically correct but visually quite different from any ground truth.</p>
+  <p>Human preference studies are the ultimate ground truth. Researchers display two generated images (or one generated vs. one real) to annotators and ask: "Which is higher quality?" or "Which do you prefer?" Collecting responses from dozens to thousands of annotators, aggregated via majority vote or Bayesian methods, establishes empirical quality ranking. Modern approaches often use ranking-based evaluation (showing multiple images, asking annotators to rank them) rather than binary comparisons, yielding richer information. Human studies are expensive and slow but provide definitive validation. Empirical results show that models with good downstream metrics often have good human preference alignment, but not always—some models score well on automatic metrics while humans strongly prefer competitors.</p>
+  <p>However, human evaluation has its own challenges. Preferences are subjective and context-dependent; different people prefer different styles. Geographic and cultural backgrounds influence aesthetic preferences. Annotator fatigue and gaming (rushing through annotations, strategic clicking) introduce noise. Large-scale studies mitigate noise through aggregation, but are correspondingly expensive. Additionally, human preferences can be misaligned with usefulness: humans might prefer photorealistic medical images, but clinically accurate slightly-unrealistic renderings have more value. Best practice involves collecting human feedback for the specific use case and user demographic of interest rather than relying on generic "preferences."</p>
+  <p>A relatively new approach is preference-based learning: rather than training models to maximize a single automatic metric, train models using human preference feedback directly (e.g., via reinforcement learning from human feedback, RLHF). This approach has shown success in text generation (GPT-4 training used RLHF extensively) and is beginning to be applied to image generation. Models optimized this way often have better human alignment than models optimized on automatic metrics, though RLHF is computationally expensive and introduces its own challenges (e.g., feedback quality, scalability).</p>
+  <h3>Best Practices</h3>
+  <p>For rapid iteration during development, use LPIPS for perceptual fine-tuning alongside FID for distribution-level assessment. For final model selection and deployment, conduct human studies tailored to your specific use case and user base. Avoid relying on any single automatic metric as the definitive quality measure. When reporting results, include both automatic metrics and human preference data if possible. For scientific papers, human evaluation studies (even if modest in scale) significantly strengthen claims. For production systems, establish dashboards tracking both automatic metrics and downstream task performance, with occasional human audits to detect metric drift or gaming. The field is moving toward human-centric evaluation; prepare for this shift by building human feedback infrastructure even in research-stage projects.</p>`,
+
+  // 07 Downstream Tasks
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Real-World Utility</div><h2><em>Downstream</em> Tasks</h2></div>
+  <p>Downstream task evaluation tests whether a generative model's outputs or learned representations actually enable good performance on practical applications. This approach directly connects evaluation to business value: a model might achieve excellent FID but be useless if generated images don't train effective downstream classifiers, or if learned representations don't transfer to target tasks. Downstream evaluation reveals the gap between automatic metric quality and practical utility.</p>
+  <p>Common downstream evaluation protocols include: (1) Data augmentation: train a classifier on a mix of real and synthetic training data; measure how much synthetic data improves accuracy. If FID-good synthetic data doesn't improve classifier accuracy, the metric is misleading. (2) Feature extraction: use learned representations from a generative model as inputs to a downstream task (e.g., linear classifier, clustering); measure performance. Some generative models learn excellent transferable features; others focus purely on sample quality. (3) Linear probes: freeze learned representations and train a simple linear classifier on top; measure top-1 accuracy. Linear probe performance is a canonical measure of representation quality and is particularly useful for self-supervised and generative pretraining approaches.</p>
+  <p>Empirical findings have revealed large discrepancies between automatic metrics and downstream utility. Some StyleGAN2 variants achieve excellent FID but mode-drop significantly, generating only narrow distributions of faces or objects—FID hides this because the selected modes are high-quality. In data augmentation studies, synthetic data with slightly lower visual quality but higher diversity sometimes improves downstream accuracy more than high-FID data with poor diversity. In representation quality studies, diffusion models with excellent sample quality sometimes learn poorer features than VAEs with moderate sample quality, because diffusion objectives don't explicitly encourage representation consistency. These findings demonstrate that generative quality and representational utility are distinct properties.</p>
+  <p>A particular strength of downstream evaluation is domain-specificity. In medical imaging, clinicians care less about ImageNet-aligned features and more about diagnostic utility: does the synthetic training data help train models that achieve good diagnostic accuracy on real patient data? In scientific simulation, utility is measured by whether synthetic training improves downstream scientific models' accuracy on real phenomena. These domain-specific metrics cannot be captured by generic image-quality metrics like FID.</p>
+  <p>However, downstream evaluation has limitations. Computing downstream task performance requires training full models, making evaluation expensive and slow. This computational cost means downstream evaluation is usually reserved for final model selection rather than hyperparameter tuning during development. Downstream tasks are often data-dependent and don't generalize across domains; excellent performance on ImageNet-based classification might not transfer to medical imaging or artwork generation. Additionally, downstream task performance is a weak signal if the downstream task is itself easy or saturated; if all reasonable models achieve high downstream accuracy, differences are imperceptible. Finally, selecting which downstream tasks to evaluate becomes a new form of metric cherry-picking; researchers might choose tasks where their models excel.</p>
+  <p>Best practice treats downstream evaluation as a critical validation step alongside automatic metrics. During development, use fast automatic metrics (FID, LPIPS) for iteration. For final model selection, measure downstream task performance on your specific application domain (not generic ImageNet). For scientific and medical applications, downstream utility is the ultimate metric—no amount of FID perfection makes up for downstream failure. Report both automatic metrics and downstream performance; if they significantly diverge, investigate why (it reveals limitations in your automatic metrics or properties of your data not captured by generic metrics).</p>
+  <h3>Representation Quality Evaluation</h3>
+  <p>For models trained on generative objectives (VAEs, diffusion models, masked image models), evaluating representation quality is crucial. Linear probe accuracy on ImageNet or downstream tasks measures transferability of learned features. Mutual information between representations and class labels quantifies information content. Rank of the learned representation matrix indicates whether models utilize their full capacity or collapse to lower ranks. These diagnostics reveal whether the model is learning rich, informative representations or merely memorizing visual statistics without learning meaningful features.</p>`,
+
+  // 08 Comprehensive Evaluation
+  `<div class="detail-header"><div class="num"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Integrated Framework</div><h2><em>Comprehensive</em> Evaluation</h2></div>
+  <p>Best-practice generative model evaluation combines multiple metrics into a comprehensive framework. No single metric captures all aspects of model quality. Modern papers (DeepMind, Meta, OpenAI, Google) increasingly report 4–6 automatic metrics alongside human studies and often downstream task performance. This multi-metric approach requires discipline to avoid metric cherry-picking, but provides a complete picture of model behavior.</p>
+  <p>Tier 1 (Development & Iteration): Use fast, automatic metrics requiring <1 minute computation per model. FID remains standard for natural images (1-minute computation for 50k images). Precision-Recall adds 2–5 minutes but yields diagnostic insights. Inception Score for legacy compatibility. LPIPS for perceptual fine-tuning (adds ~1 minute). For autoregressive models, include log-likelihood (BPD) for theoretical grounding. For text-to-image or conditional generation, add CLIP-based metrics (e.g., CLIP score measuring image-text alignment). For each metric, report mean ± std over multiple seeds/random samples.</p>
+  <p>Tier 2 (Model Selection & Comparison): For final candidate models, compute human evaluation studies. Scale: 50–500 images, 10–20 annotators per image, binary preference or ranking tasks. Aggregate via majority vote or Bayesian Bradley-Terry models. Include downstream task evaluation if applicable to your domain. Measure linear probe accuracy (frozen features) or train downstream models on synthetic + real data to assess utility. Conduct ablation studies to isolate the contribution of key design choices. Document which models humans prefer and whether automatic metrics align with preferences.</p>
+  <p>Tier 3 (Reporting & Reproducibility): Publish results with complete details. Include sample size (how many real/generated images evaluated), random seeds, implementation libraries (PyTorch version, etc.), and metrics versions (official TensorFlow/PyTorch implementations, community forks). Report confidence intervals where possible (bootstrapped estimates). Include error bars or variance across multiple seeds. Make code open-source with standardized evaluation scripts. If using proprietary datasets, ensure evaluation is reproducible on public alternatives. Disclose limitations of metrics used; acknowledge that metric choices influence conclusions.</p>
+  <p>Tier 4 (Domain-Specific Customization): For specialized domains, adapt metrics appropriately. Medical imaging: include domain-specific metrics (e.g., diagnostic accuracy, Hausdorff distance for segmentation), not just FID. Artistic generation: prioritize human preference studies over automatic metrics (humans evaluate art, not algorithms). Scientific simulation: evaluate whether synthetic training improves downstream physics models. Architecture: measure semantic correctness of generated floor plans. This requires domain expertise and custom evaluation infrastructure, but ensures metrics are aligned with task objectives.</p>
+  <p>Emerging standards include benchmark datasets and leaderboards. ImageNet-derived benchmarks (BigGAN, StyleGAN2 evaluation sets) provide standardized train/test splits and consistent evaluation across papers. GenEval (focusing on text-to-image evaluation) and HPSv2 (human preference studies on diverse generative tasks) are community resources establishing baseline human preference data. Using these benchmarks improves comparability across research groups and reduces per-paper evaluation overhead. However, be cautious of leaderboard gaming; models optimized specifically for benchmark metrics may not transfer to real-world applications.</p>
+  <p>A critical practical consideration is computational budget for evaluation. A single FID computation on 50k images takes ~1 minute (modest). Computing Precision-Recall adds ~5 minutes. Full human evaluation of 500 images with 10 annotators each requires ~50–100 person-hours (expensive). This trade-off—speed vs. comprehensiveness—means most papers use automatic metrics for all ablations and development, then conduct human studies only for final claims. This is reasonable if automated metrics are validated against human judgment on a representative subset; if automatic metrics diverge from human judgment, the divergence must be understood and acknowledged.</p>
+  <h3>Common Pitfalls and How to Avoid Them</h3>
+  <p>Pitfall 1: Reporting only metrics where your model excels (cherry-picking). Solution: Commit to a metric set before training; report all metrics even if some are unfavorable. Pitfall 2: Using different metrics across papers or sections, making comparisons impossible. Solution: Standardize on core metrics (FID + Precision-Recall + downstream task) and include only additional metrics if necessary. Pitfall 3: Large variance in metric scores due to random seeds or FID recomputation details. Solution: Average over 3–5 seeds and include confidence intervals. Pitfall 4: Misaligned evaluation of conditional vs. unconditional models (comparing metrics across different settings). Solution: Report separate metrics for each task. Pitfall 5: Out-of-distribution evaluation without domain-specific metrics. Solution: For specialized domains, include at least one domain-specific metric and explain why generic metrics may be misleading.</p>
+  <p>The field is moving toward standardized, reproducible evaluation. Initiatives like Papers with Code, Hugging Face Model Hub, and academic leaderboards establish public benchmarks and encourage open-source evaluation code. Following these community standards—using public evaluation code, reporting details exhaustively, and participating in leaderboards responsibly—strengthens the entire field's ability to compare models and reproducibly improve architectures.</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div><h2>References & <em>Further</em> Reading</h2></div>
+   <h3>Foundational Papers</h3>
+   <ul>
+    <li><a href="https://arxiv.org/abs/1706.08500" target="_blank">GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium (Heusel et al, 2017)</a> — Fréchet Inception Distance (FID)</li>
+    <li><a href="https://arxiv.org/abs/1606.03498" target="_blank">Improved Techniques for Training GANs (Salimans et al, 2016)</a> — Inception Score (IS)</li>
+   </ul>
+   <h3>Key Metrics</h3>
+   <ul>
+    <li><strong>Log-Likelihood / Bits Per Dimension (BPD)</strong> — Direct likelihood evaluation for tractable models</li>
+    <li><strong>Fréchet Inception Distance (FID)</strong> — Distribution distance via pre-trained feature embeddings</li>
+    <li><strong>Inception Score (IS)</strong> — Sample quality and diversity via class predictions</li>
+    <li><strong>Precision & Recall</strong> — Mode coverage and fidelity as separate metrics</li>
+    <li><strong>LPIPS (Learned Perceptual Image Patch Similarity)</strong> — Perceptual distance via deep networks</li>
+    <li><strong>CLIP Score</strong> — Image-text alignment for conditional generation</li>
+   </ul>
+   <h3>Evaluation Frameworks & Benchmarks</h3>
+   <ul>
+    <li><strong>ImageNet Benchmarks</strong> — Standard datasets for image generation evaluation</li>
+    <li><strong>GenEval</strong> — Text-to-image generation evaluation framework</li>
+    <li><strong>HPSv2</strong> — Human preference scores for diverse generative tasks</li>
+    <li><strong>Papers with Code</strong> — Leaderboards and standardized benchmarks</li>
+   </ul>
+   <h3>Human Evaluation</h3>
+   <ul>
+    <li><strong>Preference Studies</strong> — Binary/ranking judgments with multiple annotators</li>
+    <li><strong>Bradley-Terry Models</strong> — Aggregating pairwise preferences into rankings</li>
+    <li><strong>Downstream Task Performance</strong> — Evaluating utility for downstream applications</li>
+    <li><strong>Domain-Specific Metrics</strong> — Medical imaging, artistic content, scientific simulation</li>
+   </ul>
+   <h3>Best Practices</h3>
+   <ul>
+    <li><strong>Multi-Metric Evaluation</strong> — Combining 4–6 automatic metrics plus human studies</li>
+    <li><strong>Reproducibility</strong> — Documenting seeds, library versions, implementation details</li>
+    <li><strong>Statistical Rigor</strong> — Confidence intervals, variance across seeds, significance tests</li>
+    <li><strong>Avoiding Pitfalls</strong> — No cherry-picking, consistent metrics, appropriate baselines</li>
+   </ul>
+   <h3>Learning Resources</h3>
+   <ul>
+    <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a> — Evaluation lecture and materials</li>
+    <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng's Blog</a> — Comprehensive evaluation tutorials</li>
+   </ul>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
+        <div class="hero-title">Evaluating <em>Generative</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 7–8 · FID, Likelihood & Precision-Recall</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

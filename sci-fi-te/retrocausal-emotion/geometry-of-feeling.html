@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Geometry of Feeling — Retrocausal Emotion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b7aed;--accent-soft:#7c3aed08;
+  --green:#2e6e3e;--red:#8b2020;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#b598ff;--accent2:#9b7aed;--accent-soft:#b598ff0c;
+  --green:#4ee8a8;--red:#e87090;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--serif);-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.9;transition:background .5s,color .4s}
+
+.shell{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:200px;min-width:200px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10;overflow:hidden}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-logo{font-family:var(--serif);font-size:18px;color:var(--bright);font-weight:600}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:block;padding:8px 16px;font-family:var(--sans);font-size:12px;color:var(--dim);text-decoration:none;border-left:2px solid transparent;transition:all .2s;letter-spacing:.3px;line-height:1.4}
+.sidebar-item:hover{background:var(--bg3);color:var(--text)}
+.sidebar-item.active{border-left-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.sidebar-item .sn{font-family:var(--mono);font-size:10px;color:var(--dim);display:block;letter-spacing:1px;margin-bottom:1px}
+.sidebar-back{display:block;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--dim);text-decoration:none;letter-spacing:1px;text-transform:uppercase;border-top:1px solid var(--border);transition:color .2s}
+.sidebar-back:hover{color:var(--accent)}
+
+/* Main content */
+.main{margin-left:200px;flex:1;min-width:0}
+.article{max-width:720px;margin:0 auto;padding:60px 40px 120px}
+
+/* Typography */
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+h1{font-family:var(--sans);font-size:38px;font-weight:500;color:var(--bright);letter-spacing:.5px;line-height:1.15;margin-bottom:8px}
+h1 em{font-style:italic;font-family:var(--serif);color:var(--accent);font-weight:400}
+.subtitle{font-size:17px;color:var(--dim);margin-bottom:16px;font-style:italic;line-height:1.6}
+.rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);margin:32px 0;width:50%;opacity:.5}
+.abstract{font-size:15px;color:var(--text);line-height:1.85;font-family:var(--sans);margin-bottom:40px;padding:20px 24px;border-left:3px solid var(--accent);background:var(--accent-soft)}
+.abstract strong{color:var(--bright)}
+
+h2{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;margin:48px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+h2:first-of-type{margin-top:0}
+h3{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--bright);letter-spacing:.5px;margin:28px 0 12px}
+
+p{margin-bottom:18px;letter-spacing:.15px}
+p strong{color:var(--bright);font-weight:600}
+p em{color:var(--bright)}
+
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+
+.callout{border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:24px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-style:italic;color:var(--bright);font-weight:400}
+
+.tension-list{list-style:none;margin:16px 0}
+.tension-item{padding:12px 16px;margin-bottom:8px;border-left:2px solid var(--accent2);background:var(--accent-soft);font-size:15px;line-height:1.7;font-family:var(--sans)}
+.tension-item strong{color:var(--bright)}
+
+.diagram-wrap{margin:24px 0;padding:20px;background:var(--bg3);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+
+.meta-line{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.5px;line-height:1.8;margin-bottom:32px}
+.meta-line strong{color:var(--text)}
+
+/* Controls */
+.ctrl{position:fixed;top:12px;right:16px;z-index:100;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);transition:all .2s}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .article{padding:40px 20px 80px}
+  h1{font-size:28px}
+}
+</style></head>
+<body data-theme="light">
+<div class="ctrl">
+  <button class="ctrl-btn" onclick="toggleTheme()" id="theme-btn"></button>
+</div>
+
+<div class="shell">
+<nav class="sidebar">
+  <div class="sidebar-head"><div class="sidebar-logo">G<em>F</em></div></div>
+  <div class="sidebar-nav" id="sidebar-nav">
+    <a class="sidebar-item" href="#abstract"><span class="sn">00</span>Abstract</a>
+    <a class="sidebar-item" href="#introduction"><span class="sn">01</span>Introduction</a>
+    <a class="sidebar-item" href="#method"><span class="sn">02</span>Method</a>
+    <a class="sidebar-item" href="#block-universe"><span class="sn">03</span>Block Universe</a>
+    <a class="sidebar-item" href="#retrocausality"><span class="sn">04</span>Retrocausality</a>
+    <a class="sidebar-item" href="#hope"><span class="sn">05</span>Hope</a>
+    <a class="sidebar-item" href="#depression"><span class="sn">06</span>Depression</a>
+    <a class="sidebar-item" href="#free-will"><span class="sn">07</span>Free Will</a>
+    <a class="sidebar-item" href="#embodiment"><span class="sn">08</span>Embodiment</a>
+    <a class="sidebar-item" href="#literary"><span class="sn">09</span>Literary Forms</a>
+    <a class="sidebar-item" href="#tensions"><span class="sn">10</span>Six Tensions</a>
+    <a class="sidebar-item" href="#conclusion"><span class="sn">11</span>Conclusion</a>
+    <a class="sidebar-item" href="#references"><span class="sn">&mdash;</span>References</a>
+  </div>
+  <a class="sidebar-back" href="index.html">&larr; Project</a>
+</nav>
+
+<div class="main">
+<article class="article">
+
+<div class="badge"><span class="dot"></span> Synthesis Paper &middot; Retrocausal Emotion</div>
+<h1>The Geometry of <em>Feeling</em></h1>
+<div class="subtitle">A writer's essay on block universe physics and emotional experience</div>
+<div class="meta-line">
+  <strong>43 sources</strong> across 7 sections &middot; <strong>6 tensions</strong> &middot; ~6,500 words<br>
+  Part of <a href="index.html">Retrocausality, Hope & Depression</a> &middot;
+  Source material for <em>Second Seconds</em> and <em>Schr&ouml;dinger's Gelato</em>
+</div>
+<div class="rule"></div>
+
+<div class="abstract" id="abstract">
+This essay argues that theoretical physics &mdash; specifically the block universe, retrocausality, and bidirectional causation &mdash; and prospective psychology converge on a single structural insight: the future shapes the present. Not metaphorically. Not as prediction. As geometry. Hope and depression are not reactions to the future. They are the future's fingerprint on the present, readable in the body, articulable in verse, and grounded in the same mathematics that describes quantum correlations across time. Drawing on 43 sources across physics, psychology, somatic neuroscience, and literature, this essay maps the territory where the equation and the elegy describe the same landscape &mdash; and identifies six unresolved tensions that define the frontier.
+</div>
+
+<h2 id="introduction">1. Introduction: The Thesis</h2>
+
+<p>There is a moment in every physics-informed poem where the metaphor and the mathematics point at the same structure. This essay is about that moment &mdash; extended across seven dimensions of inquiry and held together by a single claim:</p>
+
+<div class="callout"><h4>Core Thesis</h4><p>The future is not something that happens to us. It is something that shapes us now, has always shaped us, and in the geometry of spacetime, is us.</p></div>
+
+<p>The claim emerges from two independent research programs that, remarkably, have not yet been brought into sustained conversation. On one side: the block universe of eternalism, where all times coexist with equal ontological status, and retrocausality, where the future constrains the present through the same time-symmetric equations that govern all fundamental physics. On the other: prospective psychology, where the brain's default mode is future simulation, emotions are predictions rather than reactions, and hope and depression are prospective phenomena &mdash; oriented toward what will be, not what was.</p>
+
+<p>The geometry is the same. The vocabulary differs. This essay traces the convergence.</p>
+
+<h2 id="method">2. Method</h2>
+
+<p>This synthesis draws on a literature collection of 43 sources organized across seven sections, built through a discourse survey methodology. The physics must be correct, but the synthesis is oriented toward writerly application &mdash; what images, metaphors, and structural conceits emerge from each concept? The target reader is the poet who wants to know exactly what they mean when they write "everything that will happen has already happened."</p>
+
+<p>The seven sections move from physics foundation to literary output: (1) Block Universe & Eternalism, (2) Retrocausality & Bidirectional Causation, (3) Hope as Retrocausal Signal, (4) Depression as Bidirectional Loop, (5) Free Will, Agency & Determinism, (6) Time, Memory & Embodiment, and (7) Literary Applications. Each synthesizes 5&ndash;8 sources, identifies points of consensus and dissent, and extracts writer's takeaways.</p>
+
+<h2 id="block-universe">3. The Block Universe: All Times Coexist</h2>
+
+<p>The foundation is special relativity. Einstein's 1905 demonstration that the speed of light is constant for all observers eliminates absolute simultaneity. If two observers in relative motion disagree about which events are simultaneous, there is no physical basis for a universal "now." The <a href="https://en.wikipedia.org/wiki/Rietdijk%E2%80%93Putnam_argument" target="_blank">Rietdijk-Putnam argument</a> (1966&ndash;67) formalizes the consequence: if an event is in Observer A's future and Observer B's past, that event must exist regardless of temporal perspective. The future is real. The past is real. All events have equal ontological status.</p>
+
+<p>This is eternalism &mdash; the view that the universe is a four-dimensional block in which all times coexist. <a href="https://www.preposterousuniverse.com/" target="_blank">Sean Carroll</a>, <a href="https://en.wikipedia.org/wiki/Carlo_Rovelli" target="_blank">Carlo Rovelli</a>, and Brian Greene all work within this framework, though they disagree on details. Carroll emphasizes that the arrow of time is thermodynamic: the second law of thermodynamics is the <em>only</em> law of physics that distinguishes past from future. We remember the past because it was lower-entropy. We anticipate the future because entropy increases. The directionality of experience is real but emergent.</p>
+
+<p>Rovelli goes further with the thermal time hypothesis: time itself emerges from our partial knowledge of the world. An omniscient being would see no time &mdash; only a static configuration. Time is what ignorance feels like from the inside. <a href="https://en.wikipedia.org/wiki/Julian_Barbour" target="_blank">Barbour</a>'s even more radical position eliminates temporal emergence entirely: what exists is a vast configuration space ("Platonia") where each point is a complete snapshot, and the illusion of flow arises from "time capsule" configurations that contain records mimicking a past.</p>
+
+<p>Against these, <a href="https://en.wikipedia.org/wiki/Lee_Smolin" target="_blank">Lee Smolin</a>'s <em>Time Reborn</em> argues that time is fundamental, that the laws of physics evolve, and that the future is genuinely open. Smolin is a minority position but dramatically necessary for a writer, because it preserves the stakes that eternalism threatens to dissolve.</p>
+
+<div class="callout"><h4>Writer's Position</h4><p>Hold both. The block provides the frame. Smolin provides the tension. A poem about time needs both the geometry and the stakes.</p></div>
+
+<h2 id="retrocausality">4. Retrocausality: The Future Constrains the Present</h2>
+
+<p>If the block universe provides the ontology, retrocausality provides the mechanism. <a href="https://aeon.co/essays/can-retrocausality-solve-the-puzzle-of-action-at-a-distance" target="_blank">Huw Price</a>'s 2012 argument demonstrates that if the quantum state is real and quantum mechanics is time-symmetric, retrocausality follows necessarily. The critical factor is discreteness: in classical physics, time-symmetry coexists with forward-only causation. But quantum measurement outcomes are discrete, and this discreteness, combined with time-symmetry, makes forward-only causation untenable.</p>
+
+<p><a href="https://phys.org/news/2017-07-physicists-retrocausal-quantum-theory-future.html" target="_blank">Leifer and Pusey</a> (2017) generalized the argument: even if the quantum state is merely epistemic, time-symmetry still entails backward influences. They constructed a temporal analog of Bell's theorem. The elegant resolution: allow retrocausality, and you can keep both locality and realism.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Two-state_vector_formalism" target="_blank">Yakir Aharonov</a>'s Two-State Vector Formalism makes this concrete. At any moment, a quantum system is described by two state vectors: one from the past and one from the future. The present is the intersection of past and future boundary conditions. <a href="https://theconversation.com/quantum-mechanics-how-the-future-might-influence-the-past-199426" target="_blank">Price and Wharton</a>'s most recent work introduces <a href="https://en.wikipedia.org/wiki/Berkson%27s_paradox" target="_blank">Berkson's bias</a> as the mechanism behind Bell correlations. The mechanism is mundane. The implications are not.</p>
+
+<div class="diagram-wrap"><svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="400" height="160" fill="rgba(0,0,0,0.025)" rx="6"/>
+<text x="200" y="16" text-anchor="middle" font-size="9" class="lbl" letter-spacing="1.5" fill="var(--dim)">THE CROSSWORD METAPHOR</text>
+<line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+<rect x="40" y="40" width="140" height="40" rx="4" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+<text x="110" y="58" text-anchor="middle" font-size="7" fill="#5b5bd6">PAST boundary</text>
+<text x="110" y="70" text-anchor="middle" font-size="6" fill="var(--dim)">preparation &rarr;</text>
+<rect x="220" y="40" width="140" height="40" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+<text x="290" y="58" text-anchor="middle" font-size="7" fill="#7c3aed">FUTURE boundary</text>
+<text x="290" y="70" text-anchor="middle" font-size="6" fill="var(--dim)">&larr; measurement</text>
+<circle cx="200" cy="60" r="12" fill="rgba(20,150,110,0.15)" stroke="#14966e" stroke-width="1.5"/>
+<text x="200" y="64" text-anchor="middle" font-size="7" fill="#14966e">NOW</text>
+<rect x="60" y="100" width="280" height="40" rx="4" fill="rgba(0,0,0,0.03)"/>
+<text x="200" y="118" text-anchor="middle" font-size="7" fill="var(--dim)">Constraints run both directions.</text>
+<text x="200" y="132" text-anchor="middle" font-size="7" fill="var(--dim)">17-across changes what fits at 5-down.</text>
+</svg></div>
+
+<h2 id="hope">5. Hope as Advanced Wave</h2>
+
+<p>The prospection revolution in psychology provides the bridge. <a href="https://ppc.sas.upenn.edu/sites/default/files/navigatingfuturepub.pdf" target="_blank">Seligman, Railton, Baumeister, and Sripada</a>'s 2013 manifesto overturned the dominant framework: the central organizing feature of human cognition is not the processing of past experience but prospection &mdash; the representation of possible futures. The brain's default mode network, activated during rest, is functionally identical to the circuit activated during deliberate future imagination. We are, at rest, modeling what comes next.</p>
+
+<p>Memory, in this framework, serves prospection. <a href="https://en.wikipedia.org/wiki/How_Emotions_Are_Made" target="_blank">Lisa Feldman Barrett</a>'s constructed emotion theory deepens this: emotions are not reactions to present stimuli but predictions about what is coming. The body is an anticipation engine.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Hope_theory" target="_blank">C.R. Snyder</a>'s hope theory decomposes hope into pathways thinking (generating routes to goals) and agency thinking (initiating and sustaining movement). This is structural, not sentimental. Hope is a cognitive architecture for navigating toward the future.</p>
+
+<p>Now notice the structural isomorphism with retrocausality. In the block universe, the future is real. The brain's "present representations of possible future states" are representations of something that actually exists. Is the brain modeling a future that exists, or is the existing future causally influencing the brain? Seligman explicitly denies backward causation. Price would say the distinction is verbal, not physical. For a writer, the resolution may not matter.</p>
+
+<div class="callout"><h4>The Image</h4><p>Hope is the advanced wave traveling backward from success. The successful person is hopeful not because they predict success but because, in the geometry of the block, the success is already shaping their present.</p></div>
+
+<h2 id="depression">6. Depression as Backward Shadow</h2>
+
+<p>If hope is the advanced wave from a successful outcome, depression is the advanced wave from a bleak one. <a href="https://ppc.sas.upenn.edu/sites/default/files/prospectiondepression_2.pdf" target="_blank">Roepke and Seligman</a>'s reframing is radical: negative prospection is not a symptom of depression but its core causal element. Of the 32 procedures in CBT adherence protocols, none explicitly target prospection. The science and the practice are decades apart.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Surfing_Uncertainty" target="_blank">Andy Clark</a>'s predictive processing framework reveals the mechanism: depression is a regime of pessimistic priors with excessively high precision weighting. The brain trusts its own negative predictions more than positive evidence. Barrett adds the somatic layer: the system predicts pain, generates pain-consistent body states, and then interprets those body states as confirming the prediction. The loop is self-sealing.</p>
+
+<p>Seligman's original learned helplessness experiments demonstrated the prospective core: animals exposed to inescapable shocks developed the conviction that nothing they did mattered &mdash; a prediction about the <em>future</em>, not a memory of the past.</p>
+
+<p>But Carroll's compatibilism provides the escape: the block contains the person who started therapy, who broke the loop. Both advanced waves exist &mdash; from the bleak future and from the healed future. Therapy is tuning the antenna toward the better signal.</p>
+
+<div class="diagram-wrap"><svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="400" height="150" fill="rgba(0,0,0,0.025)" rx="6"/>
+<text x="200" y="16" text-anchor="middle" font-size="9" letter-spacing="1.5" fill="var(--dim)">TWO ADVANCED WAVES</text>
+<line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+<circle cx="140" cy="80" r="18" fill="rgba(20,150,110,0.1)" stroke="#14966e" stroke-width="1.5"/>
+<text x="140" y="84" text-anchor="middle" font-size="7" fill="#14966e">NOW</text>
+<rect x="260" y="40" width="100" height="25" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+<text x="310" y="56" text-anchor="middle" font-size="6" fill="#7c3aed">Bleak future</text>
+<rect x="260" y="95" width="100" height="25" rx="4" fill="rgba(20,150,110,0.06)" stroke="#14966e" stroke-width="0.8"/>
+<text x="310" y="111" text-anchor="middle" font-size="6" fill="#14966e">Healed future</text>
+<path d="M 260 52 Q 210 65 158 75" stroke="#7c3aed" stroke-width="1" fill="none" stroke-dasharray="4,3"/>
+<path d="M 260 107 Q 210 95 158 85" stroke="#14966e" stroke-width="1" fill="none"/>
+<text x="205" y="60" font-size="5" fill="#7c3aed">depression</text>
+<text x="205" y="105" font-size="5" fill="#14966e">hope</text>
+<text x="70" y="130" font-size="6" fill="var(--dim)">Therapy = tuning the antenna</text>
+</svg></div>
+
+<h2 id="free-will">7. Free Will at the Intersection</h2>
+
+<p>The question of agency cuts across everything. <a href="https://www.preposterousuniverse.com/blog/2011/07/13/free-will-is-as-real-as-baseball/" target="_blank">Carroll</a>'s compatibilism provides the most useful framework: free will operates at a different level of description than particle physics. The vocabulary of choice and agency captures real patterns at the human level &mdash; patterns as real as temperature and pressure, both of which are also emergent descriptions of underlying physics.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Carlo_Rovelli" target="_blank">Rovelli</a>, characteristically more austere, points to <a href="https://en.wikipedia.org/wiki/Ethics_(Spinoza_book)" target="_blank">Spinoza</a>: freedom consists in acting from one's own nature rather than from external compulsion.</p>
+
+<p>For the writer, the tension between the block and the slice is not a problem to solve but a space to inhabit. From inside the slice, choice is vivid, real, felt in the body. From outside the block, the worldline goes one way and was always going to. <a href="https://en.wikipedia.org/wiki/Story_of_Your_Life" target="_blank">Chiang</a>'s Louise holds this tension perfectly: she "chooses" her daughter knowing the death. Choice dissolves into participation. The inhabiting is the only freedom available.</p>
+
+<div class="callout"><h4>Writer's Position</h4><p>Write from the slice, not from the block. Inside the slice, the choice is real. The block doesn't negate the slice. It frames it. The poem happens at the intersection of freedom and geometry.</p></div>
+
+<h2 id="embodiment">8. The Body as Instrument</h2>
+
+<p>The body is where physics becomes phenomenology. Against the backdrop of Rovelli's timelessness and Barbour's Platonia, the body insists on time. <a href="https://en.wikipedia.org/wiki/Somatic_experiencing" target="_blank">Peter Levine</a>'s Somatic Experiencing documents how the autonomic nervous system stores unresolved survival responses. <a href="https://en.wikipedia.org/wiki/The_Body_Keeps_the_Score" target="_blank">Van der Kolk</a> confirms at the neurological level: flashbacks are not memories but re-activations of the original physiological state. The body cannot distinguish "then" from "now."</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Polyvagal_theory" target="_blank">Porges</a>'s polyvagal theory provides the wiring diagram: the vagus nerve mediates between social engagement, fight/flight, and freeze states based on neuroception &mdash; the body's automatic assessment of safety or danger, operating below conscious awareness.</p>
+
+<p>If all moments coexist equally in the block, why does the body carry the past forward? Because the body doesn't experience the block. It experiences the entropy gradient. Trauma is a distortion of the gradient: the body gets stuck at a particular entropy configuration and re-generates it. Healing is the body's worldline curving away from the traumatic region. The curve was always in the block. The therapy is part of the geometry.</p>
+
+<h2 id="literary">9. Literary Forms for Temporal Physics</h2>
+
+<p><a href="https://en.wikipedia.org/wiki/Slaughterhouse-Five" target="_blank">Vonnegut</a> solved the problem of writing about the block universe by making the reader experience it &mdash; non-linear chapters, tenses shifting without warning. <a href="https://en.wikipedia.org/wiki/Story_of_Your_Life" target="_blank">Chiang</a> solved simultaneous temporal perception through dual tenses &mdash; past tense for the alien encounter, future tense for the daughter's life. <a href="https://en.wikipedia.org/wiki/The_Garden_of_Forking_Paths" target="_blank">Borges</a> anticipated many-worlds before Everett. <a href="https://en.wikipedia.org/wiki/Four_Quartets" target="_blank">Eliot</a> compressed eternalism into verse. <a href="https://en.wikipedia.org/wiki/Interstellar_(film)" target="_blank">Nolan</a> made the physics visceral.</p>
+
+<p>The formal possibilities for confessional poetry converge on six structural conceits:</p>
+
+<div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+<text x="200" y="16" text-anchor="middle" font-size="9" letter-spacing="1.5" fill="var(--dim)">SIX STRUCTURAL CONCEITS</text>
+<line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+<rect x="20" y="38" width="175" height="30" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.6"/>
+<text x="107" y="52" text-anchor="middle" font-size="7" fill="#5b5bd6">1. Temporal Juxtaposition</text>
+<text x="107" y="62" text-anchor="middle" font-size="5" fill="var(--dim)">Moments without transition</text>
+<rect x="205" y="38" width="175" height="30" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="0.6"/>
+<text x="292" y="52" text-anchor="middle" font-size="7" fill="#14966e">2. Bidirectional Address</text>
+<text x="292" y="62" text-anchor="middle" font-size="5" fill="var(--dim)">Past + future selves at once</text>
+<rect x="20" y="78" width="175" height="30" rx="3" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="107" y="92" text-anchor="middle" font-size="7" fill="#7c3aed">3. Observer Split</text>
+<text x="107" y="102" text-anchor="middle" font-size="5" fill="var(--dim)">Slice voice + block voice</text>
+<rect x="205" y="78" width="175" height="30" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.6"/>
+<text x="292" y="92" text-anchor="middle" font-size="7" fill="#5b5bd6">4. Gelato as Measurement</text>
+<text x="292" y="102" text-anchor="middle" font-size="5" fill="var(--dim)">Choice collapses superposition</text>
+<rect x="20" y="118" width="175" height="30" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="0.6"/>
+<text x="107" y="132" text-anchor="middle" font-size="7" fill="#14966e">5. Tralfamadorian Move</text>
+<text x="107" y="142" text-anchor="middle" font-size="5" fill="var(--dim)">All moments co-present</text>
+<rect x="205" y="118" width="175" height="30" rx="3" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="292" y="132" text-anchor="middle" font-size="7" fill="#7c3aed">6. Heptapod Syntax</text>
+<text x="292" y="142" text-anchor="middle" font-size="5" fill="var(--dim)">Ending shapes beginning</text>
+<rect x="50" y="160" width="300" height="28" rx="4" fill="rgba(0,0,0,0.03)"/>
+<text x="200" y="178" text-anchor="middle" font-size="7" fill="var(--dim)">Each conceit enacts a physics idea. Form IS content.</text>
+</svg></div>
+
+<h2 id="tensions">10. The Six Tensions</h2>
+
+<p>Six unresolved tensions define the frontier. They are not problems to solve but productive contradictions to hold:</p>
+
+<ul class="tension-list">
+<li class="tension-item"><strong>T1: Is time fundamental or emergent?</strong> Smolin says fundamental. Rovelli says emergent. Barbour says it does not exist. The writer holds all four, because a poem needs both the open future and the eternal present.</li>
+<li class="tension-item"><strong>T2: Retrocausality &mdash; real physics or fringe?</strong> Price and Wharton say it is the natural reading. Mainstream physics is skeptical. The program is gaining ground but remains a minority position.</li>
+<li class="tension-item"><strong>T3: Prospection vs retrocausality &mdash; metaphor or mechanism?</strong> Seligman denies backward causation. Price says the distinction is verbal. The phenomenology maps perfectly.</li>
+<li class="tension-item"><strong>T4: Depression as broken machinery vs boundary condition.</strong> The clinical view says fix the prediction system. The retrocausal metaphor says the machinery might be working correctly on bad input.</li>
+<li class="tension-item"><strong>T5: Compatibilism's adequacy.</strong> Carroll says free will is real at the emergent level. Hard determinists say he changed the subject.</li>
+<li class="tension-item"><strong>T6: Body time vs block time.</strong> The body experiences the gradient, not the block. Healing is the worldline curving away. The curve was always in the geometry.</li>
+</ul>
+
+<h2 id="conclusion">11. Conclusion: Write That</h2>
+
+<p>The block universe, retrocausality, and prospective psychology converge on a single insight: the future is not something that happens to us. It is something that shapes us now.</p>
+
+<p>For a writer working at the intersection of physics and confessional poetry, this convergence offers not just metaphors but structures. The poem about grief can hold two temporal perspectives simultaneously. The poem about hope can be written as an advanced wave, shaped by its ending before its beginning. The poem about the body can attend to the entropy gradient &mdash; the somatic hum that is time itself, experienced from within the geometry.</p>
+
+<p>The physics does not replace the poetry. The poetry does not simplify the physics. Both are valid descriptions of the same reality, at different levels of resolution. Poetic naturalism gives both a seat at the table.</p>
+
+<p>The six tensions remain unresolved because they are productive. They are the spaces where the next poems live. The geometry of feeling is not a solved problem. It is a landscape to be mapped &mdash; in equations, in verse, in the body's insistence on time within a timeless block.</p>
+
+<div class="callout"><h4>The Final Image</h4><p>The future is already shaping you. Hope is the advanced wave traveling backward from the version of yourself that made it through. The poem you have not yet written is already influencing the one you are writing now. Write that.</p></div>
+
+<div class="rule"></div>
+
+<h2 id="references">References</h2>
+<ol style="font-family:var(--sans);font-size:14px;line-height:1.8;color:var(--text);padding-left:24px;margin-bottom:32px">
+  <li><a href="https://plato.stanford.edu/entries/time/">SEP: Time</a></li>
+  <li><a href="https://iep.utm.edu/etern/">IEP: Eternalism</a></li>
+  <li><a href="https://royalsocietypublishing.org/doi/10.1098/rsta.2017.0314">Vaccaro: Quantum Theory of Time &amp; Block Universe (Phil Trans Royal Society A, 2018)</a></li>
+  <li><a href="https://philpapers.org/rec/PETROS-7">Peterson &amp; Silberstein: Relativity of Simultaneity and Eternalism</a></li>
+  <li><a href="https://www.preposterousuniverse.com/eternitytohere/">Carroll: From Eternity to Here (2010)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/The_Big_Picture_(book)">Carroll: The Big Picture / Poetic Naturalism (2016)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Time_Reborn">Smolin: Time Reborn (2013)</a></li>
+  <li><a href="https://plato.stanford.edu/entries/qm-retrocausality/">SEP: Retrocausality in Quantum Mechanics</a></li>
+  <li><a href="https://arxiv.org/abs/1002.0906">Price: Does Time-Symmetry Imply Retrocausality? (2012)</a></li>
+  <li><a href="https://arxiv.org/abs/0802.3230">Price: Toy Models for Retrocausality (2008)</a></li>
+  <li><a href="https://arxiv.org/abs/1607.07871">Leifer &amp; Pusey: Time-Symmetric QM Without Retrocausality? (Proc Royal Society A, 2017)</a></li>
+  <li><a href="https://aeon.co/essays/can-retrocausality-solve-the-puzzle-of-action-at-a-distance">Price &amp; Wharton: Retrocausality (Aeon, 2016)</a></li>
+  <li><a href="https://theconversation.com/quantum-mechanics-how-the-future-might-influence-the-past-243388">Price &amp; Wharton: Future Influencing the Past (The Conversation, 2026)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Transactional_interpretation">Cramer: Transactional Interpretation (1986)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Two-state_vector_formalism">Aharonov: Two-State Vector Formalism</a></li>
+  <li><a href="https://journals.sagepub.com/doi/10.1177/1745691612474317">Seligman et al.: Navigating Into the Future (Perspectives on Psych. Sci., 2013)</a></li>
+  <li><a href="https://global.oup.com/academic/product/homo-prospectus-9780199374823">Seligman et al.: Homo Prospectus (Oxford, 2016)</a></li>
+  <li><a href="https://pubmed.ncbi.nlm.nih.gov/24639655/">Szpunar et al.: A Taxonomy of Prospection (PNAS, 2014)</a></li>
+  <li><a href="https://www.authentichappiness.sas.upenn.edu/learn/prospectivepsych">Prospective Psychology (UPenn + Templeton)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Hope_theory">Snyder: The Psychology of Hope (2000)</a></li>
+  <li><a href="https://www.amazon.com/Hope-Circuit-Psychologists-Helplessness-Optimism/dp/1610397762">Seligman: The Hope Circuit (2018)</a></li>
+  <li><a href="https://pubmed.ncbi.nlm.nih.gov/25772338/">Roepke &amp; Seligman: Depression and Prospection (British J Clin Psych, 2016)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Cognitive_triad">Beck: Cognitive Triad (1976)</a></li>
+  <li>Clark: Surfing Uncertainty / Predictive Processing (2015)</li>
+  <li><a href="https://www.amazon.com/How-Emotions-Are-Made-Secret/dp/1328915433">Barrett: How Emotions Are Made (2017)</a></li>
+  <li><a href="https://www.preposterousuniverse.com/blog/2011/07/13/free-will-is-as-real-as-baseball/">Carroll: Free Will Is as Real as Baseball (2011)</a></li>
+  <li><a href="https://www.youtube.com/watch?v=UeenGcaHTkk">Carroll, Big Think: 3 Free Will Arguments (2022)</a></li>
+  <li><a href="https://arxiv.org/abs/1712.02734">Carroll: Consciousness and Downward Causation (2016)</a></li>
+  <li><a href="https://plato.stanford.edu/entries/compatibilism/">SEP: Compatibilism</a></li>
+  <li><a href="https://www.youtube.com/watch?v=f4_BIfJp6Jg">Rovelli interview (Borealism): Time, Free Will, Entropy (2024)</a></li>
+  <li>Seligman: Learned Helplessness (1975)</li>
+  <li><a href="https://www.amazon.com/Order-Time-Carlo-Rovelli/dp/073521610X">Rovelli: The Order of Time (2018)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/The_End_of_Time_(book)">Barbour: The End of Time (1999)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/The_Fabric_of_the_Cosmos">Greene: The Fabric of the Cosmos (2004)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Waking_the_Tiger">Levine: Waking the Tiger / Somatic Experiencing (1997)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Polyvagal_theory">Porges: Polyvagal Theory (2011)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/The_Body_Keeps_the_Score">van der Kolk: The Body Keeps the Score (2014)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Slaughterhouse-Five">Vonnegut: Slaughterhouse-Five (1969)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Story_of_Your_Life">Chiang: Story of Your Life (1998)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Tenet_(film)">Nolan: Tenet (2020) &amp; Interstellar (2014)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/The_Garden_of_Forking_Paths">Borges: The Garden of Forking Paths (1941)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Four_Quartets">Eliot: Four Quartets (1943)</a></li>
+  <li><a href="https://nautil.us/to-understand-your-past-look-to-your-future-235522/">Wharton &amp; Price: To Understand Your Past, Look to Your Future (Nautilus, 2016)</a></li>
+</ol>
+
+<p style="font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.5px;margin-top:32px">
+  43 sources &middot; 7 sections &middot; 6 tensions &middot; One geometry<br>
+  Part of <a href="index.html">Retrocausality, Hope & Depression</a> &middot; A writer's physics
+</p>
+
+</article>
+</div>
+</div>
+
+<script>
+function toggleTheme(){
+  const b=document.body;const c=b.getAttribute('data-theme');
+  const n=c==='light'?'dark':'light';
+  b.setAttribute('data-theme',n);localStorage.setItem('theme',n);
+  document.getElementById('theme-btn').textContent=n==='dark'?'\u2600':'\u263D';
+}
+const st=localStorage.getItem('theme')||'light';
+document.body.setAttribute('data-theme',st);
+document.getElementById('theme-btn').textContent=st==='dark'?'\u2600':'\u263D';
+
+// Scroll spy
+const links=document.querySelectorAll('.sidebar-item');
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){
+    links.forEach(l=>l.classList.remove('active'));
+    const a=document.querySelector('.sidebar-item[href="#'+e.target.id+'"]');
+    if(a)a.classList.add('active');
+  }});
+},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('h2[id],.abstract[id]').forEach(s=>obs.observe(s));
+</script>
+</body></html>

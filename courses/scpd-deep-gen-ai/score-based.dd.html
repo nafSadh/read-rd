@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Score-Based Generative Models — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Score Function', title: 'The <em>Score</em> Function' },
+  { num: '02', short: 'Score Matching', title: '<em>Score</em> Matching Objectives' },
+  { num: '03', short: 'Denoising', title: '<em>Denoising</em> Score Matching' },
+  { num: '04', short: 'Noise Cond.', title: '<em>Noise</em> Conditional Networks' },
+  { num: '05', short: 'Langevin', title: '<em>Langevin</em> Dynamics Sampling' },
+  { num: '06', short: 'SDEs', title: '<em>Stochastic</em> Differential Equations' },
+  { num: '07', short: 'Score SDE', title: '<em>Score-Based</em> SDE Framework' },
+  { num: '08', short: 'Diffusion Link', title: '<em>Connections</em> to Diffusion' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 Score Function
+  `<p>The score function is the gradient of the log probability: <code>s(x) = ∇_x log p(x)</code>. It points in the direction of increasing probability density, encoding the shape and geometry of the data distribution without explicitly computing probabilities. The score captures local information about where the data manifold resides in high-dimensional space.</p>
+  <p>Unlike density estimation, which requires explicit probability evaluation, score-based methods avoid the intractable partition function. The Stein score provides connections to both classical probability theory and modern variational inference. Understanding scores is fundamental: they bridge gradient-based sampling, optimal transport, and generative modeling.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">∇_x log p(x)</div><div class="sl">Score Formula</div></div>
+    <div class="st"><div class="sv">Gradient Space</div><div class="sl">Function Domain</div></div>
+    <div class="st"><div class="sv">No Partition Z</div><div class="sl">Key Advantage</div></div>
+    <div class="st"><div class="sv">Local Density</div><div class="sl">Geometric Info</div></div>
+  </div>`,
+
+  // 02 Score Matching
+  `<p>Score matching minimizes Fisher divergence between the true and estimated score functions, avoiding density ratio estimation. The key insight is an integration-by-parts trick: E[||∇_x log p(x) - s_θ(x)||²] can be rewritten as E[∇²_x log p(x) + 2∇·s_θ(x)], which requires only score derivatives of the model, not the true distribution.</p>
+  <p>Implicit score matching further avoids computing explicit Hessians by using a stochastic loss. This family of methods forms the foundation for scalable training of score-based generative models, enabling learning without synthetic data or adversarial objectives. The mathematical elegance lies in transforming an intractable objective into a tractable one through differential calculus.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Fisher Divergence</h4>
+      <p>Measures disagreement between score fields in a probabilistically principled way.</p>
+    </div>
+    <div class="feat">
+      <h4>Integration by Parts</h4>
+      <p>Transforms Hessian terms into model divergence, avoiding second derivatives of true data.</p>
+    </div>
+    <div class="feat">
+      <h4>Implicit Matching</h4>
+      <p>Stochastic approximation enables training without explicit Hessian computation.</p>
+    </div>
+    <div class="feat">
+      <h4>Scalability</h4>
+      <p>No discriminator, no adversarial training—direct supervised objective on gradients.</p>
+    </div>
+  </div>`,
+
+  // 03 Denoising Score Matching
+  `<p>Denoising score matching exploits the key observation that adding Gaussian noise to data yields a score that is simpler to estimate. For noise-perturbed data x_t = x + εt where ε ~ N(0, σ²I), the score ∇_x log p_t(x) becomes easier to learn. This connects to denoising autoencoders: training a network to predict the noise added during corruption directly estimates the score of the noisy distribution.</p>
+  <p>This elegant reformulation avoids explicit Hessian computation while gaining robustness through noise. The denoising perspective reveals a deep connection: a denoising network that predicts noise is simultaneously learning the score function. Multiple noise levels σ₁ > σ₂ > ... > σ_L can be used to learn scores across scales, forming the foundation for annealed sampling and powerful generative models.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">x_t = x + σ·ε</div><div class="sl">Noise Perturbation</div></div>
+    <div class="st"><div class="sv">Predict ε</div><div class="sl">Denoising Task</div></div>
+    <div class="st"><div class="sv">∇ log p_t</div><div class="sl">Learned Score</div></div>
+    <div class="st"><div class="sv">Multi-scale</div><div class="sl">Noise Ladder</div></div>
+  </div>`,
+
+  // 04 Noise Conditional Score Networks
+  `<p>Noise Conditional Score Networks (NCSNs) introduce a single neural network conditioned on noise level σ. Rather than training separate networks for each noise scale, s_θ(x, σ) learns to output the score for any noise level. This is trained by sampling σ uniformly and using denoising objectives at that scale. The conditioning dramatically improves efficiency while capturing multi-scale structure in data.</p>
+  <p>The NCSN framework elegantly unifies score estimation across noise scales. During sampling, annealed Langevin dynamics starts with high noise σ₁ for coarse structure, gradually annealing σ → 0 for details. This hierarchical approach mirrors the intuition of coarse-to-fine generation. Empirically, NCSNs achieved state-of-the-art generative modeling results before diffusion models, establishing score-based methods as competitive with GANs.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Condition on σ</h4>
+      <p>Single network learns all noise scales through explicit conditioning mechanism.</p>
+    </div>
+    <div class="feat">
+      <h4>Efficient Training</h4>
+      <p>One model trained on mixed noise levels replaces separate per-scale networks.</p>
+    </div>
+    <div class="feat">
+      <h4>Annealed Sampling</h4>
+      <p>Iteratively refine samples: start coarse (high σ), gradually sharpen (low σ).</p>
+    </div>
+    <div class="feat">
+      <h4>Hierarchical Generation</h4>
+      <p>Coarse-to-fine structure naturally emerges from noise scheduling strategy.</p>
+    </div>
+  </div>`,
+
+  // 05 Langevin Dynamics
+  `<p>Langevin dynamics is a stochastic MCMC algorithm for sampling from a distribution given its score. The update rule is x_{t+1} = x_t + ε·∇_x log p(x_t) + √(2ε)·z_t where ε is step size, z_t ~ N(0,I), and the drift term ∇_x log p is exactly the score. As ε → 0 and iterations → ∞, the chain converges to the true distribution in the continuous limit.</p>
+  <p>Annealed Langevin dynamics alternates between multiple noise levels, using Langevin at each scale. Starting with high noise (ε large) enables global exploration; reducing noise progressively refines details. This hierarchical sampling strategy combats mixing issues in high dimensions. With learned score networks s_θ(x,σ), sampling becomes entirely score-based, replacing explicit density models with gradient estimation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">x := x + ε·∇log p</div><div class="sl">Score Drift</div></div>
+    <div class="st"><div class="sv">+ √(2ε)·z</div><div class="sl">Stochastic Diffusion</div></div>
+    <div class="st"><div class="sv">ε → 0</div><div class="sl">Convergence Limit</div></div>
+    <div class="st"><div class="sv">Annealed σ</div><div class="sl">Multi-scale Hierarchy</div></div>
+  </div>`,
+
+  // 06 Stochastic Differential Equations
+  `<p>Score-based modeling naturally extends to continuous-time SDEs: dx = f(x,t)dt + g(t)dw where f is drift, g(t) is diffusion coefficient, and w is standard Brownian motion. The reverse-time SDE (score-based reverse diffusion) is dx = [f(x,t) - g(t)²·∇_x log p_t(x)]dt + g(t)dw, showing that the score ∇_x log p_t(x) appears in the drift term of the reverse process.</p>
+  <p>Multiple SDE formulations yield equivalent samplers: the Variance-Preserving (VP) SDE maintains signal variance; Variance-Exploding (VE) allows unbounded noise; sub-VP offers intermediate behavior. The framework admits a probability flow ODE (removing stochasticity) that generates identical marginal distributions. SDEs provide mathematical rigor, connection to probability theory, and alternative sampling strategies like ODE solvers.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Forward SDE</h4>
+      <p>Gradually corrupt data: dx = f(x,t)dt + g(t)dw.</p>
+    </div>
+    <div class="feat">
+      <h4>Reverse-time SDE</h4>
+      <p>Denoise via score: reverse drift uses ∇ log p_t(x).</p>
+    </div>
+    <div class="feat">
+      <h4>VP, VE, sub-VP</h4>
+      <p>Different schedules trade variance, SNR, and sampling speed.</p>
+    </div>
+    <div class="feat">
+      <h4>Probability Flow ODE</h4>
+      <p>Deterministic sampling path with same marginals; fast inference.</p>
+    </div>
+  </div>`,
+
+  // 07 Score-Based SDE Framework
+  `<p>The unified score-based SDE framework integrates all prior ideas: train a score network s_θ(x,t) to estimate ∇_x log p_t(x) at any time-noise coupling. During generation, use the reverse-time SDE or probability flow ODE with the learned score. This framework encompasses diffusion models (special case), score matching, denoising autoencoders, and Langevin dynamics as instances of a single paradigm.</p>
+  <p>Key advantages include flexible time-conditioning, unified handling of multiple noise schedules, and theoretical guarantees on convergence and sample quality. The probability flow ODE variant enables deterministic generation and exact log-likelihood computation. Advanced techniques like Exponential Moving Average (EMA) of weights, importance weighting, and continuous time scheduling further improve sample quality and efficiency.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">s_θ(x,t)</div><div class="sl">Time-Conditional Network</div></div>
+    <div class="st"><div class="sv">VP/VE/sub-VP</div><div class="sl">SDE Variants</div></div>
+    <div class="st"><div class="sv">Reverse SDE</div><div class="sl">Generative Direction</div></div>
+    <div class="st"><div class="sv">Probability ODE</div><div class="sl">Deterministic Sampling</div></div>
+  </div>`,
+
+  // 08 Connections to Diffusion
+  `<p>Diffusion Probabilistic Models (DDPM, Score-Based Diffusion) emerge as a special case of the score-based SDE framework with a specific noise schedule. DDPM applies a sequence of discrete noise additions: q(x_t | x_{t-1}) = N(√(1-β_t)·x_{t-1}, β_t·I). The reverse process is learned via denoising: predicting noise at each step recovers the score ∇ log p_t(x). This connection reveals DDPM as an implicit score matching algorithm with scheduling.</p>
+  <p>Classifier guidance extends both frameworks: incorporating class information into the score ∇_x log p(y|x_t) enables conditional generation. The unified view explains why continuous SDEs provide faster sampling than discrete diffusion steps—fewer evaluations of the same learned score function. Recent advances in score-based models directly leverage this connection: probability flow ODEs, consistency models, and flow matching all build upon understanding diffusion as score-based SDE sampling.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>DDPM Foundation</h4>
+      <p>Discrete diffusion is discretized score-based SDE with specific β schedule.</p>
+    </div>
+    <div class="feat">
+      <h4>Noise Prediction</h4>
+      <p>DDPM predicting noise ε ≡ predicting score ∇ log p_t(x).</p>
+    </div>
+    <div class="feat">
+      <h4>Classifier Guidance</h4>
+      <p>Score ∇ log p(y|x) enables class-conditional generation seamlessly.</p>
+    </div>
+    <div class="feat">
+      <h4>Fast Sampling</h4>
+      <p>Continuous ODE, distillation, consistency models exploit score reuse.</p>
+    </div>
+  </div>`,
+
+  // 09 References
+  `<p>Score-based generative modeling offers a unified framework connecting score matching, diffusion models, and energy-based methods. This section compiles key papers and resources for understanding score functions, training objectives, and sampling algorithms that form the backbone of modern generative models.</p>
+   <p>From classical score matching to recent SDE formulations, these materials trace the theoretical and practical advances in score-based modeling.</p>`
+];
+
+const details = [
+  // 01 Score Function
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 01</div>
+    <h2>The <em>Score</em> Function</h2>
+  </div>
+  <p>The score function is one of the most fundamental concepts in score-based generative modeling. Mathematically, the score is defined as:</p>
+  <pre>s(x) = ∇_x log p(x)</pre>
+  <p>This gradient of the log-probability density points in the direction of increasing probability. In high-dimensional spaces, it encodes the local shape of the probability landscape without requiring explicit density computation. The score is scale-invariant—it depends only on the distribution's shape, not its overall magnitude.</p>
+  <h3>Why Scores Instead of Densities?</h3>
+  <p>Computing p(x) for complex distributions often requires a partition function Z that is intractable. Scores avoid this: if we know s(x) = ∇ log p(x), we can perform inference and sampling without ever computing Z. This is the core advantage—a shift from density-based to gradient-based reasoning.</p>
+  <p>Geometrically, the score field is a vector field on the data space. Each point has an associated gradient vector pointing toward higher density regions. In low-density regions, the score helps escape local minima; in high-density regions, it refines fine details. This hierarchical geometric view motivates multi-scale score matching and annealed sampling algorithms.</p>
+  <h3>Stein Score & Connections</h3>
+  <p>The Stein score, also called the Stein operator, is the score under a specific divergence measure. It connects to classical ideas in statistics: Stein's lemma, characteristic functions, and optimal transport. The Stein discrepancy (related to Stein scores) measures distributional divergence and underpins many modern goodness-of-fit tests.</p>
+  <p>In practice, score-based methods train neural networks to approximate s(x) directly. Unlike GANs (which implicitly model the score via discriminators), score networks make the gradient structure explicit. This explicitness enables rigorous theoretical analysis, uncertainty quantification, and connections to physics-inspired methods like diffusion and Langevin dynamics.</p>
+  <h3>Challenges & Properties</h3>
+  <p>A key challenge is that scores are undefined or poorly-defined in low-density regions where p(x) ≈ 0. Noise injection (introducing perturbation) regularizes scores in these regions, making them more learnable. Additionally, estimating scores in very high dimensions requires careful network design and training strategies to avoid numerical instability.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#2e6ab4;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#9b7aed;stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="200" cy="100" rx="80" ry="60" fill="url(#scoreGrad)" stroke="#2e6ab4" stroke-width="2"/>
+      <circle cx="200" cy="100" r="3" fill="#2e6ab4"/>
+      <path d="M 200 100 L 230 110" stroke="#e87090" stroke-width="2" marker-end="url(#arrowred)"/>
+      <path d="M 200 100 L 240 70" stroke="#e87090" stroke-width="2" marker-end="url(#arrowred)"/>
+      <path d="M 200 100 L 170 95" stroke="#e87090" stroke-width="2" marker-end="url(#arrowred)"/>
+      <defs>
+        <marker id="arrowred" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <polygon points="0,0 10,5 0,10" fill="#e87090"/>
+        </marker>
+      </defs>
+      <text x="200" y="170" text-anchor="middle" font-size="12" fill="#546080">Score field: ∇ log p(x) points toward high probability</text>
+    </svg>
+  </div>`,
+
+  // 02 Score Matching
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 02</div>
+    <h2><em>Score</em> Matching Objectives</h2>
+  </div>
+  <p>Score matching is a family of training objectives designed to fit a parameterized score network s_θ(x) to the true score ∇ log p(x). The most direct approach—regression—would require knowing the true score at each data point. However, true scores are generally inaccessible. Score matching overcomes this with clever mathematical transformations.</p>
+  <h3>Fisher Divergence & Integration by Parts</h3>
+  <p>The key insight is the connection to Fisher divergence, a symmetric divergence between distributions defined via their scores:</p>
+  <pre>D_F(p || q) = E_p[||∇ log p(x) - ∇ log q(x)||²]</pre>
+  <p>Minimizing this divergence matches scores directly. But how can we compute this without the true score? The breakthrough is integration by parts. Under appropriate boundary conditions (which hold for reasonable distributions), we can rewrite the expected squared score mismatch as:</p>
+  <pre>E[||∇ log p - s_θ||²] = E[∇² log p + 2∇·s_θ(x)]</pre>
+  <p>The right side depends only on divergence of the learned score ∇·s_θ and the Hessian of log p, which can be estimated from data-derived quantities. This elegant transformation decouples density estimation from score learning.</p>
+  <h3>Implicit Score Matching</h3>
+  <p>Even computing the Hessian can be expensive. Implicit score matching avoids explicit Hessian computation by using a stochastic lower bound. Training on synthetic Gaussian perturbations or other noise sources provides an unbiased estimator of the matching loss. This stochastic approach scales to high-dimensional problems and enables efficient mini-batch training.</p>
+  <p>Denoising score matching (detailed in Section 03) is the most practical variant: train a network to predict noise added to data, which directly corresponds to score matching on a noise-perturbed distribution. This reframing connects to classic denoising autoencoders, making the approach intuitive and practical.</p>
+  <h3>Advantages over Alternatives</h3>
+  <p>Unlike GANs, score matching requires no adversarial training, generator-discriminator balance, or mode coverage guarantees. The loss is stable and monotonically decreases. Unlike variational autoencoders (VAEs), it requires no explicit latent variable model or ELBO bound. Score matching is a direct, stable, and theoretically grounded training objective.</p>
+  <h3>Theoretical Properties</h3>
+  <p>Score matching with sufficient model capacity can recover the true score (under smoothness and integrability assumptions). Convergence rates depend on network approximation quality and dimension. The connection to Stein's method ensures statistical rigor. Empirically, the learned score generalizes well even in high dimensions where density estimation fails.</p>`,
+
+  // 03 Denoising Score Matching
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 03</div>
+    <h2><em>Denoising</em> Score Matching</h2>
+  </div>
+  <p>Denoising score matching is the most practical and intuitive approach to score learning. The key observation is that adding Gaussian noise to data makes the score significantly easier to estimate. For noise-perturbed data x_t = x + √(1-1/t)·ε where ε ~ N(0,σ²I), the score ∇_x log p_t(x) becomes a well-behaved function of x and the noise level σ.</p>
+  <h3>The Denoising-Score Connection</h3>
+  <p>The central insight: training a network to predict the noise added during corruption is equivalent to training a score network. If we denoise x_t = x + σ·ε via the update:</p>
+  <pre>x_t - σ·ε_θ(x_t) ≈ x</pre>
+  <p>then the prediction ε_θ(x_t) can be related to the score: ε_θ(x_t) ≈ (x_t - ∇ log p_t(x_t)) / σ. This connection means denoising autoencoders, properly trained, implicitly learn score functions. The intuition is that to remove noise, the network must understand the direction of increasing data probability—exactly what the score encodes.</p>
+  <h3>Multiple Noise Scales</h3>
+  <p>In practice, we use multiple noise levels σ₁ > σ₂ > ... > σ_L (a noise ladder). Training separately on each scale yields separate score networks, or we can train a single conditional network s_θ(x, σ) that handles all scales simultaneously. This multi-scale approach is crucial: high noise levels make global structure clear; low noise levels capture fine details.</p>
+  <p>The noise schedule mirrors the intuition of curriculum learning: start easy (high noise, clear structure) and gradually increase difficulty (low noise, fine details). This hierarchical structure naturally emerges when training with multiple noise scales.</p>
+  <h3>Robustness Through Noise</h3>
+  <p>Paradoxically, adding noise makes score estimation more robust. In clean data regions where p(x) is very small, the score can be undefined or numerically unstable. Noise injection regularizes these regions—the perturbed distribution p_σ(x) is smoother, with non-zero probability everywhere, making its score well-defined and learnable throughout space.</p>
+  <h3>Practical Implementation</h3>
+  <p>Training is simple: (1) sample x from data, (2) sample σ from noise schedule, (3) corrupt: x_t = x + σ·ε with ε ~ N(0,I), (4) minimize ||ε_θ(x_t, σ) - ε||². The loss is efficient to compute, scales to high dimensions, and is numerically stable. This simplicity, combined with strong empirical results, explains why denoising score matching became the foundation for modern diffusion models.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="20" font-size="12" fill="#546080">Clean Data</text>
+      <circle cx="100" cy="80" r="5" fill="#2e6ab4"/>
+      <text x="60" y="130" font-size="11" fill="#546080">x + noise(σ=0.5)</text>
+      <circle cx="100" cy="150" r="8" fill="none" stroke="#2e6ab4" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="180" y="20" font-size="12" fill="#546080">More Noise</text>
+      <circle cx="280" cy="80" r="5" fill="#9b7aed"/>
+      <text x="240" y="130" font-size="11" fill="#546080">x + noise(σ=2.0)</text>
+      <ellipse cx="280" cy="150" rx="20" ry="15" fill="none" stroke="#9b7aed" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M 130 100 Q 190 70 250 100" stroke="#e87090" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <polygon points="0,0 10,5 0,10" fill="#e87090"/>
+        </marker>
+      </defs>
+      <text x="20" y="220" font-size="11" fill="#546080">Higher noise: easier to estimate score (smoother distribution)</text>
+    </svg>
+  </div>`,
+
+  // 04 Noise Conditional Score Networks
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 04</div>
+    <h2><em>Noise</em> Conditional Networks</h2>
+  </div>
+  <p>Noise Conditional Score Networks (NCSNs) represent a crucial scaling innovation. Rather than training L separate score networks (one per noise scale), NCSN trains a single network s_θ(x, σ) conditioned on the noise level σ. During training, σ is sampled uniformly from the schedule, and the denoising objective is applied at that scale. The network learns to output the appropriate score for any noise level.</p>
+  <h3>Conditioning Mechanism</h3>
+  <p>Conditioning on σ is typically implemented via: (1) concatenating normalized noise level as input feature, (2) adaptive layer normalization that scales/shifts based on σ, or (3) embedding σ into latent space. These techniques allow the network to adapt its computation based on the noise scale. Lower noise requires more precise output; higher noise tolerates coarser representations.</p>
+  <p>The conditioning efficiency is dramatic: instead of L networks, we train one network efficiently on mixed noise scales. Computational cost scales as O(1) networks rather than O(L), dramatically reducing memory and training time. Empirically, this unified approach works as well as (or better than) separate networks, likely because the shared representation enables better generalization.</p>
+  <h3>Annealed Sampling Strategy</h3>
+  <p>During generation, sampling proceeds in an annealed fashion: start with high noise σ₁ and gradually anneal σ → 0. At each temperature, run a few Langevin dynamics iterations. The high-noise steps explore the sample space coarsely; low-noise steps refine details. This coarse-to-fine generation strategy is both intuitive and highly effective.</p>
+  <p>The annealing schedule is crucial: too fast and details miss; too slow and sampling is inefficient. Empirically, geometric schedules (σ_i = σ₁^(i/L)) or other smooth decreases work well. The flexibility in scheduling—different σ paths for different samples—enables adaptive inference time budgets.</p>
+  <h3>Empirical Success</h3>
+  <p>NCSNs achieved state-of-the-art generative modeling results on standard benchmarks (CIFAR-10, CelebA) before the rise of diffusion models. Sample quality, as measured by Inception Score and Frechet Inception Distance (FID), rivaled or exceeded GANs at the time. The method's success validated the score-based perspective and motivated subsequent developments.</p>
+  <h3>Connection to Diffusion</h3>
+  <p>Annealed Langevin dynamics with NCSNs is very similar in spirit to discrete diffusion models—both use a hierarchy of noise scales and iteratively refine samples. The main difference is the continuous formulation and Langevin stochasticity vs. discrete diffusion steps, but both can be viewed as sampling from conditional score distributions.</p>`,
+
+  // 05 Langevin Dynamics
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 05</div>
+    <h2><em>Langevin</em> Dynamics Sampling</h2>
+  </div>
+  <p>Langevin dynamics is a fundamental MCMC algorithm for sampling from an arbitrary distribution given its score (or equivalently, its gradient of log-likelihood). The algorithm is simple and elegant: iteratively update samples using the score plus Gaussian noise.</p>
+  <h3>The Algorithm</h3>
+  <p>The update rule is:</p>
+  <pre>x_{t+1} = x_t + (ε/2)·∇_x log p(x_t) + √ε·z_t</pre>
+  <p>where ε > 0 is the step size and z_t ~ N(0, I) is standard Gaussian noise. The first term (drift) uses the score to move toward high-probability regions; the second term (diffusion) adds stochasticity to explore. As ε → 0 and the number of iterations → ∞, the distribution of x_t converges to p(x) in the limit.</p>
+  <h3>Convergence Theory</h3>
+  <p>Langevin dynamics has solid theoretical foundations in MCMC theory and stochastic analysis. Under mild conditions (smoothness of log p, appropriate mixing time bounds), Langevin converges to the target distribution. Convergence is exponentially fast in favorable cases. The step size ε controls the bias-variance tradeoff: larger ε is faster but more biased; smaller ε is more accurate but slower.</p>
+  <p>In high dimensions, standard Langevin can suffer from slow mixing. The number of iterations required to decorrelate samples can scale exponentially with dimension. This is where annealing (gradually reducing noise) becomes essential: it helps escape local modes and accelerate convergence.</p>
+  <h3>Annealed Langevin Dynamics</h3>
+  <p>Annealed Langevin dynamics runs Langevin at multiple noise levels: start at σ₁ (high noise), run many Langevin steps, then decrease to σ₂, and repeat until σ_L ≈ 0. This hierarchical approach mimics simulated annealing: high-noise phases perform global exploration; low-noise phases refine local details. The key is that learned score networks s_θ(x, σ) directly enable this—they provide the required gradients at each scale.</p>
+  <p>Annealing dramatically improves mixing and convergence. By handling coarse structure first, the chain can escape deep local modes that would otherwise trap standard Langevin. Empirically, annealed Langevin with learned scores produces high-quality samples competitive with other modern generative models.</p>
+  <h3>Advantages & Limitations</h3>
+  <p>Advantages: (1) guaranteed convergence under mild assumptions, (2) simple to implement and parallelize, (3) works with any learned score network, (4) admits theoretical analysis. Limitations: (1) sampling requires many iterations, (2) high-dimensional mixing is slow, (3) tuning step size ε is important, (4) convergence can be slow compared to deterministic methods.</p>
+  <h3>Comparison to Diffusion</h3>
+  <p>Annealed Langevin and discrete diffusion both use hierarchical noise schedules and iterative refinement. The main differences: Langevin is stochastic with tunable step size; diffusion uses fixed discrete steps. Langevin admits MCMC convergence theory; diffusion has its own trajectory perspectives. Modern views recognize both as instances of sampling from score-conditional distributions.</p>`,
+
+  // 06 Stochastic Differential Equations
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 06</div>
+    <h2><em>Stochastic</em> Differential Equations</h2>
+  </div>
+  <p>The SDE framework provides a continuous-time formulation of score-based generation, offering mathematical elegance, theoretical rigor, and flexibility in sampling strategies. Rather than discrete noise levels, we consider a continuous time variable t ∈ [0, T].</p>
+  <h3>Forward SDE (Corruption)</h3>
+  <p>The forward process—progressively corrupting data with noise—is described by:</p>
+  <pre>dx = f(x, t)dt + g(t)dw</pre>
+  <p>where f is the drift coefficient, g is the diffusion (volatility), w is a standard Wiener process (Brownian motion), and dw is its increment. This drives clean data x(0) toward noise x(T) ≈ N(0, I). Different choices of f and g yield different corruption schedules—each defines a different forward process.</p>
+  <h3>Reverse SDE (Denoising)</h3>
+  <p>The critical insight is Anderson's theorem: the reverse-time SDE is:</p>
+  <pre>dx = [f(x, t) - g(t)²·∇_x log p_t(x)]dt + g(t)dw</pre>
+  <p>Note the score term ∇_x log p_t(x) in the drift! If we can estimate this score s_θ(x, t) ≈ ∇_x log p_t(x), we can sample from the reverse SDE by integrating backward in time from t = T to t = 0. The Brownian increments ensure stochasticity; removing them yields a deterministic ODE with the same marginals.</p>
+  <h3>Three Popular SDE Choices</h3>
+  <p><strong>VP (Variance-Preserving):</strong> Maintains signal norm via dx = -β(t)x/2 dt + √β(t)dw. Throughout the SDE, E[||x(t)||²] ≈ const. This is ideal for preserving information across time scales.</p>
+  <p><strong>VE (Variance-Exploding):</strong> Lets noise variance grow unboundedly via dx = dw + (g(t))² dw/dg. At T, x(T) is nearly pure Gaussian. This can accelerate sampling in early refinement phases but requires careful numerical handling.</p>
+  <p><strong>sub-VP:</strong> Intermediate between VP and VE, offering a balance. Variance increases but more slowly than VE. Empirically, the choice affects sampling speed and quality; VP is often preferred for stability.</p>
+  <h3>Probability Flow ODE</h3>
+  <p>A remarkable result: removing the stochastic dw term yields a deterministic ODE:</p>
+  <pre>dx/dt = f(x, t) - (1/2)g(t)²·∇_x log p_t(x)</pre>
+  <p>This ODE generates samples with identical marginal distributions as the reverse SDE! The advantage: deterministic paths enable: (1) exact log-likelihood computation, (2) faster sampling (fewer function evaluations), (3) exact inversion (encode/decode between data and noise). Fast ODE solvers (RK45, DPM-Solver) make this practical.</p>
+  <h3>Training Score Networks</h3>
+  <p>To enable sampling via either SDE or ODE, we train s_θ(x, t) to match ∇_x log p_t(x) by minimizing expected squared score error. Various loss weightings balance gradient accuracy across times. Denoising score matching (Section 03) provides a practical training objective: perturb data according to the forward SDE and train to predict noise.</p>`,
+
+  // 07 Score-Based SDE Framework
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 07</div>
+    <h2><em>Score-Based</em> SDE Framework</h2>
+  </div>
+  <p>The unified score-based SDE framework synthesizes all prior concepts into a cohesive theory and practice. The framework consists of: (1) a forward SDE that gradually corrupts data, (2) a score network s_θ(x, t) trained via denoising, (3) a reverse SDE or ODE for sampling, (4) flexible time-conditioning and scheduling.</p>
+  <h3>Framework Components</h3>
+  <p><strong>Training:</strong> Given data, apply forward SDE for time t, perturb, and minimize denoising loss ||ε_θ(x_t, t) - ε|| or equivalently ||s_θ(x_t, t) + ε/σ_t||. The loss is simple, scalable, and numerically stable. Batch normalization, EMA weight updates, and other tricks improve stability and convergence.</p>
+  <p><strong>Inference (Reverse SDE):</strong> Start with x_T ~ N(0, I), integrate the reverse SDE backward: dx = [f(x, t) - g(t)²·s_θ(x, t)]dt + g(t)dw from t = T → 0. The learned score guides the trajectory toward high-probability regions. Stochasticity (Brownian noise) prevents collapse and enables diverse samples.</p>
+  <p><strong>Inference (Probability ODE):</strong> Integrate the deterministic ODE: dx/dt = f(x, t) - (1/2)g(t)²·s_θ(x, t). This generates a deterministic latent code for each sample. ODE solvers with adaptive step-sizing make this fast: often 10-50 function evaluations suffice, much faster than 1000+ steps in discrete diffusion.</p>
+  <h3>Advantages of Unified View</h3>
+  <p>The framework unifies seemingly disparate methods: diffusion models (discrete SDE), annealed Langevin (continuous with explicit Langevin steps), score matching (training objective), denoising autoencoders (interpretation), and probabilistic ODEs (fast inference) all emerge as special cases or applications of the core framework.</p>
+  <p>This unity enables: (1) better understanding—seeing connections between methods, (2) cross-pollination—techniques from one variant improve others, (3) theoretical analysis—using SDE machinery to analyze diffusion models, (4) flexible inference—choosing between stochastic or deterministic sampling, speed vs. quality tradeoffs.</p>
+  <h3>Advanced Training Techniques</h3>
+  <p><strong>Weighting:</strong> Different times t contribute differently to sample quality. λ(t)-weighted loss emphasizes critical phases. Common choices: uniform weighting, exponential weighting toward early times, or SNR (signal-to-noise ratio) weighting.</p>
+  <p><strong>EMA & Averaging:</strong> Exponential moving average of model weights stabilizes training. Model averaging (over checkpoints) improves final sample quality. These techniques, borrowed from other deep learning fields, have proven essential.</p>
+  <p><strong>Continuous Scheduling:</strong> Rather than discrete noise levels, parameterize σ(t) as a continuous function. This enables finer control and can improve the trajectory smoothness for ODE solvers.</p>
+  <h3>Convergence & Theoretical Properties</h3>
+  <p>Under smoothness assumptions on the score network and forward SDE, the reverse SDE samples from a distribution that matches the data distribution as ε → 0 (continuous limit). In practice, finite step sizes introduce bias, but empirically, even moderate-sized steps yield high-quality samples. The framework admits formal analysis of sample quality in terms of TV and KL divergence.</p>`,
+
+  // 08 Connections to Diffusion
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 08</div>
+    <h2><em>Connections</em> to Diffusion</h2>
+  </div>
+  <p>Denoising Diffusion Probabilistic Models (DDPM) and more broadly diffusion models are revealed, through the score-based SDE lens, to be a special case of score-based generation with a specific discrete noise schedule. Understanding this connection deepens both frameworks and explains their shared success.</p>
+  <h3>DDPM as Discrete SDE</h3>
+  <p>DDPM defines a forward process: q(x_t | x_0) = N(√(ᾱ_t)·x_0, (1 - ᾱ_t)I) where ᾱ_t = ∏(1 - β_i) for i=1..t. The reverse process is learned: p_θ(x_{t-1}|x_t) is a Gaussian whose mean is a neural network ε_θ(x_t, t). Training minimizes ||ε - ε_θ(x_t, t)||² for added noise ε. This is exactly denoising score matching with a specific (discrete) schedule of noise levels.</p>
+  <p>The connection to scores: the DDPM prediction ε_θ(x_t) is related to the score by:</p>
+  <pre>∇_x log p_t(x) ≈ -ε_θ(x_t) / √(1 - ᾱ_t)</pre>
+  <p>In other words, predicting noise and predicting the score are equivalent up to scaling. DDPM is implicitly learning the score function, even though the original paper didn't frame it that way. The score-based view provides the mathematical interpretation underlying DDPM's success.</p>
+  <h3>Classifier Guidance</h3>
+  <p>A powerful application of the score framework: conditional generation via classifier guidance. If we have a trained classifier p(y|x), we can incorporate class information into the score:</p>
+  <pre>∇_x log p(y|x_t) = ∇_x log p(x_t|y) + λ·∇_x log p(y|x_t)</pre>
+  <p>The first term is the unconditional score (from our diffusion model); the second term is the classifier's guidance. Scaling λ controls the strength of class conditioning. This elegant formulation works seamlessly for both DDPM and score-based models, enabling high-quality class-conditional generation. The same approach extends to other conditioning (text, image, etc.) with appropriate models.</p>
+  <h3>Fast Sampling & Consistency Models</h3>
+  <p>A key advantage of the SDE/ODE view: different sampling strategies reuse the same learned score network. Rather than running 1000 diffusion steps, we can use fast ODE solvers (Runge-Kutta, DPM-Solver) with 10-50 steps and achieve similar quality. The probability flow ODE provides the theoretical foundation: it has the same marginals as the reverse SDE but admits deterministic fast integration.</p>
+  <p>Consistency Models take this further: train a network that maps noisy intermediate samples directly to data, enabling single-step generation. Flow matching and rectified flows use the same score-based machinery but with different loss formulations. All these recent advances leverage the understanding that diffusion is score-based sampling.</p>
+  <h3>Information Preservation</h3>
+  <p>Interestingly, both DDPM (discrete) and continuous SDEs preserve different aspects of information: DDPM's discrete schedule can be optimized for specific hardware; continuous SDEs reveal the underlying mathematics and enable flexible time-stepping. Neither is strictly superior—the right choice depends on computational constraints and the specific application.</p>
+  <h3>Theoretical Synergy</h3>
+  <p>The score-based SDE framework provides rigorous theoretical tools for analyzing diffusion models. Questions like "Why do diffusion models generalize?", "What drives sample quality?", and "How do different schedules compare?" are now answerable using SDE theory, stochastic analysis, and optimal transport. This theoretical foundation supports continued innovation in generative modeling.</p>
+  <h3>The Unified Perspective</h3>
+  <p>In summary: diffusion models ≈ score-based SDEs with specific scheduling. Score matching provides the training objective. Denoising score matching connects to denoising autoencoders. Annealed Langevin and annealed DDPM are both sampling from conditional score distributions. The unified framework clarifies relationships, enables technique transfer, and grounds diffusion models in principled mathematics. This understanding has been fundamental to the recent explosive progress in generative AI.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
+    <h2>References & <em>Further</em> Reading</h2>
+   </div>
+   <h3>Foundational Papers</h3>
+   <ul>
+    <li><a href="https://arxiv.org/abs/1907.05600" target="_blank">Generative Modeling by Estimating Gradients of the Data Distribution (Song & Ermon, 2019)</a> — Score matching for generative modeling</li>
+    <li><a href="https://arxiv.org/abs/2011.13456" target="_blank">Generative Modeling by Estimating Gradients of the Data Density (Song et al, 2020)</a> — Score-based SDEs framework</li>
+   </ul>
+   <h3>Core Concepts</h3>
+   <ul>
+    <li><strong>Score Function</strong> — ∇_x log p(x), gradient of log probability density</li>
+    <li><strong>Score Matching</strong> — Training without requiring partition function by matching score gradients</li>
+    <li><strong>Denoising Score Matching</strong> — Training via denoising at multiple noise levels</li>
+    <li><strong>Langevin Dynamics</strong> — MCMC sampling using score functions with noise injection</li>
+    <li><strong>Stochastic Differential Equations (SDEs)</strong> — Continuous-time formulation of diffusion processes</li>
+   </ul>
+   <h3>Key Methods</h3>
+   <ul>
+    <li><strong>Noise-Conditional Score Networks</strong> — Scoring network parameterized by noise level</li>
+    <li><strong>Annealed Langevin Sampling</strong> — Sequential sampling from coarse to fine scales</li>
+    <li><strong>ODE-Based Sampling</strong> — Reversing probability flow ODEs for faster generation</li>
+   </ul>
+   <h3>Connections</h3>
+   <ul>
+    <li><strong>Diffusion Models</strong> — Discrete-time version with Gaussian noise schedules</li>
+    <li><strong>Energy-Based Models</strong> — Energy functions related to score via logarithm</li>
+    <li><strong>Optimal Transport</strong> — SDEs and score functions in optimal transport theory</li>
+   </ul>
+   <h3>Learning Resources</h3>
+   <ul>
+    <li><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank">Lilian Weng: Score-Based Generative Modeling</a></li>
+    <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a></li>
+   </ul>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
+        <div class="hero-title">Score-Based <em>Generative</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 5–6 · Score Matching, SDEs & Langevin Dynamics</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borrowed Grief: Dream Incorporation &amp; the Subconscious Voice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      transition: all 0.2s;
+    }
+    .deliverable-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .case-study {
+      border: 1px solid var(--accent); background: var(--accent-soft);
+      padding: 24px; margin-bottom: 32px;
+    }
+    .case-study .cs-label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    }
+    .case-study p { font-family: var(--serif); font-size: 16px; line-height: 1.7; color: var(--text); }
+    .hero-img {
+      width: 100%; margin: 0 0 32px; border: 1px solid var(--border);
+    }
+    .hero-img img { width: 100%; display: block; }
+    .case-study .bengali { font-size: 18px; color: var(--bright); margin: 8px 0; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Cognitive Science &middot; Mini Research Project</div>
+    <h1>Borrowed <em>Grief</em></h1>
+    <div class="subtitle">Dream incorporation &amp; the subconscious voice &mdash; how someone else&rsquo;s words for pain become your own in sleep, and what recognition does when it arrives.</div>
+
+    <div class="rule"></div>
+
+    <div class="case-study">
+      <div class="cs-label">Framing Case</div>
+      <p>A man falls back asleep smiling, thinking of someone new. He dreams he&rsquo;s climbing a hill in sandals after a shower, struggling to reach a place that should be his. Groups pass him&mdash;some try to help. He gives up. He mutters:</p>
+      <p>Words he recognizes as his former wife&rsquo;s &mdash; a simple phrase meaning &ldquo;it hurts, it hurts too much&rdquo; &mdash; spoken in his mother tongue, from the separation. He becomes lucid&mdash;not to reshape the dream, but to leave it. He chooses to wake up.</p>
+    </div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>This mini-project investigates three interlocking questions: how the sleeping brain <strong>incorporates</strong> another person&rsquo;s emotional vocabulary as its own, how <strong>grief dreams</strong> maintain bonds with former partners long after separation, and what <strong>lucid recognition</strong> of borrowed speech reveals about the boundary between self and other. <strong>3 dimensions</strong>, <strong>24+ sources</strong>.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Interpretation <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Personal dream interpretation using the research framework. Four structural elements analyzed through incorporation, continuing bonds, and lucid metacognition lenses.</div>
+        <div class="section-links">
+          <a href="interpretation.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Mini survey synthesizing across all three sections. Academic framing with personal case study.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-img"><img src="hero.png" alt="A figure in sandals at the base of a steep hill, looking up at silhouettes moving easily along the ridge above. Watercolor in muted indigo."></div>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Memory <em>Incorporation</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. How waking-life fragments &mdash; especially other people&rsquo;s words and emotional expressions &mdash; get woven into dream content. Day-residue effect, dream-lag, inner speech in dreams, emotional intensity as driver.</div>
+          <div class="section-links">
+            <a href="s1-incorporation.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">Grief Dreams &amp; Continuing <em>Bonds</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Dreams of ex-partners after separation. Cartwright&rsquo;s divorce-dream research. Comforting vs. distressing grief dreams. The ex&rsquo;s voice as continuing bond. Attachment style predictions.</div>
+          <div class="section-links">
+            <a href="s2-grief-dreams.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">Lucid <em>Metacognition</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. The hybrid consciousness of lucid dreaming. Recognizing borrowed speech as a metacognitive act. Choosing to wake up as emotional regulation. The boundary between self and other in dream awareness.</div>
+          <div class="section-links">
+            <a href="s3-lucid-metacognition.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Related Projects</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&larr;</div>
+        <div class="section-body">
+          <div class="section-title">Sleep &amp; <em>Dreams</em></div>
+          <div class="section-desc">Parent project covering sleep science across 6 dimensions: evolutionary function, brain architecture, dream theories, lucid dreaming, deprivation, and clinical frontiers. 57 sources.</div>
+          <div class="section-links">
+            <a href="../sleep-and-dreams/index.html">Project &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">&larr;</div>
+        <div class="section-body">
+          <div class="section-title">Attachment <em>Theory</em></div>
+          <div class="section-desc">Sibling project on attachment styles, romantic bonds, and separation. Directly relevant to continuing bonds after divorce.</div>
+          <div class="section-links">
+            <a href="../attachment-theory/index.html">Project &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      <a href="https://nafsadh.github.io/read-rd/">read-rd</a> &middot; Cognitive Science &middot; March 2026
+    </div>
+  </div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement, c=h.getAttribute('data-theme');
+  const n=c==='dark'?'light':c==='light'?'dark':
+    (window.matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark');
+  h.setAttribute('data-theme',n);localStorage.setItem('theme',n);updBtn();}
+function updBtn(){
+  const h=document.documentElement,c=h.getAttribute('data-theme'),
+  d=c?c==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;
+  document.getElementById('themeBtn').textContent=d?'☀':'☾';}
+(function(){const s=localStorage.getItem('theme');
+if(s)document.documentElement.setAttribute('data-theme',s);updBtn();})();
+</script>
+</body>
+</html>

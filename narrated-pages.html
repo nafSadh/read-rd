@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narrated Pages — read-rd</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--amber:#8a6e1e;
+  --grain-opacity:0.015;--grad1:#2e6ab406;--grad2:#9b7aed04;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--amber:#e8c870;
+  --grain-opacity:0.02;--grad1:#9b7aed06;--grad2:#4ee8d004;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Jost',-apple-system,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent);transition:background 1s}
+
+.shell{max-width:640px;margin:0 auto;padding:36px 24px 80px;position:relative;z-index:1}
+
+/* Header */
+.head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.head h1{font-family:'EB Garamond',Georgia,serif;font-size:26px;font-weight:500;color:var(--bright);letter-spacing:.3px}
+.head h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.head-right{display:flex;gap:8px;align-items:center}
+.back{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);text-decoration:none;letter-spacing:1px;transition:color .2s}
+.back:hover{color:var(--accent)}
+.ctrl-btn{width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--dim);background:transparent;border:1px solid var(--border);transition:color .2s,background .2s}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+
+/* Category labels */
+.cat-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:600;padding:12px 0 4px;margin-top:4px}
+.cat-label:first-child{margin-top:0;padding-top:0}
+
+/* Rows */
+.row-wrap{border-bottom:1px solid color-mix(in srgb, var(--border), transparent 40%)}
+.row-wrap:last-child{border-bottom:none}
+.row{display:flex;align-items:center;gap:8px;padding:6px 0;cursor:default;transition:background .15s}
+.row:hover{background:var(--accent-soft);margin:0 -8px;padding:6px 8px}
+.row-play{background:none;border:none;color:var(--dim);font-size:11px;cursor:pointer;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;transition:all .15s}
+.row-play:hover{color:var(--accent);background:var(--accent-soft)}
+.row-play.playing{color:var(--cyan)}
+.row-info{flex:1;min-width:0;text-decoration:none;display:flex;align-items:baseline;gap:8px}
+.row-name{font-size:13px;color:var(--bright);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-info:hover .row-name{color:var(--accent)}
+.row-dur{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.5px;flex-shrink:0}
+.row-size{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.5px;flex-shrink:0;opacity:.5}
+
+/* Inline player */
+.row-player{display:none;padding:2px 0 6px 30px}
+.row-player.visible{display:block}
+.row-player audio{width:100%;height:28px;filter:contrast(.9)}
+[data-theme="dark"] .row-player audio{filter:invert(1) contrast(.85) hue-rotate(180deg)}
+
+/* Footer */
+.total{margin-top:16px;padding-top:10px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.5px;display:flex;justify-content:space-between}
+.total span{color:var(--bright)}
+
+@media(max-width:600px){
+  .shell{padding:24px 16px 60px}
+  .head h1{font-size:22px}
+  .row-info{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="head">
+    <h1>Narrated <em>Pages</em></h1>
+    <div class="head-right">
+      <a href="index.html" class="back">&larr; home</a>
+      <button class="ctrl-btn" onclick="toggleTheme()"></button>
+    </div>
+  </div>
+  <div id="content"></div>
+  <div class="total">
+    <div><span id="total-count">0</span> narrations</div>
+    <div>~<span id="total-dur">0</span> min &middot; <span id="total-size">0</span> MB</div>
+  </div>
+</div>
+
+<script>
+const pages = [
+  { cat: 'AI Research', name: 'GenAI 2026 Outlook', href: 'ai/genai-2026-outlook/genai-2026-overview.dd.html', mp3: 'ai/genai-2026-outlook/genai-2026-overview.mp3', bytes: 5393376 },
+  { cat: 'AI Research', name: 'ML Blog', href: 'ai/ml-blog.dd.html', mp3: 'ai/ml-blog.mp3', bytes: 7907904 },
+  { cat: 'AI Research', name: 'Trending AI Papers', href: 'ai/trending-ai.dd.html', mp3: 'ai/trending-ai.mp3', bytes: 10620144 },
+  { cat: 'Anthropology', name: 'History of Flags', href: 'anthro/flag-history/flag-history.dd.html', mp3: 'anthro/flag-history/flag-history.mp3', bytes: 9197280 },
+  { cat: 'Anthropology', name: 'Religion in the Contemporary World', href: 'anthro/religion-today/overview.dd.html', mp3: 'anthro/religion-today/overview.mp3', bytes: 3414672 },
+  { cat: 'Cognitive Science', name: 'Attachment Theory', href: 'cog-sci/attachment-theory/overview.dd.html', mp3: 'cog-sci/attachment-theory/overview.mp3', bytes: 653472 },
+  { cat: 'Cognitive Science', name: 'Brain Energy', href: 'cog-sci/brain-energy/overview.dd.html', mp3: 'cog-sci/brain-energy/overview.mp3', bytes: 1522080 },
+  { cat: 'Cognitive Science', name: 'Religion & Psychology', href: 'cog-sci/religion-psychology/overview.dd.html', mp3: 'cog-sci/religion-psychology/overview.mp3', bytes: 1324080 },
+  { cat: 'Cognitive Science', name: 'Science of Humor', href: 'cog-sci/science-of-humor/overview.dd.html', mp3: 'cog-sci/science-of-humor/overview.mp3', bytes: 1337040 },
+  { cat: 'Cognitive Science', name: 'Sleep & Dreams', href: 'cog-sci/sleep-and-dreams/overview.dd.html', mp3: 'cog-sci/sleep-and-dreams/overview.mp3', bytes: 986544 },
+  { cat: 'Cognitive Science', name: 'Stoicism in Practice', href: 'cog-sci/stoicism-in-practice/overview.dd.html', mp3: 'cog-sci/stoicism-in-practice/overview.mp3', bytes: 1279152 },
+  { cat: 'Craft', name: 'Art of Typography', href: 'craft/art-of-typography/overview.dd.html', mp3: 'craft/art-of-typography/overview.mp3', bytes: 1215072 },
+  { cat: 'Craft', name: 'Constructed Languages', href: 'craft/constructed-languages/overview.dd.html', mp3: 'craft/constructed-languages/overview.mp3', bytes: 1527984 },
+  { cat: 'Craft', name: 'Poetry Collection', href: 'craft/poetry-collection.dd.html', mp3: 'craft/poetry-collection.mp3', bytes: 9980064 },
+  { cat: 'Craft', name: 'Poetry Syllabus', href: 'craft/poetry-syllabus.dd.html', mp3: 'craft/poetry-syllabus.mp3', bytes: 5059008 },
+  { cat: 'Craft', name: 'Project Hail Mary', href: 'craft/project-hail-mary.dd.html', mp3: 'craft/project-hail-mary.mp3', bytes: 3149568 },
+  { cat: 'Craft', name: 'Science of Music', href: 'craft/science-of-music/overview.dd.html', mp3: 'craft/science-of-music/overview.mp3', bytes: 1525104 },
+  { cat: 'Philosophy', name: 'Dark Psychology', href: 'philosophy/dark-psychology.dd.html', mp3: 'philosophy/dark-psychology.mp3', bytes: 3978144 },
+  { cat: 'Philosophy', name: "Sophie's World: The Awakening", href: 'philosophy/sophies-world-reader/01-awakening.dd.html', mp3: 'philosophy/sophies-world-reader/01-awakening.mp3', bytes: 1320192 },
+];
+
+function fmtSize(b) { return (b / 1048576).toFixed(1); }
+function fmtDur(b) { const s = Math.round(b / 16000); const m = Math.floor(s/60); const r = s % 60; return m + ':' + String(r).padStart(2,'0'); }
+function fmtDurMin(b) { return Math.round(b / 16000 / 60); }
+
+const content = document.getElementById('content');
+let lastCat = '';
+let totalBytes = 0;
+
+pages.forEach((p, i) => {
+  if (p.cat !== lastCat) {
+    lastCat = p.cat;
+    const label = document.createElement('div');
+    label.className = 'cat-label';
+    label.textContent = p.cat;
+    content.appendChild(label);
+  }
+  totalBytes += p.bytes;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'row-wrap';
+
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML =
+    '<button class="row-play" data-idx="' + i + '" title="Play">\u25B6</button>' +
+    '<a href="' + p.href + '" class="row-info">' +
+      '<span class="row-name">' + p.name + '</span>' +
+      '<span class="row-dur">' + fmtDur(p.bytes) + '</span>' +
+    '</a>' +
+    '<span class="row-size">' + fmtSize(p.bytes) + ' MB</span>';
+
+  const player = document.createElement('div');
+  player.className = 'row-player';
+  player.id = 'player-' + i;
+  player.innerHTML = '<audio controls preload="none" src="' + p.mp3 + '"></audio>';
+
+  wrapper.appendChild(row);
+  wrapper.appendChild(player);
+  content.appendChild(wrapper);
+});
+
+document.getElementById('total-count').textContent = pages.length;
+document.getElementById('total-dur').textContent = fmtDurMin(totalBytes);
+document.getElementById('total-size').textContent = fmtSize(totalBytes);
+
+// Play button toggle
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.row-play');
+  if (!btn) return;
+  const idx = btn.dataset.idx;
+  const player = document.getElementById('player-' + idx);
+  const audio = player.querySelector('audio');
+
+  document.querySelectorAll('.row-player.visible').forEach(function(p) {
+    if (p !== player) {
+      p.classList.remove('visible');
+      p.querySelector('audio').pause();
+      var ob = p.parentNode.querySelector('.row-play');
+      if (ob) { ob.classList.remove('playing'); ob.textContent = '\u25B6'; }
+    }
+  });
+
+  if (player.classList.contains('visible')) {
+    if (audio.paused) { audio.play(); btn.classList.add('playing'); btn.textContent = '\u23F8'; }
+    else { audio.pause(); btn.classList.remove('playing'); btn.textContent = '\u25B6'; }
+  } else {
+    player.classList.add('visible');
+    audio.play();
+    btn.classList.add('playing');
+    btn.textContent = '\u23F8';
+  }
+
+});
+
+// Sync row-play icon with audio element's native controls
+document.querySelectorAll('.row-player audio').forEach(function(audio) {
+  var btn = audio.closest('.row-wrap').querySelector('.row-play');
+  audio.addEventListener('play', function() { btn.classList.add('playing'); btn.textContent = '\u23F8'; });
+  audio.addEventListener('pause', function() { btn.classList.remove('playing'); btn.textContent = '\u25B6'; });
+  audio.addEventListener('ended', function() { btn.classList.remove('playing'); btn.textContent = '\u25B6'; });
+});
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  localStorage.setItem('theme', html.getAttribute('data-theme'));
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+</script>
+</body>
+</html>

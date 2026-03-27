@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic LLMs in the Wild — Slides</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  /* SVG fills — light */
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Only prevent selection on nav controls, not slide content */
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+/* ---- SLIDE CONTAINER ---- */
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- SLIDE LAYOUT ---- */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+/* Subtle divider between text and SVG columns */
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+/* ---- TEXT ELEMENTS ---- */
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+/* Constrain content width on ultrawide screens — skip title & divider slides */
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- TITLE SLIDE ---- */
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+/* ---- TOC ---- */
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION DIVIDER ---- */
+/* Light mode: warm accent background */
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+/* Dark mode: deeper accent-tinted background */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+/* ---- NAVIGATION (overlay at viewport bottom) ---- */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* SVG Styling */
+.fig { overflow: visible; } /* prevent viewBox clipping on edges */
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+/* Center text vertically in boxes when text-anchor is middle */
+.fig .box-label { dominant-baseline: central; }
+
+/* Dark mode SVG overrides — remap hardcoded fills/strokes */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  /* accent colors shift slightly brighter in dark */
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+/* Animations for SVG */
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+
+/* ---- CITATIONS ---- */
+.cite {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6em;
+  color: var(--accent);
+  cursor: help;
+  position: relative;
+  vertical-align: super;
+  line-height: 0;
+  padding: 0 0.1em;
+}
+.cite:hover { color: var(--accent2); }
+.cite .tip {
+  display: none;
+  position: absolute;
+  bottom: 1.4em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--fg);
+  color: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 400;
+  vertical-align: baseline;
+  line-height: 1.45;
+  padding: 0.5em 0.7em;
+  border-radius: 6px;
+  white-space: normal;
+  width: max-content;
+  max-width: 340px;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.cite:hover .tip { display: block; }
+@media (max-width: 600px) {
+  .cite .tip { max-width: 220px; font-size: 0.65rem; left: 0; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="30" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="34" width="25" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="63" width="25" height="6" rx="3" fill="#7c3aed"/>
+    <rect x="92" width="28" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Agentic LLMs <em>in the Wild</em></h1>
+  <div class="ref">Reasoning, Acting, Interacting, and Operating</div>
+  <div class="ref">Extending Plaat et al. (JAIR 2025) · 28 papers · March 2026</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">Overview</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>Four Shifts, Five Sections</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <ol class="toc-list">
+        <li><span class="toc-num">I</span> Context — What changed since Plaat et al.</li>
+        <li><span class="toc-num">II</span> REASON — Scaffolds to weights via RL</li>
+        <li><span class="toc-num">III</span> ACT — The coding explosion</li>
+        <li><span class="toc-num">IV</span> INTERACT — Protocol infrastructure</li>
+        <li><span class="toc-num">V</span> OPERATE — The security surface</li>
+        <li><span class="toc-num">VI</span> Cross-Cutting — The portable agent layer</li>
+        <li><span class="toc-num">VII</span> Synthesis — Five findings</li>
+      </ol>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.1em">TAXONOMY EVOLUTION</text>
+        <g transform="translate(40,30)">
+          <text x="0" y="12" font-size="9" fill="#6e6b64">Plaat et al. 2025</text>
+          <rect x="0" y="22" width="80" height="30" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="40" y="42" text-anchor="middle" font-size="10" fill="#5b5bd6">Reason</text>
+          <rect x="90" y="22" width="80" height="30" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.8"/>
+          <text x="130" y="42" text-anchor="middle" font-size="10" fill="#0ea5e9">Act</text>
+          <rect x="180" y="22" width="80" height="30" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+          <text x="220" y="42" text-anchor="middle" font-size="10" fill="#7c3aed">Interact</text>
+        </g>
+        <path d="M130,92 L130,115" stroke="#6e6b64" stroke-width="0.8" stroke-dasharray="3 2"/>
+        <text x="170" y="108" text-anchor="middle" font-size="7" fill="#6e6b64">+12 months</text>
+        <g transform="translate(15,120)">
+          <text x="0" y="12" font-size="9" fill="#1a1a1a" font-weight="600">This survey 2026</text>
+          <rect x="0" y="22" width="70" height="30" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="35" y="42" text-anchor="middle" font-size="9" fill="#5b5bd6">Reason</text>
+          <rect x="78" y="22" width="70" height="30" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.8"/>
+          <text x="113" y="42" text-anchor="middle" font-size="9" fill="#0ea5e9">Act</text>
+          <rect x="156" y="22" width="70" height="30" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+          <text x="191" y="42" text-anchor="middle" font-size="9" fill="#7c3aed">Interact</text>
+          <rect x="234" y="22" width="70" height="30" rx="6" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="1.2"/>
+          <text x="269" y="42" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">Operate</text>
+          <text x="269" y="70" text-anchor="middle" font-size="7" fill="#0d9488">NEW</text>
+        </g>
+        <g transform="translate(30,210)">
+          <rect width="260" height="65" rx="8" fill="rgba(0,0,0,0.025)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          <text x="130" y="18" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.05em">CROSS-CUTTING</text>
+          <text x="130" y="32" text-anchor="middle" font-size="8" fill="#6e6b64">SKILL.md · CLAUDE.md · AGENTS.md</text>
+          <text x="130" y="46" text-anchor="middle" font-size="8" fill="#6e6b64">Five configuration layers</text>
+          <text x="130" y="58" text-anchor="middle" font-size="7" fill="#b0ada5">The portable agent layer</text>
+        </g>
+        <g transform="translate(50,290)">
+          <rect width="220" height="32" rx="6" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="110" y="14" text-anchor="middle" font-size="8" fill="#0d9488">28 papers · ~460pp · 5 deep-dives</text>
+          <text x="110" y="26" text-anchor="middle" font-size="7" fill="#6e6b64">Nov 2025 – Mar 2026 literature</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">§1</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>What Changed in<br>12 Months</h1>
+  <div class="subtitle">Four structural shifts that require a reframing, not just an update</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · Four Shifts</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>The Landscape Moved</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>1. Model-native shift:</strong> Capabilities moved from prompt scaffolding (CoT, ReAct, Reflexion) into model weights via RL. RLHF is a degenerate single-step MDP; agentic RL is a temporally extended POMDP.<span class="cite">[2]<span class="tip">Zhang et al. "Landscape of Agentic RL for LLMs." TMLR Jan 2026. arXiv:2509.02547</span></span></p>
+      <p class="point"><strong>2. The coding explosion:</strong> Software development became the dominant action domain. SWE-bench spawned 5+ variants. Self-improving agents hit 77.4%.<span class="cite">[13]<span class="tip">Xia et al. "Live-SWE-agent." UIUC, Nov 2025. arXiv:2511.13646</span></span></p>
+      <p class="point"><strong>3. Protocol infrastructure:</strong> MCP (97M+ SDK downloads) and A2A became the TCP/IP of agents. Six competitors co-govern standards under AAIF.</p>
+      <p class="point"><strong>4. Safety imperative:</strong> Plaat et al. deferred safety as "future work." MCP amplifies attacks 23–41%.<span class="cite">[19]<span class="tip">Maloyan &amp; Namiot. "Breaking the Protocol." Jan 2026. arXiv:2601.17549</span></span> All defenses fail at 78%+.<span class="cite">[20]<span class="tip">Maloyan &amp; Namiot. "Prompt Injection SoK." Jan 2026. arXiv:2601.17548</span></span> 57% of tool chains leak data.<span class="cite">[21]<span class="tip">Lin et al. "AgentRaft." Sun Yat-sen/UCF, Mar 2026. arXiv:2603.07557</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">Thesis</div>
+        <p>These shifts require a fourth taxonomy axis: Operate.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 360" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">FOUR STRUCTURAL SHIFTS</text>
+        <g transform="translate(20,30)">
+          <rect x="0" y="0" width="300" height="65" rx="8" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.6"/>
+          <text x="15" y="20" font-size="9" fill="#5b5bd6" font-weight="600">1. SCAFFOLDS → WEIGHTS</text>
+          <text x="15" y="35" font-size="8" fill="#6e6b64">CoT, ReAct, Reflexion (2023)</text>
+          <path d="M175,35 L215,35" stroke="#5b5bd6" stroke-width="1" class="dash-flow"/>
+          <text x="220" y="35" font-size="8" fill="#5b5bd6">RL-trained (2026)</text>
+          <text x="15" y="52" font-size="7" fill="#b0ada5">POMDP ⟨S,O,A,P,R,T,γ⟩ · GRPO family · scaling laws</text>
+        </g>
+        <g transform="translate(20,105)">
+          <rect x="0" y="0" width="300" height="65" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.6"/>
+          <text x="15" y="20" font-size="9" fill="#0ea5e9" font-weight="600">2. CODING EXPLOSION</text>
+          <text x="15" y="35" font-size="8" fill="#6e6b64">Hypothetical assistants (2025)</text>
+          <path d="M195,35 L215,35" stroke="#0ea5e9" stroke-width="1" class="dash-flow"/>
+          <text x="220" y="35" font-size="8" fill="#0ea5e9">$2.2B ARR (2026)</text>
+          <text x="15" y="52" font-size="7" fill="#b0ada5">SWE-bench family · Live-SWE 77.4% · SSR +10.4 · 60/20 paradox</text>
+        </g>
+        <g transform="translate(20,180)">
+          <rect x="0" y="0" width="300" height="65" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6"/>
+          <text x="15" y="20" font-size="9" fill="#7c3aed" font-weight="600">3. PROTOCOL INFRASTRUCTURE</text>
+          <text x="15" y="35" font-size="8" fill="#6e6b64">Research topic (2025)</text>
+          <path d="M150,35 L215,35" stroke="#7c3aed" stroke-width="1" class="dash-flow"/>
+          <text x="220" y="35" font-size="8" fill="#7c3aed">Governed infra (2026)</text>
+          <text x="15" y="52" font-size="7" fill="#b0ada5">MCP 97M downloads · A2A Agent Cards · AAIF · flow engineering</text>
+        </g>
+        <g transform="translate(20,255)">
+          <rect x="0" y="0" width="300" height="65" rx="8" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="1"/>
+          <text x="15" y="20" font-size="9" fill="#0d9488" font-weight="600">4. SAFETY IMPERATIVE ← NEW AXIS</text>
+          <text x="15" y="35" font-size="8" fill="#6e6b64">"Future work" (2025)</text>
+          <path d="M140,35 L215,35" stroke="#0d9488" stroke-width="1" class="dash-flow"/>
+          <text x="220" y="35" font-size="8" fill="#0d9488">Central challenge (2026)</text>
+          <text x="15" y="52" font-size="7" fill="#b0ada5">23-41% amplification · 78%+ bypass · 57% data leaks · 26.1% vuln skills</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">§3</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h1>REASON:<br>Scaffolds to Weights</h1>
+  <div class="subtitle">Model-native reasoning via reinforcement learning</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1 · POMDP</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>The Mathematical Distinction</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">RLHF is a <strong>degenerate single-step MDP</strong>: one prompt, one response, one scalar reward. Horizon T=1.</p>
+      <p class="point">Agentic RL is a <strong>temporally extended POMDP</strong>: horizon T&gt;1, stochastic transitions via tool use, step-wise rewards, partial observability.</p>
+      <div class="eq-box">
+        <span class="label">POMDP Tuple</span>
+        ⟨S, O, A, P, R, T, γ⟩
+      </div>
+      <p class="point">Action space decomposes: <code>A_text</code> (reasoning — deterministic) ∪ <code>A_action</code> (tool calls — stochastic).<span class="cite">[2]<span class="tip">Zhang et al. "Landscape of Agentic RL for LLMs." TMLR Jan 2026. arXiv:2509.02547</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">Why this matters</div>
+        <p>The RL training loop must handle both reasoning and tool-use within a single policy — fundamentally different from chat alignment.<span class="cite">[3]<span class="tip">Cheng et al. "Agent-R1." Nov 2025. arXiv:2511.14460</span></span></p>
+      </div>
+      <p class="note">Zhang et al. (25 authors), "Landscape of Agentic RL," TMLR Jan 2026. 500+ works synthesized.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 350" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">RLHF vs AGENTIC RL</text>
+        <g transform="translate(20,30)">
+          <rect x="0" y="0" width="300" height="80" rx="8" fill="rgba(0,0,0,0.025)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          <text x="150" y="18" text-anchor="middle" font-size="8" fill="#b0ada5" letter-spacing="0.05em">RLHF (T=1, DETERMINISTIC)</text>
+          <rect x="20" y="30" width="60" height="28" rx="5" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="50" y="48" text-anchor="middle" font-size="8" fill="#5b5bd6">Prompt</text>
+          <path d="M85,44 L125,44" stroke="#6e6b64" stroke-width="0.8" marker-end="url(#arr)"/>
+          <rect x="130" y="30" width="60" height="28" rx="5" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="160" y="48" text-anchor="middle" font-size="8" fill="#5b5bd6">Response</text>
+          <path d="M195,44 L225,44" stroke="#6e6b64" stroke-width="0.8" marker-end="url(#arr)"/>
+          <rect x="230" y="30" width="50" height="28" rx="5" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+          <text x="255" y="48" text-anchor="middle" font-size="8" fill="#0d9488">r</text>
+        </g>
+        <g transform="translate(20,130)">
+          <rect x="0" y="0" width="300" height="200" rx="8" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="150" y="18" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.05em">AGENTIC RL (T&gt;1, STOCHASTIC)</text>
+          <rect x="15" y="30" width="50" height="24" rx="4" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="40" y="46" text-anchor="middle" font-size="7" fill="#5b5bd6">Think</text>
+          <text x="40" y="60" font-size="6" fill="#b0ada5" text-anchor="middle">A_text</text>
+          <path d="M68,42 L88,42" stroke="#5b5bd6" stroke-width="0.6" class="dash-flow"/>
+          <rect x="92" y="30" width="50" height="24" rx="4" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+          <text x="117" y="46" text-anchor="middle" font-size="7" fill="#0ea5e9">Tool Call</text>
+          <text x="117" y="60" font-size="6" fill="#b0ada5" text-anchor="middle">A_action</text>
+          <path d="M145,42 L165,42" stroke="#0ea5e9" stroke-width="0.6" class="dash-flow"/>
+          <rect x="169" y="30" width="50" height="24" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.5"/>
+          <text x="194" y="46" text-anchor="middle" font-size="7" fill="#7c3aed">Observe</text>
+          <text x="194" y="60" font-size="6" fill="#b0ada5" text-anchor="middle">stochastic</text>
+          <path d="M222,42 L242,42" stroke="#7c3aed" stroke-width="0.6" class="dash-flow"/>
+          <rect x="246" y="30" width="40" height="24" rx="4" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+          <text x="266" y="46" text-anchor="middle" font-size="7" fill="#0d9488">r1</text>
+          <rect x="15" y="80" width="50" height="24" rx="4" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="40" y="96" text-anchor="middle" font-size="7" fill="#5b5bd6">Think</text>
+          <path d="M68,92 L88,92" stroke="#5b5bd6" stroke-width="0.6" class="dash-flow"/>
+          <rect x="92" y="80" width="50" height="24" rx="4" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+          <text x="117" y="96" text-anchor="middle" font-size="7" fill="#0ea5e9">Tool Call</text>
+          <path d="M145,92 L165,92" stroke="#0ea5e9" stroke-width="0.6" class="dash-flow"/>
+          <rect x="169" y="80" width="50" height="24" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.5"/>
+          <text x="194" y="96" text-anchor="middle" font-size="7" fill="#7c3aed">Observe</text>
+          <path d="M222,92 L242,92" stroke="#7c3aed" stroke-width="0.6" class="dash-flow"/>
+          <rect x="246" y="80" width="40" height="24" rx="4" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+          <text x="266" y="96" text-anchor="middle" font-size="7" fill="#0d9488">r2</text>
+          <text x="150" y="122" text-anchor="middle" font-size="8" fill="#6e6b64">· · ·  T steps  · · ·</text>
+          <rect x="15" y="133" width="50" height="24" rx="4" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="40" y="149" text-anchor="middle" font-size="7" fill="#5b5bd6">Think</text>
+          <path d="M68,145 L88,145" stroke="#5b5bd6" stroke-width="0.6" class="dash-flow"/>
+          <rect x="92" y="133" width="50" height="24" rx="4" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+          <text x="117" y="149" text-anchor="middle" font-size="7" fill="#0ea5e9">Submit</text>
+          <path d="M145,145 L242,145" stroke="#0d9488" stroke-width="0.8" class="dash-flow"/>
+          <rect x="246" y="133" width="40" height="24" rx="4" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="1"/>
+          <text x="266" y="149" text-anchor="middle" font-size="7" fill="#0d9488" font-weight="600">R</text>
+          <rect x="30" y="170" width="240" height="22" rx="4" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="150" y="184" text-anchor="middle" font-size="7" fill="#0d9488">Each tool call → stochastic transition, new observation</text>
+        </g>
+        <defs><marker id="arr" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5" fill="none" stroke="#6e6b64" stroke-width="0.8"/></marker></defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.2 · Scaling</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>Scaling Laws and Efficiency</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Power-law scaling</strong> for RL post-training: 63 models (0.5B–72B) show predictive fit. Learning efficiency saturates with model size. Data reuse is surprisingly effective.<span class="cite">[4]<span class="tip">Tan et al. "Scaling Behaviors of LLM RL Post-Training." Dec 2025. arXiv:2509.25300</span></span></p>
+      <div class="eq-box">
+        <span class="label">Scaling Law</span>
+        log L(N,X) = −k(N) · log X + E(N)
+      </div>
+      <p class="point"><strong>Agent-Omit</strong> quantified the waste: 45.1% thoughts, 52.2% observations, 2.7% actions. Trains agents to skip redundant reasoning — 8B matches frontier agents.<span class="cite">[5]<span class="tip">Ning et al. "Agent-Omit." Feb 2026. arXiv:2602.04284</span></span></p>
+      <p class="point"><strong>ACT</strong> (Mar 2026): Training agents to judge action quality improves MATH-500 and GPQA <em>without reasoning-specific data</em>. Agentic RL → general reasoning transfer.<span class="cite">[7]<span class="tip">Liu et al. "Agentic Critical Training." UMD, Mar 2026. arXiv:2603.08706</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">Implication</div>
+        <p>4B models with proper RL recipes can match 32B baselines. Efficiency is becoming a first-class training objective.<span class="cite">[6]<span class="tip">Yu et al. "Demystifying RL in Agentic Reasoning." Oct 2025. arXiv:2510.11701</span></span></p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">TOKEN COST BREAKDOWN</text>
+        <g transform="translate(40,35)">
+          <rect x="0" y="0" width="120" height="120" rx="60" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="12"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#5b5bd6" stroke-width="12" stroke-dasharray="153 186" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#7c3aed" stroke-width="12" stroke-dasharray="177 162" stroke-dashoffset="-153" transform="rotate(-90 60 60)"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#0d9488" stroke-width="12" stroke-dasharray="9 330" stroke-dashoffset="-330" transform="rotate(-90 60 60)"/>
+          <text x="60" y="56" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Token</text>
+          <text x="60" y="68" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Cost</text>
+        </g>
+        <g transform="translate(185,50)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#5b5bd6"/>
+          <text x="14" y="8" font-size="8" fill="#1a1a1a">45.1% Thoughts</text>
+          <rect x="0" y="22" width="8" height="8" rx="2" fill="#7c3aed"/>
+          <text x="14" y="30" font-size="8" fill="#1a1a1a">52.2% Observations</text>
+          <rect x="0" y="44" width="8" height="8" rx="2" fill="#0d9488"/>
+          <text x="14" y="52" font-size="8" fill="#1a1a1a">2.7% Actions</text>
+        </g>
+        <g transform="translate(20,175)">
+          <text x="0" y="0" font-size="8" fill="#5b5bd6" letter-spacing="0.05em">COMPETITIVE SMALL MODELS</text>
+          <rect x="0" y="10" width="300" height="24" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <rect x="0" y="10" width="38" height="24" rx="4" fill="rgba(91,91,214,0.15)"/>
+          <text x="19" y="26" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">4B</text>
+          <text x="50" y="26" font-size="7" fill="#6e6b64">Demystifying RL recipes</text>
+          <rect x="0" y="42" width="300" height="24" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <rect x="0" y="42" width="100" height="24" rx="4" fill="rgba(14,165,233,0.15)"/>
+          <text x="50" y="58" text-anchor="middle" font-size="7" fill="#0ea5e9" font-weight="600">8B</text>
+          <text x="112" y="58" font-size="7" fill="#6e6b64">Agent-Omit = frontier</text>
+          <rect x="0" y="74" width="300" height="24" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <rect x="0" y="74" width="180" height="24" rx="4" fill="rgba(124,58,237,0.1)"/>
+          <text x="90" y="90" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="600">32B baseline</text>
+        </g>
+        <g transform="translate(20,285)">
+          <rect width="300" height="24" rx="5" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="150" y="16" text-anchor="middle" font-size="7" fill="#0d9488">Efficiency is the new capability metric</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">§4</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h1>ACT:<br>The Coding Explosion</h1>
+  <div class="subtitle">From hypothetical assistants to $2.2B ARR in 12 months</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">§4.1 · Benchmarks</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>The Benchmark Reality Check</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>SWE-Bench Pro:</strong> 1,865 enterprise problems, 41 repos. Best: &lt;45%. Without augmentations: GPT-5 drops <strong>25.9% → 8.4%</strong>.<span class="cite">[8]<span class="tip">Deng et al. "SWE-Bench Pro." Scale AI, Nov 2025. arXiv:2509.16941</span></span></p>
+      <p class="point"><strong>SWE-EVO:</strong> Long-horizon evolution. GPT-5 achieves <strong>65% → 21%</strong> — a 44pp drop.<span class="cite">[9]<span class="tip">Thai et al. "SWE-EVO." FPT/Melbourne, Jan 2026. arXiv:2512.18470</span></span></p>
+      <p class="point"><strong>Saving SWE-Bench:</strong> Realistic user queries reveal <strong>20–50% overestimation</strong>.<span class="cite">[11]<span class="tip">Garg et al. "Saving SWE-Bench." Microsoft, CAIN '26. arXiv:2510.08996</span></span></p>
+      <p class="point"><strong>UTBoost:</strong> 345 erroneous patches. <strong>40.9%</strong> of leaderboard affected.<span class="cite">[12]<span class="tip">Yu et al. "UTBoost." CUHK-SZ/UIUC, Jun 2025. arXiv:2506.09289</span></span></p>
+      <p class="point"><strong>SWE-bench Live:</strong> Continuous updates show performance gaps vs static benchmarks — contamination.<span class="cite">[10]<span class="tip">Zhang et al. "SWE-bench Goes Live!" Microsoft, Jun 2025. arXiv:2505.23419</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">Bottom line</div>
+        <p>Headline numbers are inflated. Real capabilities are considerably below reported scores.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">THE LONG-HORIZON GAP</text>
+        <g transform="translate(30,30)">
+          <text x="0" y="12" font-size="7" fill="#6e6b64" letter-spacing="0.05em">GPT-5 PERFORMANCE BY BENCHMARK</text>
+          <g transform="translate(0,25)">
+            <text x="0" y="10" font-size="8" fill="#6e6b64">SWE-Bench Verified</text>
+            <rect x="130" y="0" width="143" height="14" rx="3" fill="rgba(91,91,214,0.25)"/>
+            <text x="278" y="11" font-size="8" fill="#5b5bd6" font-weight="600">65%</text>
+          </g>
+          <g transform="translate(0,50)">
+            <text x="0" y="10" font-size="8" fill="#6e6b64">SWE-Bench Pro</text>
+            <rect x="130" y="0" width="55" height="14" rx="3" fill="rgba(14,165,233,0.25)"/>
+            <text x="190" y="11" font-size="8" fill="#0ea5e9" font-weight="600">25.9%</text>
+          </g>
+          <g transform="translate(0,75)">
+            <text x="0" y="10" font-size="8" fill="#1a1a1a" font-weight="600">SWE-EVO</text>
+            <rect x="130" y="0" width="46" height="14" rx="3" fill="rgba(124,58,237,0.35)"/>
+            <text x="181" y="11" font-size="8" fill="#7c3aed" font-weight="600">21%</text>
+          </g>
+          <g transform="translate(0,100)">
+            <text x="0" y="10" font-size="8" fill="#6e6b64">Pro (no augment)</text>
+            <rect x="130" y="0" width="18" height="14" rx="3" fill="rgba(20,150,110,0.25)"/>
+            <text x="153" y="11" font-size="8" fill="#0d9488" font-weight="600">8.4%</text>
+          </g>
+        </g>
+        <g transform="translate(30,175)">
+          <path d="M195,0 L195,30" stroke="#7c3aed" stroke-width="0.8" stroke-dasharray="3 2"/>
+          <rect x="130" y="35" width="130" height="36" rx="6" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.5"/>
+          <text x="195" y="50" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">44pp drop</text>
+          <text x="195" y="63" text-anchor="middle" font-size="7" fill="#6e6b64">single-issue → evolution</text>
+        </g>
+        <g transform="translate(30,230)">
+          <text x="0" y="12" font-size="7" fill="#6e6b64" letter-spacing="0.05em">INFLATION SOURCES</text>
+          <rect x="0" y="22" width="280" height="20" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <text x="140" y="36" text-anchor="middle" font-size="7" fill="#6e6b64">Contamination · Over-specified descriptions · Insufficient tests</text>
+          <rect x="0" y="48" width="280" height="20" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <text x="140" y="62" text-anchor="middle" font-size="7" fill="#6e6b64">Benchmark saturation · Static test sets · Single-language bias</text>
+        </g>
+        <g transform="translate(30,300)">
+          <rect width="280" height="24" rx="5" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="140" y="16" text-anchor="middle" font-size="7" fill="#0d9488">UTBoost: 40.9% of SWE-Bench Lite leaderboard has erroneous patches</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">§4.2 · Self-Improvement</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Self-Improvement Beats Hand-Crafting</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Live-SWE-agent</strong> (UIUC): Starts from minimal bash scaffold, creates tools on-the-fly. <strong>77.4%</strong> SWE-bench Verified. Zero offline cost.<span class="cite">[13]<span class="tip">Xia et al. "Live-SWE-agent." UIUC, Nov 2025. arXiv:2511.13646</span></span></p>
+      <p class="point"><strong>Self-Play SWE-RL</strong> (Meta FAIR): Bug-injector + solver, no human data. <strong>+10.4</strong> over pre-RL baseline, beats human-data RL.<span class="cite">[14]<span class="tip">Wei et al. "Self-Play SWE-RL." Meta FAIR/UIUC/CMU, Dec 2025. arXiv:2512.18552</span></span></p>
+      <p class="point"><strong>RepoNavigator</strong> (PKU): One "jump" tool + RL. <strong>7B beats 14B</strong> multi-tool baselines.<span class="cite">[15]<span class="tip">Zhang et al. "One Tool Is Enough." PKU/Baidu, Jan 2026. arXiv:2512.20957</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">The pattern</div>
+        <p>Self-generated tools, self-generated training data, and minimal tool design with RL each independently outperform hand-crafted alternatives.</p>
+      </div>
+      <p class="note">Minimum model capability threshold required — below GPT-5-Mini, self-improvement degrades.<span class="cite">[13]<span class="tip">Xia et al. "Live-SWE-agent." UIUC, Nov 2025. arXiv:2511.13646</span></span></p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">THREE PATHS TO SELF-IMPROVEMENT</text>
+        <g transform="translate(20,35)">
+          <rect x="0" y="0" width="300" height="75" rx="8" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.6"/>
+          <text x="15" y="18" font-size="8" fill="#5b5bd6" font-weight="600">SELF-GENERATED TOOLS</text>
+          <text x="15" y="34" font-size="8" fill="#6e6b64">Live-SWE-agent · creates tools at runtime</text>
+          <rect x="200" y="42" width="85" height="22" rx="4" fill="rgba(91,91,214,0.15)"/>
+          <text x="242" y="57" text-anchor="middle" font-size="10" fill="#5b5bd6" font-weight="600">77.4%</text>
+          <text x="15" y="57" font-size="7" fill="#b0ada5">SWE-bench Verified SOTA · $0 offline cost</text>
+        </g>
+        <g transform="translate(20,120)">
+          <rect x="0" y="0" width="300" height="75" rx="8" fill="rgba(14,165,233,0.06)" stroke="#0ea5e9" stroke-width="0.6"/>
+          <text x="15" y="18" font-size="8" fill="#0ea5e9" font-weight="600">SELF-GENERATED DATA</text>
+          <text x="15" y="34" font-size="8" fill="#6e6b64">Self-Play SWE-RL · self-play on raw codebases</text>
+          <rect x="200" y="42" width="85" height="22" rx="4" fill="rgba(14,165,233,0.15)"/>
+          <text x="242" y="57" text-anchor="middle" font-size="10" fill="#0ea5e9" font-weight="600">+10.4</text>
+          <text x="15" y="57" font-size="7" fill="#b0ada5">vs pre-RL · beats human-data RL throughout training</text>
+        </g>
+        <g transform="translate(20,205)">
+          <rect x="0" y="0" width="300" height="75" rx="8" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.6"/>
+          <text x="15" y="18" font-size="8" fill="#7c3aed" font-weight="600">MINIMAL TOOLS + RL</text>
+          <text x="15" y="34" font-size="8" fill="#6e6b64">RepoNavigator · one "jump" tool, RL from scratch</text>
+          <rect x="200" y="42" width="85" height="22" rx="4" fill="rgba(124,58,237,0.15)"/>
+          <text x="242" y="57" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">7B &gt; 14B</text>
+          <text x="15" y="57" font-size="7" fill="#b0ada5">Smaller model beats larger multi-tool baselines</text>
+        </g>
+        <g transform="translate(20,290)">
+          <rect width="300" height="22" rx="5" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="150" y="15" text-anchor="middle" font-size="7" fill="#0d9488">All three: learned &gt; engineered</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">§5</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h1>INTERACT:<br>Protocol Infrastructure</h1>
+  <div class="subtitle">MCP + A2A became the TCP/IP of agents</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">§5.1 · Protocols</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>The Agentic Protocol Stack</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>MCP</strong> (Anthropic): JSON-RPC 2.0 for tool invocation. <strong>97M+ monthly SDK downloads</strong>. "How agents talk to tools."<span class="cite">[17]<span class="tip">Ehtesham et al. "Agent Interoperability Protocols." May 2025. arXiv:2505.02279</span></span></p>
+      <p class="point"><strong>A2A</strong> (Google): Agent Cards for capability discovery. Peer-to-peer task delegation. "How agents talk to each other."</p>
+      <p class="point"><strong>AAIF</strong> (Dec 2025): Six competitors — OpenAI, Anthropic, Google, Microsoft, AWS, Block — co-governing standards under Linux Foundation.</p>
+      <p class="point"><strong>Multi-agent orchestration</strong>: 348 trials showed <strong>100% actionable vs 1.7%</strong> single-agent, with zero quality variance.<span class="cite">[16]<span class="tip">Drammeh. "Multi-Agent LLM Orchestration." Jan 2026. arXiv:2511.15755</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">The pattern</div>
+        <p>MCP for the resource layer, A2A for the network layer. They compose like TCP/IP, not compete.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">PROTOCOL STACK</text>
+        <g transform="translate(20,30)">
+          <rect x="0" y="0" width="300" height="50" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+          <text x="150" y="20" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">A2A — Agent-to-Agent</text>
+          <text x="150" y="38" text-anchor="middle" font-size="7" fill="#6e6b64">Discovery · Delegation · Agent Cards · HTTPS+SSE</text>
+        </g>
+        <g transform="translate(20,90)">
+          <rect x="0" y="0" width="300" height="50" rx="8" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="150" y="20" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">MCP — Model Context Protocol</text>
+          <text x="150" y="38" text-anchor="middle" font-size="7" fill="#6e6b64">Tools · Resources · Prompts · Sampling · JSON-RPC</text>
+        </g>
+        <g transform="translate(20,150)">
+          <rect x="0" y="0" width="140" height="40" rx="6" fill="rgba(0,0,0,0.025)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          <text x="70" y="16" text-anchor="middle" font-size="7" fill="#6e6b64">Postgres</text>
+          <text x="70" y="30" text-anchor="middle" font-size="6" fill="#b0ada5">MCP Server</text>
+          <rect x="160" y="0" width="140" height="40" rx="6" fill="rgba(0,0,0,0.025)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          <text x="230" y="16" text-anchor="middle" font-size="7" fill="#6e6b64">GitHub</text>
+          <text x="230" y="30" text-anchor="middle" font-size="6" fill="#b0ada5">MCP Server</text>
+        </g>
+        <g transform="translate(20,210)">
+          <rect x="0" y="0" width="300" height="50" rx="8" fill="rgba(20,150,110,0.06)" stroke="#0d9488" stroke-width="0.6"/>
+          <text x="150" y="18" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">AAIF Governance</text>
+          <text x="150" y="36" text-anchor="middle" font-size="7" fill="#6e6b64">OpenAI + Anthropic + Google + Microsoft + AWS + Block</text>
+        </g>
+        <g transform="translate(20,280)">
+          <rect x="0" y="0" width="140" height="40" rx="6" fill="rgba(91,91,214,0.06)"/>
+          <text x="70" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">97M+</text>
+          <text x="70" y="30" text-anchor="middle" font-size="7" fill="#6e6b64">MCP SDK/month</text>
+          <rect x="160" y="0" width="140" height="40" rx="6" fill="rgba(124,58,237,0.06)"/>
+          <text x="230" y="16" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">100% vs 1.7%</text>
+          <text x="230" y="30" text-anchor="middle" font-size="7" fill="#6e6b64">multi vs single agent</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">§6</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h1>OPERATE:<br>The Security Surface</h1>
+  <div class="subtitle">The fourth axis that Plaat et al. deferred</div>
+  <div class="section-num-big">V</div>
+</div>
+
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">§6 · Security</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>Four Numbers That Define the Problem</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>23–41%:</strong> MCP amplifies attack success rates compared to equivalent non-MCP integrations. Architectural, not implementation.<span class="cite">[19]<span class="tip">Maloyan &amp; Namiot. "Breaking the Protocol." Jan 2026. arXiv:2601.17549</span></span></p>
+      <p class="point"><strong>78%+:</strong> All tested defenses bypassed under adaptive attacks (PromptGuard 91%, Protect AI 93%).<span class="cite">[20]<span class="tip">Maloyan &amp; Namiot. "Prompt Injection SoK." Jan 2026. arXiv:2601.17548</span></span></p>
+      <p class="point"><strong>57%:</strong> Of MCP tool call chains leak sensitive data by default — not adversarial, just systemic over-exposure.<span class="cite">[21]<span class="tip">Lin et al. "AgentRaft." Sun Yat-sen/UCF, Mar 2026. arXiv:2603.07557</span></span></p>
+      <p class="point"><strong>26.1%:</strong> Of community-contributed agent skills contain security vulnerabilities (42,447 analyzed).<span class="cite">[22]<span class="tip">Xu &amp; Yan. "Agent Skills Survey." Zhejiang, Feb 2026. arXiv:2602.12430</span></span></p>
+      <div class="key-idea">
+        <div class="kicker">The thesis</div>
+        <p>Security is architectural, not patchable. Prompt injection needs architectural mitigation like SQL injection got parameterized queries.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#0d9488" letter-spacing="0.08em">THE SECURITY SURFACE</text>
+        <g transform="translate(30,35)">
+          <rect x="0" y="0" width="130" height="70" rx="10" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="65" y="28" text-anchor="middle" font-size="20" fill="#5b5bd6" font-weight="600">23-41%</text>
+          <text x="65" y="48" text-anchor="middle" font-size="7" fill="#6e6b64">MCP amplification</text>
+          <text x="65" y="60" text-anchor="middle" font-size="6" fill="#b0ada5">847 attack scenarios</text>
+        </g>
+        <g transform="translate(170,35)">
+          <rect x="0" y="0" width="130" height="70" rx="10" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+          <text x="65" y="28" text-anchor="middle" font-size="20" fill="#7c3aed" font-weight="600">78%+</text>
+          <text x="65" y="48" text-anchor="middle" font-size="7" fill="#6e6b64">defense bypass</text>
+          <text x="65" y="60" text-anchor="middle" font-size="6" fill="#b0ada5">all tested defenses</text>
+        </g>
+        <g transform="translate(30,120)">
+          <rect x="0" y="0" width="130" height="70" rx="10" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.8"/>
+          <text x="65" y="28" text-anchor="middle" font-size="20" fill="#0ea5e9" font-weight="600">57%</text>
+          <text x="65" y="48" text-anchor="middle" font-size="7" fill="#6e6b64">tool chains leak data</text>
+          <text x="65" y="60" text-anchor="middle" font-size="6" fill="#b0ada5">6,675 MCP tools tested</text>
+        </g>
+        <g transform="translate(170,120)">
+          <rect x="0" y="0" width="130" height="70" rx="10" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="0.8"/>
+          <text x="65" y="28" text-anchor="middle" font-size="20" fill="#0d9488" font-weight="600">26.1%</text>
+          <text x="65" y="48" text-anchor="middle" font-size="7" fill="#6e6b64">skills with vulns</text>
+          <text x="65" y="60" text-anchor="middle" font-size="6" fill="#b0ada5">42,447 skills analyzed</text>
+        </g>
+        <g transform="translate(30,210)">
+          <rect x="0" y="0" width="270" height="55" rx="8" fill="rgba(0,0,0,0.025)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          <text x="135" y="18" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Platform Security Assessment</text>
+          <text x="20" y="36" font-size="7" fill="#0d9488">Claude Code: Low</text>
+          <text x="115" y="36" font-size="7" fill="#6e6b64">(sandboxing)</text>
+          <text x="20" y="48" font-size="7" fill="#7c3aed">Cursor: Critical</text>
+          <text x="115" y="48" font-size="7" fill="#6e6b64">(extension trust)</text>
+        </g>
+        <g transform="translate(30,280)">
+          <rect width="270" height="36" rx="6" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="135" y="14" text-anchor="middle" font-size="8" fill="#0d9488">No equivalent of parameterized queries</text>
+          <text x="135" y="28" text-anchor="middle" font-size="7" fill="#6e6b64">for natural language processing exists yet</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">§7</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h1>The Portable<br>Agent Layer</h1>
+  <div class="subtitle">SKILL.md, CLAUDE.md, AGENTS.md — cross-vendor standards</div>
+  <div class="section-num-big">VI</div>
+</div>
+
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">§7 · Skills</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>Skills as Portable Capability</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Formal definition:</strong> S = (C, π, T, R) — applicability condition, executable policy, termination condition, reusable interface.<span class="cite">[23]<span class="tip">Jiang et al. "SoK: Agentic Skills." UTS/CSIRO, Feb 2026. arXiv:2602.20867</span></span></p>
+      <p class="point"><strong>Progressive disclosure:</strong> L1 metadata (~30 tokens, always loaded) → L2 instructions (200–2K, on trigger) → L3 resources (on demand).<span class="cite">[22]<span class="tip">Xu &amp; Yan. "Agent Skills Survey." Zhejiang, Feb 2026. arXiv:2602.12430</span></span></p>
+      <p class="point"><strong>1,300+ skills</strong> across 8+ tools. Contributions from Anthropic, Google DeepMind, OpenAI, Microsoft, Vercel.<span class="cite">[27]<span class="tip">Anthropic. "2026 Agentic Coding Trends Report." Jan 2026</span></span></p>
+      <p class="point"><strong>Skills + MCP</strong> are complementary: skills = "what to do," MCP = "how to connect."</p>
+      <div class="key-idea">
+        <div class="kicker">Five configuration layers</div>
+        <p>Model → Project (CLAUDE.md) → Skills (SKILL.md) → Tools (MCP) → Agent-to-Agent (A2A). Trust decreases down the stack.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="15" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">PROGRESSIVE DISCLOSURE</text>
+        <g transform="translate(20,30)">
+          <rect x="0" y="0" width="300" height="60" rx="8" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+          <text x="15" y="18" font-size="7" fill="#5b5bd6" letter-spacing="0.05em">L1: METADATA · ~30 TOKENS · ALWAYS LOADED</text>
+          <rect x="15" y="26" width="270" height="24" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <text x="22" y="40" font-size="7" fill="#6e6b64" font-family="IBM Plex Mono, monospace">name: pdf-processing</text>
+          <text x="22" y="50" font-size="7" fill="#6e6b64" font-family="IBM Plex Mono, monospace">description: Extract text and fill...</text>
+        </g>
+        <path d="M170,95 L170,105" stroke="#5b5bd6" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <text x="200" y="103" font-size="7" fill="#5b5bd6">TRIGGER</text>
+        <g transform="translate(20,110)">
+          <rect x="0" y="0" width="300" height="65" rx="8" fill="rgba(14,165,233,0.06)" stroke="#0ea5e9" stroke-width="0.8"/>
+          <text x="15" y="18" font-size="7" fill="#0ea5e9" letter-spacing="0.05em">L2: INSTRUCTIONS · 200-2K TOKENS · ON TRIGGER</text>
+          <rect x="15" y="26" width="270" height="30" rx="4" fill="rgba(0,0,0,0.025)"/>
+          <text x="22" y="40" font-size="7" fill="#6e6b64" font-family="IBM Plex Mono, monospace"># PDF Processing Skill</text>
+          <text x="22" y="50" font-size="7" fill="#6e6b64" font-family="IBM Plex Mono, monospace">def main(file_path): ...</text>
+        </g>
+        <path d="M170,180 L170,190" stroke="#0ea5e9" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <text x="200" y="188" font-size="7" fill="#0ea5e9">ON DEMAND</text>
+        <g transform="translate(20,195)">
+          <rect x="0" y="0" width="300" height="55" rx="8" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.8"/>
+          <text x="15" y="18" font-size="7" fill="#7c3aed" letter-spacing="0.05em">L3: RESOURCES · UNBOUNDED · ON DEMAND</text>
+          <rect x="15" y="28" width="80" height="18" rx="3" fill="rgba(0,0,0,0.025)"/>
+          <text x="55" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">scripts/*.py</text>
+          <rect x="105" y="28" width="80" height="18" rx="3" fill="rgba(0,0,0,0.025)"/>
+          <text x="145" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">docs/*.md</text>
+          <rect x="195" y="28" width="80" height="18" rx="3" fill="rgba(0,0,0,0.025)"/>
+          <text x="235" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">assets/*</text>
+        </g>
+        <g transform="translate(20,270)">
+          <rect width="300" height="50" rx="8" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+          <text x="150" y="16" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">1,300+ skills · 8+ tools · cross-vendor</text>
+          <text x="150" y="32" text-anchor="middle" font-size="7" fill="#6e6b64">Anthropic · DeepMind · OpenAI · Microsoft · Vercel</text>
+          <text x="150" y="44" text-anchor="middle" font-size="7" fill="#b0ada5">The first genuine cross-vendor standard in agentic AI</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">§8</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h1>Synthesis:<br>Five Findings</h1>
+  <div class="subtitle">What 28 papers across four axes tell us</div>
+  <div class="section-num-big">VII</div>
+</div>
+
+<div class="slide" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">§8 · Findings</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h2>The Five Findings</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>1. Scaffold→weights migration is real.</strong> RL internalizes planning, tool use, memory, reflection into model weights. ACT: agentic RL → general reasoning transfer.</p>
+      <p class="point"><strong>2. Self-improvement outperforms hand-crafting.</strong> Live-SWE 77.4%, SSR +10.4, RepoNavigator 7B&gt;14B. Threshold: minimum model capability required.</p>
+      <p class="point"><strong>3. Benchmarks overestimate, production underdelivers.</strong> SWE-EVO 65%→21%. UTBoost: 40.9% erroneous patches. The 60/20 paradox.</p>
+      <p class="point"><strong>4. Interaction became infrastructure.</strong> MCP 97M+ downloads. AAIF governance. Flow engineering &gt; full autonomy.</p>
+      <p class="point"><strong>5. Security is architectural, not patchable.</strong> MCP amplifies 23–41%. All defenses bypassed 78%+. 57% tool chains leak. 26.1% skills contain vulns.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(20,15)">
+          <rect x="0" y="0" width="300" height="48" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+          <text x="15" y="18" font-size="9" fill="#5b5bd6" font-weight="600">1</text>
+          <text x="35" y="18" font-size="8" fill="#1a1a1a">Scaffolds → Weights</text>
+          <text x="35" y="35" font-size="7" fill="#6e6b64">RL internalizes capabilities · POMDP · scaling laws</text>
+        </g>
+        <g transform="translate(20,73)">
+          <rect x="0" y="0" width="300" height="48" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+          <text x="15" y="18" font-size="9" fill="#0ea5e9" font-weight="600">2</text>
+          <text x="35" y="18" font-size="8" fill="#1a1a1a">Self-Improvement &gt; Engineering</text>
+          <text x="35" y="35" font-size="7" fill="#6e6b64">77.4% · +10.4 · 7B&gt;14B · min capability threshold</text>
+        </g>
+        <g transform="translate(20,131)">
+          <rect x="0" y="0" width="300" height="48" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.5"/>
+          <text x="15" y="18" font-size="9" fill="#7c3aed" font-weight="600">3</text>
+          <text x="35" y="18" font-size="8" fill="#1a1a1a">Benchmarks ≠ Production</text>
+          <text x="35" y="35" font-size="7" fill="#6e6b64">65%→21% gap · 60/20 paradox · 40.9% erroneous</text>
+        </g>
+        <g transform="translate(20,189)">
+          <rect x="0" y="0" width="300" height="48" rx="6" fill="rgba(167,139,250,0.08)" stroke="#a78bfa" stroke-width="0.5"/>
+          <text x="15" y="18" font-size="9" fill="#a78bfa" font-weight="600">4</text>
+          <text x="35" y="18" font-size="8" fill="#1a1a1a">Interaction = Infrastructure</text>
+          <text x="35" y="35" font-size="7" fill="#6e6b64">MCP 97M · AAIF · flow engineering · 100% vs 1.7%</text>
+        </g>
+        <g transform="translate(20,247)">
+          <rect x="0" y="0" width="300" height="48" rx="6" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="0.8"/>
+          <text x="15" y="18" font-size="9" fill="#0d9488" font-weight="600">5</text>
+          <text x="35" y="18" font-size="8" fill="#1a1a1a" font-weight="600">Security Is Architectural</text>
+          <text x="35" y="35" font-size="7" fill="#6e6b64">23-41% amp · 78%+ bypass · 57% leak · 26.1% vuln</text>
+        </g>
+        <g transform="translate(20,308)">
+          <rect width="300" height="22" rx="5" fill="rgba(0,0,0,0.025)"/>
+          <text x="150" y="15" text-anchor="middle" font-size="7" fill="#6e6b64">The field shifted from "can agents act?" to "can we make them act safely?"</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">§8 · Agenda</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>Research Agenda</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>Close the long-horizon gap:</strong> SWE-EVO's 65%→21% is the clearest open problem. Multi-file, multi-session reasoning across hours of work.</p>
+      <p class="point"><strong>Agentic scaling laws:</strong> Existing laws are for pure reasoning. How does tool-augmented RL shift the compute-optimal frontier?</p>
+      <p class="point"><strong>Protocol-level security:</strong> Incorporate AttestMCP/SMCP into the MCP spec itself. Solve the cross-protocol identity gap.</p>
+      <p class="point"><strong>Data Over-Exposure mitigation:</strong> Protocol-layer data minimization. Tools should return only the data requested, not full schemas.</p>
+      <p class="point"><strong>Skill governance at scale:</strong> Same rigor as npm/pip. Signed manifests, behavioral verification, trust-tiered deployment.</p>
+      <p class="point"><strong>Bridge benchmarks to production:</strong> Measure sustained, collaborative, multi-session coding — not isolated issue resolution.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide title-slide" data-n="19">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="30" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="34" width="25" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="63" width="25" height="6" rx="3" fill="#7c3aed"/>
+    <rect x="92" width="28" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Agentic LLMs <em>in the Wild</em></h1>
+  <div class="ref">28 papers · ~460pp · 5 deep-dives · 4 axes · 1 thesis</div>
+  <div class="ref">nafsadh.github.io/read-rd/ai/agentic-lm-survey/</div>
+  <div class="meta">The field is no longer asking "can agents act?" — it's asking "can we make them act safely?"</div>
+</div>
+
+</div>
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 20</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">◐</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>

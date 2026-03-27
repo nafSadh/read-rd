@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understanding the KV Cache</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+.fig .box-label { dominant-baseline: central; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ===================== SLIDE 0: TITLE ===================== -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b5bd6"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Understanding the <em>KV Cache</em></h1>
+  <div class="ref">Optimization at the heart of modern LLM inference</div>
+  <div class="ref">How to cache computed attention keys and values for speed</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<!-- ===================== SLIDE 1: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">§1</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h1>Autoregressive Generation</h1>
+  <div class="subtitle">How LLMs generate text token-by-token through attention</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<!-- ===================== SLIDE 2: TOKEN-BY-TOKEN ===================== -->
+<div class="slide" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · Generation</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h2>Autoregressive Decoding</h2>
+  <div class="subtitle">Generating one token at a time</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">LLMs don't generate entire sequences at once. They produce text <strong>one token at a time</strong>, where each token depends on all previous tokens.</p>
+      <p class="point">Start with <code>[BOS]</code> → model outputs token "The" → feed back "The" → model outputs "cat" → feed back "The cat" → continue…</p>
+      <p class="point">This is called <strong>autoregressive generation</strong> (auto = self, regressive = depends on past).</p>
+      <div class="eq-box">
+        <span class="label">Autoregressive Formula</span>
+        P(token_t | token_0...token_t-1) = softmax(logits_t)
+      </div>
+      <div class="key-idea">
+        <div class="kicker">Why autoregressive?</div>
+        <p>At inference time, we can't know future tokens. So we predict one at a time, feeding each back into the model.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">AUTOREGRESSIVE GENERATION</text>
+
+        <!-- Step 1 -->
+        <g transform="translate(10, 40)">
+          <rect x="0" y="0" width="100" height="50" rx="4" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="50" y="12" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Step 1</text>
+          <text x="50" y="30" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">[BOS]</text>
+          <text x="50" y="45" text-anchor="middle" font-size="7" fill="#6e6b64">Input</text>
+        </g>
+
+        <!-- Arrow 1 -->
+        <path d="M 115 65 L 135 65" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrowHead)"/>
+
+        <!-- Step 2 -->
+        <g transform="translate(140, 40)">
+          <rect x="0" y="0" width="100" height="50" rx="4" fill="rgba(14,143,208,0.08)" stroke="#0e8fd0" stroke-width="1"/>
+          <text x="50" y="12" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Step 2</text>
+          <text x="50" y="30" text-anchor="middle" font-size="9" fill="#0e8fd0" font-weight="600">The</text>
+          <text x="50" y="45" text-anchor="middle" font-size="7" fill="#6e6b64">Output 1</text>
+        </g>
+
+        <!-- Arrow 2 -->
+        <path d="M 245 65 L 265 65" stroke="#0e8fd0" stroke-width="2" fill="none" marker-end="url(#arrowHead2)"/>
+
+        <!-- Step 3 -->
+        <g transform="translate(270, 40)">
+          <rect x="0" y="0" width="100" height="50" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="50" y="12" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Step 3</text>
+          <text x="50" y="30" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">cat</text>
+          <text x="50" y="45" text-anchor="middle" font-size="7" fill="#6e6b64">Output 2</text>
+        </g>
+
+        <!-- Feedback loop -->
+        <text x="190" y="110" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Feed back each output as next input</text>
+
+        <!-- Details below -->
+        <text x="10" y="150" font-size="8" fill="#1a1a1a" font-weight="600">Pass 1: input=[BOS], output="The"</text>
+        <text x="10" y="168" font-size="7" fill="#6e6b64">Model sees 1 token, computes attention over 1 token</text>
+
+        <text x="10" y="190" font-size="8" fill="#1a1a1a" font-weight="600">Pass 2: input=[BOS, The], output="cat"</text>
+        <text x="10" y="208" font-size="7" fill="#6e6b64">Model sees 2 tokens, computes attention over 2 tokens</text>
+
+        <text x="10" y="230" font-size="8" fill="#1a1a1a" font-weight="600">Pass 3: input=[BOS, The, cat], output="sat"</text>
+        <text x="10" y="248" font-size="7" fill="#6e6b64">Model sees 3 tokens, computes attention over 3 tokens</text>
+
+        <!-- Callout -->
+        <rect x="10" y="260" width="350" height="30" rx="4" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.15)" stroke-width="1"/>
+        <text x="190" y="280" text-anchor="middle" font-size="8" fill="#14966e" font-weight="500">Problem: each pass recomputes ALL attention over growing context</text>
+
+        <defs>
+          <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#5b5bd6" />
+          </marker>
+          <marker id="arrowHead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#0e8fd0" />
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 3: ATTENTION RECAP ===================== -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · Attention</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>Attention Mechanism Recap</h2>
+  <div class="subtitle">Query, Key, Value matrices</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">At each position, a token's output is a <strong>weighted sum</strong> of all token values.</p>
+      <p class="point"><strong>Query (Q):</strong> "what am I looking for?" — derived from current token</p>
+      <p class="point"><strong>Key (K):</strong> "here's what I am" — one per token in context</p>
+      <p class="point"><strong>Value (V):</strong> "here's my information" — one per token in context</p>
+      <div class="eq-box">
+        <span class="label">Attention Output</span>
+        Output = softmax(Q @ K^T / sqrt(d)) @ V
+      </div>
+      <div class="key-idea">
+        <div class="kicker">Core insight</div>
+        <p>Attention weights (softmax scores) choose which values to combine. High score = that token's info contributes more.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 280" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">ATTENTION COMPUTATION</text>
+
+        <!-- Input tokens -->
+        <text x="15" y="45" font-size="7" fill="#6e6b64" font-weight="600">Tokens:</text>
+        <rect x="15" y="50" width="35" height="22" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="32" y="65" text-anchor="middle" font-size="8" fill="#5b5bd6">The</text>
+
+        <rect x="55" y="50" width="35" height="22" rx="3" fill="rgba(14,143,208,0.12)" stroke="#0e8fd0" stroke-width="0.5"/>
+        <text x="72" y="65" text-anchor="middle" font-size="8" fill="#0e8fd0">cat</text>
+
+        <rect x="95" y="50" width="35" height="22" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="112" y="65" text-anchor="middle" font-size="8" fill="#7c3aed">sat</text>
+
+        <rect x="135" y="50" width="35" height="22" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="152" y="65" text-anchor="middle" font-size="8" fill="#5b5bd6">on</text>
+
+        <!-- Q, K, V projections -->
+        <text x="15" y="95" font-size="8" fill="#1a1a1a" font-weight="600">Q matrix (queries):</text>
+        <text x="20" y="112" font-size="7" fill="#6e6b64">[0.1, -0.2, 0.8]</text>
+        <text x="20" y="124" font-size="7" fill="#6e6b64">[0.3, 0.5, -0.1]</text>
+
+        <text x="175" y="95" font-size="8" fill="#1a1a1a" font-weight="600">K matrix (keys):</text>
+        <text x="180" y="112" font-size="7" fill="#6e6b64">[0.2, -0.1, 0.4]</text>
+        <text x="180" y="124" font-size="7" fill="#6e6b64">[0.5, 0.3, 0.2]</text>
+        <text x="180" y="136" font-size="7" fill="#6e6b64">[0.1, 0.6, -0.3]</text>
+
+        <!-- Attention weights -->
+        <text x="15" y="160" font-size="8" fill="#1a1a1a" font-weight="600">Attention weights (Q @ K^T):</text>
+        <rect x="20" y="175" width="140" height="12" rx="2" fill="rgba(91,91,214,0.6)"/>
+        <text x="90" y="184" text-anchor="middle" font-size="7" fill="#1a1a1a" font-weight="600">0.45</text>
+
+        <rect x="20" y="195" width="100" height="12" rx="2" fill="rgba(91,91,214,0.3)"/>
+        <text x="70" y="204" text-anchor="middle" font-size="7" fill="#1a1a1a" font-weight="600">0.25</text>
+
+        <rect x="20" y="215" width="60" height="12" rx="2" fill="rgba(91,91,214,0.15)"/>
+        <text x="50" y="224" text-anchor="middle" font-size="7" fill="#1a1a1a" font-weight="600">0.30</text>
+
+        <!-- Value vectors -->
+        <text x="175" y="160" font-size="8" fill="#1a1a1a" font-weight="600">V matrix (values):</text>
+        <text x="180" y="177" font-size="7" fill="#6e6b64">[V1, V2, V3, V4]</text>
+        <text x="180" y="193" font-size="7" fill="#6e6b64">Each row = token info</text>
+
+        <!-- Output -->
+        <text x="15" y="255" font-size="8" fill="#1a1a1a" font-weight="600">Output = 0.45*V1 + 0.25*V2 + 0.30*V3 + ...</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 4: O(N^2) PROBLEM ===================== -->
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · Complexity</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>The Quadratic Bottleneck</h2>
+  <div class="subtitle">Why attention is O(n²) in sequence length</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Attention computes scores for <strong>every pair of tokens</strong> in context: <code>Q @ K^T</code> is <code>[n, d] @ [d, n] → [n, n]</code>.</p>
+      <p class="point">For a sequence of length <strong>n</strong>, that's <strong>n² comparisons</strong> — quadratic in context length.</p>
+      <p class="point">With 80 layers × 64 heads in LLaMA 2 70B, at 2048 tokens: <strong>2048² × 80 × 64 = 21 billion operations per token</strong>.</p>
+      <div class="eq-box">
+        <span class="label">Attention Cost</span>
+        Time: O(n²·d)  Memory: O(n²) for attention matrix
+      </div>
+      <div class="key-idea">
+        <div class="kicker">The problem</div>
+        <p>Each new token requires recomputing Q@K^T and attention over the ENTIRE growing context. Huge redundant work.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">QUADRATIC SCALING</text>
+
+        <!-- Timeline -->
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Context growing, computation explodes:</text>
+
+        <!-- Step 1: 1 token -->
+        <g transform="translate(20, 65)">
+          <rect x="0" y="0" width="50" height="35" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="25" y="12" text-anchor="middle" font-size="7" fill="#6e6b64">1 token</text>
+          <text x="25" y="28" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">1×1=1</text>
+          <text x="25" y="38" text-anchor="middle" font-size="6" fill="#6e6b64">pairs</text>
+        </g>
+
+        <!-- Step 2: 4 tokens -->
+        <g transform="translate(90, 65)">
+          <rect x="0" y="0" width="50" height="35" rx="3" fill="rgba(91,91,214,0.16)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="25" y="12" text-anchor="middle" font-size="7" fill="#6e6b64">4 tokens</text>
+          <text x="25" y="28" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">4×4=16</text>
+          <text x="25" y="38" text-anchor="middle" font-size="6" fill="#6e6b64">pairs</text>
+        </g>
+
+        <!-- Step 3: 8 tokens -->
+        <g transform="translate(160, 65)">
+          <rect x="0" y="0" width="50" height="35" rx="3" fill="rgba(91,91,214,0.24)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="25" y="12" text-anchor="middle" font-size="7" fill="#6e6b64">8 tokens</text>
+          <text x="25" y="28" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">8×8=64</text>
+          <text x="25" y="38" text-anchor="middle" font-size="6" fill="#6e6b64">pairs</text>
+        </g>
+
+        <!-- Step 4: 16 tokens -->
+        <g transform="translate(230, 65)">
+          <rect x="0" y="0" width="50" height="35" rx="3" fill="rgba(91,91,214,0.4)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="25" y="12" text-anchor="middle" font-size="7" fill="#6e6b64">16 tokens</text>
+          <text x="25" y="28" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">16×16=256</text>
+          <text x="25" y="38" text-anchor="middle" font-size="6" fill="#6e6b64">pairs</text>
+        </g>
+
+        <!-- Chart title -->
+        <text x="20" y="140" font-size="8" fill="#1a1a1a" font-weight="600">Cost growth at decode time:</text>
+
+        <!-- Axes -->
+        <line x1="30" y1="260" x2="30" y2="150" stroke="#6e6b64" stroke-width="1"/>
+        <line x1="30" y1="260" x2="360" y2="260" stroke="#6e6b64" stroke-width="1"/>
+        <text x="15" y="205" font-size="7" fill="#6e6b64">Cost</text>
+        <text x="335" y="275" font-size="7" fill="#6e6b64">Seq Len</text>
+
+        <!-- Curve -->
+        <path d="M 35 255 Q 100 220 150 160 Q 200 80 350 40" stroke="#5b5bd6" stroke-width="3" fill="none" marker-end="url(#arrowCurve)"/>
+        <text x="280" y="50" font-size="8" fill="#5b5bd6" font-weight="600">O(n²)</text>
+
+        <!-- Annotations -->
+        <text x="30" y="190" font-size="7" fill="#1a1a1a" font-weight="600">2K tokens context:</text>
+        <text x="30" y="202" font-size="8" fill="#7c3aed">4.2M attention pairs</text>
+        <text x="30" y="217" font-size="7" fill="#1a1a1a" font-weight="600">8K tokens context:</text>
+        <text x="30" y="229" font-size="8" fill="#7c3aed">64M attention pairs</text>
+
+        <defs>
+          <marker id="arrowCurve" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#5b5bd6" />
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 5: REDUNDANT COMPUTATION ===================== -->
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · Waste</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>The Redundancy Problem</h2>
+  <div class="subtitle">Each token regenerates all previous K,V pairs</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">When generating token 10, you compute attention over tokens 1-10, including K and V for tokens 1-9.</p>
+      <p class="point">When generating token 11, you compute attention over tokens 1-11, and must <strong>recompute K and V for tokens 1-9 exactly the same way</strong>.</p>
+      <p class="point">Massive waste: 90% of computation in step 11 repeats from step 10.</p>
+      <p class="point">As context grows, redundancy balloons: at step n, (n-1)/n of the work is replicated.</p>
+      <div class="key-idea">
+        <div class="kicker">The insight</div>
+        <p>K and V are <strong>deterministic</strong> once computed. Why recompute them? Cache them!</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 290" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">WASTED RECOMPUTATION</text>
+
+        <!-- Pass 1 -->
+        <text x="20" y="45" font-size="8" fill="#1a1a1a" font-weight="600">Pass 1 (generate "The"):</text>
+        <g transform="translate(20, 55)">
+          <rect x="0" y="0" width="320" height="20" rx="3" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="160" y="14" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Compute K,V for [BOS]</text>
+        </g>
+        <text x="350" y="70" font-size="7" fill="#6e6b64">100%</text>
+
+        <!-- Pass 2 -->
+        <text x="20" y="100" font-size="8" fill="#1a1a1a" font-weight="600">Pass 2 (generate "cat"):</text>
+        <g transform="translate(20, 110)">
+          <rect x="0" y="0" width="160" height="20" rx="3" fill="rgba(91,91,214,0.1)" stroke="rgba(91,91,214,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="80" y="14" text-anchor="middle" font-size="7" fill="#5b5bd6">K,V [BOS]</text>
+          <text x="80" y="24" text-anchor="middle" font-size="6" fill="#6e6b64">REPEAT</text>
+        </g>
+        <g transform="translate(190, 110)">
+          <rect x="0" y="0" width="150" height="20" rx="3" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="75" y="14" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">+ K,V for "The"</text>
+        </g>
+        <text x="350" y="125" font-size="7" fill="#6e6b64">50% waste</text>
+
+        <!-- Pass 3 -->
+        <text x="20" y="155" font-size="8" fill="#1a1a1a" font-weight="600">Pass 3 (generate "sat"):</text>
+        <g transform="translate(20, 165)">
+          <rect x="0" y="0" width="105" height="20" rx="3" fill="rgba(91,91,214,0.1)" stroke="rgba(91,91,214,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="52" y="14" text-anchor="middle" font-size="7" fill="#5b5bd6">K,V [BOS]</text>
+          <text x="52" y="24" text-anchor="middle" font-size="6" fill="#6e6b64">REPEAT</text>
+        </g>
+        <g transform="translate(135, 165)">
+          <rect x="0" y="0" width="105" height="20" rx="3" fill="rgba(91,91,214,0.1)" stroke="rgba(91,91,214,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="52" y="14" text-anchor="middle" font-size="7" fill="#5b5bd6">K,V "The"</text>
+          <text x="52" y="24" text-anchor="middle" font-size="6" fill="#6e6b64">REPEAT</text>
+        </g>
+        <g transform="translate(250, 165)">
+          <rect x="0" y="0" width="90" height="20" rx="3" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="45" y="14" text-anchor="middle" font-size="8" fill="#5b5bd6">+ K,V "cat"</text>
+        </g>
+        <text x="350" y="180" font-size="7" fill="#6e6b64">67% waste</text>
+
+        <!-- Pass N -->
+        <text x="20" y="215" font-size="8" fill="#1a1a1a" font-weight="600">Pass N (generate token N):</text>
+        <text x="25" y="235" font-size="7" fill="#6e6b64">Recompute K,V for all previous N-1 tokens...</text>
+        <text x="25" y="250" font-size="7" fill="#6e6b64">+ only compute K,V for 1 new token</text>
+        <text x="350" y="235" font-size="8" fill="#7c3aed" font-weight="600">(N-1)/N</text>
+        <text x="350" y="250" font-size="7" fill="#7c3aed">waste</text>
+
+        <!-- Callout -->
+        <rect x="20" y="260" width="340" height="25" rx="4" fill="rgba(124,58,237,0.06)" stroke="rgba(124,58,237,0.15)" stroke-width="1"/>
+        <text x="190" y="278" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">Solution: save computed K,V so they never need recalculation</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 6: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">§2</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h1>The KV Cache Idea</h1>
+  <div class="subtitle">Saving computed keys and values across generation steps</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<!-- ===================== SLIDE 7: KV CACHE CONCEPT ===================== -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · Core Idea</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>Cache K,V Across Steps</h2>
+  <div class="subtitle">The fundamental optimization</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Instead of recomputing K,V for previous tokens, <strong>store them in memory after first computation</strong>.</p>
+      <p class="point">At step t, retrieve cached K,V for tokens 1...t-1, compute fresh K,V for token t, concatenate, and reuse for step t+1.</p>
+      <p class="point">Transforms attention from <strong>O(n²) computation per token</strong> to <strong>O(n) computation per token</strong> (only new token needs K,V computation).</p>
+      <div class="eq-box">
+        <span class="label">Without cache</span>
+        Step n: recompute K,V for all n tokens
+      </div>
+      <div class="eq-box">
+        <span class="label">With cache</span>
+        Step n: load K,V for 1...n-1 from cache + compute for token n
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">CACHE WORKFLOW</text>
+
+        <!-- Without cache -->
+        <text x="20" y="45" font-size="8" fill="#1a1a1a" font-weight="600">Without Cache (Naive):</text>
+        <g transform="translate(20, 55)">
+          <rect x="0" y="0" width="350" height="40" rx="3" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="175" y="20" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Step 1: compute K,V([BOS])</text>
+          <text x="175" y="35" text-anchor="middle" font-size="7" fill="#6e6b64">then throw away, recompute in step 2</text>
+        </g>
+
+        <g transform="translate(20, 100)">
+          <rect x="0" y="0" width="350" height="40" rx="3" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="175" y="20" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Step 2: recompute K,V([BOS]), compute K,V("The")</text>
+          <text x="175" y="35" text-anchor="middle" font-size="7" fill="#6e6b64">throw away both, recompute in step 3</text>
+        </g>
+
+        <g transform="translate(20, 145)">
+          <rect x="0" y="0" width="350" height="40" rx="3" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="175" y="20" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Step 3: recompute K,V([BOS]), K,V("The"), compute K,V("cat")</text>
+          <text x="175" y="35" text-anchor="middle" font-size="7" fill="#6e6b64">Exponential waste!</text>
+        </g>
+
+        <!-- With cache -->
+        <text x="20" y="205" font-size="8" fill="#1a1a1a" font-weight="600">With KV Cache:</text>
+        <g transform="translate(20, 215)">
+          <rect x="0" y="0" width="350" height="40" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="175" y="20" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Step 1: compute K,V([BOS]), save to cache</text>
+          <text x="175" y="35" text-anchor="middle" font-size="7" fill="#6e6b64">Cache: {[BOS]: (K, V)}</text>
+        </g>
+
+        <g transform="translate(20, 260)">
+          <rect x="0" y="0" width="350" height="40" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="175" y="20" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Step 2: load K,V([BOS]) from cache, compute K,V("The"), save</text>
+          <text x="175" y="35" text-anchor="middle" font-size="7" fill="#6e6b64">Cache: {[BOS]: (...), "The": (K, V)}</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 8: BEFORE AND AFTER ===================== -->
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · Comparison</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>Computation Comparison</h2>
+  <div class="subtitle">With concrete token example and matrix sizes</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point" style="margin-bottom: 1.5rem;"><strong>Example: generating "The cat sat on"</strong> with hidden_dim=128, 32 heads, head_dim=4</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 700 280" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="350" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">COMPUTATION: NO CACHE vs WITH CACHE</text>
+
+        <!-- Headers -->
+        <text x="140" y="45" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Without KV Cache</text>
+        <text x="480" y="45" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">With KV Cache</text>
+
+        <!-- Separator line -->
+        <line x1="350" y1="50" x2="350" y2="280" stroke="#b0ada5" stroke-width="1"/>
+
+        <!-- No cache: Step 1 -->
+        <text x="25" y="70" font-size="7" fill="#6e6b64" font-weight="600">Generate "The":</text>
+        <g transform="translate(20, 75)">
+          <rect x="0" y="0" width="310" height="35" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS]  (1 token)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Compute K: [1, 128]  V: [1, 128]</text>
+          <text x="5" y="33" font-size="7" fill="#5b5bd6" font-weight="600">Attention ops: 1×1 = 1 comparison</text>
+        </g>
+
+        <!-- No cache: Step 2 -->
+        <text x="25" y="130" font-size="7" fill="#6e6b64" font-weight="600">Generate "cat":</text>
+        <g transform="translate(20, 135)">
+          <rect x="0" y="0" width="310" height="45" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS, "The"]  (2 tokens)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Recompute K: [2, 128]  V: [2, 128]</text>
+          <text x="5" y="33" font-size="7" fill="#5b5bd6" font-weight="600">Attention ops: 2×2 = 4 comparisons</text>
+          <text x="5" y="43" font-size="7" fill="#7c3aed" font-weight="600">Waste: 1 token's K,V repeated!</text>
+        </g>
+
+        <!-- No cache: Step 3 -->
+        <text x="25" y="200" font-size="7" fill="#6e6b64" font-weight="600">Generate "sat":</text>
+        <g transform="translate(20, 205)">
+          <rect x="0" y="0" width="310" height="45" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS, "The", "cat"]  (3 tokens)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Recompute K: [3, 128]  V: [3, 128]</text>
+          <text x="5" y="33" font-size="7" fill="#5b5bd6" font-weight="600">Attention ops: 3×3 = 9 comparisons</text>
+          <text x="5" y="43" font-size="7" fill="#7c3aed" font-weight="600">Waste: 2 tokens' K,V repeated!</text>
+        </g>
+
+        <!-- With cache: Step 1 -->
+        <text x="365" y="70" font-size="7" fill="#6e6b64" font-weight="600">Generate "The":</text>
+        <g transform="translate(360, 75)">
+          <rect x="0" y="0" width="310" height="35" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS]  (1 token)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Compute K: [1, 128]  V: [1, 128]  → save</text>
+          <text x="5" y="33" font-size="7" fill="#7c3aed" font-weight="600">Attention ops: 1</text>
+        </g>
+
+        <!-- With cache: Step 2 -->
+        <text x="365" y="130" font-size="7" fill="#6e6b64" font-weight="600">Generate "cat":</text>
+        <g transform="translate(360, 135)">
+          <rect x="0" y="0" width="310" height="45" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS, "The"]  (2 tokens)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Load K,V([BOS]) from cache</text>
+          <text x="5" y="33" font-size="7" fill="#7c3aed">Compute only new: K: [1, 128]  V: [1, 128]</text>
+          <text x="5" y="43" font-size="7" fill="#0d9488" font-weight="600">Attention ops: 2  (vs 4 without cache)</text>
+        </g>
+
+        <!-- With cache: Step 3 -->
+        <text x="365" y="200" font-size="7" fill="#6e6b64" font-weight="600">Generate "sat":</text>
+        <g transform="translate(360, 205)">
+          <rect x="0" y="0" width="310" height="45" rx="3" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="5" y="12" font-size="7" fill="#1a1a1a">Input: [BOS, "The", "cat"]  (3 tokens)</text>
+          <text x="5" y="23" font-size="7" fill="#6e6b64">Load K,V([BOS], "The") from cache</text>
+          <text x="5" y="33" font-size="7" fill="#7c3aed">Compute only new: K: [1, 128]  V: [1, 128]</text>
+          <text x="5" y="43" font-size="7" fill="#0d9488" font-weight="600">Attention ops: 3  (vs 9 without cache)</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 9: PREFILL VS DECODE ===================== -->
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · Phases</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Prefill vs Decode Phases</h2>
+  <div class="subtitle">Two distinct stages in inference</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Prefill phase:</strong> Process prompt tokens all at once (e.g., 500 tokens). Build initial KV cache. Batch dimension is high, great GPU utilization.</p>
+      <p class="point"><strong>Decode phase:</strong> Generate output one token at a time (or small batch), append to KV cache each step. Batch is small, bound by memory bandwidth.</p>
+      <p class="point">KV cache is built in prefill, then grown incrementally during decode.</p>
+      <div class="eq-box">
+        <span class="label">Two-Phase Pipeline</span>
+        Prefill: grow cache from 0 → prompt_length
+        Decode: grow cache from prompt_length → max_length
+      </div>
+      <div class="key-idea">
+        <div class="kicker">Why split?</div>
+        <p>Prefill is compute-bound (large batch). Decode is memory-bound (batch=1). Cache amortizes prefill cost over many decode steps.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">PREFILL VS DECODE</text>
+
+        <!-- Prefill -->
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Prefill Phase: Process Prompt</text>
+        <g transform="translate(20, 60)">
+          <rect x="0" y="0" width="340" height="60" rx="4" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="10" y="15" font-size="7" fill="#6e6b64">Input prompt:</text>
+          <text x="10" y="28" font-size="8" fill="#5b5bd6" font-weight="600">"Translate to French: The cat sat on the mat"</text>
+          <text x="10" y="42" font-size="7" fill="#6e6b64">500 tokens processed in ONE forward pass</text>
+          <text x="10" y="55" font-size="8" fill="#0d9488" font-weight="600">Output: KV cache of shape [500, ...] ready</text>
+        </g>
+
+        <!-- Decode -->
+        <text x="20" y="145" font-size="8" fill="#1a1a1a" font-weight="600">Decode Phase: Autoregressive Generation</text>
+
+        <g transform="translate(20, 160)">
+          <rect x="0" y="0" width="160" height="50" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="80" y="15" text-anchor="middle" font-size="7" fill="#6e6b64">Step 1</text>
+          <text x="80" y="30" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Generate "Le"</text>
+          <text x="80" y="42" text-anchor="middle" font-size="6" fill="#6e6b64">cache: [501]</text>
+        </g>
+
+        <path d="M 190 185 L 210 185" stroke="#6e6b64" stroke-width="2" fill="none" marker-end="url(#arrowDec)"/>
+
+        <g transform="translate(220, 160)">
+          <rect x="0" y="0" width="140" height="50" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="70" y="15" text-anchor="middle" font-size="7" fill="#6e6b64">Step 2</text>
+          <text x="70" y="30" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Generate "chat"</text>
+          <text x="70" y="42" text-anchor="middle" font-size="6" fill="#6e6b64">cache: [502]</text>
+        </g>
+
+        <!-- Iteration -->
+        <text x="20" y="235" font-size="7" fill="#6e6b64">Continue step-by-step until [EOS] or max_length</text>
+        <text x="20" y="250" font-size="7" fill="#6e6b64">Each step: load cache, compute 1 new token, append to cache</text>
+
+        <!-- Summary box -->
+        <rect x="20" y="265" width="340" height="25" rx="4" fill="rgba(14,143,208,0.08)" stroke="rgba(14,143,208,0.2)" stroke-width="1"/>
+        <text x="190" y="283" text-anchor="middle" font-size="8" fill="#0e8fd0" font-weight="500">Prefill: fast (parallel). Decode: slow (sequential) but cache saves recomputation.</text>
+
+        <defs>
+          <marker id="arrowDec" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#6e6b64" />
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 10: MEMORY LAYOUT ===================== -->
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · Memory</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2>Memory Layout</h2>
+  <div class="subtitle">Shape and storage of cached tensors</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">KV cache is stored as: <code>[batch, num_heads, seq_len, head_dim]</code></p>
+      <p class="point">For LLaMA 2 70B: 80 layers, 64 attention heads, 128 dim per head, batch=1, max_seq=2048</p>
+      <p class="point">Per layer cache size: <code>2 × 1 × 64 × 2048 × 128 bytes = 33.5 MB per layer (FP32)</code></p>
+      <p class="point">Total for all 80 layers: <code>33.5 × 80 = 2.7 GB</code> just for KV cache at full context!</p>
+      <div class="eq-box">
+        <span class="label">KV Cache Memory</span>
+        Size = 2 × layers × batch × heads × seq_len × head_dim × precision_bytes
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">CACHE TENSOR SHAPE</text>
+
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Tensor shape example:</text>
+
+        <!-- Shape breakdown -->
+        <g transform="translate(20, 70)">
+          <text x="0" y="0" font-size="7" fill="#6e6b64">[batch, heads, seq_len, head_dim]</text>
+          <text x="0" y="15" font-size="8" fill="#5b5bd6" font-weight="600">[1, 64, 2048, 128]</text>
+        </g>
+
+        <text x="20" y="105" font-size="7" fill="#1a1a1a">Dimension breakdown:</text>
+
+        <!-- batch -->
+        <rect x="20" y="115" width="80" height="25" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="60" y="128" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">batch=1</text>
+        <text x="60" y="138" text-anchor="middle" font-size="6" fill="#6e6b64">samples</text>
+
+        <!-- heads -->
+        <rect x="110" y="115" width="80" height="25" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="150" y="128" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">heads=64</text>
+        <text x="150" y="138" text-anchor="middle" font-size="6" fill="#6e6b64">attn heads</text>
+
+        <!-- seq_len -->
+        <rect x="200" y="115" width="95" height="25" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="247" y="128" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">seq_len=2048</text>
+        <text x="247" y="138" text-anchor="middle" font-size="6" fill="#6e6b64">tokens</text>
+
+        <!-- head_dim -->
+        <rect x="305" y="115" width="65" height="25" rx="3" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="337" y="128" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">dim=128</text>
+        <text x="337" y="138" text-anchor="middle" font-size="6" fill="#6e6b64">vector</text>
+
+        <!-- Memory calculation -->
+        <text x="20" y="175" font-size="8" fill="#1a1a1a" font-weight="600">Memory per layer (FP32):</text>
+
+        <g transform="translate(20, 190)">
+          <text x="0" y="0" font-size="7" fill="#6e6b64">2 (K and V) × 1 × 64 × 2048 × 128 × 4 bytes</text>
+          <text x="0" y="12" font-size="8" fill="#5b5bd6" font-weight="600">= 2 × 16,777,216 bytes = 33.5 MB per layer</text>
+        </g>
+
+        <!-- Total -->
+        <text x="20" y="225" font-size="8" fill="#1a1a1a" font-weight="600">Total for 80 layers:</text>
+        <g transform="translate(20, 240)">
+          <text x="0" y="0" font-size="7" fill="#6e6b64">33.5 MB × 80 = 2.68 GB at full 2K context</text>
+          <text x="0" y="12" font-size="8" fill="#7c3aed" font-weight="600">Plus model weights: 140 GB for 70B params</text>
+        </g>
+
+        <!-- Grows linearly note -->
+        <rect x="20" y="265" width="340" height="25" rx="4" fill="rgba(14,143,208,0.08)" stroke="rgba(14,143,208,0.15)" stroke-width="1"/>
+        <text x="190" y="283" text-anchor="middle" font-size="8" fill="#0e8fd0" font-weight="500">Cache grows linearly with seq_len: 2K context = ~10× memory vs 200 token context</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 11: TIME COMPLEXITY ===================== -->
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · Speedup</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>Time Complexity Savings</h2>
+  <div class="subtitle">From O(n²) to O(n) per token</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Without KV cache:</strong> generating token t requires O(t²) compute — full attention over t tokens.</p>
+      <p class="point"><strong>With KV cache:</strong> generating token t requires only O(t) compute — load cache, compute new K,V, one attention pass.</p>
+      <p class="point">For 2048-token generation: without cache O(1+4+9+...+2048²) ≈ O(n³/3), with cache O(1+2+3+...+2048) = O(n²) amortized!</p>
+      <div class="eq-box">
+        <span class="label">Speedup factor</span>
+        (2048²) / (2048) ≈ 2000× faster per token in 2K context
+      </div>
+      <div class="key-idea">
+        <div class="kicker">Practical impact</div>
+        <p>KV cache reduces decode time from hours to seconds on GPUs. It's the difference between usable and unusable inference.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">COMPLEXITY REDUCTION</text>
+
+        <!-- Axes -->
+        <line x1="40" y1="270" x2="40" y2="50" stroke="#6e6b64" stroke-width="1"/>
+        <line x1="40" y1="270" x2="370" y2="270" stroke="#6e6b64" stroke-width="1"/>
+        <text x="20" y="160" font-size="7" fill="#6e6b64">Cost</text>
+        <text x="350" y="285" font-size="7" fill="#6e6b64">Seq Pos</text>
+
+        <!-- Without cache: quadratic -->
+        <path d="M 45 265 Q 100 230 150 150 Q 200 70 360 40" stroke="#5b5bd6" stroke-width="2.5" fill="none" opacity="0.8"/>
+        <text x="320" y="35" font-size="8" fill="#5b5bd6" font-weight="600">O(n²) no cache</text>
+
+        <!-- With cache: linear -->
+        <path d="M 45 265 L 360 85" stroke="#0d9488" stroke-width="2.5" fill="none"/>
+        <text x="280" y="140" font-size="8" fill="#0d9488" font-weight="600">O(n) with cache</text>
+
+        <!-- Shaded region showing savings -->
+        <path d="M 45 265 Q 100 230 150 150 Q 200 70 360 40 L 360 85 Q 200 115 150 165 Q 100 235 45 265 Z" fill="rgba(124,58,237,0.2)" opacity="0.6"/>
+        <text x="200" y="140" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Saved</text>
+        <text x="200" y="153" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">computation</text>
+
+        <!-- Table -->
+        <text x="20" y="190" font-size="7" fill="#6e6b64" font-weight="600">Cost per token (cumulative):</text>
+
+        <g transform="translate(20, 210)">
+          <rect x="0" y="0" width="340" height="35" rx="3" fill="rgba(91,91,214,0.05)" stroke="rgba(91,91,214,0.1)" stroke-width="1"/>
+          <text x="10" y="10" font-size="7" fill="#1a1a1a" font-weight="600">Position</text>
+          <text x="70" y="10" font-size="7" fill="#1a1a1a" font-weight="600">No Cache</text>
+          <text x="180" y="10" font-size="7" fill="#1a1a1a" font-weight="600">With Cache</text>
+          <text x="290" y="10" font-size="7" fill="#1a1a1a" font-weight="600">Speedup</text>
+
+          <line x1="0" y1="16" x2="340" y2="16" stroke="#b0ada5" stroke-width="0.5"/>
+
+          <text x="10" y="28" font-size="7" fill="#6e6b64">100</text>
+          <text x="70" y="28" font-size="7" fill="#5b5bd6" font-weight="600">10K ops</text>
+          <text x="180" y="28" font-size="7" fill="#0d9488" font-weight="600">100 ops</text>
+          <text x="290" y="28" font-size="7" fill="#7c3aed" font-weight="600">100×</text>
+
+          <text x="10" y="33" font-size="6" fill="#b0ada5">(1000 total)</text>
+          <text x="70" y="33" font-size="6" fill="#b0ada5">(1M total)</text>
+          <text x="180" y="33" font-size="6" fill="#b0ada5">(10K total)</text>
+        </g>
+
+        <g transform="translate(20, 255)">
+          <text x="10" y="10" font-size="7" fill="#1a1a1a" font-weight="600">2000</text>
+          <text x="70" y="10" font-size="7" fill="#5b5bd6" font-weight="600">4M ops</text>
+          <text x="180" y="10" font-size="7" fill="#0d9488" font-weight="600">2K ops</text>
+          <text x="290" y="10" font-size="7" fill="#7c3aed" font-weight="600">2000×</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 12: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">§3</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h1>Memory Costs</h1>
+  <div class="subtitle">Understanding the tradeoff: speed for memory</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<!-- ===================== SLIDE 13: MEMORY FORMULA ===================== -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · Formula</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>KV Cache Memory Formula</h2>
+  <div class="subtitle">Computing total memory consumption</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Memory for all layers, all tokens in context:</p>
+      <div class="eq-box">
+        <span class="label">Full Formula</span>
+        Cache (GB) = 2 × num_layers × num_heads × head_dim × max_seq_len × batch_size × 4 bytes / 1e9
+      </div>
+      <p class="point"><strong>Key insight:</strong> memory grows linearly with seq_len and batch_size, but scales with model architecture (layers, heads, head_dim).</p>
+      <p class="point">Larger models = more cache. Longer contexts = more cache. Batch processing = more cache.</p>
+      <div class="key-idea">
+        <div class="kicker">Memory vs Speed tradeoff</div>
+        <p>KV cache saves computation but costs memory. With GPU VRAM fixed, must choose batch size or context length.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">MEMORY CALCULATION</text>
+
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Formula breakdown:</text>
+
+        <g transform="translate(20, 70)">
+          <text x="0" y="0" font-size="7" fill="#6e6b64">2 = K cache + V cache</text>
+          <text x="0" y="12" font-size="7" fill="#6e6b64">num_layers = how many transformer blocks</text>
+          <text x="0" y="24" font-size="7" fill="#6e6b64">num_heads × head_dim = total hidden dimension</text>
+          <text x="0" y="36" font-size="7" fill="#6e6b64">max_seq_len = maximum context length</text>
+          <text x="0" y="48" font-size="7" fill="#6e6b64">batch_size = parallel sequences</text>
+          <text x="0" y="60" font-size="7" fill="#6e6b64">4 bytes = FP32 precision (or 2 for FP16)</text>
+        </g>
+
+        <text x="20" y="145" font-size="8" fill="#1a1a1a" font-weight="600">Example 1: LLaMA 2 70B</text>
+        <g transform="translate(20, 160)">
+          <rect x="0" y="0" width="340" height="35" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="10" y="12" font-size="7" fill="#6e6b64">80 layers × 64 heads × 128 dim × 2048 tokens × 1 batch × 4 bytes</text>
+          <text x="10" y="24" font-size="8" fill="#5b5bd6" font-weight="600">= 2.68 GB per full context</text>
+          <text x="10" y="33" font-size="7" fill="#6e6b64">140 GB model weights + 2.68 GB cache = 142.68 GB total needed</text>
+        </g>
+
+        <text x="20" y="215" font-size="8" fill="#1a1a1a" font-weight="600">Example 2: GPT-3 175B</text>
+        <g transform="translate(20, 230)">
+          <rect x="0" y="0" width="340" height="35" rx="3" fill="rgba(0,168,208,0.1)" stroke="#0e8fd0" stroke-width="1"/>
+          <text x="10" y="12" font-size="7" fill="#6e6b64">96 layers × 96 heads × 128 dim × 2048 tokens × 1 batch × 4 bytes</text>
+          <text x="10" y="24" font-size="8" fill="#0e8fd0" font-weight="600">= 4.78 GB per full context</text>
+          <text x="10" y="33" font-size="7" fill="#6e6b64">Scales worse with larger models!</text>
+        </g>
+
+        <text x="20" y="275" font-size="8" fill="#1a1a1a" font-weight="600">With FP16 precision: divide by 2 (1.34 GB for LLaMA)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 14: CONCRETE EXAMPLE ===================== -->
+<div class="slide" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · LLaMA Example</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h2>LLaMA-2 70B Memory</h2>
+  <div class="subtitle">Detailed worked example</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>Architecture:</strong> 80 layers, 64 heads, 128 head_dim, 4096 hidden_dim (64×64)</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 700 280" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="350" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">LLAMA-2 70B CACHE MEMORY BREAKDOWN</text>
+
+        <g transform="translate(20, 40)">
+          <text x="0" y="0" font-size="8" fill="#1a1a1a" font-weight="600">Per-Layer Cache (single layer):</text>
+
+          <rect x="0" y="15" width="320" height="40" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="10" y="30" font-size="7" fill="#6e6b64">Shape: [batch=1, heads=64, seq=2048, dim=128]</text>
+          <text x="10" y="43" font-size="8" fill="#5b5bd6" font-weight="600">K cache: 1 × 64 × 2048 × 128 × 4 = 67 MB</text>
+          <text x="10" y="55" font-size="8" fill="#5b5bd6" font-weight="600">V cache: 1 × 64 × 2048 × 128 × 4 = 67 MB</text>
+
+          <text x="0" y="70" font-size="8" fill="#7c3aed" font-weight="600">→ 134 MB per layer at max context</text>
+        </g>
+
+        <g transform="translate(20, 140)">
+          <text x="0" y="0" font-size="8" fill="#1a1a1a" font-weight="600">All 80 layers:</text>
+
+          <rect x="0" y="15" width="320" height="55" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="10" y="30" font-size="8" fill="#7c3aed" font-weight="600">Total = 134 MB/layer × 80 layers = 10.7 GB</text>
+          <text x="10" y="43" font-size="7" fill="#6e6b64">Model weights (FP32): ~280 GB</text>
+          <text x="10" y="55" font-size="7" fill="#6e6b64">Total GPU memory needed: 280 + 10.7 = 290.7 GB</text>
+          <text x="10" y="67" font-size="8" fill="#7c3aed" font-weight="600">→ Only fits on very large GPU clusters!</text>
+        </g>
+
+        <g transform="translate(380, 40)">
+          <text x="0" y="0" font-size="8" fill="#1a1a1a" font-weight="600">With FP16 quantization:</text>
+
+          <rect x="0" y="15" width="300" height="55" rx="3" fill="rgba(14,143,208,0.1)" stroke="#0e8fd0" stroke-width="1"/>
+          <text x="10" y="30" font-size="8" fill="#0e8fd0" font-weight="600">KV cache: 10.7 GB ÷ 2 = 5.35 GB</text>
+          <text x="10" y="42" font-size="8" fill="#0e8fd0" font-weight="600">Model: 140 GB (70B params × 2 bytes)</text>
+          <text x="10" y="54" font-size="8" fill="#0e8fd0" font-weight="600">Total: ~145 GB (more reasonable)</text>
+          <text x="10" y="66" font-size="8" fill="#0d9488" font-weight="600">Fits on 8× A100 80GB GPUs</text>
+        </g>
+
+        <g transform="translate(380, 140)">
+          <text x="0" y="0" font-size="8" fill="#1a1a1a" font-weight="600">Memory at different context lengths:</text>
+
+          <g transform="translate(0, 15)">
+            <rect x="0" y="0" width="300" height="70" rx="3" fill="rgba(20,150,110,0.05)" stroke="rgba(20,150,110,0.2)" stroke-width="1"/>
+
+            <text x="10" y="14" font-size="7" fill="#1a1a1a" font-weight="600">Seq Len</text>
+            <text x="100" y="14" font-size="7" fill="#1a1a1a" font-weight="600">Cache (GB)</text>
+            <text x="210" y="14" font-size="7" fill="#1a1a1a" font-weight="600">Total GPU</text>
+
+            <text x="10" y="30" font-size="7" fill="#6e6b64">256</text>
+            <text x="100" y="30" font-size="7" fill="#0d9488">0.67</text>
+            <text x="210" y="30" font-size="7" fill="#0d9488">140.67 GB</text>
+
+            <text x="10" y="44" font-size="7" fill="#6e6b64">1024</text>
+            <text x="100" y="44" font-size="7" fill="#0d9488">2.67</text>
+            <text x="210" y="44" font-size="7" fill="#0d9488">142.67 GB</text>
+
+            <text x="10" y="58" font-size="7" fill="#6e6b64">2048</text>
+            <text x="100" y="58" font-size="7" fill="#0d9488">5.34</text>
+            <text x="210" y="58" font-size="7" fill="#0d9488">145.34 GB</text>
+
+            <text x="10" y="72" font-size="7" fill="#6e6b64">4096</text>
+            <text x="100" y="72" font-size="7" fill="#7c3aed">10.68</text>
+            <text x="210" y="72" font-size="7" fill="#7c3aed">150.68 GB</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 15: MEMORY GROWTH CHART ===================== -->
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · Growth</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>Cache Grows Linearly</h2>
+  <div class="subtitle">Memory consumption vs sequence length</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Since cache size = O(seq_len), memory grows linearly with context.</p>
+      <p class="point">Double context → double cache memory. Not quadratic, but still significant.</p>
+      <p class="point">For very long documents (8K, 32K+ tokens), cache can dominate GPU memory budget.</p>
+      <div class="key-idea">
+        <div class="kicker">Practical limit</div>
+        <p>On a 80GB GPU, LLaMA-2 70B can hold ~12K token context before running out of memory (FP16).</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">LINEAR MEMORY GROWTH</text>
+
+        <!-- Axes -->
+        <line x1="35" y1="300" x2="35" y2="30" stroke="#6e6b64" stroke-width="1.5"/>
+        <line x1="35" y1="300" x2="360" y2="300" stroke="#6e6b64" stroke-width="1.5"/>
+
+        <!-- Axis labels -->
+        <text x="15" y="160" font-size="7" fill="#6e6b64" font-weight="600">Memory (GB)</text>
+        <text x="320" y="315" font-size="7" fill="#6e6b64" font-weight="600">Sequence Length (tokens)</text>
+
+        <!-- Grid lines -->
+        <line x1="35" y1="250" x2="360" y2="250" stroke="#b0ada5" stroke-width="0.5" opacity="0.3"/>
+        <line x1="35" y1="200" x2="360" y2="200" stroke="#b0ada5" stroke-width="0.5" opacity="0.3"/>
+        <line x1="35" y1="150" x2="360" y2="150" stroke="#b0ada5" stroke-width="0.5" opacity="0.3"/>
+        <line x1="35" y1="100" x2="360" y2="100" stroke="#b0ada5" stroke-width="0.5" opacity="0.3"/>
+
+        <!-- Scale markers -->
+        <text x="25" y="305" font-size="6" fill="#6e6b64" text-anchor="end">0</text>
+        <text x="25" y="255" font-size="6" fill="#6e6b64" text-anchor="end">5</text>
+        <text x="25" y="205" font-size="6" fill="#6e6b64" text-anchor="end">10</text>
+        <text x="25" y="155" font-size="6" fill="#6e6b64" text-anchor="end">15</text>
+        <text x="25" y="105" font-size="6" fill="#6e6b64" text-anchor="end">20</text>
+
+        <text x="40" y="312" font-size="6" fill="#6e6b64">0</text>
+        <text x="140" y="312" font-size="6" fill="#6e6b64">2K</text>
+        <text x="230" y="312" font-size="6" fill="#6e6b64">4K</text>
+        <text x="320" y="312" font-size="6" fill="#6e6b64">6K</text>
+
+        <!-- Linear line -->
+        <path d="M 35 300 L 360 50" stroke="#5b5bd6" stroke-width="3" fill="none"/>
+
+        <!-- Points -->
+        <circle cx="85" cy="275" r="3" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="140" cy="250" r="3" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="195" cy="225" r="3" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="250" cy="200" r="3" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="305" cy="175" r="3" fill="#5b5bd6" opacity="0.6"/>
+        <circle cx="360" cy="150" r="3" fill="#5b5bd6" opacity="0.6"/>
+
+        <!-- Annotations -->
+        <text x="70" y="280" font-size="7" fill="#6e6b64">512 tokens</text>
+        <text x="65" y="290" font-size="7" fill="#6e6b64">1.3 GB</text>
+
+        <text x="220" y="235" font-size="7" fill="#6e6b64">2K tokens</text>
+        <text x="220" y="245" font-size="7" fill="#6e6b64">5.3 GB</text>
+
+        <text x="310" y="165" font-size="7" fill="#6e6b64">4K tokens</text>
+        <text x="310" y="175" font-size="7" fill="#6e6b64">10.7 GB</text>
+
+        <!-- Formula box -->
+        <rect x="20" y="270" width="200" height="25" rx="4" fill="rgba(91,91,214,0.08)" stroke="rgba(91,91,214,0.15)" stroke-width="1"/>
+        <text x="120" y="288" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Memory ∝ seq_len</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 16: GPU MEMORY BUDGET ===================== -->
+<div class="slide" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · Budget</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h2>GPU Memory Budget</h2>
+  <div class="subtitle">Where memory goes during inference</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Model weights:</strong> ~70-280 GB for 70B-175B params (FP16)</p>
+      <p class="point"><strong>KV cache:</strong> ~5-20 GB for 2K-8K context</p>
+      <p class="point"><strong>Activations:</strong> ~1-5 GB per batch (intermediate layer outputs)</p>
+      <p class="point">Total: ~76-305 GB depending on scale, context, batch.</p>
+      <div class="key-idea">
+        <div class="kicker">Insight</div>
+        <p>KV cache is 5-10% of total memory but essential for speed. Trade: accept cache overhead to eliminate recomputation.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">MEMORY BREAKDOWN (LLaMA-2 70B)</text>
+
+        <!-- Pie chart -->
+        <circle cx="190" cy="150" r="80" fill="none" stroke="#b0ada5" stroke-width="1"/>
+
+        <!-- Model weights slice (85%) -->
+        <path d="M 190 70 A 80 80 0 1 1 152.9 220" fill="#5b5bd6" opacity="0.7"/>
+
+        <!-- Activations slice (10%) -->
+        <path d="M 152.9 220 A 80 80 0 0 1 144 219.2" fill="#0e8fd0" opacity="0.7"/>
+
+        <!-- KV cache slice (5%) -->
+        <path d="M 144 219.2 A 80 80 0 0 1 190 70" fill="#7c3aed" opacity="0.7"/>
+
+        <!-- Labels inside pie -->
+        <text x="160" y="120" font-size="10" fill="#1a1a1a" font-weight="600">85%</text>
+        <text x="160" y="135" font-size="7" fill="#1a1a1a">Weights</text>
+
+        <text x="128" y="230" font-size="9" fill="#1a1a1a" font-weight="600">10%</text>
+        <text x="125" y="243" font-size="6" fill="#1a1a1a">Activations</text>
+
+        <text x="155" y="85" font-size="8" fill="#1a1a1a" font-weight="600">5%</text>
+        <text x="152" y="97" font-size="6" fill="#1a1a1a">Cache</text>
+
+        <!-- Legend -->
+        <g transform="translate(20, 250)">
+          <rect x="0" y="0" width="12" height="12" fill="#5b5bd6" opacity="0.7"/>
+          <text x="18" y="10" font-size="7" fill="#1a1a1a">Model Weights: 140 GB</text>
+        </g>
+
+        <g transform="translate(20, 268)">
+          <rect x="0" y="0" width="12" height="12" fill="#0e8fd0" opacity="0.7"/>
+          <text x="18" y="10" font-size="7" fill="#1a1a1a">Activations: 3 GB</text>
+        </g>
+
+        <g transform="translate(200, 250)">
+          <rect x="0" y="0" width="12" height="12" fill="#7c3aed" opacity="0.7"/>
+          <text x="18" y="10" font-size="7" fill="#1a1a1a">KV Cache: 5.3 GB</text>
+        </g>
+
+        <g transform="translate(200, 268)">
+          <text x="0" y="10" font-size="7" fill="#1a1a1a" font-weight="600">Total: 148.3 GB</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 17: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">§4</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h1>Optimization Strategies</h1>
+  <div class="subtitle">Reducing KV cache memory while maintaining speed</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<!-- ===================== SLIDE 18: MQA AND GQA ===================== -->
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">§4 · Architecture</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>Multi-Query & Grouped-Query Attention</h2>
+  <div class="subtitle">Reduce cache by sharing K,V heads</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Standard MHA:</strong> Each Q head gets its own K,V pair. 64 Q heads = 64 K heads, 64 V heads.</p>
+      <p class="point"><strong>Multi-Query Attention (MQA):</strong> All Q heads share ONE K,V pair. 64 Q heads share 1 K,V. Cache 64× smaller!</p>
+      <p class="point"><strong>Grouped-Query (GQA):</strong> Compromise. 64 Q heads grouped into 8 groups, each group shares 1 K,V. Cache 8× smaller than MHA, 8× larger than MQA.</p>
+      <p class="point">LLaMA 2 uses GQA with 8 KV heads for 64 Q heads. GPT-4 uses MQA.</p>
+      <div class="key-idea">
+        <div class="kicker">Tradeoff</div>
+        <p>Sharing reduces cache memory but may slightly hurt model quality. Worth it for 8× speedup in decode.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">MHA vs MQA vs GQA</text>
+
+        <!-- MHA -->
+        <text x="35" y="40" font-size="8" fill="#1a1a1a" font-weight="600">Standard MHA</text>
+        <g transform="translate(20, 50)">
+          <circle cx="10" cy="10" r="5" fill="#5b5bd6" opacity="0.8"/>
+          <text x="20" y="14" font-size="6" fill="#6e6b64">Q1</text>
+
+          <circle cx="10" cy="40" r="5" fill="#5b5bd6" opacity="0.8"/>
+          <text x="20" y="44" font-size="6" fill="#6e6b64">Q2</text>
+
+          <text x="20" y="58" font-size="6" fill="#6e6b64">... 64 heads</text>
+
+          <!-- Individual K,V -->
+          <circle cx="50" cy="10" r="5" fill="#0e8fd0" opacity="0.8"/>
+          <text x="60" y="14" font-size="6" fill="#6e6b64">K1</text>
+
+          <circle cx="50" cy="40" r="5" fill="#0e8fd0" opacity="0.8"/>
+          <text x="60" y="44" font-size="6" fill="#6e6b64">K2</text>
+
+          <text x="60" y="58" font-size="6" fill="#6e6b64">... 64 heads</text>
+
+          <!-- Arrows -->
+          <path d="M 15 10 L 45 10" stroke="#5b5bd6" stroke-width="1" stroke-dasharray="2,2"/>
+          <path d="M 15 40 L 45 40" stroke="#5b5bd6" stroke-width="1" stroke-dasharray="2,2"/>
+        </g>
+
+        <text x="35" y="140" font-size="7" fill="#7c3aed" font-weight="600">Cache size: full</text>
+
+        <!-- MQA -->
+        <text x="165" y="40" font-size="8" fill="#1a1a1a" font-weight="600">Multi-Query (MQA)</text>
+        <g transform="translate(150, 50)">
+          <circle cx="10" cy="10" r="5" fill="#5b5bd6" opacity="0.8"/>
+          <text x="20" y="14" font-size="6" fill="#6e6b64">Q1</text>
+
+          <circle cx="10" cy="40" r="5" fill="#5b5bd6" opacity="0.8"/>
+          <text x="20" y="44" font-size="6" fill="#6e6b64">Q2</text>
+
+          <text x="20" y="58" font-size="6" fill="#6e6b64">... 64 heads</text>
+
+          <!-- Shared K,V -->
+          <circle cx="50" cy="25" r="5" fill="#0e8fd0" opacity="0.8"/>
+          <text x="60" y="29" font-size="6" fill="#6e6b64">K (shared)</text>
+
+          <!-- Arrows -->
+          <path d="M 15 10 L 45 25" stroke="#5b5bd6" stroke-width="1" stroke-dasharray="2,2"/>
+          <path d="M 15 40 L 45 25" stroke="#5b5bd6" stroke-width="1" stroke-dasharray="2,2"/>
+        </g>
+
+        <text x="165" y="140" font-size="7" fill="#0e8fd0" font-weight="600">Cache size: 1/64</text>
+
+        <!-- GQA -->
+        <text x="20" y="170" font-size="8" fill="#1a1a1a" font-weight="600">Grouped-Query (GQA) - 8 groups</text>
+        <g transform="translate(20, 190)">
+          <circle cx="5" cy="10" r="3" fill="#5b5bd6" opacity="0.8"/>
+          <circle cx="13" cy="10" r="3" fill="#5b5bd6" opacity="0.8"/>
+          <text x="25" y="14" font-size="6" fill="#6e6b64">Group 1 (8 Q) → K1</text>
+
+          <circle cx="5" cy="30" r="3" fill="#5b5bd6" opacity="0.8"/>
+          <circle cx="13" cy="30" r="3" fill="#5b5bd6" opacity="0.8"/>
+          <text x="25" y="34" font-size="6" fill="#6e6b64">Group 2 (8 Q) → K2</text>
+
+          <text x="25" y="50" font-size="6" fill="#6e6b64">... 8 groups</text>
+
+          <!-- Shared K,V for each group -->
+          <circle cx="90" cy="10" r="4" fill="#0e8fd0" opacity="0.8"/>
+          <circle cx="90" cy="30" r="4" fill="#0e8fd0" opacity="0.8"/>
+        </g>
+
+        <text x="20" y="260" font-size="7" fill="#7c3aed" font-weight="600">Cache size: 1/8 (middle ground)</text>
+
+        <!-- LLaMA note -->
+        <rect x="20" y="270" width="340" height="25" rx="4" fill="rgba(0,168,208,0.08)" stroke="rgba(0,168,208,0.15)" stroke-width="1"/>
+        <text x="190" y="288" text-anchor="middle" font-size="8" fill="#0e8fd0" font-weight="500">LLaMA-2: 64 Q heads × 8 KV heads (8× cache reduction)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 19: QUANTIZATION ===================== -->
+<div class="slide" data-n="19">
+  <div class="slide-header">
+    <span class="slide-chapter">§4 · Compression</span>
+    <span class="slide-num">19</span>
+  </div>
+  <h2>KV Cache Quantization</h2>
+  <div class="subtitle">Compress to INT8 or INT4</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">K,V values usually stored in FP32 or FP16. But don't need full precision.</p>
+      <p class="point"><strong>FP32 → FP16:</strong> 50% memory reduction, minimal quality loss. Very safe.</p>
+      <p class="point"><strong>FP16 → INT8:</strong> Another 50% reduction. Quantize to 8-bit integers with careful scaling. Small quality dip but huge space savings.</p>
+      <p class="point"><strong>INT4:</strong> Extreme compression (4 bits). Requires specialized hardware/kernels. Tricky but possible.</p>
+      <div class="key-idea">
+        <div class="kicker">Practical use</div>
+        <p>FP16 is standard. INT8 used when memory is critical. INT4 still experimental.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">QUANTIZATION SAVINGS</text>
+
+        <!-- Precision comparison -->
+        <g transform="translate(20, 40)">
+          <text x="0" y="0" font-size="8" fill="#1a1a1a" font-weight="600">Bit width & memory:</text>
+
+          <!-- FP32 -->
+          <rect x="0" y="15" width="100" height="30" rx="3" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="50" y="28" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">FP32</text>
+          <text x="50" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">32 bits (100%)</text>
+
+          <!-- FP16 -->
+          <rect x="115" y="15" width="100" height="30" rx="3" fill="rgba(14,143,208,0.15)" stroke="#0e8fd0" stroke-width="1"/>
+          <text x="165" y="28" text-anchor="middle" font-size="8" fill="#0e8fd0" font-weight="600">FP16</text>
+          <text x="165" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">16 bits (50%)</text>
+
+          <!-- INT8 -->
+          <rect x="230" y="15" width="100" height="30" rx="3" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="1"/>
+          <text x="280" y="28" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">INT8</text>
+          <text x="280" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">8 bits (25%)</text>
+        </g>
+
+        <text x="20" y="100" font-size="8" fill="#1a1a1a" font-weight="600">LLaMA 2 70B at 2K context:</text>
+
+        <!-- Bar chart -->
+        <g transform="translate(20, 120)">
+          <text x="0" y="0" font-size="7" fill="#6e6b64" font-weight="600">Precision</text>
+          <text x="80" y="0" font-size="7" fill="#6e6b64" font-weight="600">Cache Size</text>
+          <text x="200" y="0" font-size="7" fill="#6e6b64" font-weight="600">Savings</text>
+
+          <rect x="0" y="10" width="360" height="20" rx="3" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.08)"/>
+          <rect x="0" y="10" width="360" height="20" rx="3" fill="none" stroke="#b0ada5" stroke-width="0.5"/>
+          <text x="5" y="25" font-size="7" fill="#6e6b64">FP32</text>
+          <rect x="80" y="12" width="100" height="16" rx="2" fill="#5b5bd6" opacity="0.4"/>
+          <text x="185" y="25" font-size="7" fill="#5b5bd6" font-weight="600">10.7 GB</text>
+          <text x="270" y="25" font-size="7" fill="#6e6b64">baseline</text>
+
+          <rect x="0" y="38" width="360" height="20" rx="3" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.08)"/>
+          <text x="5" y="53" font-size="7" fill="#6e6b64">FP16</text>
+          <rect x="80" y="40" width="50" height="16" rx="2" fill="#0e8fd0" opacity="0.4"/>
+          <text x="185" y="53" font-size="7" fill="#0e8fd0" font-weight="600">5.3 GB</text>
+          <text x="270" y="53" font-size="7" fill="#0d9488">50% reduction</text>
+
+          <rect x="0" y="66" width="360" height="20" rx="3" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.08)"/>
+          <text x="5" y="81" font-size="7" fill="#6e6b64">INT8</text>
+          <rect x="80" y="68" width="25" height="16" rx="2" fill="#7c3aed" opacity="0.4"/>
+          <text x="185" y="81" font-size="7" fill="#7c3aed" font-weight="600">2.7 GB</text>
+          <text x="270" y="81" font-size="7" fill="#7c3aed">75% reduction</text>
+        </g>
+
+        <text x="20" y="230" font-size="8" fill="#1a1a1a" font-weight="600">Quality impact:</text>
+        <text x="20" y="245" font-size="7" fill="#6e6b64">FP16: minimal, widely used in production</text>
+        <text x="20" y="258" font-size="7" fill="#6e6b64">INT8: small perplexity increase, acceptable for many tasks</text>
+        <text x="20" y="271" font-size="7" fill="#6e6b64">INT4: significant, experimental, needs careful tuning</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 20: SLIDING WINDOW ===================== -->
+<div class="slide" data-n="20">
+  <div class="slide-header">
+    <span class="slide-chapter">§4 · Windowing</span>
+    <span class="slide-num">20</span>
+  </div>
+  <h2>Sliding Window Attention</h2>
+  <div class="subtitle">Mistral's approach: only attend to recent tokens</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Observation: LLMs mostly attend to recent context, not distant tokens.</p>
+      <p class="point">Mistral uses <strong>sliding window attention:</strong> only cache K,V for last W tokens (e.g., W=4096).</p>
+      <p class="point">Older tokens evicted automatically. Saves memory proportional to how much context is unused.</p>
+      <p class="point">Reduces full-context cache but loses ability to recall very distant context. Tradeoff.</p>
+      <div class="eq-box">
+        <span class="label">Mistral Window</span>
+        Cache only tokens [max(0, t - 4096), t], evict older
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">SLIDING WINDOW CACHE</text>
+
+        <!-- Full cache -->
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Standard KV Cache (full context):</text>
+        <g transform="translate(20, 65)">
+          <rect x="0" y="0" width="340" height="20" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1"/>
+          <rect x="5" y="3" width="20" height="14" rx="2" fill="#5b5bd6" opacity="0.4"/>
+          <rect x="28" y="3" width="20" height="14" rx="2" fill="#5b5bd6" opacity="0.5"/>
+          <text x="51" y="16" font-size="6" fill="#6e6b64">... all tokens ...</text>
+          <rect x="308" y="3" width="20" height="14" rx="2" fill="#5b5bd6" opacity="0.7"/>
+          <text x="332" y="16" font-size="6" fill="#6e6b64">now</text>
+        </g>
+        <text x="20" y="95" font-size="7" fill="#6e6b64">Keep all 4000 tokens at 8K context, cache grows</text>
+
+        <!-- Windowed cache -->
+        <text x="20" y="120" font-size="8" fill="#1a1a1a" font-weight="600">Mistral Sliding Window (W=4096):</text>
+        <g transform="translate(20, 135)">
+          <rect x="0" y="0" width="340" height="20" rx="3" fill="rgba(14,143,208,0.08)" stroke="rgba(14,143,208,0.2)" stroke-width="1" stroke-dasharray="2,2"/>
+          <rect x="80" y="3" width="20" height="14" rx="2" fill="rgba(14,143,208,0.3)"/>
+          <text x="105" y="16" font-size="6" fill="#6e6b64">evicted</text>
+          <rect x="180" y="3" width="20" height="14" rx="2" fill="#0e8fd0" opacity="0.5"/>
+          <rect x="203" y="3" width="20" height="14" rx="2" fill="#0e8fd0" opacity="0.6"/>
+          <text x="226" y="16" font-size="6" fill="#6e6b64">... W recent ...</text>
+          <rect x="308" y="3" width="20" height="14" rx="2" fill="#0e8fd0" opacity="0.8"/>
+          <text x="332" y="16" font-size="6" fill="#6e6b64">now</text>
+        </g>
+        <text x="20" y="165" font-size="7" fill="#6e6b64">Keep only recent 4096 tokens, old ones dropped</text>
+
+        <!-- Comparison -->
+        <text x="20" y="195" font-size="8" fill="#1a1a1a" font-weight="600">Comparison at 8K context:</text>
+
+        <g transform="translate(20, 210)">
+          <rect x="0" y="0" width="340" height="35" rx="3" fill="rgba(91,91,214,0.05)" stroke="rgba(91,91,214,0.1)" stroke-width="1"/>
+
+          <text x="10" y="12" font-size="7" fill="#1a1a1a" font-weight="600">Full cache</text>
+          <text x="100" y="12" font-size="7" fill="#5b5bd6">8000 tokens cached</text>
+          <text x="260" y="12" font-size="7" fill="#6e6b64">21.4 GB</text>
+
+          <line x1="0" y1="18" x2="340" y2="18" stroke="#b0ada5" stroke-width="0.5"/>
+
+          <text x="10" y="30" font-size="7" fill="#1a1a1a" font-weight="600">Sliding window</text>
+          <text x="100" y="30" font-size="7" fill="#0e8fd0">4096 tokens cached</text>
+          <text x="260" y="30" font-size="7" fill="#0d9488" font-weight="600">10.7 GB (50%)</text>
+        </g>
+
+        <text x="20" y="265" font-size="7" fill="#6e6b64" font-weight="600">Tradeoff: can't query tokens older than window</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 21: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="21">
+  <div class="slide-header">
+    <span class="slide-chapter">§5</span>
+    <span class="slide-num">21</span>
+  </div>
+  <h1>PagedAttention & vLLM</h1>
+  <div class="subtitle">Modern serving with memory efficiency</div>
+  <div class="section-num-big">V</div>
+</div>
+
+<!-- ===================== SLIDE 22: PAGED ATTENTION ===================== -->
+<div class="slide" data-n="22">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · vLLM</span>
+    <span class="slide-num">22</span>
+  </div>
+  <h2>PagedAttention Overview</h2>
+  <div class="subtitle">Virtual memory for KV cache</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Naive KV cache allocates contiguous memory. With dynamic sequence lengths, wastes up to 80% to fragmentation.</p>
+      <p class="point"><strong>PagedAttention:</strong> Inspired by OS virtual memory. Store K,V in fixed-size <strong>blocks</strong>, not contiguous arrays.</p>
+      <p class="point">Map logical token positions to physical blocks via <strong>block table</strong>. Non-contiguous storage looks contiguous to attention.</p>
+      <p class="point">Result: <strong>multiple requests share prefixes without duplication.</strong> And internal fragmentation eliminated.</p>
+      <div class="key-idea">
+        <div class="kicker">Key benefit</div>
+        <p>2-4× throughput improvement + dynamic batching without memory waste.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">PAGED vs CONTIGUOUS</text>
+
+        <!-- Contiguous (fragmented) -->
+        <text x="20" y="45" font-size="8" fill="#1a1a1a" font-weight="600">Contiguous Allocation (waste):</text>
+        <g transform="translate(20, 60)">
+          <rect x="0" y="0" width="330" height="18" rx="2" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1"/>
+          <rect x="5" y="2" width="130" height="14" rx="1" fill="#5b5bd6" opacity="0.7"/>
+          <text x="72" y="13" text-anchor="middle" font-size="6" fill="#1a1a1a" font-weight="600">Request 1 (1000 tokens)</text>
+
+          <rect x="0" y="25" width="330" height="18" rx="2" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1"/>
+          <rect x="5" y="27" width="90" height="14" rx="1" fill="#0e8fd0" opacity="0.7"/>
+          <text x="52" y="38" text-anchor="middle" font-size="6" fill="#1a1a1a" font-weight="600">Request 2 (700 tokens)</text>
+          <rect x="100" y="27" width="230" height="14" rx="1" fill="rgba(91,91,214,0.08)" stroke="rgba(91,91,214,0.2)" stroke-dasharray="1,1"/>
+          <text x="220" y="38" text-anchor="middle" font-size="5" fill="#6e6b64">wasted space</text>
+
+          <rect x="0" y="50" width="330" height="18" rx="2" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1"/>
+          <rect x="5" y="52" width="60" height="14" rx="1" fill="#7c3aed" opacity="0.7"/>
+          <text x="37" y="63" text-anchor="middle" font-size="6" fill="#1a1a1a">Req 3</text>
+          <rect x="70" y="52" width="260" height="14" rx="1" fill="rgba(91,91,214,0.08)" stroke="rgba(91,91,214,0.2)" stroke-dasharray="1,1"/>
+          <text x="205" y="63" text-anchor="middle" font-size="5" fill="#6e6b64">wasted</text>
+        </g>
+        <text x="20" y="85" font-size="7" fill="#7c3aed" font-weight="600">~60-80% wasted memory!</text>
+
+        <!-- Paged (efficient) -->
+        <text x="20" y="115" font-size="8" fill="#1a1a1a" font-weight="600">PagedAttention (shared blocks):</text>
+        <g transform="translate(20, 135)">
+          <rect x="0" y="0" width="330" height="20" rx="2" fill="rgba(0,168,208,0.1)" stroke="rgba(0,168,208,0.2)" stroke-width="1"/>
+          <rect x="10" y="2" width="15" height="16" rx="1" fill="#0e8fd0" opacity="0.8"/>
+          <text x="28" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="28" y="19" font-size="5" fill="#6e6b64">1</text>
+
+          <rect x="40" y="2" width="15" height="16" rx="1" fill="#0e8fd0" opacity="0.8"/>
+          <text x="58" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="58" y="19" font-size="5" fill="#6e6b64">2</text>
+
+          <rect x="70" y="2" width="15" height="16" rx="1" fill="#0e8fd0" opacity="0.8"/>
+          <text x="88" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="88" y="19" font-size="5" fill="#6e6b64">3</text>
+
+          <text x="115" y="13" font-size="6" fill="#6e6b64">Request 1 owns these blocks</text>
+        </g>
+
+        <g transform="translate(20, 165)">
+          <rect x="0" y="0" width="330" height="20" rx="2" fill="rgba(14,143,208,0.1)" stroke="rgba(14,143,208,0.2)" stroke-width="1"/>
+          <rect x="10" y="2" width="15" height="16" rx="1" fill="#0e8fd0" opacity="0.8"/>
+          <text x="28" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="28" y="19" font-size="5" fill="#6e6b64">1 (shared!)</text>
+
+          <rect x="40" y="2" width="15" height="16" rx="1" fill="#0e8fd0" opacity="0.8"/>
+          <text x="58" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="58" y="19" font-size="5" fill="#6e6b64">2 (shared!)</text>
+
+          <rect x="70" y="2" width="15" height="16" rx="1" fill="#14966e" opacity="0.8"/>
+          <text x="88" y="13" font-size="5" fill="#6e6b64">Block</text>
+          <text x="88" y="19" font-size="5" fill="#6e6b64">4</text>
+
+          <text x="115" y="13" font-size="6" fill="#6e6b64">Request 2 shares prefix, own tail</text>
+        </g>
+
+        <text x="20" y="210" font-size="7" fill="#0d9488" font-weight="600">Result: same requests fit in <5% less memory!</text>
+
+        <!-- Benefits box -->
+        <rect x="20" y="225" width="340" height="70" rx="4" fill="rgba(14,143,208,0.06)" stroke="rgba(14,143,208,0.15)" stroke-width="1"/>
+        <text x="30" y="242" font-size="8" fill="#1a1a1a" font-weight="600">Benefits of PagedAttention:</text>
+        <text x="30" y="257" font-size="7" fill="#0e8fd0">• Eliminates fragmentation waste</text>
+        <text x="30" y="271" font-size="7" fill="#0e8fd0">• Enable prefix sharing (common prompts)</text>
+        <text x="30" y="285" font-size="7" fill="#0e8fd0">• Dynamic batching with different seq lengths</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 23: VLLM FRAMEWORK ===================== -->
+<div class="slide" data-n="23">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · Framework</span>
+    <span class="slide-num">23</span>
+  </div>
+  <h2>vLLM: Serving Engine</h2>
+  <div class="subtitle">Production inference with PagedAttention</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>vLLM</strong> is an open-source serving framework built on PagedAttention.</p>
+      <p class="point">Manages dynamic batching, KV cache efficiently, schedules requests to maximize GPU utilization.</p>
+      <p class="point">Supports <strong>continuous batching:</strong> new requests arrive mid-batch, old ones leave. No gaps.</p>
+      <p class="point">Achieves 2-4× higher throughput than naive batching for the same GPU memory.</p>
+      <div class="key-idea">
+        <div class="kicker">Industry standard</div>
+        <p>vLLM (and similar: TensorRT-LLM, SGLang) are what power commercial LLM APIs today.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 380 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="190" y="15" text-anchor="middle" font-size="9" fill="#5b5bd6" letter-spacing="0.1em" font-weight="600">VLLM BATCHING</text>
+
+        <!-- Static batching -->
+        <text x="20" y="50" font-size="8" fill="#1a1a1a" font-weight="600">Static Batching (traditional):</text>
+        <g transform="translate(20, 70)">
+          <rect x="0" y="0" width="330" height="80" rx="3" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+          <text x="10" y="15" font-size="7" fill="#6e6b64">Step 1: 3 requests</text>
+          <rect x="10" y="22" width="50" height="12" rx="2" fill="#5b5bd6" opacity="0.6"/>
+          <text x="70" y="28" font-size="6" fill="#6e6b64">Req A</text>
+          <rect x="10" y="39" width="50" height="12" rx="2" fill="#0e8fd0" opacity="0.6"/>
+          <text x="70" y="45" font-size="6" fill="#6e6b64">Req B</text>
+          <rect x="10" y="56" width="50" height="12" rx="2" fill="#7c3aed" opacity="0.6"/>
+          <text x="70" y="62" font-size="6" fill="#6e6b64">Req C</text>
+
+          <text x="170" y="30" font-size="7" fill="#6e6b64">wait for slowest</text>
+
+          <text x="10" y="80" font-size="7" fill="#7c3aed" font-weight="600">Step 2: all 3 done, remove all, add new batch</text>
+        </g>
+
+        <!-- Continuous batching -->
+        <text x="20" y="165" font-size="8" fill="#1a1a1a" font-weight="600">Continuous Batching (vLLM):</text>
+        <g transform="translate(20, 185)">
+          <rect x="0" y="0" width="330" height="100" rx="3" fill="rgba(0,168,208,0.08)" stroke="#0e8fd0" stroke-width="1"/>
+
+          <text x="10" y="15" font-size="7" fill="#6e6b64">Step 1: 3 requests</text>
+          <rect x="10" y="22" width="50" height="12" rx="2" fill="#5b5bd6" opacity="0.6"/>
+          <rect x="10" y="39" width="50" height="12" rx="2" fill="#0e8fd0" opacity="0.6"/>
+          <rect x="10" y="56" width="50" height="12" rx="2" fill="#7c3aed" opacity="0.6"/>
+
+          <text x="180" y="30" font-size="7" fill="#6e6b64">→ Process all</text>
+
+          <text x="10" y="80" font-size="7" fill="#6e6b64">Step 2: Req A done (remove), Req D arrives (add)</text>
+          <rect x="10" y="87" width="50" height="12" rx="2" fill="#0e8fd0" opacity="0.6" stroke-dasharray="2,2"/>
+          <text x="70" y="93" font-size="6" fill="#6e6b64">(done)</text>
+          <rect x="10" y="104" width="50" height="12" rx="2" fill="#7c3aed" opacity="0.6"/>
+          <rect x="70" y="104" width="50" height="12" rx="2" fill="#14966e" opacity="0.6"/>
+        </g>
+
+        <text x="20" y="300" font-size="7" fill="#0d9488" font-weight="600">Never idle GPU, always processing something!</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 24: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="24">
+  <div class="slide-header">
+    <span class="slide-chapter">§6</span>
+    <span class="slide-num">24</span>
+  </div>
+  <h1>Practical Impact</h1>
+  <div class="subtitle">Which models use what, and why it matters</div>
+  <div class="section-num-big">VI</div>
+</div>
+
+<!-- ===================== SLIDE 25: MODEL ARCHITECTURES ===================== -->
+<div class="slide" data-n="25">
+  <div class="slide-header">
+    <span class="slide-chapter">§6 · Models</span>
+    <span class="slide-num">25</span>
+  </div>
+  <h2>Cache Strategies by Model</h2>
+  <div class="subtitle">How different models balance speed vs memory</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>GPT-4 (OpenAI):</strong> Multi-Query Attention (MQA). Single K,V head for all Q heads. Smallest cache, fastest decode.</p>
+      <p class="point"><strong>LLaMA 2 / 3 (Meta):</strong> Grouped-Query Attention (GQA) with 8 KV heads. Balanced 8× cache reduction.</p>
+      <p class="point"><strong>Mistral:</strong> GQA + sliding window (4096). Both techniques combined for max efficiency.</p>
+      <p class="point"><strong>Gemini/Claude:</strong> Proprietary, likely similar: GQA or MQA.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 26: SERVING FRAMEWORKS ===================== -->
+<div class="slide" data-n="26">
+  <div class="slide-header">
+    <span class="slide-chapter">§6 · Frameworks</span>
+    <span class="slide-num">26</span>
+  </div>
+  <h2>Inference Frameworks</h2>
+  <div class="subtitle">Production systems for LLM serving</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>vLLM:</strong> Open-source, PagedAttention, best-in-class throughput. Most popular for research and startups.</p>
+      <p class="point"><strong>TensorRT-LLM (NVIDIA):</strong> Closed-source, GPU-optimized, enterprise support. Used by major clouds.</p>
+      <p class="point"><strong>TGI (Hugging Face):</strong> Production-focused, multi-backend, easy to deploy.</p>
+      <p class="point"><strong>SGLang:</strong> Structured generation, state-machine scheduling for better cache reuse.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 27: FUTURE DIRECTIONS ===================== -->
+<div class="slide" data-n="27">
+  <div class="slide-header">
+    <span class="slide-chapter">§6 · Future</span>
+    <span class="slide-num">27</span>
+  </div>
+  <h2>Future Directions</h2>
+  <div class="subtitle">Emerging techniques and research</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>Speculative decoding:</strong> Generate 5-10 tokens in parallel with cheaper model, verify with main model. Uses cache more efficiently.</p>
+      <p class="point"><strong>Disaggregated KV cache:</strong> Store cache on separate memory nodes. GPU compute separate from cache memory. Improves scaling.</p>
+      <p class="point"><strong>Cross-request cache:</strong> Share KV cache across different users' requests for common prefixes. Radical efficiency gain.</p>
+      <p class="point"><strong>Learned index for cache:</strong> Use ML to predict which cached tokens are needed. Adaptive eviction.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 28: SUMMARY ===================== -->
+<div class="slide" data-n="28">
+  <div class="slide-header">
+    <span class="slide-chapter">Summary</span>
+    <span class="slide-num">28</span>
+  </div>
+  <h2>Key Takeaways</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>KV Cache Problem:</strong> Without caching, decoding regenerates K,V for all previous tokens = O(n²) waste per token.</p>
+      <p class="point"><strong>KV Cache Solution:</strong> Store computed K,V in memory, reuse across steps. Reduces decode time from hours to seconds.</p>
+      <p class="point"><strong>Memory Tradeoff:</strong> Cache costs memory (5-20 GB for 2K context), but eliminates recomputation. Space-time tradeoff.</p>
+      <p class="point"><strong>Optimization Techniques:</strong> GQA/MQA reduce cache 8-64×, quantization 2-4×, sliding window for long contexts.</p>
+      <p class="point"><strong>PagedAttention & vLLM:</strong> Modern serving engines eliminate fragmentation, enable dynamic batching, 2-4× throughput gain.</p>
+      <p class="point"><strong>Impact:</strong> Makes LLM inference practical. Enables real-time chat, long-context understanding, cost-effective deployment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 29: FINAL SLIDE ===================== -->
+<div class="slide" data-n="29">
+  <div class="slide-header">
+    <span class="slide-chapter">Questions?</span>
+    <span class="slide-num">29</span>
+  </div>
+  <h2>Understanding the <em>KV Cache</em></h2>
+  <div class="subtitle">Optimization at the heart of modern LLM inference</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point" style="text-align: center; font-size: 1.1em; margin-top: 2rem;">The key insight: never recompute what you've already computed.</p>
+      <p class="point" style="text-align: center; margin-top: 3rem; font-size: 0.95em; color: var(--mute);">This technique transformed LLMs from research curiosities to practical production systems.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 30</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">◐</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>

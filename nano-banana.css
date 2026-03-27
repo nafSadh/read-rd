@@ -1,0 +1,110 @@
+/* Nano Banana — AI Image Placeholder System
+   Styled containers for Gemini/Nano Banana generated images.
+   Each .nb-img shows a gradient placeholder until
+   a real image URL is loaded. Small copy-prompt button in corner. */
+
+.nb-img {
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all .4s ease;
+  cursor: default;
+}
+
+/* Aspect ratios */
+.nb-img.nb-hero    { aspect-ratio: 21/9; margin: 16px 0 8px; }
+.nb-img.nb-section { aspect-ratio: 21/9; margin: 12px 0; width: 70%; }
+.nb-img.nb-square  { aspect-ratio: 1/1;  margin: 12px 0; }
+.nb-img.nb-wide    { aspect-ratio: 3/1;  margin: 12px 0; }
+
+/* Placeholder gradient — light theme */
+[data-theme="light"] .nb-img {
+  background: linear-gradient(135deg, #e8e4dc 0%, #d6d0c4 30%, #c9c0b0 60%, #e0dcd4 100%);
+}
+[data-theme="light"] .nb-img::before {
+  background: radial-gradient(ellipse 60% 50% at 30% 40%, #2e6ab408, transparent),
+              radial-gradient(ellipse 40% 40% at 70% 60%, #9b7aed06, transparent);
+}
+
+/* Placeholder gradient — dark theme */
+[data-theme="dark"] .nb-img {
+  background: linear-gradient(135deg, #0f1322 0%, #151b30 30%, #1c2440 60%, #0f1322 100%);
+}
+[data-theme="dark"] .nb-img::before {
+  background: radial-gradient(ellipse 60% 50% at 30% 40%, #9b7aed0c, transparent),
+              radial-gradient(ellipse 40% 40% at 70% 60%, #4ee8d008, transparent);
+}
+
+.nb-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity .4s;
+}
+
+/* Copy prompt button — small, bottom-right corner */
+.nb-prompt-copy {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all .2s;
+  z-index: 4;
+  opacity: 0;
+}
+.nb-img:hover .nb-prompt-copy { opacity: .7; }
+.nb-prompt-copy:hover {
+  opacity: 1 !important;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.nb-prompt-copy.copied {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* Shimmer animation for placeholder */
+.nb-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--accent-soft) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: nb-shimmer 3s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .3;
+}
+@keyframes nb-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* When image is loaded */
+.nb-img.nb-loaded {
+  background-size: cover;
+  background-position: center;
+}
+.nb-img.nb-loaded::after { display: none; }
+.nb-img.nb-loaded::before { display: none; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .nb-img.nb-hero { aspect-ratio: 16/9; }
+}
+@media (max-width: 600px) {
+  .nb-img.nb-hero { aspect-ratio: 4/3; }
+}

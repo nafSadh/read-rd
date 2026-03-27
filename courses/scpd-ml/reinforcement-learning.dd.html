@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reinforcement Learning — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'MDPs', title: '<em>Markov</em> Decision Processes' },
+  { num: '02', short: 'Value Iteration', title: '<em>Value</em> Iteration Algorithm' },
+  { num: '03', short: 'Policy Iteration', title: '<em>Policy</em> Iteration Method' },
+  { num: '04', short: 'Learning Models', title: '<em>Learning</em> Environment Models' },
+  { num: '05', short: 'Continuous States', title: '<em>Continuous</em> State MDPs' },
+  { num: '06', short: 'LQR', title: '<em>Linear</em> Quadratic Regulator' },
+  { num: '07', short: 'DDP & iLQR', title: '<em>Differential</em> Dynamic Programming' },
+  { num: '08', short: 'Policy Gradient', title: '<em>Policy</em> Gradient Methods' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // 01 MDPs
+  `<p>A Markov Decision Process (MDP) is the mathematical framework for sequential decision-making under uncertainty. It consists of states S, actions A, transition probabilities P(s'|s,a), rewards R(s,a), and a discount factor γ ∈ [0,1]. The Markov property ensures that future states depend only on the current state and action, not on the history of transitions.</p>
+  <p>The goal of reinforcement learning is to find an optimal policy π*(s) that maps states to actions, maximizing cumulative discounted reward: E[∑t=0∞ γt rt]. Key insights include the concept of value functions V(s) = E[cumulative future reward from state s] and Q-functions Q(s,a) = E[reward from taking action a in state s]. These functions satisfy recursive relationships known as Bellman equations.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">4</div><div class="sl">Core Components</div></div>
+    <div class="st"><div class="sv">γ ≤ 1</div><div class="sl">Discount Factor</div></div>
+    <div class="st"><div class="sv">π*(s)</div><div class="sl">Optimal Policy</div></div>
+    <div class="st"><div class="sv">Bellman</div><div class="sl">Recursion</div></div>
+  </div>`,
+
+  // 02 Value Iteration
+  `<p>Value iteration is a dynamic programming algorithm that computes the optimal value function by repeatedly applying the Bellman optimality operator. Starting from an arbitrary initialization V(s), the algorithm updates: V(s) ← maxₐ [R(s,a) + γ E[V(s')]]. This update is guaranteed to converge to V*(s) because the Bellman operator is a contraction mapping with modulus γ < 1.</p>
+  <p>Once the optimal value function is computed, the optimal policy is extracted via π*(s) = argmaxₐ [R(s,a) + γ E[V*(s')]]. Value iteration has exponential convergence in the number of iterations, making it efficient for problems with moderate state spaces. The algorithm requires knowledge of the transition model P(s'|s,a) and reward function, limiting applicability to model-free settings.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Contraction Mapping</h4>
+      <p>Bellman operator satisfies ||T V - T V'|| ≤ γ ||V - V'||, guaranteeing convergence at rate O(γ^n).</p>
+    </div>
+    <div class="feat">
+      <h4>Policy Extraction</h4>
+      <p>After convergence, optimal policy is deterministically extracted from value function in one sweep.</p>
+    </div>
+  </div>`,
+
+  // 03 Policy Iteration
+  `<p>Policy iteration alternates between two steps: policy evaluation computes V^π(s) for a fixed policy π, and policy improvement updates π(s) ← argmaxₐ [R(s,a) + γ E[V^π(s')]]. This greedy improvement step is guaranteed to produce π' ≥ π in the sense of V^π'(s) ≥ V^π(s) for all states. The algorithm terminates when the improved policy equals the current policy.</p>
+  <p>Policy iteration typically converges in fewer iterations than value iteration because policy improvement can make substantial jumps. However, each iteration requires solving a system of linear equations for V^π (policy evaluation), which can be computationally expensive. In practice, generalized policy iteration (GPI) performs partial policy evaluation steps to balance computation cost with convergence speed.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Policy Improvement</h4>
+      <p>Greedy improvement guarantees: V^π'(s) ≥ V^π(s) for every state, leading to monotonic improvement.</p>
+    </div>
+    <div class="feat">
+      <h4>Faster Convergence</h4>
+      <p>Often converges in fewer total iterations than value iteration despite higher per-iteration cost.</p>
+    </div>
+  </div>`,
+
+  // 04 Learning Models
+  `<p>In model-based reinforcement learning, the agent learns or uses a transition model P(s'|s,a) and reward model to plan optimal behavior. When the true model is unknown, the agent can learn an approximate model from experience (s,a,s',r) tuples using maximum likelihood or other supervised learning techniques. The learned model is then used with value iteration or policy iteration for planning.</p>
+  <p>The exploration vs. exploitation dilemma arises naturally: the agent must balance exploring unfamiliar state-action pairs (to improve the model) with exploiting actions that appear optimal under the current model. Methods like ε-greedy exploration, upper confidence bounds (UCB), and Thompson sampling address this tradeoff. Dyna-style algorithms combine learning from real experience with planning using the learned model to accelerate learning.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Model Learning</h4>
+      <p>Learn P(s'|s,a) from experience transitions; use maximum likelihood or Bayesian methods for uncertainty.</p>
+    </div>
+    <div class="feat">
+      <h4>Dyna Architecture</h4>
+      <p>Interleave real experience collection with simulated planning steps using the learned model.</p>
+    </div>
+  </div>`,
+
+  // 05 Continuous States
+  `<p>Many real-world problems have continuous state spaces (e.g., robot position, velocity) where discretization is impractical due to curse of dimensionality. Value function approximation addresses this by parameterizing V(s) ≈ V(s;θ) with a function approximator (neural network, linear basis functions, etc.). Fitted value iteration becomes: sample state transitions, compute targets using Bellman equation, and perform supervised learning to minimize ||V(s;θ) - target||².</p>
+  <p>Linear function approximation using basis functions φ(s) offers theoretical guarantees: V(s;θ) = θᵀφ(s). However, nonlinear approximators like neural networks are more flexible but lack convergence guarantees and can exhibit instability. Key practical challenges include managing function approximation error, choosing appropriate features, and handling off-policy learning where the data distribution doesn't match the current policy.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Basis Functions</h4>
+      <p>Linear approximation V(s;θ) = θᵀφ(s) with convergence guarantees under gradient descent.</p>
+    </div>
+    <div class="feat">
+      <h4>Neural Networks</h4>
+      <p>Nonlinear function approximation enables complex value functions but requires careful regularization and stability techniques.</p>
+    </div>
+  </div>`,
+
+  // 06 LQR
+  `<p>The Linear Quadratic Regulator (LQR) is the optimal solution for continuous control of linear dynamical systems. Given dynamics ẋ = Ax + Bu and quadratic cost ∑(xᵀQx + uᵀRu), LQR computes an optimal linear policy u* = -Kx where K is derived from the algebraic Riccati equation. The solution is closed-form, computationally efficient, and optimal in expectation.</p>
+  <p>LQR serves as a foundation for many advanced control algorithms. The value function is quadratic: V(x) = xᵀPx where P is the solution to the Riccati equation. Finite-horizon variants of LQR can be solved via backward dynamic programming. Extensions to time-varying systems, partially observed systems (LQG), and constrained settings are well-studied. LQR's optimality and computational efficiency make it the gold standard for linear regulator problems.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Riccati Equation</h4>
+      <p>Closed-form solution P via algebraic Riccati equation yields optimal feedback gain K = (R + BᵀPB)⁻¹BᵀPA.</p>
+    </div>
+    <div class="feat">
+      <h4>Optimality Guarantee</h4>
+      <p>Proven optimal in expectation for linear systems with quadratic costs; computational complexity O(n³) for n-dimensional state.</p>
+    </div>
+  </div>`,
+
+  // 07 DDP & iLQR
+  `<p>Differential Dynamic Programming (DDP) extends LQR to nonlinear systems by linearizing around a nominal trajectory. At each iteration, DDP computes a linear approximation of the value function along the trajectory, solves a local LQR problem, and takes a step toward the computed policy. Iterative LQR (iLQR) simplifies this by solving the local LQR subproblem without explicit second-order terms.</p>
+  <p>DDP and iLQR are trajectory optimization methods: they optimize a specific plan (sequence of states and actions) rather than a state-dependent policy. These algorithms converge rapidly (quadratically for DDP) near good solutions. Extensions include differential dynamic programming with constraints, iterative value function computation, and connections to probabilistic inference formulations of control. iLQR has become a practical workhorse in robotics due to its balance of efficiency and flexibility.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Trajectory Optimization</h4>
+      <p>Optimizes finite-horizon plans via successive linearization and local LQR solution.</p>
+    </div>
+    <div class="feat">
+      <h4>Fast Convergence</h4>
+      <p>Quadratic convergence near optima; applicable to high-dimensional nonlinear systems in robotics.</p>
+    </div>
+  </div>`,
+
+  // 08 Policy Gradient
+  `<p>Policy gradient methods directly optimize the policy π(a|s;θ) parameterized by θ, using gradient ascent on the objective J(θ) = E[∑γᵗrₜ]. The policy gradient theorem shows that ∇J(θ) ∝ E[∇log π(a|s;θ) Q(s,a)], enabling unbiased gradient estimates. REINFORCE uses sampled rewards as estimates of Q, while more advanced methods use learned value functions V(s) as baselines to reduce variance.</p>
+  <p>Policy gradients enjoy universal function approximation (any policy can be approximated), but suffer from high variance in gradient estimates. Variance reduction techniques like baselines, generalized advantage estimation (GAE), and actor-critic methods significantly improve sample efficiency. Modern variants like PPO and TRPO use trust region optimization to stabilize learning. Policy gradients are particularly effective for continuous control and exploration-friendly policies (e.g., Gaussians).</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Policy Gradient Theorem</h4>
+      <p>∇J(θ) ∝ E[∇log π(a|s;θ) Q(s,a)] enables unbiased gradient estimation without value function.</p>
+    </div>
+    <div class="feat">
+      <h4>Variance Reduction</h4>
+      <p>Baselines V(s), GAE, and actor-critic methods dramatically reduce variance while maintaining unbiasedness.</p>
+    </div>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Reinforcement Learning</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Reinforcement_learning" target="_blank">Reinforcement Learning - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Markov_decision_process" target="_blank">Markov Decision Processes - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning</a></li>
+  <li><a href="https://arxiv.org/abs/1707.01495" target="_blank">Rainbow: Combining Improvements in Deep RL</a></li>
+</ul>`];
+
+const details = [
+  // 01 MDPs
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/><circle cx="6" cy="6" r="2.5"/></svg>01</span><h2><em>Markov</em> Decision Processes</h2></div>
+  <p>The Markov Decision Process (MDP) formalizes sequential decision-making under uncertainty as a tuple (S, A, P, R, γ). The state space S contains all possible configurations the environment can be in. The action space A represents choices available to the agent. Transition probabilities P(s'|s,a) define the probability of reaching state s' after taking action a in state s. The reward function R(s,a) assigns immediate scalar feedback. The discount factor γ ∈ [0,1] weighs immediate rewards more heavily than future rewards.</p>
+  <p>The Markov property—that future evolution depends only on the current state, not history—enables efficient computation. A policy π(s) → a maps states to actions deterministically (or π(a|s) probabilistically). The return Gt = ∑ₖ γᵏrₜ₊ₖ represents total discounted future reward from time t. The value function V^π(s) = E[Gt | s] gives expected return under policy π, while the action-value function Q^π(s,a) = E[Gt | s,a] gives expected return after taking action a in state s and following π thereafter.</p>
+  <p>The Bellman equations decompose value functions recursively: V^π(s) = ∑ₐ π(a|s)[R(s,a) + γ ∑ₛ' P(s'|s,a)V^π(s')]. For optimal policies, the Bellman optimality equations become: V*(s) = maxₐ[R(s,a) + γ ∑ₛ' P(s'|s,a)V*(s')]. These recursive definitions form the foundation for dynamic programming algorithms. The advantage function A(s,a) = Q*(s,a) - V*(s) measures how much better taking action a is than the average policy action in state s.</p>
+  <p>MDPs can be finite-horizon (terminal state reached in finite time), infinite-horizon with discount (γ < 1 prevents divergence), or average-reward (optimizing long-run average reward per step). Model-based methods assume knowledge of P and R; model-free methods learn from experience. The framework elegantly captures exploration-exploitation tradeoff: exploration improves model estimates; exploitation uses current knowledge to maximize reward. Understanding MDPs is essential before applying any RL algorithm.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="currentColor"/></marker></defs>
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">MDP Graphical Model</text>
+    <circle cx="120" cy="100" r="35" class="node"/>
+    <text x="105" y="110" class="node-text">s(t)</text>
+    <circle cx="340" cy="100" r="35" class="node"/>
+    <text x="320" y="110" class="node-text">s(t+1)</text>
+    <circle cx="230" cy="180" r="30" class="node-hi"/>
+    <text x="218" y="188" class="node-text">a(t)</text>
+    <circle cx="230" cy="40" r="30" class="node-hi"/>
+    <text x="215" y="48" class="node-text">r(t)</text>
+    <path d="M 155 100 L 305 100" class="edge-hi" marker-end="url(#arrowhead)"/>
+    <text x="225" y="90" class="lbl-hi">P(s'|s,a)</text>
+    <path d="M 130 130 Q 180 160 200 175" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="140" y="155" class="lbl">A</text>
+    <path d="M 230 145 L 230 75" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="250" y="110" class="lbl">R(s,a)</text>
+    <path d="M 130 120 Q 115 160 120 210" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="90" y="170" class="lbl">γ ∑V(s')</text>
+  </svg></div>`,
+
+  // 02 Value Iteration
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="9" height="9" rx="1"/><path d="M 3 6 L 6 9 L 9 3"/></svg>02</span><h2><em>Value</em> Iteration Algorithm</h2></div>
+  <p>Value iteration solves the Bellman optimality equation V*(s) = maxₐ[R(s,a) + γ ∑ₛ' P(s'|s,a)V*(s')] by iteration. Begin with arbitrary V₀(s) (often V₀(s) = 0). Repeatedly apply the Bellman backup operator: Vₖ₊₁(s) ← maxₐ[R(s,a) + γ ∑ₛ' P(s'|s,a)Vₖ(s')] for all states. The algorithm converges to V* as k→∞ because the Bellman operator is a γ-contraction: ||T V - T V'||∞ ≤ γ||V - V'||∞.</p>
+  <p>The contraction property guarantees exponential convergence at rate O(γᵏ). For discount factor γ = 0.99, roughly 460 iterations suffice to reduce error by 10⁻². Convergence is guaranteed regardless of initialization, making value iteration robust. Practical stopping criteria include checking ||Vₖ₊₁ - Vₖ||∞ < ε. Once convergence is achieved, the optimal policy is extracted in a single sweep: π*(s) = argmaxₐ[R(s,a) + γ ∑ₛ' P(s'|s,a)V*(s')].</p>
+  <p>Value iteration's primary limitation is that it requires complete knowledge of the transition model P and reward function. For large state spaces, computing the backup for each state becomes prohibitive. In such cases, asynchronous dynamic programming (updating states in arbitrary order, possibly from samples) helps. The algorithm is the foundation for more sophisticated methods like Q-learning, which learn optimal Q-values from experience without knowing P in advance.</p>
+  <p>Convergence analysis reveals that value iteration makes global progress: V* is a fixed point, and ||Vₖ - V*||∞ ≤ γᵏ ||V₀ - V*||∞. The number of iterations needed grows logarithmically with required precision: k = O(log(1/ε)/(1-γ)). This makes value iteration practical for problems with moderate state spaces, provided the Bellman backup can be computed efficiently.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">Value Iteration Convergence</text>
+    <line x1="60" y1="250" x2="550" y2="250" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+    <line x1="60" y1="50" x2="60" y2="250" stroke="currentColor" stroke-width="1.5" class="lbl"/>
+    <text x="530" y="270" class="lbl">iterations (k)</text>
+    <text x="30" y="150" class="lbl" font-size="11">error</text>
+    <path d="M 70 240 L 100 210 L 130 170 L 160 130 L 190 90 L 220 60 L 250 50" stroke="currentColor" stroke-width="2.5" fill="none" class="edge-hi" vector-effect="non-scaling-stroke"/>
+    <text x="350" y="120" class="lbl-hi" font-size="13">Exponential decay</text>
+    <text x="350" y="140" class="lbl" font-size="12">||V_k - V*|| ≤ γ^k ||V_0 - V*||</text>
+    <circle cx="70" cy="240" r="3" fill="currentColor"/>
+    <circle cx="250" cy="50" r="3" fill="currentColor" class="node-text"/>
+  </svg></div>`,
+
+  // 03 Policy Iteration
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M 2 6 L 5 9 L 10 3" stroke-width="1.5"/></svg>03</span><h2><em>Policy</em> Iteration Method</h2></div>
+  <p>Policy iteration alternates between two phases: policy evaluation and policy improvement. Initialize a policy π arbitrarily. Evaluation phase: solve the linear system V^π(s) = R(s,π(s)) + γ ∑ₛ' P(s'|s,π(s))V^π(s') for all states. This can be done via iterative methods (value iteration on the value function for a fixed policy) or directly solving the linear system when applicable. Improvement phase: set π_new(s) ← argmaxₐ[R(s,a) + γ ∑ₛ' P(s'|s,a)V^π(s')] for each state. Repeat until π_new = π (policy convergence).</p>
+  <p>Policy improvement step is guaranteed monotonic: V^π_new(s) ≥ V^π(s) for all s. This follows from the greedy improvement step—by definition, the new action maximizes the immediate reward plus expected future value. Remarkably, policy iteration converges to π* (the optimal policy) in relatively few outer loop iterations. Empirically, policy iteration often requires 3-10 iterations to converge, while value iteration might need hundreds. The tradeoff is that each policy iteration involves solving a linear system of equations, which can be expensive for large state spaces.</p>
+  <p>Generalized Policy Iteration (GPI) relaxes the requirement for exact policy evaluation. Instead of solving the linear system exactly, perform only a few iterations of value iteration in the evaluation phase. This hybrid approach retains convergence guarantees while reducing per-iteration cost. Asynchronous GPI updates states in arbitrary order, enabling sample-based and distributed implementations. The flexibility of GPI makes it a conceptual framework encompassing value iteration (policy improvement only) and temporal-difference learning (partial evaluation from samples).</p>
+  <p>Policy iteration is less commonly used in model-free settings because evaluation requires complete model information. However, in model-based planning, policy iteration is attractive when the policy can be represented compactly (e.g., a few parameters) and evaluation cost is manageable. Theoretical convergence speed for policy iteration is superlinear: often converging in polynomially many iterations total (not per-iteration cost).</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">Policy Iteration Loop</text>
+    <rect x="60" y="80" width="140" height="60" rx="8" class="node" stroke="currentColor" stroke-width="1.5"/>
+    <text x="75" y="115" class="node-text" font-weight="bold">Policy</text>
+    <text x="75" y="130" class="node-text" font-weight="bold">Evaluation</text>
+    <rect x="320" y="80" width="140" height="60" rx="8" class="node" stroke="currentColor" stroke-width="1.5"/>
+    <text x="335" y="115" class="node-text" font-weight="bold">Policy</text>
+    <text x="335" y="130" class="node-text" font-weight="bold">Improvement</text>
+    <path d="M 200 110 L 320 110" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="250" y="100" class="lbl-hi">V^π</text>
+    <path d="M 320 180 Q 190 220 200 150" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="230" y="200" class="lbl-hi">π' ≥ π</text>
+    <text x="100" y="180" class="lbl" font-size="11">Solve linear system</text>
+    <text x="340" y="180" class="lbl" font-size="11">Greedy on V</text>
+  </svg></div>`,
+
+  // 04 Learning Models
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="9" height="9" rx="1"/></svg>04</span><h2><em>Learning</em> Environment Models</h2></div>
+  <p>Model-based RL learns representations of the environment dynamics P(s'|s,a) and reward function R(s,a) from experience. When the agent interacts with the environment, it collects transitions (s,a,s',r). These can be used to train supervised learning models: predict s' from (s,a) for transition model, and predict r from (s,a) for reward model. Maximum likelihood estimation for multinomial transitions (discrete s') or regression for continuous transitions are standard approaches. The learned model is then used for planning: apply value iteration or policy iteration using the learned model in place of the true one.</p>
+  <p>The exploration-exploitation dilemma is central to model-based learning. Exploitation uses the current model to choose actions that seem best: a = argmaxₐ V_model(s,a). Exploration deliberately selects actions providing information to improve the model's accuracy. Methods include ε-greedy (take random action with probability ε), upper confidence bound (UCB) selection based on optimism under uncertainty, and Thompson sampling (sample model from posterior, act optimally under sampled model). Each trades off short-term reward for long-term model improvement.</p>
+  <p>Dyna algorithms elegantly combine model learning and planning. They interleave: (i) real world transitions for model training and reward collection, (ii) simulated transitions using the learned model to expand exploration. Pseudocode: For each real transition (s,a,s',r): Store in replay buffer, Train model on batch, Take m planning steps simulating model, Execute real action. This architecture efficiently uses both real and simulated experience. Dyna-style algorithms can accelerate learning by one to two orders of magnitude.</p>
+  <p>Challenges in model learning include distributional shift (model predicts on states unlike those seen during training) and compounding error (mistakes in short-term predictions compound into large errors for long-horizon planning). Uncertainty quantification helps: represent model uncertainty via Bayesian methods or ensemble models, use pessimistic/robust planning under uncertainty. The interplay between model quality and planning horizon is subtle; longer plans accumulate error unless model uncertainty is managed. Modern approaches like latent variable models and world models in deep RL address these challenges.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">Model-Based RL Cycle</text>
+    <rect x="100" y="60" width="100" height="50" rx="6" class="node"/>
+    <text x="110" y="92" class="node-text" font-size="13" font-weight="bold">Environment</text>
+    <rect x="320" y="60" width="100" height="50" rx="6" class="node"/>
+    <text x="345" y="92" class="node-text" font-size="13" font-weight="bold">Learned</text>
+    <text x="345" y="106" class="node-text" font-size="13" font-weight="bold">Model</text>
+    <rect x="210" y="160" width="100" height="50" rx="6" class="node"/>
+    <text x="238" y="192" class="node-text" font-size="13" font-weight="bold">Planning</text>
+    <path d="M 150 110 L 180 160" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="155" y="135" class="lbl">Real (s,a,s',r)</text>
+    <path d="M 200 185 Q 250 120 320 110" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="250" y="140" class="lbl-hi">Train Model</text>
+    <path d="M 370 110 L 320 160" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="380" y="135" class="lbl">Simulated (s,a,s')</text>
+    <path d="M 250 160 L 150 110" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="175" y="135" class="lbl">Improve π</text>
+  </svg></div>`,
+
+  // 05 Continuous States
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg>05</span><h2><em>Continuous</em> State MDPs</h2></div>
+  <p>Continuous state spaces (e.g., robot pose, economic indicators) are ubiquitous in applications. Discretizing an n-dimensional state space with m grid points per dimension requires mⁿ states, leading to curse of dimensionality. Value function approximation mitigates this by parameterizing V(s;θ) with a compact representation. Linear approximators V(s;θ) = θᵀφ(s) with hand-crafted basis functions φ(s) offer interpretability and convergence guarantees. Neural networks enable learning feature representations automatically but lack theoretical convergence guarantees.</p>
+  <p>Fitted value iteration (FVI) adapts value iteration to function approximation: (1) Sample state transitions {sᵢ, aᵢ, sᵢ', rᵢ}, (2) Compute targets: tᵢ = rᵢ + γ maxₐ V(sᵢ';θ_old), (3) Update θ by minimizing loss: L(θ) = ∑ᵢ (V(sᵢ;θ) - tᵢ)². FVI is popular in deep RL but convergence is not guaranteed, especially with nonlinear approximators. Off-policy learning (learning from experience collected under a different policy) exacerbates challenges: target values may lie outside the support of the current value function approximation.</p>
+  <p>Linear basis functions with convergence guarantees: If φ(s) are linearly independent and "persistent excitation" conditions hold (states are sampled persistently across the space), then gradient descent on linear approximation V(s;θ) = θᵀφ(s) converges to the solution of the projected Bellman equation: V(s;θ*) = ΠV*, where Π is projection onto the linear subspace spanned by φ. This suggests careful feature engineering is important. Polynomials, Fourier features, and RBF kernels are common basis function choices.</p>
+  <p>Nonlinear approximation (neural networks) dramatically increases expressiveness but introduces new challenges: (1) Overfit risk, addressed by regularization and dropout, (2) Instability from correlation in experience and moving target values, addressed by experience replay and target networks (freezing old parameters), (3) Off-policy divergence where function approximation error accumulates unboundedly. Modern deep RL methods like DQN and A3C address these via engineering techniques: prioritized replay, gradient clipping, double Q-learning. Theoretical understanding of when deep RL converges remains an active research area.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">Function Approximation Hierarchy</text>
+    <rect x="80" y="80" width="120" height="50" rx="6" class="node"/>
+    <text x="95" y="102" class="node-text" font-size="12">Table</text>
+    <text x="95" y="118" class="node-text" font-size="10">(Discrete)</text>
+    <rect x="240" y="80" width="120" height="50" rx="6" class="node"/>
+    <text x="280" y="102" class="node-text" font-size="12">Linear Basis</text>
+    <text x="275" y="118" class="node-text" font-size="10">Convergent</text>
+    <rect x="400" y="80" width="120" height="50" rx="6" class="node"/>
+    <text x="430" y="102" class="node-text" font-size="12">Neural Net</text>
+    <text x="425" y="118" class="node-text" font-size="10">Expressive</text>
+    <path d="M 200 105 L 240 105" class="edge" marker-end="url(#arrowhead)"/>
+    <path d="M 360 105 L 400 105" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="215" y="140" class="lbl" font-size="11">low capacity</text>
+    <text x="370" y="140" class="lbl" font-size="11">high bias</text>
+    <text x="430" y="140" class="lbl" font-size="11">high variance</text>
+  </svg></div>`,
+
+  // 06 LQR
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M 2 10 L 6 2 L 10 8 L 12 8"/></svg>06</span><h2><em>Linear</em> Quadratic Regulator</h2></div>
+  <p>The Linear Quadratic Regulator (LQR) solves the optimal control problem for linear dynamics and quadratic costs. System dynamics: xₜ₊₁ = Axₜ + Buₜ. Cost function: ∑ₜ(xₜᵀQxₜ + uₜᵀRuₜ) with Q ≥ 0 (positive semidefinite) and R > 0 (positive definite). The optimal policy is linear: u*ₜ = -Kₜxₜ where the gain matrix K is derived from the algebraic Riccati equation. For infinite-horizon problems, K is constant (time-invariant).</p>
+  <p>The Riccati equation: P = AᵀPA - AᵀPB(R + BᵀPB)⁻¹BᵀPA + Q. The optimal feedback gain is K = (R + BᵀPB)⁻¹BᵀPA. The closed-loop system xₜ₊₁ = (A - BK)xₜ is asymptotically stable when Q, R are chosen appropriately. The value function is quadratic: V*(x) = xᵀPx, where P satisfies the Riccati equation. Computational complexity is O(n³) for n-dimensional state, making LQR scalable to moderately high dimensions.</p>
+  <p>Finite-horizon LQR is solved via backward dynamic programming. Define Vₜ(x) = xᵀPₜx. At the terminal time T, Pₜ = Q. Backward from T-1 to 0: Pₜ = AᵀPₜ₊₁A - AᵀPₜ₊₁B(R + BᵀPₜ₊₁B)⁻¹BᵀPₜ₊₁A + Q. Forward simulate: uₜ = -Kₜxₜ where Kₜ = (R + BᵀPₜ₊₁B)⁻¹BᵀPₜ₊₁A. Finite-horizon problems are particularly useful for trajectory tracking and constrained prediction horizons.</p>
+  <p>LQR forms the foundation for advanced control algorithms. Iterative LQR (iLQR) extends LQR to nonlinear systems by successive linearization, and LQG extends it to partially observed systems (Gaussian uncertainty). Robustness can be addressed via H-infinity control or μ-synthesis. Constraints can be incorporated via quadratic programming or penalty methods. The closed-form optimal solution, computational efficiency, and theoretical guarantees make LQR the gold standard in linear control.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">LQR Control Loop</text>
+    <rect x="80" y="100" width="80" height="50" rx="6" class="node"/>
+    <text x="95" y="130" class="node-text" font-size="11">System</text>
+    <rect x="250" y="100" width="80" height="50" rx="6" class="node"/>
+    <text x="260" y="130" class="node-text" font-size="11">Controller</text>
+    <circle cx="430" cy="125" r="25" class="node-hi"/>
+    <text x="420" y="130" class="node-text" font-size="11">-K</text>
+    <path d="M 160 125 L 250 125" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="200" y="115" class="lbl" font-size="10">x, u</text>
+    <path d="M 330 125 L 405 125" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="360" y="115" class="lbl" font-size="10">u = -Kx</text>
+    <path d="M 430 100 L 130 100 L 130 100 Q 130 60 180 60" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="280" y="50" class="lbl-hi" font-size="11">State Feedback</text>
+    <text x="400" y="200" class="lbl" font-size="12">K = (R + B'PB)⁻¹B'PA</text>
+    <text x="400" y="220" class="lbl" font-size="12">P solves algebraic Riccati</text>
+  </svg></div>`,
+
+  // 07 DDP & iLQR
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M 6 2 L 10 6 L 6 10 L 2 6 Z"/></svg>07</span><h2><em>Differential</em> Dynamic Programming</h2></div>
+  <p>Differential Dynamic Programming (DDP) extends LQR to nonlinear systems via successive linearization. Given nonlinear dynamics f(x,u) and cost ∑ᵢ c(xᵢ,uᵢ), DDP optimizes a specific trajectory. Initialize with an arbitrary trajectory {x̄₀,ū₀,...,ū_{T-1}}. At each DDP iteration: (1) Linearize dynamics around trajectory: f(x,u) ≈ A(t)x + B(t)u + c, (2) Linearize cost around trajectory, (3) Solve the resulting finite-horizon LQR subproblem backward, (4) Execute forward pass with computed feedback gains to generate a new trajectory.</p>
+  <p>The backward pass computes value function and feedback gains using Riccati recursion analogous to finite-horizon LQR. Define Qₜ(δx,δu) = c(x̄ₜ,ūₜ) + (∇c)ᵀ[δx;δu] + ½[δx;δu]ᵀHₜ[δx;δu] where Hₜ is the Hessian of Q (value + linearized dynamics cost). Backward: Qₜ = Qₜ(x,u) + Vₜ₊₁(f(x,u)). The forward pass executes: xₜ₊₁ = f(xₜ,ūₜ + Kₜδxₜ + kₜ) where Kₜ, kₜ come from LQR solution. This improves the trajectory toward a locally optimal solution.</p>
+  <p>DDP converges quadratically near local optima, meaning error squared at each iteration—very rapid convergence. However, convergence is only guaranteed locally; far from optima, divergence is possible. Heuristics like step-size reduction ("line search") improve robustness. Iterative LQR (iLQR) simplifies DDP by ignoring second-order terms, making each iteration cheaper. Modern implementations use regularization to ensure numerical stability of Riccati recursion.</p>
+  <p>Applications in robotics are widespread: trajectory optimization for manipulation, locomotion, and legged control. DDP works well when an initial trajectory is available (from human demonstrations or simpler heuristics) and when the nonlinearity is moderate. For highly nonlinear systems or unstructured problems, DDP may require good initialization. Extensions include time-varying systems, constraints (e.g., joint limits), and probabilistic variants formulating control as inference. iLQR is now the practical standard in robotics for nonlinear trajectory optimization.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">DDP / iLQR Iteration</text>
+    <rect x="100" y="80" width="120" height="45" rx="6" class="node"/>
+    <text x="120" y="108" class="node-text" font-size="12">Linearize</text>
+    <rect x="300" y="80" width="120" height="45" rx="6" class="node"/>
+    <text x="315" y="100" class="node-text" font-size="12">Backward</text>
+    <text x="325" y="113" class="node-text" font-size="10">(Riccati)</text>
+    <rect x="100" y="170" width="120" height="45" rx="6" class="node"/>
+    <text x="125" y="198" class="node-text" font-size="12">Forward Pass</text>
+    <rect x="300" y="170" width="120" height="45" rx="6" class="node"/>
+    <text x="320" y="198" class="node-text" font-size="12">New Trajectory</text>
+    <path d="M 220 102 L 300 102" class="edge" marker-end="url(#arrowhead)"/>
+    <path d="M 360 125 L 160 170" class="edge" marker-end="url(#arrowhead)"/>
+    <path d="M 220 192 L 300 192" class="edge" marker-end="url(#arrowhead)"/>
+    <path d="M 300 182 Q 200 200 220 192" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="250" y="225" class="lbl-hi" font-size="11">Iterate until convergence</text>
+  </svg></div>`,
+
+  // 08 Policy Gradient
+  `<div class="detail-header"><span class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M 3 3 L 9 9 M 9 3 L 3 9"/></svg>08</span><h2><em>Policy</em> Gradient Methods</h2></div>
+  <p>Policy gradient methods directly optimize the policy π(a|s;θ) parameterized by θ using gradient ascent on the objective J(θ) = E[∑ᵗγᵗrₜ | π_θ]. The policy gradient theorem (Sutton et al.) states that ∇J(θ) = E[∇log π(a|s;θ) Q^π(s,a)]. This remarkable result shows gradient can be computed by sampling actions from the policy, computing log probabilities, and weighting by Q-values. No knowledge of transition model P is required.</p>
+  <p>REINFORCE algorithm implements policy gradient via stochastic gradient ascent: θ ← θ + α ∇log π(aₜ|sₜ;θ) Gₜ where Gₜ = ∑ₖγᵏ rₜ₊ₖ is the sampled return. This is an unbiased gradient estimator: E[∇log π(aₜ|sₜ;θ) Gₜ] = ∇J(θ). However, Gₜ can be high variance because it's a single sample of stochastic returns. Reducing variance is critical for sample efficiency. A baseline function b(s) reduces variance without introducing bias: ∇J(θ) = E[∇log π(a|s;θ) (Q^π(s,a) - b(s))]. Choosing b(s) = V^π(s) is optimal for minimizing variance, yielding advantage estimates A^π(s,a) = Q^π(s,a) - V^π(s).</p>
+  <p>Actor-critic methods learn both policy π(a|s;θ) and value function V(s;φ). The critic (value function) provides low-variance estimates of advantage; the actor updates policy using these estimates. Generalized Advantage Estimation (GAE) combines n-step returns with exponentially decaying weights: Âₜ = ∑_{l=0}^∞ (γλ)ˡ δₜ₊ₗ where δₜ = rₜ + γV(sₜ₊₁) - V(sₜ) is the temporal difference error. GAE offers a bias-variance tradeoff controlled by λ ∈ [0,1].</p>
+  <p>Advanced policy gradient methods address optimization stability. Trust region methods (TRPO, PPO) constrain updates to stay near the old policy to prevent catastrophic forgetting. PPO: θ ← argmaxθ E[min(rₜ(θ) Âₜ, clip(rₜ(θ), 1-ε, 1+ε) Âₜ)] where rₜ(θ) = π(aₜ|sₜ;θ)/π(aₜ|sₜ;θ_old) is the probability ratio. Clipping prevents excessive policy updates. Natural policy gradient methods use Fisher information matrix to account for policy geometry. Policy gradient's ability to handle continuous action spaces, combined with variance reduction techniques, makes them dominant in modern deep RL for both continuous and discrete control.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="25" class="lbl-hi" font-weight="bold">Actor-Critic Architecture</text>
+    <ellipse cx="150" cy="120" rx="60" ry="40" class="node"/>
+    <text x="130" y="130" class="node-text" font-size="12">Policy</text>
+    <text x="130" y="144" class="node-text" font-size="10">π(a|s;θ)</text>
+    <ellipse cx="400" cy="120" rx="60" ry="40" class="node"/>
+    <text x="390" y="130" class="node-text" font-size="12">Value</text>
+    <text x="390" y="144" class="node-text" font-size="10">V(s;φ)</text>
+    <circle cx="275" cy="200" r="35" class="node-hi"/>
+    <text x="265" y="208" class="node-text" font-size="11">Advantage</text>
+    <text x="260" y="222" class="node-text" font-size="10">Âₜ = Rₜ - V(s)</text>
+    <path d="M 180 150 L 250 180" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="205" y="160" class="lbl-hi">∇log π</text>
+    <path d="M 370 150 L 300 180" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="340" y="160" class="lbl">reward targets</text>
+    <path d="M 275 165 Q 150 165 150 160" class="edge-hi" marker-end="url(#arrowhead)" stroke-width="2"/>
+    <text x="190" y="155" class="lbl-hi">Low-variance gradient</text>
+  </svg></div>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://incompleteideas.net/book/the-book-2nd.html" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Sutton & Barto — Reinforcement Learning: An Introduction (2nd ed.)</a> — Comprehensive textbook on MDPs, value functions, policy gradients, and temporal difference learning</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — Introduction to reinforcement learning, control problems, and learning algorithms</p>
+<p><a href="https://en.wikipedia.org/wiki/Reinforcement_learning" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Reinforcement Learning</a> — Overview of learning agents, policies, rewards, and decision processes</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">Reinforcement <em>Learning</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Part V · MDPs, Value Iteration & Policy Gradient</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

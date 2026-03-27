@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACT — Agentic Coding & Tool Use</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  /* Links */
+  a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+  a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+  .detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+  .section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  /* Wikipedia-style superscript citations with hover tooltips */
+  sup.fn{position:relative;cursor:pointer;font-family:var(--sans);font-size:11px;line-height:0;vertical-align:super}
+  sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+  sup.fn:hover>a{color:var(--bright)}
+  sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+  sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+  sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+  sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+
+  </style>
+</head>
+<body data-theme="light">
+<script>
+
+const sections = [
+  { num: '01', short: 'Overview', title: 'The Agentic <em>Coding</em> Explosion' },
+  { num: '02', short: 'SWE-Bench Pro', title: '<em>SWE-Bench</em> Pro — Enterprise Scale' },
+  { num: '03', short: 'SWE-EVO', title: '<em>SWE-EVO</em> — Long-Horizon Evolution' },
+  { num: '04', short: 'Benchmarks', title: '<em>Live</em>, Mutated &amp; Augmented Benchmarks' },
+  { num: '05', short: 'Live-SWE', title: '<em>Live-SWE-agent</em> — Self-Evolving' },
+  { num: '06', short: 'RepoNavigator', title: '<em>One</em> Tool Is Enough' },
+  { num: '07', short: 'Tools', title: 'The <em>Coding</em> Tools Landscape' },
+  { num: '08', short: 'Trends', title: '<em>2026</em> Agentic Coding Trends' }
+];
+
+
+const summaries = [
+  `<p>The most dramatically transformed pillar since Plaat et al. In their 2025 survey, acting meant robotics and hypothetical assistants. By March 2026, the dominant action domain is software development&mdash;agents writing, testing, debugging, and deploying code at production scale.</p>
+  <p>The SWE-Bench benchmark family has fragmented usefully: Pro (enterprise), EVO (long-horizon), Live (continuous updates), Saving (realistic queries), UTBoost (test adequacy). Self-improving agents (Live-SWE-agent at 77.4%) outperform all hand-crafted scaffolds. The tools landscape has exploded: Claude Code, Antigravity, Codex CLI, Gemini CLI, Cursor, OpenClaw&mdash;each making different bets about developer workflow.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">1,865</div><div class="sl">SWE-Bench Pro problems</div></div>
+    <div class="st"><div class="sv">77.4%</div><div class="sl">Live-SWE-agent (SOTA)</div></div>
+    <div class="st"><div class="sv">345</div><div class="sl">Erroneous patches found (UTBoost)</div></div>
+    <div class="st"><div class="sv">60%</div><div class="sl">AI usage in engineering work</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">SWE-bench</span>
+    <span class="s-chip">self-evolving agents</span>
+    <span class="s-chip">Claude Code</span>
+    <span class="s-chip">Antigravity</span>
+    <span class="s-chip">skills portability</span>
+  </div>`,
+
+  `<p>SWE-Bench Pro (Scale AI, Nov 2025)<sup class="fn"><a>[1]</a><span class="tip">SWE-Bench Pro (arXiv:2509.16941v2, Scale AI, Nov 2025)</span></sup> is designed for enterprise-level complexity. 1,865 problems from 41 repos spanning Python, JS, TS, Go. Three-tier access: public (731, GPL), commercial (276, startup codebases), held-out (858, private). Average reference solution: 107.4 lines across 4.1 files.</p>
+  <p>Best model performance remains <strong>below 45% Pass@1</strong>. Without human augmentations (requirements + interface specs), GPT-5 drops from 25.9% to 8.4%. Failure modes: Claude Opus 4.1 submits 74% of the time but 50% are wrong; GPT-5 submits only 27% and gets stuck in loops 96% of non-submission cases.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">41</div><div class="sl">Repositories</div></div>
+    <div class="st"><div class="sv">107.4</div><div class="sl">Avg lines changed</div></div>
+    <div class="st"><div class="sv">&lt;45%</div><div class="sl">Best Pass@1</div></div>
+    <div class="st"><div class="sv">4.1</div><div class="sl">Avg files per patch</div></div>
+  </div>`,
+
+  `<p>SWE-EVO (FPT/Melbourne, Jan 2026)<sup class="fn"><a>[2]</a><span class="tip">SWE-EVO (arXiv:2512.18470v4, FPT/Melbourne, Jan 2026)</span></sup> tests what SWE-Bench can&rsquo;t: continuous software evolution. 48 tasks from release notes of 7 mature Python projects. Average: 21 files edited, 874 tests per instance. <strong>GPT-5 drops from 65% (SWE-Bench Verified) to 21% (SWE-EVO)</strong>&mdash;a 44 percentage-point gap that reveals the frontier problem.</p>
+  <p>Introduces Fix Rate metric for partial progress. Stronger models fail on instruction following (misinterpreting release notes); weaker models fail on tool use and syntax. Difficulty correlates with PR count: unsolved instances average 14.84 PRs vs 1.67 for easily solved ones.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">21%</div><div class="sl">GPT-5 on SWE-EVO</div></div>
+    <div class="st"><div class="sv">65%</div><div class="sl">GPT-5 on SWE-Bench Verified</div></div>
+    <div class="st"><div class="sv">21</div><div class="sl">Avg files per task</div></div>
+    <div class="st"><div class="sv">874</div><div class="sl">Avg tests per instance</div></div>
+  </div>`,
+
+  `<p>Three complementary papers address SWE-Bench&rsquo;s limitations from different angles.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>SWE-bench Live (Microsoft)</h4>
+      <p>1,319 tasks from 93 repos, auto-generated via REPOLAUNCH pipeline. Continuously updatable. Shows performance gap vs static benchmarks.</p>
+    </div>
+    <div class="feat">
+      <h4>Saving SWE-Bench (Microsoft)</h4>
+      <p>Mutates formal GitHub issues into realistic user queries. Reveals 20&ndash;50% overestimation on public benchmarks; 10&ndash;16% on internal ones.</p>
+    </div>
+    <div class="feat">
+      <h4>UTBoost (CUHK-SZ/UIUC)</h4>
+      <p>LLM-generated test augmentation finds 345 erroneous patches. Impacts 40.9% of SWE-Bench Lite leaderboard entries. Rankings changed.</p>
+    </div>
+    <div class="feat">
+      <h4>Collective Lesson</h4>
+      <p>The benchmark the field relies on is contaminated, over-specified, insufficiently tested, and doesn&rsquo;t reflect real user behavior. All four problems are addressable.</p>
+    </div>
+  </div>`,
+
+  `<p>Live-SWE-agent (UIUC, Nov 2025)<sup class="fn"><a>[3]</a><span class="tip">Live-SWE-agent (arXiv:2511.13646v3, UIUC, Nov 2025)</span></sup> is the current state-of-the-art on SWE-bench Verified at <strong>77.4%</strong> with zero offline training cost. The key idea: let agents create custom tools on the fly as they solve problems, starting from a minimal bash-only scaffold.</p>
+  <p>Outperforms all manually designed agents and all offline self-improving agents (DGM cost ~$22K, HGM ~512 hours). On SWE-Bench Pro, achieves 45.8%&mdash;best known score, beating SWE-agent&rsquo;s 7,000 lines of handcrafted code. Model capability matters: Claude 4.5 Sonnet gains +22.6%, but GPT-5-Nano actually <em>hurts</em> with tool creation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">77.4%</div><div class="sl">SWE-bench Verified</div></div>
+    <div class="st"><div class="sv">45.8%</div><div class="sl">SWE-Bench Pro</div></div>
+    <div class="st"><div class="sv">$0</div><div class="sl">Offline training cost</div></div>
+    <div class="st"><div class="sv">+22.6%</div><div class="sl">Claude 4.5 improvement</div></div>
+  </div>`,
+
+  `<p>RepoNavigator (Peking U/Baidu, Jan 2026)<sup class="fn"><a>[4]</a><span class="tip">RepoNavigator (arXiv:2512.20957, Peking U/Baidu, Jan 2026)</span></sup> demonstrates that a single execution-aware tool&mdash;&ldquo;jump&rdquo; to a symbol&rsquo;s definition&mdash;plus RL training outperforms multi-tool agents with much larger models. The 7B model beats 14B baselines; 14B surpasses 32B competitors; 32B exceeds GPT-5.</p>
+  <p>Trained end-to-end via RL from base pretrained models without closed-source distillation. Uses Pyright language server for deterministic symbol resolution. Validates both the &ldquo;one good tool&rdquo; philosophy and the agentic RL training approach from Section 1.</p>
+  <div class="s-chips">
+    <span class="s-chip">single tool</span>
+    <span class="s-chip">RL from scratch</span>
+    <span class="s-chip">7B beats 14B</span>
+    <span class="s-chip">symbol resolution</span>
+  </div>`,
+
+  `<p>The agentic coding tool market has exploded into 15+ serious contenders. The key axes of differentiation: CLI vs IDE, model lock-in vs model flexibility, single-agent vs multi-agent, specialized coding vs general-purpose.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Claude Code</h4>
+      <p>$1B ARR. Agent Teams (parallel sub-agents). MCP-native. CLAUDE.md config. Leads VS Code Marketplace for agent extensions.</p>
+    </div>
+    <div class="feat">
+      <h4>Antigravity (Google)</h4>
+      <p>Agent-first IDE. Manager View for multi-agent orchestration. Artifacts for verification. Free preview with Gemini 3 Pro.</p>
+    </div>
+    <div class="feat">
+      <h4>Gemini CLI</h4>
+      <p>1M token context (5x Claude). Free tier: 1,000 req/day. Open source, 96K+ stars. Google Search grounding.</p>
+    </div>
+    <div class="feat">
+      <h4>OpenClaw / Cursor / Codex</h4>
+      <p>OpenClaw: general-purpose via messaging. Cursor: $1.2B ARR, cloud agents. Codex: Rust sandbox, local-first.</p>
+    </div>
+  </div>`,
+
+  `<p>Anthropic&rsquo;s 2026 report<sup class="fn"><a>[5]</a><span class="tip">Anthropic, &ldquo;2026 Agentic Coding Trends Report&rdquo; (Jan 2026)</span></sup> identifies eight trends across foundation, capability, and impact categories. Central finding: engineers use AI in 60% of work but fully delegate only 0&ndash;20%&mdash;the &ldquo;constant collaborator&rdquo; pattern rather than full replacement.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Role Restructuring</h4>
+      <p>From code writing to agent orchestration. ~27% of AI-assisted work is tasks that wouldn&rsquo;t have been done otherwise.</p>
+    </div>
+    <div class="feat">
+      <h4>Multi-Agent Coordination</h4>
+      <p>Orchestrator + specialists in parallel. Single-agent workflows already dated. Skills portability (SKILL.md) across 868+ tools.</p>
+    </div>
+    <div class="feat">
+      <h4>Long-Horizon Agents</h4>
+      <p>From minutes to hours/days. Plan, iterate, recover from errors, maintain context. Human checkpoints at key decisions.</p>
+    </div>
+    <div class="feat">
+      <h4>Security Dual-Use</h4>
+      <p>Same capabilities help defenders and attackers. Must embed security architecture from inception, not retrofit.</p>
+    </div>
+  </div>`
+];
+
+
+const details = [
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01</div>
+    <h2>The Agentic <em>Coding</em> Explosion</h2>
+  </div>
+  <p>In Plaat et al.&rsquo;s March 2025 survey, the &ldquo;Act&rdquo; category focused on action models, robots, and tool-use demonstrations. Agentic coding was not a topic. By March 2026, it is the dominant manifestation of agentic AI&mdash;with $1B+ revenue products, 15+ competing CLI/IDE tools, and an entire benchmarking ecosystem measuring how well agents can modify real codebases.</p>
+  <h3>Why Coding Became the Dominant Action Domain</h3>
+  <p>Three convergent factors: (1) Code is <em>verifiable</em>&mdash;you can run tests and check if a patch works, providing clean reward signals for RL training. (2) Code is <em>high-value</em>&mdash;developer time is expensive, so even modest automation pays for itself. (3) Code is <em>self-referential</em>&mdash;agents that write code can improve themselves, creating the virtuous learning cycle Plaat et al. theorized.</p>
+  <p>The academic benchmarking ecosystem and the production tool ecosystem have developed in parallel but with surprisingly little cross-pollination. Academic benchmarks (SWE-Bench family) test isolated issue resolution with ground-truth patches. Production tools (Claude Code, Antigravity) operate on open-ended tasks with human review instead of automated verification. Bridging this gap is a key challenge.</p>
+  <h3>Papers and Sources</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Sep 2025</div><div class="tl-text"><strong>SWE-Bench Pro</strong>&mdash;Scale AI. 1,865 enterprise-grade problems. Contamination-resistant three-tier design.</div></div>
+    <div class="tl-item"><div class="tl-date">Dec 2025</div><div class="tl-text"><strong>SWE-EVO</strong>&mdash;FPT/Melbourne. Long-horizon evolution tasks. GPT-5 drops to 21%.</div></div>
+    <div class="tl-item"><div class="tl-date">Jun 2025</div><div class="tl-text"><strong>SWE-bench Live</strong>&mdash;Microsoft. Automated, continuously updatable benchmark from 93 repos.</div></div>
+    <div class="tl-item"><div class="tl-date">Oct 2025</div><div class="tl-text"><strong>Saving SWE-Bench</strong>&mdash;Microsoft. Mutation-based realism. Overestimation revealed.</div></div>
+    <div class="tl-item"><div class="tl-date">Jun 2025</div><div class="tl-text"><strong>UTBoost</strong>&mdash;CUHK-SZ/UIUC. Test augmentation finds 345 erroneous patches.</div></div>
+    <div class="tl-item"><div class="tl-date">Nov 2025</div><div class="tl-text"><strong>Live-SWE-agent</strong>&mdash;UIUC. Self-evolving agent. 77.4% SOTA with zero offline cost.</div></div>
+    <div class="tl-item"><div class="tl-date">Jan 2026</div><div class="tl-text"><strong>RepoNavigator</strong>&mdash;Peking U/Baidu. Single &ldquo;jump&rdquo; tool + RL. 7B beats 14B.</div></div>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02&mdash;Scale AI, Nov 2025</div>
+    <h2><em>SWE-Bench</em> Pro</h2>
+  </div>
+  <p>SWE-Bench Pro (arXiv:2509.16941v2, 20 pages)<sup class="fn"><a>[1]</a><span class="tip">SWE-Bench Pro (arXiv:2509.16941v2, Scale AI, Nov 2025)</span></sup> is the most ambitious coding benchmark to date. Its design decisions address the specific failure modes of the original SWE-Bench: data contamination, trivial problems, limited language coverage, and insufficient task complexity.</p>
+  <h3>Contamination Resistance</h3>
+  <p>The three-tier structure is clever: copyleft (GPL) repos for the public set means including them in training data would violate the license. Purchased startup codebases for the commercial set are literally inaccessible to pre-training pipelines. The held-out set enables future overfitting detection. This is the most contamination-resistant benchmark design in the field.</p>
+  <h3>Human Augmentations Are Critical</h3>
+  <p>Without requirements and interface specifications, GPT-5 drops from 25.9% to 8.4%. This tells us something important: agents fail not because they can&rsquo;t code, but because they can&rsquo;t infer the <em>intended</em> behavior from ambiguous descriptions. The augmentations constrain the solution space so unit test verifiers don&rsquo;t produce false negatives.</p>
+  <h3>Failure Mode Taxonomy</h3>
+  <p>The LLM-as-a-judge failure analysis (using GPT-5 as judge, validated at 87% alignment with humans) reveals model-specific failure patterns. Claude Opus 4.1 submits most of the time (74.2%) but gets solutions wrong (50.3% wrong solution, 31.3% incorrect instruction following). GPT-5 barely submits (27.2%) because it gets stuck in execution loops (96.4% of non-submissions). Weaker models fail on syntax and formatting&mdash;they can&rsquo;t even produce valid patches.</p>
+  <div class="callout">
+    <h4>Multi-File Scaling</h4>
+    <p>Performance degrades sharply beyond 3-file problems. The gap between frontier and smaller models widens dramatically with file count. This aligns with SWE-EVO&rsquo;s findings: the fundamental bottleneck is sustained multi-file reasoning, not single-file code generation.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03&mdash;FPT/Melbourne, Jan 2026</div>
+    <h2><em>SWE-EVO</em>&mdash;The Long-Horizon Gap</h2>
+  </div>
+  <p>SWE-EVO (arXiv:2512.18470v4, 27 pages)<sup class="fn"><a>[2]</a><span class="tip">SWE-EVO (arXiv:2512.18470v4, FPT/Melbourne, Jan 2026)</span></sup> asks the question SWE-Bench can&rsquo;t answer: can agents <em>evolve</em> a codebase, not just fix a bug? The answer, as of early 2026, is: barely.</p>
+  <h3>Construction from Release Notes</h3>
+  <p>Each task is constructed from actual release notes of mature projects (scikit-learn, pydantic, dask, etc.). The agent receives a release note and must implement all the changes needed to evolve the codebase to the new version&mdash;potentially spanning dozens of files, multiple features, and several bug fixes. Average gold patch: 610 lines across 21 files.</p>
+  <h3>The 65% &rarr; 21% Drop</h3>
+  <p>This is the section&rsquo;s most important number. GPT-5 achieves 65% on SWE-Bench Verified (single issues) but only 21% on SWE-EVO (evolution tasks). The drop is not about coding skill&mdash;it&rsquo;s about sustained planning, multi-file coordination, and maintaining coherence across many interdependent changes.</p>
+  <p>The Fix Rate metric reveals partial progress: GPT-5 gets 27.64% Fix Rate vs 18.75% Resolved, meaning it fixes many individual tests even when the overall task isn&rsquo;t solved. This suggests agents <em>can</em> make progress on evolution tasks but can&rsquo;t coordinate the full picture.</p>
+  <h3>Difficulty Analysis</h3>
+  <p>Instances never solved (r=0, 64% of all tasks) average 14.84 PRs each. Instances solved by 10+ models average only 1.67 PRs. The number of upstream PRs is a strong proxy for difficulty&mdash;each PR represents a coherent development step that the agent must understand and implement.</p>
+  <div class="security-box">
+    <h4>The Frontier Problem</h4>
+    <p>Long-horizon software evolution is the clearest gap between current agent capabilities and real-world software engineering needs. 80% of SE effort is maintenance and evolution, not greenfield development. Closing this gap requires sustained multi-file reasoning that no current model achieves reliably.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04&mdash;Three Complementary Papers</div>
+    <h2><em>Benchmarking</em> Reality Check</h2>
+  </div>
+  <h3>SWE-bench Live (Microsoft, Jun 2025)</h3>
+  <p>The REPOLAUNCH pipeline automates the entire benchmark construction process: repository selection (8,577 &rarr; 2,609 after filtering), issue-PR pair extraction, Docker environment setup via LLM agents, and multi-round test validation. Result: 1,319 tasks from 93 repos (vs SWE-Bench&rsquo;s 12). Monthly updates planned.</p>
+  <p>Key finding: agents show &ldquo;substantial performance gap compared to static benchmarks,&rdquo; suggesting overfitting to SWE-Bench&rsquo;s fixed test set.</p>
+  <h3>Saving SWE-Bench (Microsoft, CAIN &rsquo;26)</h3>
+  <p>Telemetry analysis of real developer queries to a coding agent reveals: users write 10&ndash;30 word queries sharing file paths and error stacks; GitHub issues are 100+ words with reproduction code and environment details. Mutation transforms benchmarks to match real usage patterns.</p>
+  <p>Result: <strong>20&ndash;50% overestimation</strong> on public benchmarks, 10&ndash;16% on internal. This establishes a new evaluation paradigm where benchmarks must reflect actual user communication patterns.</p>
+  <h3>UTBoost (CUHK-SZ/UIUC, Jun 2025)</h3>
+  <p>Three contributions: (1) UTGenerator&mdash;LLM-driven test generation with 3-level localization. (2) Intramorphic testing&mdash;compare gold and generated patches on augmented tests. (3) Parser fixes&mdash;SWE-Bench&rsquo;s regex parser has defects affecting multi-line test cases.</p>
+  <p><strong>345 erroneous patches found.</strong> 40.9% of SWE-Bench Lite and 24.4% of SWE-Bench Verified leaderboard entries affected. Rankings changed. The benchmark everyone trusts has systematic evaluation errors.</p>
+  <div class="callout">
+    <h4>Collective Implication</h4>
+    <p>Reported capabilities on SWE-Bench are inflated by: data contamination (Live addresses this), over-specified task descriptions (Saving addresses this), insufficient test cases (UTBoost addresses this), and saturation on isolated tasks (Pro and EVO address this). The real state of the art is considerably below the headline numbers.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05&mdash;UIUC, Nov 2025</div>
+    <h2><em>Live-SWE-agent</em>&mdash;Self-Evolving</h2>
+  </div>
+  <p>Live-SWE-agent (arXiv:2511.13646v3, 20 pages)<sup class="fn"><a>[3]</a><span class="tip">Live-SWE-agent (arXiv:2511.13646v3, UIUC, Nov 2025)</span></sup> represents a paradigm shift: instead of designing agent scaffolds, let agents design themselves. Starting from minimal bash tools, the agent creates custom scripts as it works through problems.</p>
+  <h3>The Reflection Loop</h3>
+  <p>After each environment feedback step, the agent is explicitly asked to reflect: &ldquo;Is there a tool I could create to help with this?&rdquo; Without this reflection prompt, agents don&rsquo;t spontaneously create tools. With it, they generate 3.28 tools per problem on average, and performance jumps from 62.0% to 76.0%.</p>
+  <h3>What Tools Do Agents Create?</h3>
+  <p>Common categories: edit, view, search&mdash;but with per-problem variations. The edit cluster in embedding space is spread out, showing different editing tools for different problems. Unique tools emerge: a Go static analyzer for openlibrary, specialized diff checkers, multi-file patch applicators. Different repos and languages generate different tool profiles.</p>
+  <h3>Cost Comparison</h3>
+  <p>Prior self-improving agents: DGM costs $22,000 and 1,231 hours offline. HGM costs 512 hours. SICA enters an infinite loop. Live-SWE-agent: zero offline cost, minimal per-problem overhead ($0.48&ndash;$0.73 average).</p>
+  <h3>The Model Capability Threshold</h3>
+  <p>GPT-5-Nano (-68.2% relative change) actually <em>degrades</em> with tool creation&mdash;it can&rsquo;t understand the purpose and gets stuck in loops. GPT-5-Mini is nearly neutral (-3.3%). Improvement begins with GPT-5 (+13.3%) and scales to Claude 4.5 Sonnet (+22.6%). There is a minimum model capability threshold for self-improvement to work.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>State-of-the-art with zero offline cost</li>
+        <li>Compatible with any agent loop and LLM</li>
+        <li>Tools adapt per-problem and per-language</li>
+        <li>Open source (github.com/OpenAutoCoder)</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations</h4>
+      <ul>
+        <li>Requires strong base model (fails with small models)</li>
+        <li>Currently limited to tool creation, not full scaffold evolution</li>
+        <li>Reflection prompt is hand-crafted</li>
+      </ul>
+    </div>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06&mdash;Peking U/Baidu, Jan 2026</div>
+    <h2><em>One</em> Tool: RepoNavigator</h2>
+  </div>
+  <p>RepoNavigator (arXiv:2512.20957, 25 pages)<sup class="fn"><a>[4]</a><span class="tip">RepoNavigator (arXiv:2512.20957, Peking U/Baidu, Jan 2026)</span></sup> makes an elegant argument: existing code localization agents use multiple tools that don&rsquo;t reflect how code actually executes. High-level abstractions (classes, inheritance) disappear after compilation. What remains is sequential execution and jumps. LLMs already handle sequential dependencies. What they need is the ability to <em>jump</em>.</p>
+  <h3>The Jump Tool</h3>
+  <p>A single tool: given a symbol in a file, resolve its definition using Pyright&rsquo;s language server. This follows Python&rsquo;s actual name-binding semantics: syntactic analysis &rarr; lexical scope resolution (LEGB rule) &rarr; static type inference &rarr; import dependency graph. Deterministic, structural, and grounded in execution logic.</p>
+  <h3>RL Training Without Distillation</h3>
+  <p>RepoNavigator is trained end-to-end via RL directly from base pretrained models. No closed-source teacher distillation (unlike RepoSearcher and LocAgent). Uses verifiable string-level rewards for localization accuracy. This is possible because localization outputs discrete paths&mdash;clean evaluation compatible with scalable RL.</p>
+  <h3>Striking Scale Efficiency</h3>
+  <p>7B beats 14B baselines. 14B beats 32B. 32B beats GPT-5 on most metrics. This is perhaps the strongest evidence in the ACT section that the right tool design + RL training can overcome raw model scale. It connects directly to the Section 1 insight that tool-augmented agents shift the scaling curve upward.</p>
+  <div class="callout">
+    <h4>The Pi Connection</h4>
+    <p>RepoNavigator&rsquo;s &ldquo;one tool is enough&rdquo; philosophy echoes Pi (the agent engine under OpenClaw): no MCP, no plugin marketplace, just the ability to write and run code. Both bet that a minimal, well-chosen interface beats a complex multi-tool setup&mdash;especially when combined with learned behavior.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07&mdash;Industry Landscape</div>
+    <h2>The <em>Coding</em> Tools Landscape</h2>
+  </div>
+  <p>The agentic coding tool market in March 2026 has 15+ serious contenders, each making different bets about the future of development. A comprehensive comparison by Tembo identifies the key axes: autonomy vs. control, model lock-in vs. flexibility, CLI vs. IDE, specialized vs. general-purpose.</p>
+  <h3>Claude Code</h3>
+  <p>Anthropic&rsquo;s terminal-native agent. $1B annualized revenue by November 2025. Leads VS Code Marketplace for agent-tagged extensions. Key innovations: Agent Teams (Opus 4.6 spawns parallel sub-agents for large tasks), CLAUDE.md per-project configuration, native MCP integration. Case studies: Rakuten processed 12.5M-line codebase in 7 autonomous hours at 99.9% accuracy. TELUS created 13,000 custom AI solutions, 30% velocity increase.</p>
+  <h3>Google Antigravity</h3>
+  <p>Launched November 2025 alongside Gemini 3. An agent-first IDE (VS Code fork) with a distinct Manager View for orchestrating multiple agents in parallel workspaces. Artifacts (task lists, implementation plans, screenshots, browser recordings) provide trust through tangible deliverables. Knowledge base as a learning primitive&mdash;agents save context for future tasks. Free in public preview. Supports Gemini 3 Pro, Claude Sonnet 4.6, GPT-OSS-120B.</p>
+  <h3>Skills Portability</h3>
+  <p>Antigravity Awesome Skills (v5.4.0) bundles 868+ skills usable across Claude Code, Gemini CLI, Codex, Cursor, and 5+ other tools. Official contributions from Anthropic, Vercel Labs, OpenAI, Microsoft, Google DeepMind. The universal SKILL.md format works without modification across <code>.claude/skills/</code>, <code>.gemini/skills/</code>, <code>.cursor/skills/</code>. This is the closest thing to a cross-vendor standard for agent configuration.</p>
+  <h3>The OpenClaw Experiment</h3>
+  <p>Not primarily a coding tool but a general-purpose agent accessed via messaging platforms. 100K+ GitHub stars. The Pi engine underneath takes a radical minimalist approach: no MCP, no skill marketplace. If you want the agent to do something new, you ask it to extend itself via code. Supply chain attacks on ClawHub (14 malicious skills within weeks of launch) demonstrate the risks of open skill ecosystems.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 08&mdash;Anthropic Report, Jan 2026</div>
+    <h2><em>2026</em> Agentic Coding Trends</h2>
+  </div>
+  <p>Anthropic&rsquo;s 2026 Agentic Coding Trends Report<sup class="fn"><a>[5]</a><span class="tip">Anthropic, &ldquo;2026 Agentic Coding Trends Report&rdquo; (Jan 2026)</span></sup> (published January 2026, based on customer deployments and Societal Impacts team research) identifies eight trends organized into foundation, capability, and impact categories.</p>
+  <h3>The 60/20 Paradox</h3>
+  <p>Engineers use AI in approximately 60% of their work and achieve significant productivity gains. Yet they can fully delegate only 0&ndash;20% of tasks. This is not a failure&mdash;it reflects the nature of effective human-AI collaboration. Engineers develop &ldquo;intuitions for AI delegation&rdquo; over time, delegating easily verifiable or low-stakes tasks while retaining conceptually difficult or design-dependent work.</p>
+  <p>~27% of AI-assisted work consists of tasks that wouldn&rsquo;t have been done otherwise: scaling projects, building nice-to-have tools, exploratory development that couldn&rsquo;t justify engineering time before. AI isn&rsquo;t just replacing work&mdash;it&rsquo;s creating new categories of work.</p>
+  <h3>Multi-Agent as Standard Architecture</h3>
+  <p>Single-agent workflows are described as &ldquo;already dated.&rdquo; The report documents orchestrator + specialist patterns: one agent decomposes the task, specialized agents handle implementation, testing, documentation in parallel, an integrator synthesizes results. This mirrors how human teams operate.</p>
+  <h3>Four Strategic Priorities</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">Priority 1</div><div class="tl-text"><strong>Master multi-agent coordination.</strong> Parallel reasoning across context windows is becoming standard. Organizations that build this now gain advantages.</div></div>
+    <div class="tl-item"><div class="tl-date">Priority 2</div><div class="tl-text"><strong>Scale human-agent oversight.</strong> AI-automated review that focuses human attention where it matters. Not optional&mdash;essential for managing increased agent output.</div></div>
+    <div class="tl-item"><div class="tl-date">Priority 3</div><div class="tl-text"><strong>Extend beyond engineering.</strong> Domain experts across departments can leverage agentic coding. Cross-functional adoption unlocks multiplicative value.</div></div>
+    <div class="tl-item"><div class="tl-date">Priority 4</div><div class="tl-text"><strong>Embed security from inception.</strong> Dual-use risk: same capabilities help defenders and attackers. Build security architecture into agentic systems from day one.</div></div>
+  </div>
+  <div class="callout">
+    <h4>Market Context</h4>
+    <p>AI agents market projected to grow from $7.84 billion (2025) to $52.62 billion (2030) at 46.3% CAGR. Asia Pacific is fastest-growing due to rapid digitalization and government AI support.</p>
+  </div><div class="security-box"><h4>Forward Citation Updates (Mar 2026)</h4><p><strong>Self-Play SWE-RL</strong> (Meta FAIR/UIUC, Dec 2025): Self-play RL without human data. Bug-injector + solver trained jointly. +10.4 on SWE-bench Verified. Outperforms human-data RL throughout training.</p><p><strong>Self-Evolving Agents Survey</strong> (TMLR Jan 2026, 30+ authors): First systematic survey. f(\u03a0,\u03c4,r)=\u03a0\u2019 formalization. Four pillars (model/context/tools/architecture). Contextualizes DGM/HGM/Live-SWE-agent.</p><p><strong>Agentic Critical Training</strong> (UMD, Mar 2026): RL for action quality judgment. +5.07 over IL. Improves MATH-500/GPQA without reasoning data.</p></div><div class="security-box"><h4>Web Research Update (Mar 25, 2026)</h4><p><strong>SWE-Bench Verified (Mar 2026):</strong> Claude Opus 4.5 leads at <strong>80.9%</strong>, up from ~65% a year ago. Gemini 3.1 Pro at 80.6%, MiniMax M2.5 (open-weight) at 80.2%, GPT-5.2 at 80.0%. Agent frameworks add 10&ndash;20 points over raw model scores. Qwen3-Coder-Next achieves 70.6% with only 3B active parameters.</p><p><strong>SWE-Bench Pro:</strong> GPT-5.3-Codex leads at <strong>56.8%</strong>. Claude Opus 4.5 at 45.9% on SEAL leaderboard. The Verified&ndash;Pro gap (80.9% vs 45.9%) confirms the benchmark-to-reality gulf the survey identified.</p><p><strong>Revenue explosion:</strong> Claude Code now at <strong>$2.5B ARR</strong> (up from $1B Nov 2025). Cursor passed <strong>$2B ARR</strong> (Feb 2026), valued at $50B. Anthropic overall $14B ARR. 84% of developers use multiple AI coding tools simultaneously.</p></div>`
+];
+
+// DOM BUILDER — Do not modify below this line
+// ════════════════════════════════════════════════
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">A<em>2</em></div><!-- ← CHANGE: 1-3 char logo, <em> for accent -->
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SURVEY SECTION 02 &middot; LITERATURE DEEP-DIVE</div><!-- ← CHANGE -->
+        <div class="hero-title">ACT &mdash; Agentic <em>Coding</em> &amp; Tool Use</div><!-- ← CHANGE -->
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>7 papers + industry sources &middot; ~150 pages read &middot; Mar 2025&ndash;Mar 2026</span></div><!-- ← CHANGE -->
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Section navigation
+const navDiv = document.createElement('div');
+navDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase';
+navDiv.innerHTML = `
+  <span style="color:var(--dim)">&larr; <a href="s1-reason.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S1: Reason</a></span>
+  <a href="index.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">Index</a>
+  <span style="color:var(--dim)"><a href="s3-interact.dd.html" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">S3: Interact</a> &rarr;</span>
+`;
+mainInner.appendChild(navDiv);
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+
+</script>
+</body>
+</html>

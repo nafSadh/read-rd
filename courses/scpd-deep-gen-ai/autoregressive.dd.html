@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autoregressive Models — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Chain Rule', title: '<em>Chain</em> Rule Decomposition' },
+  { num: '02', short: 'NADE', title: '<em>NADE</em> — Neural Density Estimation' },
+  { num: '03', short: 'MADE', title: '<em>MADE</em> — Masked Autoencoder' },
+  { num: '04', short: 'PixelCNN', title: '<em>PixelCNN</em> — Image Generation' },
+  { num: '05', short: 'WaveNet', title: '<em>WaveNet</em> — Audio Synthesis' },
+  { num: '06', short: 'Transformers', title: '<em>Transformer</em> Language Models' },
+  { num: '07', short: 'Sampling', title: '<em>Sampling</em> Strategies' },
+  { num: '08', short: 'Analysis', title: '<em>Strengths</em> & Limitations' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 Chain Rule
+  `<p>Autoregressive models factorize the joint probability distribution p(x₁, x₂, ..., xₙ) using the chain rule of probability. Rather than modeling the entire joint distribution directly, we decompose it as a product of conditional distributions: p(x) = ∏ᵢ p(xᵢ|x₁, ..., xᵢ₋₁). This factorization is theoretically exact and allows tractable computation of likelihood.</p>
+  <p>The key insight is that ordering matters—different orderings yield different conditional factorizations, though all are valid. Some orderings may be more efficient or natural depending on domain structure. Once established, an autoregressive model learns each conditional distribution p(xᵢ|x₁, ..., xᵢ₋₁) using a neural network, enabling both density estimation and generation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Exact</div><div class="sl">Likelihood</div></div>
+    <div class="st"><div class="sv">Tractable</div><div class="sl">Training</div></div>
+    <div class="st"><div class="sv">Sequential</div><div class="sl">Generation</div></div>
+    <div class="st"><div class="sv">Order</div><div class="sl">Dependent</div></div>
+  </div>`,
+
+  // 02 NADE
+  `<p>Neural Autoregressive Density Estimation (NADE) is one of the first efficient autoregressive models. It uses masked weight matrices to ensure that the prediction of xᵢ only depends on x₁, ..., xᵢ₋₁. The key innovation is weight sharing and efficient masking, allowing single-pass evaluation of the entire distribution without explicitly computing intermediate terms.</p>
+  <p>NADE learns a shared hidden layer representation that is reused across all conditional distributions. For binary data, it demonstrates strong empirical results on benchmarks like MNIST and Caltech101. The model scales better than fully general density estimators and provides exact likelihood computation, making it valuable for both density estimation and generative modeling tasks.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Masked Weights</h4>
+      <p>Ensures xᵢ prediction depends only on x₁,...,xᵢ₋₁ through careful masking of weight matrices during training.</p>
+    </div>
+    <div class="feat">
+      <h4>Weight Sharing</h4>
+      <p>Efficient parameter sharing across all conditional distributions reduces model complexity significantly.</p>
+    </div>
+    <div class="feat">
+      <h4>Single Pass</h4>
+      <p>Computes all conditionals in one forward pass rather than sequential evaluation like Boltzmann machines.</p>
+    </div>
+    <div class="feat">
+      <h4>Binary Data</h4>
+      <p>Originally designed for binary data but extended to continuous and categorical variables later.</p>
+    </div>
+  </div>`,
+
+  // 03 MADE
+  `<p>MADE (Masked Autoencoder for Density Estimation) extends NADE with more expressive architectures. It applies masking to general neural networks, using a clever assignment of ordering masks to hidden and output units. Each hidden unit h_j is assigned an ordering mask m_j that ensures dependencies respect the autoregressive ordering. The output prediction for xᵢ only uses hidden units whose masks allow it.</p>
+  <p>MADE improves upon NADE by supporting deep networks while maintaining tractability. It can be trained with any architecture (fully connected, convolutional) as long as masking is properly applied. The approach is elegant: masks are binary matrices that zero out connections violating the autoregressive property, making it universally applicable to arbitrary neural network architectures.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Deep</div><div class="sl">Networks</div></div>
+    <div class="st"><div class="sv">Masked</div><div class="sl">Connections</div></div>
+    <div class="st"><div class="sv">Arbitrary</div><div class="sl">Architectures</div></div>
+    <div class="st"><div class="sv">Elegant</div><div class="sl">Design</div></div>
+  </div>`,
+
+  // 04 PixelCNN
+  `<p>PixelCNN applies autoregressive modeling to image generation by factorizing p(image) = ∏ᵢ p(pixelᵢ|pixel₁, ..., pixelᵢ₋₁) where pixels are ordered in raster scan (top-to-bottom, left-to-right). The network uses masked convolutional filters—specifically gated convolutions—to respect the ordering while processing images efficiently. Color channels (R, G, B) follow strict dependencies: red depends on prior pixels, green on prior pixels and current red, blue on prior pixels and current red/green.</p>
+  <p>PixelCNN's masked convolutions use a receptive field carefully designed to avoid causality violations. Each layer's receptive field grows, allowing predictions to incorporate increasingly distant context. Gated units (multiplicative gates) improve expressiveness. The model generates pixels sequentially, which is slow but guarantees valid distributions. High-quality image generation is achieved on datasets like CIFAR-10 and ImageNet, though generation speed remains a practical limitation.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Masked Convolutions</h4>
+      <p>Convolutional filters masked to respect pixel ordering, preventing information flow from future pixels.</p>
+    </div>
+    <div class="feat">
+      <h4>Gated Units</h4>
+      <p>Multiplicative gates amplify expressiveness by mixing feature channels nonlinearly in each layer.</p>
+    </div>
+    <div class="feat">
+      <h4>Receptive Field</h4>
+      <p>Grows systematically across layers, allowing distant spatial context to inform pixel predictions.</p>
+    </div>
+    <div class="feat">
+      <h4>Sequential Generation</h4>
+      <p>Pixels generated one-at-a-time left-to-right, top-to-bottom, enabling exact sampling from distribution.</p>
+    </div>
+  </div>`,
+
+  // 05 WaveNet
+  `<p>WaveNet adapts autoregressive modeling to raw audio waveforms, modeling p(audio) as a product of conditionals over time-steps. The innovation is dilated (atrous) causal convolutions that efficiently expand receptive field size without increasing parameter count. Each layer applies convolutions at different dilation rates (1, 2, 4, 8, ..., 2^k), allowing each timestep's prediction to depend on exponentially many prior timesteps with few layers.</p>
+  <p>Causal convolutions ensure predictions at time t depend only on timesteps ≤ t, maintaining autoregressive validity. Gated activations similar to PixelCNN enhance expressiveness. WaveNet generates audio by sampling from predicted distributions at each timestep, producing high-fidelity speech, music, and instrument synthesis. Conditioning on mel-spectrograms or text enables voice conversion and TTS applications. Despite sequential generation's slowness, the model's quality and conditioning flexibility made it highly influential.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Dilated</div><div class="sl">Convolutions</div></div>
+    <div class="st"><div class="sv">Causal</div><div class="sl">Masking</div></div>
+    <div class="st"><div class="sv">Raw</div><div class="sl">Waveforms</div></div>
+    <div class="st"><div class="sv">μ-law</div><div class="sl">Encoding</div></div>
+  </div>`,
+
+  // 06 Transformers
+  `<p>Transformer Language Models apply autoregressive factorization to text using the GPT architecture. Tokens are generated sequentially where each token's distribution p(tᵢ|t₁,...,tᵢ₋₁) is modeled using self-attention with a causal mask. The causal attention mask zeroes out attention weights for future positions, ensuring tokens cannot attend to tokens they should predict.</p>
+  <p>Transformers scale dramatically with model size and data, discovering emergent capabilities. Scaling laws show perplexity decreases predictably with model size and compute. Large language models (GPT-2, GPT-3, etc.) achieve remarkable few-shot learning through in-context learning—adapting behavior based on prompt examples without fine-tuning. The combination of transformer efficiency, scaling law predictability, and emergent abilities makes them dominant in modern generative AI.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Causal Attention</h4>
+      <p>Self-attention mask prevents tokens from attending to future positions, enforcing autoregressive property.</p>
+    </div>
+    <div class="feat">
+      <h4>Scaling Laws</h4>
+      <p>Perplexity decreases predictably with compute; larger models consistently outperform smaller ones.</p>
+    </div>
+    <div class="feat">
+      <h4>In-Context Learning</h4>
+      <p>Models learn from prompt examples at inference time without parameter updates or fine-tuning.</p>
+    </div>
+    <div class="feat">
+      <h4>Efficient Computation</h4>
+      <p>Parallelizable training despite sequential generation; self-attention enables long-range dependencies efficiently.</p>
+    </div>
+  </div>`,
+
+  // 07 Sampling
+  `<p>Autoregressive generation requires sampling strategies at inference time. Greedy decoding selects the highest-probability token at each step—fast but often repetitive. Temperature scaling adjusts probability distributions: higher temperatures flatten distributions (more randomness), lower temperatures sharpen them (more deterministic). Top-k sampling restricts sampling to the k most likely tokens, eliminating very low-probability tail noise while preserving diversity.</p>
+  <p>Nucleus (top-p) sampling selects the smallest set of tokens with cumulative probability ≥ p, adapting dynamically to distribution shape. Beam search explores multiple hypothesis sequences in parallel, keeping the b best partial sequences at each step and returning the highest-scoring complete sequence. These strategies trade between quality (determinism), diversity (randomness), and computational cost (inference speed).</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Greedy</div><div class="sl">Fast, Dull</div></div>
+    <div class="st"><div class="sv">Beam Search</div><div class="sl">Quality-Focused</div></div>
+    <div class="st"><div class="sv">Top-k/p</div><div class="sl">Diversity</div></div>
+    <div class="st"><div class="sv">Temperature</div><div class="sl">Stochasticity</div></div>
+  </div>`,
+
+  // 08 Analysis
+  `<p>Autoregressive models offer fundamental strengths: they provide exact likelihood computation, enabling principled comparison via log-likelihood on test sets. They generate sample-by-sample with no approximation, and can be conditioned flexibly on any subset of variables. Likelihood provides a clear optimization target during training without variational bounds or adversarial losses.</p>
+  <p>However, limitations are significant. Sequential generation is slow—generating N tokens requires N forward passes. Weak inductive biases mean ordering sensitivity (e.g., word order in text, pixel ordering in images) affects results. Long-range dependencies are expensive to model computationally. Modern large language models compensate through massive scale and data, but fundamental sequential generation cost remains. Other generative model families (diffusion, flow, VAE) address different trade-offs—faster generation, conditional generation, or latent structure learning.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Strengths</h4>
+      <ul>
+        <li>Exact, tractable likelihood for principled evaluation</li>
+        <li>Sample-accurate generation with no approximations</li>
+        <li>Flexible conditioning on any variable subset</li>
+        <li>Proven scaling laws with emergent capabilities</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Limitations</h4>
+      <ul>
+        <li>Sequential generation is slow (O(N) forward passes)</li>
+        <li>Order-dependent; sensitivity to variable ordering</li>
+        <li>Weak inductive bias vs. structured models</li>
+        <li>Expensive long-range dependencies</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 09 References
+  `<p>Autoregressive models have deep roots in probability theory and machine learning. This section provides key references for further study of chain rule factorization, neural density estimation, and practical applications in image and audio generation.</p>
+   <p>The papers below establish both theoretical foundations and efficient implementations that have become standard tools for generative modeling across multiple domains.</p>`
+];
+
+const details = [
+  // 01 Chain Rule Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 01</div>
+    <h2><em>Chain</em> Rule Decomposition</h2>
+  </div>
+  <p>The chain rule of probability states: p(x₁, x₂, ..., xₙ) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) · ... · p(xₙ|x₁,...,xₙ₋₁). This is not an approximation—it is an exact identity. Autoregressive models exploit this factorization to make tractable the task of learning complex high-dimensional distributions.</p>
+  <p>Unlike energy-based models (Boltzmann machines) or implicit generative models (GANs), autoregressive factorization gives an explicit, tractable form. Computing p(x) requires evaluating n simple conditional distributions rather than a partition function. The conditioning structure naturally emerges from the problem: to generate xᵢ, we condition on already-generated x₁, ..., xᵢ₋₁.</p>
+  <h3>Ordering and Dependency Structure</h3>
+  <p>Different orderings produce different factorizations. For image pixels, raster-scan ordering (left-to-right, top-to-bottom) is natural because spatial locality matches the dependency structure. For sequences (text, audio), temporal ordering is canonical. However, any ordering is mathematically valid.</p>
+  <p>Some orderings may admit more efficient models. For example, if the true data distribution has weak long-range dependencies, an ordering that clusters related variables could reduce the context needed for accurate prediction. Conversely, poor orderings force models to capture unnecessary long-range patterns, increasing model complexity and sample efficiency.</p>
+  <h3>Fully-Observed Conditioning</h3>
+  <p>During training, all xᵢ are fully observed, so p(xᵢ|x₁,...,xᵢ₋₁) can be computed directly from data. At generation time, we sample xᵢ ~ p(xᵢ|x₁ᵗʳᵃⁱⁿ,...,xᵢ₋₁ᵗʳᵃⁱⁿ), building up the sequence iteratively. This sample-then-condition approach ensures generated sequences respect the learned distribution.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="30" y="25" class="lbl">p(x₁, x₂, x₃, x₄) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) · p(x₄|x₁,x₂,x₃)</text>
+      <g id="factorization">
+        <circle cx="60" cy="80" r="20" class="node"/><text x="60" y="85" class="node-text" text-anchor="middle">x₁</text>
+        <circle cx="150" cy="80" r="20" class="node"/><text x="150" y="85" class="node-text" text-anchor="middle">x₂</text>
+        <circle cx="240" cy="80" r="20" class="node"/><text x="240" y="85" class="node-text" text-anchor="middle">x₃</text>
+        <circle cx="330" cy="80" r="20" class="node"/><text x="330" y="85" class="node-text" text-anchor="middle">x₄</text>
+        <line x1="80" y1="80" x2="130" y2="80" class="edge-hi" stroke-width="2"/><text x="105" y="70" class="lbl-hi" text-anchor="middle">p(x₂|x₁)</text>
+        <line x1="170" y1="80" x2="220" y2="80" class="edge-hi" stroke-width="2"/><text x="195" y="70" class="lbl-hi" text-anchor="middle">p(x₃|...)</text>
+        <line x1="260" y1="80" x2="310" y2="80" class="edge-hi" stroke-width="2"/><text x="285" y="70" class="lbl-hi" text-anchor="middle">p(x₄|...)</text>
+      </g>
+      <text x="30" y="160" class="lbl" font-size="12">Each variable conditions on all predecessors; joint likelihood computable as product of conditionals</text>
+    </svg>
+  </div>
+  <h3>Training vs. Generation</h3>
+  <p>During training, we minimize -log p(x₁, x₂, ..., xₙ) = -Σᵢ log p(xᵢ|x₁,...,xᵢ₋₁), summed over training data. Each term is a standard supervised learning problem: predict xᵢ from context, minimize cross-entropy. This parallels teacher forcing in sequence models.</p>
+  <p>At generation time, we autoregress: sample x₁ ~ p(x₁), then x₂ ~ p(x₂|x₁ˢᵃᵐᵖˡᵉᵈ), etc. Sampling from learned conditionals ensures diversity. The entire generation process is exact, sampling from the learned distribution without approximation.</p>`,
+
+  // 02 NADE Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 02</div>
+    <h2><em>NADE</em> — Neural Autoregressive Density Estimation</h2>
+  </div>
+  <p>NADE (Uria et al., 2016) is a foundational autoregressive neural density estimator. It learns the conditional distributions p(xᵢ|x₁,...,xᵢ₋₁) using a single shared hidden layer with masked weight matrices. The key innovation: instead of computing n separate networks, NADE computes all conditionals in one forward pass through clever parameter sharing and masking.</p>
+  <p>For binary data, the architecture is: h = σ(W_mask ⊙ x + b), where ⊙ denotes element-wise multiplication by a binary mask matrix W_mask, and σ is ReLU. The output μᵢ = σ(W_out[i] ⊙ h + b_out[i]) predicts p(xᵢ=1|context). The mask ensures W_mask[i,j] = 0 whenever j ≥ i, preventing xᵢ from using itself as input.</p>
+  <h3>Masked Weight Matrices</h3>
+  <p>The masking is simple but powerful. Each weight matrix is multiplied by a fixed binary mask during forward/backward propagation. The mask structure is: M[i,j] = 1 if j < i (predecessors), 0 otherwise. This zero-ing of weights ensures causality without changing the optimizer.</p>
+  <p>The elegance: during backpropagation, gradients flow only through allowed connections. A weight connecting xⱼ to unit computing xᵢ with j ≥ i receives zero gradient, automatically enforcing the ordering constraint without explicit loss terms.</p>
+  <h3>Single Forward Pass</h3>
+  <p>Traditional approaches might evaluate p(xᵢ|context) via separate networks for each i, requiring n forward passes. NADE evaluates all n conditionals in one forward pass through the shared hidden layer, with different output neurons predicting each conditional. This efficiency enabled scalability to high-dimensional data.</p>
+  <h3>Extension to Continuous Data</h3>
+  <p>The original NADE uses Bernoulli outputs (binary data). Extensions model continuous variables using Gaussian outputs (diagonal covariance), mixture of Gaussians, or copula approaches. For categorical variables, softmax outputs replace sigmoid. Modern variants combine these for mixed-type data.</p>
+  <p>NADE's influence extended to mixture density networks and energy-based models. Its simplicity and efficiency made it popular for density estimation tasks, though transformer-based models have since supplanted it for high-dimensional structured data.</p>`,
+
+  // 03 MADE Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 03</div>
+    <h2><em>MADE</em> — Masked Autoencoder for Density Estimation</h2>
+  </div>
+  <p>MADE (Germain et al., 2015) generalizes autoregressive masking to arbitrary neural network architectures. Rather than restricting to single hidden layers like NADE, MADE uses deep networks while maintaining autoregressive validity through masks applied to all weight matrices.</p>
+  <p>The key idea: assign each hidden unit hⱼ an ordering label m(hⱼ) ∈ {1, ..., n-1} and each input xᵢ a label m(xᵢ) = i. Then mask weight matrices between layers such that connections from units with label ≤ a to units with label ≤ b only exist if a < b. This ensures information strictly flows forward in ordering.</p>
+  <h3>Masking Strategy</h3>
+  <p>During training, hidden unit masks are typically sampled randomly in {1, ..., n-1} (uniform or by other strategies). This randomization over masks encourages the model to learn robust representations invariant to mask choice. Different mask assignments can be used across training epochs.</p>
+  <p>For output units predicting xᵢ, only hidden units with m(h) < i contribute. This guarantees that p̂(xᵢ|context) depends only on x with indices less than i. The masking is elegant: it works with any architecture—fully connected, convolutional, recurrent—as long as connections respect the ordering.</p>
+  <h3>Deep Architectures</h3>
+  <p>Unlike NADE's single hidden layer, MADE supports multiple stacked layers. Deeper networks learn hierarchical representations: lower layers capture simple patterns, higher layers complex interactions. Depth allows exponential growth in expressiveness without proportional parameter growth.</p>
+  <h3>Practical Implementation</h3>
+  <p>Implementation is straightforward: multiply weight matrices by binary masks during forward propagation. Masks can be precomputed or sampled. The approach integrates seamlessly with standard autodiff frameworks. MADE serves as the backbone for modern autoregressive models like MAF (Masked Autoencoder Flows) for density estimation and normalizing flows.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="25" class="lbl" font-weight="600">MADE Masking Example (3-layer)</text>
+      <g id="input">
+        <circle cx="60" cy="80" r="15" class="node"/><text x="60" y="85" class="node-text" text-anchor="middle" font-size="11">x₁</text>
+        <circle cx="120" cy="80" r="15" class="node"/><text x="120" y="85" class="node-text" text-anchor="middle" font-size="11">x₂</text>
+        <circle cx="180" cy="80" r="15" class="node"/><text x="180" y="85" class="node-text" text-anchor="middle" font-size="11">x₃</text>
+      </g>
+      <g id="hidden1">
+        <circle cx="60" cy="160" r="12" class="node"/><text x="60" y="163" class="node-sub" text-anchor="middle" font-size="10">h₁</text>
+        <circle cx="120" cy="160" r="12" class="node"/><text x="120" y="163" class="node-sub" text-anchor="middle" font-size="10">h₂</text>
+        <circle cx="180" cy="160" r="12" class="node"/><text x="180" y="163" class="node-sub" text-anchor="middle" font-size="10">h₃</text>
+      </g>
+      <g id="output">
+        <circle cx="80" cy="230" r="13" class="node"/><text x="80" y="235" class="node-text" text-anchor="middle" font-size="10">p(x₂|x₁)</text>
+        <circle cx="160" cy="230" r="13" class="node"/><text x="160" y="235" class="node-text" text-anchor="middle" font-size="10">p(x₃|x₁,x₂)</text>
+      </g>
+      <polyline points="60,95 60,148" class="edge"/><polyline points="75,95 90,148" class="edge"/>
+      <polyline points="120,95 120,148" class="edge"/><polyline points="135,95 130,148" class="edge"/>
+      <polyline points="180,95 180,148" class="edge"/>
+      <polyline points="60,172 80,217" class="edge-hi"/><polyline points="120,172 80,217" class="edge-hi"/>
+      <polyline points="120,172 160,217" class="edge-hi"/><polyline points="180,172 160,217" class="edge-hi"/>
+      <text x="20" y="260" class="lbl" font-size="12">Masks ensure outputs only receive inputs from predecessors in ordering</text>
+    </svg>
+  </div>`,
+
+  // 04 PixelCNN Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 04</div>
+    <h2><em>PixelCNN</em> — Autoregressive Image Generation</h2>
+  </div>
+  <p>PixelCNN (van den Oord et al., 2016) applies autoregressive factorization to images using masked convolutional neural networks. The model predicts p(image) = ∏ᵢ p(pixelᵢ | pixels_{1..i-1}) where pixels are ordered raster-scan: top row left-to-right, then next row, etc. This ordering is natural for images and respects spatial locality.</p>
+  <p>The innovation is masked convolutions: convolutional kernels are masked to prevent receptive fields from including future pixels. A "Type A" mask excludes the center pixel (useful for first layer), "Type B" includes it (useful for subsequent layers). Gated linear units (GLU) provide multiplicative interactions between features.</p>
+  <h3>Masked Convolutional Kernels</h3>
+  <p>Standard convolutions process all spatial neighbors. In PixelCNN, kernels are masked to zero out weights corresponding to pixels that should not influence prediction. For a 3×3 kernel predicting center pixel (i,j), only the top two rows and left portion of center row have nonzero weights.</p>
+  <p>Multi-scale masking: early layers use Type-A masks (excluding center), later layers use Type-B (including center with previous layers' inputs). This ensures predictions incorporate progressively broader contexts while respecting causality.</p>
+  <h3>Residual and Skip Connections</h3>
+  <p>Deep PixelCNN networks use residual connections to enable effective training. Skip connections aggregate information across scales. The architecture typically interleaves masked convolutions with gated units and skip connections, allowing precise gradients to flow during backpropagation.</p>
+  <h3>Color Channel Dependencies</h3>
+  <p>For RGB images, channels have ordering: red is predicted from prior pixels only, green from prior pixels plus current red, blue from prior pixels plus current red and green. This respects information flow: channels can depend on spatially prior channels and earlier channels in the ordering.</p>
+  <h3>Sampling and Generation</h3>
+  <p>Generation is purely autoregressive: predict distribution over colors for top-left pixel, sample, move right, repeat. After reaching row end, proceed to next row. High-resolution generation is slow (O(H × W) forward passes) but produces high-quality images. Post-hoc improvements like parallel decoding or mixture of logistics outputs enhance sample quality.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 550 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="25" class="lbl" font-weight="600">Raster-Scan Ordering & Masking</text>
+      <g id="grid">
+        <rect x="60" y="60" width="30" height="30" class="node-hi" stroke-width="2"/><text x="75" y="82" class="node-text" text-anchor="middle" font-size="10">1</text>
+        <rect x="95" y="60" width="30" height="30" class="node"/><text x="110" y="82" class="node-text" text-anchor="middle" font-size="10">2</text>
+        <rect x="130" y="60" width="30" height="30" class="node"/><text x="145" y="82" class="node-text" text-anchor="middle" font-size="10">3</text>
+        <rect x="60" y="95" width="30" height="30" class="node"/><text x="75" y="117" class="node-text" text-anchor="middle" font-size="10">4</text>
+        <rect x="95" y="95" width="30" height="30" class="node"/><text x="110" y="117" class="node-text" text-anchor="middle" font-size="10">5</text>
+        <rect x="130" y="95" width="30" height="30" class="node"/><text x="145" y="117" class="node-text" text-anchor="middle" font-size="10">6</text>
+      </g>
+      <text x="200" y="90" class="lbl" font-size="12">Prediction of pixel 5:</text>
+      <text x="200" y="110" class="lbl-hi" font-size="12">✓ depends on 1,2,4</text>
+      <text x="200" y="130" class="lbl" font-size="12">✗ does NOT depend on 3,6</text>
+      <text x="20" y="165" class="lbl" font-size="11">Each pixel's conditional depends only on spatially prior pixels in raster ordering</text>
+    </svg>
+  </div>`,
+
+  // 05 WaveNet Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 05</div>
+    <h2><em>WaveNet</em> — Raw Audio Synthesis</h2>
+  </div>
+  <p>WaveNet (van den Oord et al., 2016) models raw audio waveforms autoregressively, predicting p(audio) = ∏ₜ p(aₜ | a₁, ..., aₜ₋₁). Rather than conditioning on engineered features like MFCCs, WaveNet operates on raw sample values (μ-law encoded). This end-to-end approach learns all feature representations.</p>
+  <p>The core innovation is dilated (atrous) causal convolutions. Standard convolutions have fixed receptive fields. Dilated convolutions skip samples: dilation=1 uses all samples, dilation=2 uses every other sample, etc. By exponentially increasing dilation across layers, WaveNet grows receptive field exponentially with depth, enabling long-range dependencies with fewer parameters and layers.</p>
+  <h3>Dilated Causal Convolutions</h3>
+  <p>A causal convolution ensures the output at time t depends only on inputs up to time t. Dilation d makes the kernel skip d-1 samples: output_t = activation(kernel ∘ [input_{t}, input_{t-d}, input_{t-2d}, ...]). With dilation 1, 2, 4, 8, ..., after L layers receptive field ≈ 2^L samples.</p>
+  <p>Example: 10 layers with exponential dilation (1,2,4,...,512) achieve receptive field ≈ 1024 timesteps. For 16kHz audio, this is ~64ms context, sufficient for phoneme-level dependencies in speech. The architecture is efficient: few parameters, parallelizable training (teacher forcing), yet expressive.</p>
+  <h3>Gated Activation Units</h3>
+  <p>Like PixelCNN, WaveNet uses gated units: h_t = tanh(W_f * x + b_f) ⊙ σ(W_g * x + b_g), where ⊙ is element-wise multiplication, W_f/W_g are filter/gate weights. Gates modulate filter outputs nonlinearly, increasing expressiveness beyond standard ReLU activations.</p>
+  <h3>Conditioning and Synthesis</h3>
+  <p>WaveNet supports conditioning on auxiliary information: mel-spectrograms (for TTS), speaker embeddings (for multi-speaker synthesis), or other features. Conditioning is via projection onto residual/gate paths. This flexibility enables voice conversion, speech synthesis, and music generation.</p>
+  <p>Generation requires sampling: predict distribution over 256 μ-law values at each timestep, sample, feed into next timestep. Sequential sampling means generating 1 second of 16kHz audio requires 16,000 forward passes—slow but necessary for exact sampling.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="25" class="lbl" font-weight="600">Dilated Convolution Receptive Field Growth</text>
+      <g id="timeline">
+        <line x1="50" y1="100" x2="550" y2="100" stroke="var(--border)" stroke-width="1"/>
+        <circle cx="70" cy="100" r="4" class="node"/><text x="70" y="120" class="lbl" text-anchor="middle" font-size="10">t</text>
+        <circle cx="120" cy="100" r="4" class="node"/><text x="120" y="120" class="lbl" text-anchor="middle" font-size="10">t-1</text>
+        <circle cx="170" cy="100" r="4" class="node"/><text x="170" y="120" class="lbl" text-anchor="middle" font-size="10">t-2</text>
+        <circle cx="220" cy="100" r="4" class="node"/><text x="220" y="120" class="lbl" text-anchor="middle" font-size="10">t-4</text>
+        <circle cx="290" cy="100" r="4" class="node"/><text x="290" y="120" class="lbl" text-anchor="middle" font-size="10">t-8</text>
+        <circle cx="430" cy="100" r="4" class="node"/><text x="430" y="120" class="lbl" text-anchor="middle" font-size="10">t-64</text>
+      </g>
+      <line x1="70" y1="65" x2="70" y2="55" stroke="var(--accent)" stroke-width="2"/><text x="70" y="45" class="lbl-hi" text-anchor="middle" font-size="10">Layer 1 (d=1)</text>
+      <line x1="120" y1="65" x2="220" y2="65" stroke="var(--accent)" stroke-width="2"/><text x="170" y="55" class="lbl-hi" text-anchor="middle" font-size="10">Layer 2-3 (d=2,4)</text>
+      <line x1="70" y1="140" x2="430" y2="140" stroke="var(--accent)" stroke-width="2"/><text x="250" y="155" class="lbl-hi" text-anchor="middle" font-size="10">Layer 10 (d=512): receptive field ~1024 samples</text>
+      <text x="20" y="195" class="lbl" font-size="11">Exponential dilation grows receptive field exponentially, allowing long-range temporal context with few layers</text>
+    </svg>
+  </div>`,
+
+  // 06 Transformers Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 06</div>
+    <h2><em>Transformer</em> Language Models (GPT)</h2>
+  </div>
+  <p>Transformer language models (GPT architecture) apply autoregressive factorization using self-attention with causal masking. Unlike CNNs (PixelCNN, WaveNet) or RNNs, transformers process sequences in parallel during training yet maintain autoregressive generation at inference. Token prediction p(tᵢ | t₁, ..., tᵢ₋₁) uses self-attention over all preceding tokens.</p>
+  <p>The causal attention mask is a triangular matrix: element [i,j] is -∞ for j > i (future tokens), 0 otherwise. This forces softmax attention to put zero probability on future positions. During training, all positions are processed in parallel (teacher forcing). At generation, tokens are sampled sequentially, updating the context for next token prediction.</p>
+  <h3>Scaling Laws and Emergence</h3>
+  <p>A remarkable empirical discovery: language model perplexity follows power-law scaling with model size and compute. Doubling model size typically reduces perplexity by ~12%. No theoretical explanation fully accounts for this, but it's reproducible and has become a design principle.</p>
+  <p>Larger models exhibit emergent capabilities absent in smaller ones: few-shot in-context learning, chain-of-thought reasoning, translation without specific training. These emerge around 10B+ parameters. Scaling appears to be a primary lever for capability.</p>
+  <h3>In-Context Learning</h3>
+  <p>GPT models adapt to tasks through prompt examples without fine-tuning or gradient updates. Given a prompt like "Translate to French: hello = bonjour. How to say 'goodbye'?", the model generates correct translations. This appears to be implicit task learning through next-token prediction on the prompt.</p>
+  <p>In-context learning is remarkable because it's unintended: models are only trained to predict the next token. Yet they implicitly extract task structure from context. Larger models are dramatically better at in-context learning, suggesting it's an emergent property of scale.</p>
+  <h3>Efficient Training and Generation</h3>
+  <p>Transformer training is highly parallelizable: all positions compute attention in parallel, all tokens' gradients flow simultaneously. This contrasts with RNNs' sequential timesteps. However, generation requires sequential sampling (like all autoregressive models), limiting inference speed. Methods like speculative decoding attempt to parallelize sampling.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="25" class="lbl" font-weight="600">Causal Attention Mask Pattern</text>
+      <g id="mask_matrix">
+        <text x="60" y="60" class="lbl" font-size="11" font-weight="600">Attention Weights (before softmax)</text>
+        <rect x="60" y="75" width="150" height="100" fill="none" stroke="var(--border)" stroke-width="1"/>
+        <rect x="60" y="75" width="30" height="25" class="node-hi"/><text x="75" y="92" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="90" y="75" width="30" height="25" class="node"/><text x="105" y="92" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <rect x="120" y="75" width="30" height="25" class="node"/><text x="135" y="92" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <rect x="150" y="75" width="30" height="25" class="node"/><text x="165" y="92" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <rect x="60" y="100" width="30" height="25" class="node-hi"/><text x="75" y="117" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="90" y="100" width="30" height="25" class="node-hi"/><text x="105" y="117" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="120" y="100" width="30" height="25" class="node"/><text x="135" y="117" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <rect x="150" y="100" width="30" height="25" class="node"/><text x="165" y="117" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <rect x="60" y="125" width="30" height="25" class="node-hi"/><text x="75" y="142" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="90" y="125" width="30" height="25" class="node-hi"/><text x="105" y="142" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="120" y="125" width="30" height="25" class="node-hi"/><text x="135" y="142" class="lbl" text-anchor="middle" font-size="9">✓</text>
+        <rect x="150" y="125" width="30" height="25" class="node"/><text x="165" y="142" class="lbl" text-anchor="middle" font-size="9">-∞</text>
+        <text x="220" y="95" class="lbl" font-size="11" text-anchor="start">Lower triangle: allowed<br/>Upper triangle: masked to -∞<br/>Softmax(−∞) = 0: no future attention</text>
+      </g>
+    </svg>
+  </div>`,
+
+  // 07 Sampling Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 07</div>
+    <h2><em>Sampling</em> Strategies at Inference Time</h2>
+  </div>
+  <p>Autoregressive generation requires sampling from learned conditional distributions. Different strategies trade quality, diversity, and computation. The choice significantly affects generation characteristics: greedy sampling is deterministic but dull; stochastic sampling adds diversity but may reduce coherence.</p>
+  <h3>Greedy Decoding</h3>
+  <p>At each step, select argmax(p(xᵢ | context)). Simple, fast (no randomness), but prone to repetition and mode collapse. For language, greedy often generates generic text lacking diversity. For images/audio, greedy tends toward averaged-out, blurry samples. Rarely optimal despite efficiency.</p>
+  <h3>Temperature Scaling</h3>
+  <p>Rescale logits by temperature τ: p(xᵢ) ∝ exp(logit_xᵢ / τ). Temperature τ < 1 sharpens distribution (more concentrated on high-probability tokens, more "greedy"). Temperature τ > 1 flattens distribution (more uniform, higher entropy, more random). τ = 1 is the original distribution.</p>
+  <p>In practice, τ ∈ [0.5, 2] is typical. Lower temperatures (0.7-0.8) generate more coherent text; higher temperatures (1.2-1.5) generate more creative/diverse samples. This simple scaling provides control over the stochasticity-coherence trade-off.</p>
+  <h3>Top-k Sampling</h3>
+  <p>Rather than sampling from full vocabulary, sample only from the k most likely tokens (rest probability zeroed). Eliminates very low-probability tail noise while maintaining diversity. For language models, k=40 or k=50 is typical. Prevents sampling from absurd tokens with near-zero probability yet allows flexibility within likely options.</p>
+  <h3>Nucleus (Top-p) Sampling</h3>
+  <p>Instead of fixed k, select the smallest set of tokens with cumulative probability ≥ p (nucleus). If top token has 0.6 probability, include it; if next three have 0.25, 0.1, 0.05, include all until cumulative hits p. Adapts k dynamically based on distribution shape.</p>
+  <p>Nucleus sampling often produces higher quality samples than fixed top-k because it responds to entropy: when top token dominates (low entropy), nucleus includes few tokens (similar to argmax); when entropy is high, nucleus includes more. Standard in GPT-2/3 generation.</p>
+  <h3>Beam Search</h3>
+  <p>Maintain b "beam" partial sequences, keeping the highest-scoring complete sequences at each step. At step t, score all b×vocab extensions, select top b by score. Continue until desired length. Return top-scoring complete sequence(s).</p>
+  <p>Beam search finds higher-likelihood sequences than greedy but requires more computation (b forward passes per step). For language, b=5 is typical. Beam search optimizes for joint likelihood over the sequence, not per-token accuracy, often producing more coherent outputs despite lower immediate probabilities.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="25" class="lbl" font-weight="600">Sampling Strategy Comparison</text>
+      <g id="strategies">
+        <text x="30" y="65" class="lbl" font-weight="600">Greedy:</text>
+        <line x1="30" y1="75" x2="540" y2="75" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+        <circle cx="150" cy="75" r="25" class="node-hi" stroke-width="2"/><text x="150" y="80" class="lbl-hi" text-anchor="middle" font-weight="600">max prob</text>
+        <text x="35" y="125" class="lbl">Top-k (k=5):</text>
+        <line x1="30" y1="135" x2="540" y2="135" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+        <circle cx="100" cy="135" r="15" class="node-hi"/><circle cx="160" cy="135" r="12" class="node-hi"/><circle cx="210" cy="135" r="10" class="node-hi"/><circle cx="255" cy="135" r="8" class="node-hi"/><circle cx="295" cy="135" r="6" class="node-hi"/>
+        <text x="330" y="140" class="lbl" font-size="11">(sample from top-5)</text>
+        <text x="35" y="185" class="lbl">Nucleus (p=0.9):</text>
+        <line x1="30" y1="195" x2="540" y2="195" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+        <circle cx="100" cy="195" r="20" class="node-hi"/><circle cx="160" cy="195" r="14" class="node-hi"/><circle cx="210" cy="195" r="10" class="node-hi"/><circle cx="255" cy="195" r="7" class="node-hi"/>
+        <text x="300" y="200" class="lbl" font-size="11">(cumulative prob ≥ 0.9)</text>
+      </g>
+    </svg>
+  </div>`,
+
+  // 08 Strengths & Limitations Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 08</div>
+    <h2><em>Strengths</em>, Limitations & Alternatives</h2>
+  </div>
+  <p>Autoregressive models are powerful yet face inherent trade-offs. Understanding these helps guide model choice for specific applications.</p>
+  <h3>Core Strengths</h3>
+  <p><strong>Exact Likelihood.</strong> Computing p(x) via the chain rule is exact, not approximate. This enables principled comparison: log-likelihood on test sets measures how well the model captures data distribution. Unlike GANs (no density) or VAEs (approximate lower bound), autoregressive models provide ground truth.</p>
+  <p><strong>Sample Accuracy.</strong> Sampling from learned conditionals generates samples from the actual learned distribution, not an approximation. This contrasts with VAEs (which approximate posterior) or diffusion (which uses Markov chains). Autoregressive generation is exact.</p>
+  <p><strong>Flexible Conditioning.</strong> Any subset of variables can be conditioned on. For images: given left half, predict right half. For audio: given partial waveform, predict future. For mixed types: condition on some features, generate others. The factorization naturally supports this without model changes.</p>
+  <p><strong>Proven Scaling Laws.</strong> Language models exhibit reproducible scaling laws—perplexity improving predictably with scale. Emergent capabilities (in-context learning, reasoning) arise at scale, and continue scaling appears safe and rewarding. This contrasts with GANs (training instability) or some flows (training complexity).</p>
+  <h3>Fundamental Limitations</h3>
+  <p><strong>Sequential Generation.</strong> Generating N tokens requires N forward passes (or N sequential samples from conditionals). For 1000-token sequences or high-resolution images (1M+ pixels), this is slow. Inference time is O(N), making real-time or interactive applications challenging. This is inherent to autoregressive factorization: later tokens depend on earlier ones.</p>
+  <p><strong>Order Sensitivity.</strong> Different orderings of variables produce different models. For text, left-to-right word order is natural, but for images, raster-scan is arbitrary—diagonal or columnar orderings would differ. This weak inductive bias means the model learns to model all orderings equally, even if true data has natural structure.</p>
+  <p><strong>Long-Range Dependencies.</strong> Modeling dependencies over many steps is computationally expensive. In language, earlier tokens have exponentially weaker influence on later tokens (if distances matter). Transformers mitigate this with attention, but cost grows quadratically in sequence length.</p>
+  <p><strong>Mode Coverage vs. Likelihood.</strong> Models maximizing likelihood tend toward averaging predictions across modes, producing blurry or generic samples. Balancing mode coverage and sharp modes requires careful training (e.g., mixture of logistics, discrete latent variables).</p>
+  <h3>Alternative Generative Models</h3>
+  <p><strong>Diffusion Models:</strong> Gradually add noise to data, then reverse process with learned denoiser. Avoid autoregressive ordering, enable parallel decoding (few steps vs. N steps). Recent empirical success in images (DALL-E 3, Midjourney). Slower than GANs but more stable to train than VAEs or GANs. Emerging leader in image generation.</p>
+  <p><strong>Flow-Based Models:</strong> Learn invertible transformations from simple prior (Gaussian) to data. Exact likelihood like autoregressive models, but support parallel generation (apply inverse transform in parallel). Require careful architecture design and training can be unstable. Less popular than diffusion or autoregressive recently.</p>
+  <p><strong>GANs:</strong> Adversarial training generates samples without explicit likelihood. Fast sampling (one-shot), flexible architectures. Training instability, mode collapse, and lack of likelihood are drawbacks. Prominent in specialized domains (e.g., StyleGAN for faces) but less dominant than diffusion or transformers for general generation.</p>
+  <p><strong>VAEs:</strong> Variational autoencoders learn latent representations with principled likelihood lower bound. Amortized inference (fast encoder), support for structured latents. Posterior approximation error (ELBO gap) and tendency to ignore latents (posterior collapse) limit expressiveness. Less competitive on density/generation quality than autoregressive or diffusion models.</p>
+  <div class="callout">
+    <h4>Key Takeaway</h4>
+    <p>Autoregressive models excel at likelihood estimation and structured generation with flexible conditioning. Their sequential generation is slow but exact. Modern dominance in language modeling reflects these properties. For faster generation or avoiding ordering assumptions, diffusion or flow-based alternatives are worth exploring.</p>
+  </div>`,
+
+  // 09 References Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
+    <h2>References & <em>Further</em> Reading</h2>
+   </div>
+   <h3>Foundational Papers</h3>
+   <ul>
+    <li><a href="https://arxiv.org/abs/1606.05328" target="_blank">PixelCNN (van den Oord et al, 2016)</a> — Convolutional autoregressive image modeling with multiscale architecture</li>
+    <li><a href="https://arxiv.org/abs/1609.03499" target="_blank">WaveNet (van den Oord et al, 2016)</a> — Dilated convolutional autoregressive audio generation</li>
+   </ul>
+   <h3>Density Estimation Methods</h3>
+   <ul>
+    <li><strong>NADE</strong> — Neural Autoregressive Density Estimator (Larochelle & Murray, 2011)</li>
+    <li><strong>MADE</strong> — Masked Autoencoder for Density Estimation (Germain et al, 2015)</li>
+   </ul>
+   <h3>Language & Transformers</h3>
+   <ul>
+    <li><strong>Transformer Language Models</strong> — Modern autoregressive sequence modeling with attention mechanisms</li>
+   </ul>
+   <h3>Learning Resources</h3>
+   <ul>
+    <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng's Blog</a> — Comprehensive tutorials on generative modeling</li>
+    <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a> — Course materials and lectures</li>
+   </ul>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
+        <div class="hero-title"><em>Autoregressive</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 1–2 · Chain Rule, MADE, PixelCNN & Transformers</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

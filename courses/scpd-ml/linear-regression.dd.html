@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Regression & Gradient Descent — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Supervised Learning', title: '<em>Supervised</em> Learning Setup' },
+  { num: '02', short: 'LMS Algorithm', title: 'The <em>LMS</em> Algorithm' },
+  { num: '03', short: 'Batch vs SGD', title: '<em>Batch</em> vs Stochastic GD' },
+  { num: '04', short: 'Normal Equations', title: '<em>Normal</em> Equations' },
+  { num: '05', short: 'Matrix Derivatives', title: '<em>Matrix</em> Derivatives' },
+  { num: '06', short: 'Probabilistic View', title: '<em>Probabilistic</em> Interpretation' },
+  { num: '07', short: 'LWR', title: '<em>Locally</em> Weighted Regression' },
+  { num: '08', short: 'Practical Considerations', title: '<em>Practical</em> Considerations' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // 01 Supervised Learning Setup
+  `<p>Supervised learning begins with a training set of <code>m</code> examples, each pair of input <code>x</code> and output <code>y</code>. For regression tasks, we assume a linear relationship: our hypothesis function is <code>h(x) = θ₀ + θ₁x₁ + ... + θₙxₙ</code>, parameterized by weights θ. The design matrix <code>X</code> stacks examples as rows, and we estimate θ to minimize the gap between predictions and true values.</p>
+  <p>The core objective is to find parameters that minimize the cost function <code>J(θ) = ½ Σᵢ(hθ(xⁱ) − yⁱ)²</code>. This sum-of-squared-errors formulation penalizes large deviations equally regardless of direction. The problem is convex, meaning any local minimum is global, guaranteeing a unique solution.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">m</div><div class="sl">Training Examples</div></div>
+    <div class="st"><div class="sv">n</div><div class="sl">Features per Example</div></div>
+    <div class="st"><div class="sv">θ ∈ ℝⁿ</div><div class="sl">Parameter Space</div></div>
+    <div class="st"><div class="sv">Convex</div><div class="sl">Optimization Type</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Design Matrix X</span>
+    <span class="s-chip">Hypothesis h(x)</span>
+    <span class="s-chip">Cost Function J(θ)</span>
+    <span class="s-chip">Sum of Squares</span>
+  </div>`,
+
+  // 02 LMS Algorithm
+  `<p>The Least Mean Squares (LMS) algorithm uses gradient descent to iteratively update parameters toward the minimum. The gradient of the cost function is <code>∇J(θ) = Xᵀ(Xθ − y)</code>. At each iteration, we move in the negative gradient direction scaled by learning rate α: <code>θ := θ − α ∇J(θ)</code>. Smaller α converges slowly but safely; larger α risks overshooting the minimum.</p>
+  <p>The learning rate α is critical and often problem-dependent. Too small and convergence takes forever; too large and oscillation prevents convergence. A practical heuristic is to start with α around 0.01 and adjust based on empirical convergence speed. The algorithm terminates when gradients become negligible or iteration count reaches a preset limit.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Update Rule</h4>
+      <p>θ := θ − α Xᵀ(Xθ − y) per iteration, steering downhill.</p>
+    </div>
+    <div class="feat">
+      <h4>Convergence Guarantee</h4>
+      <p>Convex objective ensures global minimum; rate depends on condition number of X.</p>
+    </div>
+  </div>
+  <div class="s-stat">
+    <div class="st"><div class="sv">α</div><div class="sl">Learning Rate</div></div>
+    <div class="st"><div class="sv">0.01–0.1</div><div class="sl">Typical Range</div></div>
+    <div class="st"><div class="sv">Iterative</div><div class="sl">Update Type</div></div>
+    <div class="st"><div class="sv">≈1/κ(X)</div><div class="sl">Optimal Rate</div></div>
+  </div>`,
+
+  // 03 Batch vs Stochastic GD
+  `<p>Batch gradient descent processes all <code>m</code> training examples per iteration, computing the full gradient <code>∇J(θ) = Xᵀ(Xθ − y)</code>. This guarantees downhill motion at every step and smooth convergence, but becomes prohibitively slow for large datasets (m = millions). Each iteration costs O(nm) time.</p>
+  <p>Stochastic gradient descent (SGD) processes one example at a time: <code>θ := θ − α(hθ(xⁱ) − yⁱ)xⁱ</code>. This is much faster—O(n) per iteration—but the gradient estimate is noisy, causing oscillation around the optimum. Mini-batch GD balances both: process k examples per iteration (k = 32, 256, etc.), reducing variance while remaining efficient on GPUs.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Batch GD</h4>
+      <ul>
+        <li>Smooth, monotonic convergence</li>
+        <li>Better use of vectorization</li>
+        <li>No hyperparameter noise</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Batch GD</h4>
+      <ul>
+        <li>O(nm) cost per iteration</li>
+        <li>Impractical for large m</li>
+        <li>Can get stuck in poor local regions</li>
+      </ul>
+    </div>
+  </div>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>SGD</h4>
+      <ul>
+        <li>O(n) cost per iteration</li>
+        <li>Scales to massive datasets</li>
+        <li>Escapes local minima easily</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>SGD</h4>
+      <ul>
+        <li>Noisy gradient estimates</li>
+        <li>Oscillates around optimum</li>
+        <li>Learning rate tuning critical</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 04 Normal Equations
+  `<p>Instead of iterating, we can solve the optimization problem in closed form. Setting the gradient to zero—<code>∇J(θ) = Xᵀ(Xθ − y) = 0</code>—yields <code>θ = (XᵀX)⁻¹Xᵀy</code>. This normal equation gives the exact least-squares solution without iteration. If <code>XᵀX</code> is invertible, there is a unique solution.</p>
+  <p>The computational cost is O(n³) due to matrix inversion, making this impractical for very high-dimensional problems (n > 100,000). However, for moderate n, it avoids hyperparameter tuning and convergence criteria. Numerical stability can be an issue if <code>XᵀX</code> is ill-conditioned (condition number κ >> 1), in which case small perturbations in data cause large changes in θ.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">O(n³)</div><div class="sl">Inversion Cost</div></div>
+    <div class="st"><div class="sv">1 iteration</div><div class="sl">Solution Time</div></div>
+    <div class="st"><div class="sv">Exact</div><div class="sl">Solution Quality</div></div>
+    <div class="st"><div class="sv">κ(X)</div><div class="sl">Stability Factor</div></div>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Closed-Form</span>
+    <span class="s-chip">(X^T X)^{-1}</span>
+    <span class="s-chip">No Iteration</span>
+    <span class="s-chip">Numerical Stability</span>
+  </div>`,
+
+  // 05 Matrix Derivatives
+  `<p>Deriving the normal equations requires matrix calculus. Key identities include <code>∂/∂A tr(AB) = Bᵀ</code>, <code>∂/∂A tr(AᵀB) = B</code>, and <code>∂/∂A tr(AᵀAB) = 2AB</code>. The cost function can be written as <code>J(θ) = ½ tr((Xθ − y)ᵀ(Xθ − y))</code>. Expanding and differentiating: <code>∇J(θ) = XᵀXθ − Xᵀy</code>.</p>
+  <p>These trace tricks transform matrix equations into scalar traces, enabling standard calculus rules. The key insight is that <code>∂/∂θ θᵀAθ = (A + Aᵀ)θ</code>, and when A is symmetric (as <code>XᵀX</code> is), this becomes <code>2Aθ</code>. Mastering these identities is essential for deriving optimization algorithms in machine learning.</p>
+  <div class="callout">
+    <h4>Key Matrix Identities</h4>
+    <p><code>∂/∂A tr(AB) = Bᵀ</code>, <code>∂/∂A tr(AᵀAB) = 2AB</code>, <code>∂/∂θ θᵀAθ = 2Aθ</code> (A symmetric). These are derivable from the scalar product expansion and the definition of the gradient.</p>
+  </div>
+  <div class="s-chips">
+    <span class="s-chip">Trace Properties</span>
+    <span class="s-chip">Chain Rule</span>
+    <span class="s-chip">Symmetry</span>
+    <span class="s-chip">Scalar Expansion</span>
+  </div>`,
+
+  // 06 Probabilistic Interpretation
+  `<p>Assume observations follow a Gaussian model: <code>yⁱ = θᵀxⁱ + εⁱ</code>, where <code>εⁱ ~ N(0, σ²)</code> are i.i.d. noise. Then <code>yⁱ | xⁱ; θ ~ N(θᵀxⁱ, σ²)</code>. The likelihood of the entire dataset is the product of individual Gaussians: <code>L(θ) = ∏ᵢ (1/(√(2πσ²))) exp(−(yⁱ − θᵀxⁱ)² / (2σ²))</code>.</p>
+  <p>Maximizing the log-likelihood <code>ℓ(θ) = − m/(2σ²) J(θ) + const</code> is equivalent to minimizing J(θ), the sum-of-squared-errors cost. This probabilistic view justifies the choice of quadratic loss and connects it to maximum likelihood estimation. It also reveals assumptions (Gaussianity, homoscedasticity) underlying least-squares regression.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Gaussian Noise</h4>
+      <p>Assumption: ε ~ N(0, σ²) ensures optimality of squared-error loss under MLE.</p>
+    </div>
+    <div class="feat">
+      <h4>MLE Equivalence</h4>
+      <p>Minimizing sum-of-squares is equivalent to maximum likelihood when errors are Gaussian.</p>
+    </div>
+  </div>
+  <div class="s-stat">
+    <div class="st"><div class="sv">σ²</div><div class="sl">Noise Variance</div></div>
+    <div class="st"><div class="sv">N(0,σ²)</div><div class="sl">Error Distribution</div></div>
+    <div class="st"><div class="sv">L(θ)</div><div class="sl">Likelihood</div></div>
+    <div class="st"><div class="sv">MLE</div><div class="sl">Solution Method</div></div>
+  </div>`,
+
+  // 07 Locally Weighted Regression
+  `<p>Locally Weighted Regression (LWR) is a non-parametric method that weights training examples based on proximity to the query point. For prediction at x, we solve <code>min_θ Σᵢ wⁱ(yⁱ − θᵀxⁱ)²</code>, where weight <code>wⁱ = exp(−(||xⁱ − x||² / (2τ²)))</code>. Examples near x have weight ≈ 1; distant examples decay exponentially. The bandwidth τ controls the locality radius.</p>
+  <p>LWR requires fitting a new model θ for each query point, making it O(m) at test time—much slower than parametric methods but more flexible. It adapts to local data structure without assuming global linearity. However, it is prone to overfitting in high dimensions ("curse of dimensionality") and lacks explicit regularization. The bandwidth τ is crucial: small τ fits only nearby points (high variance, low bias); large τ averages many points (low variance, high bias).</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>LWR Strengths</h4>
+      <ul>
+        <li>Flexible, non-parametric</li>
+        <li>Adapts to local structure</li>
+        <li>No global assumption needed</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>LWR Weaknesses</h4>
+      <ul>
+        <li>O(m) prediction cost</li>
+        <li>High-dimensional curse</li>
+        <li>τ tuning critical</li>
+      </ul>
+    </div>
+  </div>
+  <div class="s-stat">
+    <div class="st"><div class="sv">τ</div><div class="sl">Bandwidth Parameter</div></div>
+    <div class="st"><div class="sv">O(m)</div><div class="sl">Test Cost</div></div>
+    <div class="st"><div class="sv">Non-parametric</div><div class="sl">Model Type</div></div>
+    <div class="st"><div class="sv">Gaussian</div><div class="sl">Kernel Shape</div></div>
+  </div>`,
+
+  // 08 Practical Considerations
+  `<p>In practice, feature scaling dramatically improves convergence. If features have vastly different ranges (e.g., age 0–100 vs. income 0–1,000,000), gradient descent becomes inefficient because the loss surface is elongated. Standardizing features to zero mean and unit variance—<code>x̃ = (x − μ) / σ</code>—makes the loss surface more circular, enabling larger, safer learning rates.</p>
+  <p>Convergence criteria matter: monitor the norm of parameter changes <code>||θ^(t+1) − θ^(t)||</code> or the gradient norm <code>||∇J(θ)||</code>. When these drop below a threshold, training has effectively converged. Regularization (L2 or L1) is often added to prevent overfitting: <code>J(θ) + λ||θ||²</code> or <code>+ λ||θ||₁</code>. This introduces a bias-variance tradeoff; larger λ reduces overfitting but increases bias.</p>
+  <div class="security-box">
+    <h4>Common Pitfalls</h4>
+    <p>Choosing learning rate too large causes divergence; too small causes slow convergence. Forgetting feature scaling can require 10x more iterations. Using an ill-conditioned design matrix (features are linearly dependent) makes (XᵀX)⁻¹ numerically unstable. Always check data quality and feature correlations before training.</p>
+  </div>
+  <div class="s-stat">
+    <div class="st"><div class="sv">μ, σ</div><div class="sl">Normalization Stats</div></div>
+    <div class="st"><div class="sv">λ</div><div class="sl">Regularization Weight</div></div>
+    <div class="st"><div class="sv">10⁻⁶</div><div class="sl">Gradient Threshold</div></div>
+    <div class="st"><div class="sv">Cross-Validation</div><div class="sl">Tuning Tool</div></div>
+  </div>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere (SEE) Materials</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie, Tibshirani, Friedman - The Elements of Statistical Learning</a> (Chapter 3)</li>
+  <li><a href="https://en.wikipedia.org/wiki/Linear_regression" target="_blank">Linear Regression - Wikipedia</a></li>
+  <li><a href="https://arxiv.org/abs/0810.4521" target="_blank">Ng & Jordan - Discriminative vs. Generative Classifiers</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank">Gradient Descent - Wikipedia</a></li>
+</ul>`];
+
+const details = [
+  // 01 Supervised Learning Setup
+  `<div class="detail-header">
+    <div class="num"><span>01</span></div>
+    <h2><em>Supervised</em> Learning Setup</h2>
+  </div>
+  <p>The foundation of linear regression rests on a training dataset <code>D = {(x¹, y¹), ..., (xᵐ, yᵐ)}</code>, where each xⁱ ∈ ℝⁿ is a feature vector and yⁱ ∈ ℝ is a scalar label. The design matrix X ∈ ℝᵐˣⁿ stacks training examples as rows: X = [x¹ᵀ; x²ᵀ; ...; xᵐᵀ]. We augment each example with a bias term, setting x₀ⁱ = 1, so the effective feature dimension becomes n+1 and θ ∈ ℝⁿ⁺¹.</p>
+  <p>The hypothesis function h(x) = θᵀx models the relationship between inputs and outputs. Our goal is to find parameters θ that minimize prediction error. We quantify error using the sum-of-squared-errors cost function:</p>
+  <p><code>J(θ) = ½ Σᵢ₌₁ᵐ (hθ(xⁱ) − yⁱ)² = ½ ||Xθ − y||²</code></p>
+  <p>This cost function is convex, meaning it has a single global minimum and no saddle points. The factor of ½ is a normalization convention that simplifies derivatives. The absolute error |hθ(xⁱ) − yⁱ| is squared, making the cost symmetric and penalizing large errors more heavily than small ones.</p>
+
+  <h3>The Design Matrix and Feature Representation</h3>
+  <p>Organizing data into the design matrix X enables efficient vectorized computations. Each row is an example; each column is a feature. The matrix formulation <code>Xθ − y</code> computes all residuals in one operation. This is crucial for modern machine learning, where datasets contain millions of examples.</p>
+  <p>Feature engineering—constructing meaningful features from raw data—is essential. For example, if predicting house prices from floor area and age, we might include polynomial features (area², area × age) to capture non-linear relationships. Linear regression on engineered features can approximate complex functions.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="30" y="30" class="lbl">Design Matrix X (m × n)</text>
+      <rect x="30" y="50" width="150" height="150" class="node" />
+      <text x="75" y="110" class="node-text">x₁₁  x₁₂  x₁₃</text>
+      <text x="75" y="130" class="node-text">x₂₁  x₂₂  x₂₃</text>
+      <text x="75" y="150" class="node-text">⋮    ⋮    ⋮</text>
+      <text x="75" y="170" class="node-text">xₘ₁  xₘ₂  xₘ₃</text>
+
+      <text x="220" y="85" class="lbl">× θ</text>
+      <rect x="270" y="50" width="60" height="150" class="node" />
+      <text x="290" y="110" class="node-text">θ₁</text>
+      <text x="290" y="130" class="node-text">θ₂</text>
+      <text x="290" y="150" class="node-text">⋮</text>
+
+      <text x="360" y="85" class="lbl">= ŷ</text>
+      <rect x="410" y="50" width="60" height="150" class="node" />
+      <text x="430" y="110" class="node-text">ŷ₁</text>
+      <text x="430" y="130" class="node-text">ŷ₂</text>
+      <text x="430" y="150" class="node-text">⋮</text>
+
+      <text x="500" y="85" class="lbl">vs. y</text>
+      <rect x="550" y="50" width="40" height="150" class="node" />
+      <text x="560" y="110" class="node-text">y₁</text>
+      <text x="560" y="130" class="node-text">y₂</text>
+      <text x="560" y="150" class="node-text">⋮</text>
+
+      <text x="50" y="240" class="lbl">Cost: J(θ) = ½ ||Xθ − y||²</text>
+    </svg>
+  </div>
+
+  <h3>Convexity and Global Optimality</h3>
+  <p>The Hessian of J(θ) is <code>H = XᵀX</code>, which is positive semi-definite. This guarantees convexity: J is a bowl-shaped function with a unique minimum. Any local minimum is the global minimum, and gradient descent will converge to it. This is a fundamental advantage of linear regression over non-convex problems like deep neural networks.</p>
+
+  <div class="callout">
+    <h4>Key Insight: Convexity</h4>
+    <p>The sum-of-squared-errors cost function is convex in θ because the Hessian H = XᵀX is positive semi-definite. This guarantees that any optimization method (gradient descent, normal equations) finds the global optimum, not a local one.</p>
+  </div>`,
+
+  // 02 LMS Algorithm
+  `<div class="detail-header">
+    <div class="num"><span>02</span></div>
+    <h2>The <em>LMS</em> Algorithm</h2>
+  </div>
+  <p>The Least Mean Squares (LMS) algorithm, also called the Widrow-Hoff rule, updates parameters by moving in the negative gradient direction. The gradient of J(θ) = ½ ||Xθ − y||² is:</p>
+  <p><code>∇J(θ) = Xᵀ(Xθ − y)</code></p>
+  <p>This gradient vector points in the direction of steepest increase in cost. Moving opposite to it—proportional to −∇J(θ)—decreases cost. The update rule is:</p>
+  <p><code>θ := θ − α∇J(θ) = θ − αXᵀ(Xθ − y)</code></p>
+  <p>The scalar α > 0 is the learning rate, controlling step size. At each iteration, we make a small adjustment toward the optimum. The sequence of costs J(θ⁽ᵗ⁾) is monotonically decreasing and converges to J(θ*), where θ* is the optimal solution.</p>
+
+  <h3>Convergence Analysis</h3>
+  <p>The convergence rate depends on the conditioning of XᵀX. Define the eigenvalues λ₁ ≥ λ₂ ≥ ... ≥ λₙ ≥ 0 of XᵀX. Convergence is fastest when α ≈ 1/λ₁ (the largest eigenvalue). The condition number κ = λ₁/λₙ measures how ill-conditioned the problem is. If κ is large, convergence is slow because the loss surface is elongated, forcing small learning rates.</p>
+  <p>To ensure convergence, α must satisfy <code>0 < α < 2/λ₁</code>. In practice, <code>α = 0.01</code> to <code>0.1</code> is often safe, but the optimal rate requires knowledge of λ₁, which is expensive to compute. Adaptive methods like AdaGrad or Adam learn α automatically by accumulating gradient history.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Gradient Descent Path on Contour Plot</text>
+
+      <!-- Contour ellipses -->
+      <ellipse cx="300" cy="150" rx="120" ry="60" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.5" />
+      <ellipse cx="300" cy="150" rx="90" ry="45" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.6" />
+      <ellipse cx="300" cy="150" rx="60" ry="30" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.7" />
+      <ellipse cx="300" cy="150" rx="30" ry="15" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8" />
+
+      <!-- Path -->
+      <circle cx="100" cy="80" r="4" fill="var(--red)" />
+      <line x1="100" y1="80" x2="160" y2="120" class="edge-hi" />
+      <circle cx="160" cy="120" r="3" fill="var(--red)" opacity="0.8" />
+      <line x1="160" y1="120" x2="220" y2="135" class="edge-hi" />
+      <circle cx="220" cy="135" r="3" fill="var(--red)" opacity="0.6" />
+      <line x1="220" y1="135" x2="270" y2="145" class="edge-hi" />
+      <circle cx="270" cy="145" r="3" fill="var(--red)" opacity="0.4" />
+      <line x1="270" y1="145" x2="300" y2="150" class="edge-hi" />
+      <circle cx="300" cy="150" r="5" fill="var(--accent)" />
+
+      <text x="310" y="155" class="lbl">θ*</text>
+      <text x="80" y="65" class="lbl">Start</text>
+
+      <text x="50" y="250" class="lbl">Iteration</text>
+      <text x="50" y="270" class="lbl">Step size α determines convergence speed.</text>
+      <text x="50" y="290" class="lbl">Smaller α: slow but safe. Larger α: risk divergence.</text>
+      <text x="50" y="310" class="lbl">Optimal α ≈ 1/λ_max, where λ_max = largest eigenvalue of X^T X.</text>
+    </svg>
+  </div>
+
+  <h3>Learning Rate Selection</h3>
+  <p>Choosing the learning rate α is a key practical decision. Too small and training is inefficient; too large and θ oscillates wildly, diverging away from the optimum. A common strategy is exponential decay: start with α₀ and decrease it over time as <code>αₜ = α₀ / (1 + t)</code>. This allows large early steps and fine-tuning near convergence.</p>
+  <p>Another approach is line search: for each iteration, find the step size that minimizes cost in that direction. This is more expensive per iteration but may reduce total iterations. Modern practice often uses adaptive methods (Adam, RMSprop) that adjust learning rates per parameter based on gradient history.</p>
+
+  <div class="callout">
+    <h4>Practical Tip: Learning Rate Scheduling</h4>
+    <p>Start with a moderate learning rate (α = 0.01) and monitor training loss. If loss decreases smoothly, increase α slightly. If it oscillates, decrease α. After warmup iterations, use decay schedules to refine the solution near convergence.</p>
+  </div>`,
+
+  // 03 Batch vs Stochastic GD
+  `<div class="detail-header">
+    <div class="num"><span>03</span></div>
+    <h2><em>Batch</em> vs Stochastic Gradient Descent</h2>
+  </div>
+  <p>Batch gradient descent processes the entire training set per iteration. The cost is <code>J(θ) = ½ Σᵢ₌₁ᵐ (hθ(xⁱ) − yⁱ)²</code>, and each update is:</p>
+  <p><code>θ := θ − α Xᵀ(Xθ − y)</code></p>
+  <p>This requires O(nm) time per iteration, which becomes prohibitive when m = billions. However, every iteration moves toward the optimum (monotonic decrease), and convergence is smooth. The method fully leverages data before making an update.</p>
+  <p>Stochastic gradient descent (SGD) updates after processing a single example:</p>
+  <p><code>θ := θ − α(hθ(xⁱ) − yⁱ)xⁱ</code></p>
+  <p>This costs O(n) per iteration, 1/m the cost of batch GD. Over m iterations, SGD performs m parameter updates versus 1 for batch GD. The downside: the gradient estimate is noisy (a single example's loss direction may not align with the overall loss direction), causing oscillation and slower overall convergence.</p>
+
+  <h3>Mini-Batch Gradient Descent</h3>
+  <p>Mini-batch GD compromises: process k examples (e.g., k = 32 or 256) per iteration. The update is:</p>
+  <p><code>θ := θ − α Σᵢ ∈ ℬ (hθ(xⁱ) − yⁱ)xⁱ / k</code>, where ℬ is a random batch.</p>
+  <p>This offers a sweet spot: lower variance than SGD (k samples average noise), faster than batch GD (can iterate many times with mini-batches before seeing all data). Modern training almost always uses mini-batch GD with typical batch sizes 32–512.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Convergence Comparison: Batch vs SGD vs Mini-Batch</text>
+
+      <!-- Y axis label -->
+      <text x="20" y="80" class="lbl" transform="rotate(-90 20 80)">Cost J(θ)</text>
+      <!-- X axis label -->
+      <text x="350" y="220" class="lbl">Iterations (epochs × m/batch_size)</text>
+
+      <!-- Axes -->
+      <line x1="50" y1="200" x2="650" y2="200" stroke="var(--dim)" stroke-width="1" />
+      <line x1="50" y1="30" x2="50" y2="200" stroke="var(--dim)" stroke-width="1" />
+
+      <!-- Batch GD curve (smooth) -->
+      <path d="M 80 180 Q 200 120 400 60 T 620 30" stroke="var(--green)" stroke-width="2.5" fill="none" />
+      <text x="430" y="50" class="lbl" fill="var(--green)">Batch GD</text>
+
+      <!-- SGD curve (noisy) -->
+      <path d="M 80 185 L 100 175 L 115 182 L 135 170 L 155 180 L 175 160 L 190 172 L 210 145 L 230 155 L 250 140 L 270 148 L 290 130 L 310 135 L 330 120 L 350 125 L 370 110 L 390 112 L 410 100 L 430 102 L 450 90 L 470 92 L 490 85 L 510 86 L 530 80 L 550 81 L 570 78 L 590 78 L 610 77" stroke="var(--red)" stroke-width="1.5" fill="none" />
+      <text x="430" y="85" class="lbl" fill="var(--red)">SGD</text>
+
+      <!-- Mini-batch curve (mid) -->
+      <path d="M 80 182 Q 200 125 400 65 T 620 35" stroke="var(--cyan)" stroke-width="2" fill="none" opacity="0.8" />
+      <text x="430" y="65" class="lbl" fill="var(--cyan)">Mini-Batch</text>
+    </svg>
+  </div>
+
+  <h3>Epoch and Learning Rate Schedules</h3>
+  <p>An epoch is one pass through the entire dataset. For SGD with batch size k, one epoch consists of m/k iterations. After each epoch, typical practice is to decay the learning rate: <code>αₜ = α₀ · r^(epoch_number)</code> with decay factor r ≈ 0.99. This allows larger steps early and finer refinement later.</p>
+  <p>Practical considerations: shuffle data randomly before each epoch to avoid biased mini-batches. Use different random seeds for reproducibility. Monitor validation loss to detect overfitting and stop early if it increases while training loss decreases.</p>
+
+  <div class="callout">
+    <h4>When to Use Which</h4>
+    <p>Batch GD: small datasets (m &lt; 10k), need smooth convergence, memory available. SGD: huge datasets, online learning, noisy gradients acceptable. Mini-batch: most practical choice; size depends on GPU memory and convergence preferences.</p>
+  </div>`,
+
+  // 04 Normal Equations
+  `<div class="detail-header">
+    <div class="num"><span>04</span></div>
+    <h2><em>Normal</em> Equations</h2>
+  </div>
+  <p>Rather than iterating, we can solve the optimization problem analytically. Taking the gradient <code>∇J(θ) = Xᵀ(Xθ − y)</code> and setting it to zero:</p>
+  <p><code>Xᵀ(Xθ − y) = 0</code></p>
+  <p><code>XᵀXθ = Xᵀy</code></p>
+  <p>If the matrix <code>XᵀX</code> is invertible (full rank), we can solve for θ directly:</p>
+  <p><code>θ = (XᵀX)⁻¹Xᵀy</code></p>
+  <p>This is the closed-form solution, requiring only one matrix inversion. It avoids all hyperparameter tuning (no learning rate α) and convergence criteria. For moderate-sized datasets, this is often faster and simpler than gradient descent.</p>
+
+  <h3>Computational Complexity</h3>
+  <p>The bottleneck is computing (XᵀX)⁻¹. Matrix multiplication XᵀX costs O(n²m), and inversion costs O(n³) using direct methods (Gaussian elimination, LU decomposition). For n = 100, O(n³) = O(1M) operations is fast. For n = 10,000, O(10¹²) operations is prohibitive.</p>
+  <p>In practice, we use numerically stable algorithms like QR or SVD decomposition rather than explicit inversion. SVD(X) = UΣVᵀ gives θ = VΣ⁻¹Uᵀy. SVD also reveals the rank of X and condition number κ(X) = σ₁/σₙ (ratio of largest to smallest singular value). High κ indicates numerical instability.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Normal Equation Pipeline</text>
+
+      <rect x="50" y="60" width="80" height="60" class="node" />
+      <text x="90" y="95" class="node-text">X, y</text>
+
+      <text x="145" y="95" class="lbl">Compute</text>
+      <rect x="220" y="60" width="100" height="60" class="node" />
+      <text x="270" y="95" class="node-text">X^T X, X^T y</text>
+
+      <text x="335" y="95" class="lbl">Invert</text>
+      <rect x="420" y="60" width="120" height="60" class="node" />
+      <text x="480" y="95" class="node-text">(X^T X)^{-1}</text>
+
+      <text x="70" y="160" class="lbl">Cost:</text>
+      <text x="70" y="180" class="lbl">Compute: O(n²m)</text>
+      <text x="70" y="200" class="lbl">Invert: O(n³)</text>
+      <text x="70" y="220" class="lbl">Total: O(n³) (dominated by inversion)</text>
+
+      <text x="380" y="160" class="lbl">Stability:</text>
+      <text x="380" y="180" class="lbl">κ(X) = σ₁/σₙ</text>
+      <text x="380" y="200" class="lbl">If κ >> 1, numerical errors</text>
+      <text x="380" y="220" class="lbl">Use SVD or QR for stability</text>
+    </svg>
+  </div>
+
+  <h3>Non-Invertibility and Regularization</h3>
+  <p>If X has rank < n (features are linearly dependent), XᵀX is singular and non-invertible. This occurs when n > m (more features than examples) or when features are perfectly correlated. In such cases, the solution is not unique; infinitely many θ achieve the minimum cost.</p>
+  <p>To handle this, we add regularization: minimize <code>J(θ) + λ||θ||²</code> instead. The modified normal equation becomes <code>(XᵀX + λI)θ = Xᵀy</code>. The term λI is always invertible for λ > 0, stabilizing the solution. Larger λ pushes θ toward zero, reducing model complexity. This is called Tikhonov regularization or L2 regularization.</p>
+
+  <div class="callout">
+    <h4>Ridge Regression (L2 Regularization)</h4>
+    <p><code>θ = (XᵀX + λI)⁻¹Xᵀy</code>. The term λI ensures invertibility and shrinks weights toward zero. λ is chosen via cross-validation. This trades bias (regularization) for variance reduction, improving generalization.</p>
+  </div>`,
+
+  // 05 Matrix Derivatives
+  `<div class="detail-header">
+    <div class="num"><span>05</span></div>
+    <h2><em>Matrix</em> Derivatives</h2>
+  </div>
+  <p>Deriving the normal equations requires matrix calculus. The cost function is:</p>
+  <p><code>J(θ) = ½ ||Xθ − y||² = ½ (Xθ − y)ᵀ(Xθ − y)</code></p>
+  <p>Expanding the inner product:</p>
+  <p><code>J(θ) = ½ (θᵀXᵀXθ − 2θᵀXᵀy + yᵀy)</code></p>
+  <p>The last term is constant w.r.t. θ, so it vanishes during differentiation. Differentiating the remaining terms:</p>
+  <p><code>∇J(θ) = ½ (2XᵀXθ − 2Xᵀy) = XᵀXθ − Xᵀy</code></p>
+  <p>This uses the matrix derivative rule: <code>∂/∂θ θᵀAθ = (A + Aᵀ)θ</code>. When A is symmetric (as XᵀX is), this simplifies to 2Aθ.</p>
+
+  <h3>Key Matrix Identities</h3>
+  <p>The following identities are fundamental to machine learning derivations:</p>
+  <ul style="list-style: none; padding-left: 20px;">
+    <li>1. <code>tr(A) = Σᵢ Aᵢᵢ</code> (trace: sum of diagonal)</li>
+    <li>2. <code>∂/∂A tr(AB) = Bᵀ</code></li>
+    <li>3. <code>∂/∂A tr(AᵀB) = B</code></li>
+    <li>4. <code>∂/∂A tr(AᵀAB) = 2AB</code> (useful for squared norms)</li>
+    <li>5. <code>∂/∂A tr(ABAC) = AᵀBᵀ + BᵀAᵀ</code> (product rule)</li>
+  </ul>
+  <p>These rules transform matrix expressions into scalar traces, enabling standard calculus. For example, the squared error can be rewritten as <code>||Xθ − y||² = tr((Xθ − y)ᵀ(Xθ − y))</code>, and these rules apply directly.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Matrix Derivative Derivation</text>
+
+      <text x="50" y="70" class="lbl">J(θ) = ½ (Xθ − y)^T (Xθ − y)</text>
+      <text x="50" y="95" class="lbl">= ½ (θ^T X^T X θ − 2θ^T X^T y + y^T y)</text>
+
+      <text x="50" y="130" class="lbl-hi">Differentiate each term:</text>
+      <text x="70" y="155" class="lbl">∂/∂θ [θ^T X^T X θ] = 2 X^T X θ  (use: ∂/∂θ θ^T A θ = 2Aθ when A symmetric)</text>
+      <text x="70" y="175" class="lbl">∂/∂θ [−2θ^T X^T y] = −2 X^T y</text>
+      <text x="70" y="195" class="lbl">∂/∂θ [y^T y] = 0  (constant)</text>
+
+      <text x="50" y="230" class="lbl-hi">∇J(θ) = ½(2 X^T X θ − 2 X^T y) = X^T X θ − X^T y</text>
+      <text x="50" y="255" class="lbl">Setting to zero: X^T X θ = X^T y  ⟹  θ = (X^T X)^{-1} X^T y</text>
+    </svg>
+  </div>
+
+  <h3>Hessian and Convexity Verification</h3>
+  <p>The second derivative (Hessian) of J(θ) is:</p>
+  <p><code>H = ∇²J(θ) = XᵀX</code></p>
+  <p>The Hessian is constant—independent of θ—and equals XᵀX. For any matrix X with full column rank, XᵀX is positive definite, meaning all eigenvalues are strictly positive. A positive definite Hessian confirms strict convexity: J is a bowl-shaped function with a unique global minimum.</p>
+  <p>The eigenvalues of XᵀX are the squared singular values of X. Large eigenvalues correspond to directions of high curvature (steep slopes), while small eigenvalues correspond to directions of low curvature (flat slopes). The condition number κ = λₘₐₓ/λₘᵢₙ measures how "skewed" the optimization landscape is.</p>
+
+  <div class="callout">
+    <h4>Symmetry Simplifies Derivatives</h4>
+    <p>When A is symmetric, <code>∂/∂θ θᵀAθ = 2Aθ</code>. This is why (XᵀX) often appears in regression—it's symmetric, and its derivative is clean. Non-symmetric matrices require more care: <code>∂/∂θ θᵀAθ = (A + Aᵀ)θ</code>.</p>
+  </div>`,
+
+  // 06 Probabilistic Interpretation
+  `<div class="detail-header">
+    <div class="num"><span>06</span></div>
+    <h2><em>Probabilistic</em> Interpretation</h2>
+  </div>
+  <p>Least-squares regression can be justified through a probabilistic model. Assume the output is generated as:</p>
+  <p><code>yⁱ = θᵀxⁱ + εⁱ, where εⁱ ~ N(0, σ²) i.i.d.</code></p>
+  <p>That is, the true relationship is linear plus Gaussian noise. Then the conditional distribution of y given x is:</p>
+  <p><code>p(y | x; θ) = N(θᵀx, σ²) = (1/√(2πσ²)) exp(−(y − θᵀx)² / (2σ²))</code></p>
+  <p>Given a dataset D = {(xⁱ, yⁱ)}ᵢ₌₁ᵐ, the likelihood of observing all examples is:</p>
+  <p><code>L(θ) = ∏ᵢ p(yⁱ | xⁱ; θ) = ∏ᵢ (1/√(2πσ²)) exp(−(yⁱ − θᵀxⁱ)² / (2σ²))</code></p>
+
+  <h3>Maximum Likelihood Estimation</h3>
+  <p>Taking the log-likelihood:</p>
+  <p><code>ℓ(θ) = log L(θ) = m log(1/√(2πσ²)) − (1/(2σ²)) Σᵢ (yⁱ − θᵀxⁱ)²</code></p>
+  <p><code>= −(m/2) log(2πσ²) − (1/(2σ²)) J(θ)</code></p>
+  <p>Maximizing ℓ(θ) is equivalent to minimizing J(θ), the sum-of-squared-errors! The constant term doesn't affect the optimal θ. This is the maximum likelihood estimate (MLE) of θ under Gaussian noise.</p>
+  <p>The probabilistic view reveals assumptions: we assume errors are Gaussian (symmetric around the regression line), independent across examples, and have constant variance σ² (homoscedasticity). When these hold, least-squares is statistically optimal.</p>
+
+  <h3>Uncertainty Quantification</h3>
+  <p>Beyond point estimates of θ, the probabilistic model enables uncertainty quantification. The posterior distribution of θ given data has mean θ = (XᵀX)⁻¹Xᵀy and covariance Cov(θ) = σ²(XᵀX)⁻¹. From the covariance, we compute standard errors of parameters: <code>SE(θⱼ) = σ√[(XᵀX)⁻¹]ⱼⱼ</code>.</p>
+  <p>Confidence intervals follow: <code>θⱼ ± 1.96 · SE(θⱼ)</code> is approximately a 95% confidence interval (under Gaussianity). These intervals are essential in statistics for assessing which parameters are significantly different from zero. If a 95% CI excludes zero, the parameter is "significant" at the 5% level.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Likelihood and MLE</text>
+
+      <text x="50" y="70" class="lbl">Model: y = θ^T x + ε, ε ~ N(0, σ²)</text>
+      <text x="50" y="95" class="lbl">Likelihood: L(θ) = ∏_i (1/√(2πσ²)) exp(−(y_i − θ^T x_i)² / (2σ²))</text>
+
+      <text x="50" y="130" class="lbl-hi">Log-Likelihood:</text>
+      <text x="70" y="155" class="lbl">ℓ(θ) = −(m/2)log(2πσ²) − (1/(2σ²)) Σ_i (y_i − θ^T x_i)²</text>
+      <text x="70" y="175" class="lbl">= const − (1/(2σ²)) J(θ)</text>
+
+      <text x="50" y="210" class="lbl-hi">MLE: max_θ ℓ(θ) ⟺ min_θ J(θ)</text>
+      <text x="50" y="235" class="lbl">Minimizing sum-of-squares = Maximum Likelihood</text>
+      <text x="50" y="255" class="lbl">under Gaussian noise assumption</text>
+    </svg>
+  </div>
+
+  <div class="callout">
+    <h4>Assumptions Hidden in Least Squares</h4>
+    <p>Least-squares is optimal when errors are Gaussian, independent, and have equal variance. If errors are skewed, outliers exist, or variance depends on x (heteroscedasticity), other methods (robust regression, weighted least-squares) may be preferable.</p>
+  </div>`,
+
+  // 07 Locally Weighted Regression
+  `<div class="detail-header">
+    <div class="num"><span>07</span></div>
+    <h2><em>Locally</em> Weighted Regression</h2>
+  </div>
+  <p>Locally Weighted Regression (LWR) is a non-parametric method that adapts to local data structure without assuming global linearity. To predict y at a query point x, we solve:</p>
+  <p><code>min_θ Σᵢ wⁱ(yⁱ − θᵀxⁱ)²</code></p>
+  <p>The weight wⁱ depends on distance from xⁱ to the query x. A common choice is the Gaussian kernel:</p>
+  <p><code>wⁱ = exp(−||xⁱ − x||² / (2τ²))</code></p>
+  <p>Here τ > 0 is the bandwidth. Points close to x (small ||xⁱ − x||) have weight wⁱ ≈ 1; distant points decay exponentially. The parameter θ is fit using only nearby examples, making the model local.</p>
+
+  <h3>Bandwidth Selection</h3>
+  <p>The bandwidth τ controls the "locality" of the regression:</p>
+  <ul style="list-style: none; padding-left: 20px;">
+    <li>• Small τ: only examples very close to x are weighted significantly. Model fits local structure tightly but has high variance (overfits).</li>
+    <li>• Large τ: examples far from x still influence the fit. Model is smoother (low variance) but may miss local patterns (high bias).</li>
+    <li>• Optimal τ: balances bias and variance, found via cross-validation.</li>
+  </ul>
+  <p>Unlike parametric methods that store a single θ, LWR stores the entire training set and fits a new model at each prediction point. This gives flexibility but at computational cost: prediction is O(m), compared to O(n) for linear regression.</p>
+
+  <h3>Curse of Dimensionality</h3>
+  <p>LWR suffers from the curse of dimensionality: as feature dimension n grows, examples become sparse in the feature space. Most examples are far from the query x, so their weights are tiny, and the effective sample size drops. To maintain locality, τ must increase, which defeats the purpose.</p>
+  <p>For high-dimensional data, LWR requires very large m to work well. Parametric methods like linear regression scale better because they impose global structure (linearity), trading flexibility for efficiency. LWR is most effective in low dimensions (n ≤ 10) with large training sets (m >> 1000).</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 650 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Locally Weighted Regression: Effect of Bandwidth τ</text>
+
+      <!-- Left: small tau -->
+      <g>
+        <text x="80" y="70" class="lbl">Small τ (Tight Fit)</text>
+        <!-- Data points -->
+        <circle cx="100" cy="150" r="3" fill="var(--text)" />
+        <circle cx="120" cy="160" r="3" fill="var(--text)" />
+        <circle cx="140" cy="140" r="3" fill="var(--text)" />
+        <circle cx="160" cy="170" r="3" fill="var(--text)" />
+        <circle cx="180" cy="155" r="3" fill="var(--text)" />
+        <circle cx="200" cy="145" r="3" fill="var(--text)" />
+        <!-- Query point -->
+        <circle cx="150" cy="155" r="5" fill="var(--accent)" />
+        <!-- Weights (small circle) -->
+        <circle cx="150" cy="155" r="30" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2" opacity="0.5" />
+        <text x="100" y="220" class="lbl">High variance, fits local noise</text>
+      </g>
+
+      <!-- Right: large tau -->
+      <g>
+        <text x="380" y="70" class="lbl">Large τ (Smooth Fit)</text>
+        <!-- Data points (same) -->
+        <circle cx="400" cy="150" r="3" fill="var(--text)" />
+        <circle cx="420" cy="160" r="3" fill="var(--text)" />
+        <circle cx="440" cy="140" r="3" fill="var(--text)" />
+        <circle cx="460" cy="170" r="3" fill="var(--text)" />
+        <circle cx="480" cy="155" r="3" fill="var(--text)" />
+        <circle cx="500" cy="145" r="3" fill="var(--text)" />
+        <!-- Query point -->
+        <circle cx="450" cy="155" r="5" fill="var(--accent)" />
+        <!-- Weights (large circle) -->
+        <circle cx="450" cy="155" r="80" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3,2" opacity="0.5" />
+        <text x="380" y="220" class="lbl">Low variance, misses local structure</text>
+      </g>
+
+      <text x="200" y="260" class="lbl">Kernel radius shown by dashed circles. Optimal τ found via cross-validation.</text>
+    </svg>
+  </div>
+
+  <div class="callout">
+    <h4>Non-Parametric Advantage</h4>
+    <p>LWR doesn't assume global linearity. If the underlying function is non-linear, LWR can approximate it locally without feature engineering. The downside: no closed-form θ, requires storing training data, O(m) prediction cost.</p>
+  </div>`,
+
+  // 08 Practical Considerations
+  `<div class="detail-header">
+    <div class="num"><span>08</span></div>
+    <h2><em>Practical</em> Considerations</h2>
+  </div>
+  <p>Successful machine learning requires attention to details beyond algorithm choice. Feature scaling, convergence monitoring, and regularization are crucial in practice.</p>
+
+  <h3>Feature Scaling and Normalization</h3>
+  <p>When features have vastly different ranges, gradient descent becomes inefficient. Suppose x₁ ∈ [0, 100] (age) and x₂ ∈ [0, 1,000,000] (income). The cost surface is highly elongated: moving 1 unit in the income direction changes cost less than moving 1 unit in the age direction. Gradient descent must take tiny steps to avoid overshooting, requiring thousands of iterations.</p>
+  <p>Standardization rescales features to zero mean and unit variance:</p>
+  <p><code>x̃ⱼ = (xⱼ − μⱼ) / σⱼ</code></p>
+  <p>where μⱼ and σⱼ are computed from training data. After standardization, the cost surface is more spherical, allowing larger learning rates and faster convergence. Always standardize before training, and apply the same transformation (using training statistics) to test data.</p>
+
+  <h3>Convergence Criteria and Early Stopping</h3>
+  <p>When should you stop training? Several strategies:</p>
+  <ul style="list-style: none; padding-left: 20px;">
+    <li>1. Fixed iterations: stop after a preset number of epochs (simple but requires tuning).</li>
+    <li>2. Parameter change: stop when ||θ^(t+1) − θ^(t)|| < ε (e.g., ε = 10⁻⁶). Indicates convergence to a stationary point.</li>
+    <li>3. Gradient norm: stop when ||∇J(θ)|| < ε. Similar idea, more direct.</li>
+    <li>4. Validation loss: split data into train/validation. Stop when validation loss increases for k consecutive epochs while training loss decreases. Prevents overfitting.</li>
+  </ul>
+  <p>In practice, use a combination: set a maximum iteration count, monitor validation loss, and stop early if it plateaus or worsens.</p>
+
+  <h3>Regularization to Prevent Overfitting</h3>
+  <p>Overfitting occurs when a model fits training noise rather than underlying patterns. High-dimensional models (many features) are prone to overfitting, especially with small training sets. Regularization adds a penalty on model complexity:</p>
+  <p><code>J(θ) + λ Ω(θ)</code></p>
+  <p>Common penalties:</p>
+  <ul style="list-style: none; padding-left: 20px;">
+    <li>• L2 (Ridge): Ω(θ) = ||θ||² = Σⱼ θⱼ². Shrinks all weights toward zero gradually.</li>
+    <li>• L1 (Lasso): Ω(θ) = ||θ||₁ = Σⱼ |θⱼ|. Drives many weights exactly to zero (sparsity).</li>
+    <li>• Elastic Net: Ω(θ) = αL2 + (1−α)L1. Balances both.</li>
+  </ul>
+  <p>The regularization parameter λ ≥ 0 controls the strength. Larger λ simplifies the model; smaller λ fits training data more closely. Use cross-validation to choose λ: train on fold 1-4, validate on fold 5, repeat for all folds, and pick λ minimizing average validation error.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 650 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="50" y="30" class="lbl">Feature Scaling Impact on Gradient Descent</text>
+
+      <!-- Unscaled -->
+      <g>
+        <text x="80" y="70" class="lbl">Unscaled Features</text>
+        <!-- Elongated contours -->
+        <ellipse cx="150" cy="150" rx="110" ry="30" fill="none" stroke="var(--red)" stroke-width="1.5" opacity="0.7" />
+        <ellipse cx="150" cy="150" rx="70" ry="20" fill="none" stroke="var(--red)" stroke-width="1.5" opacity="0.7" />
+        <ellipse cx="150" cy="150" rx="30" ry="10" fill="none" stroke="var(--red)" stroke-width="2" opacity="0.7" />
+        <text x="100" y="220" class="lbl">Tiny steps needed</text>
+        <text x="85" y="240" class="lbl">Many iterations required</text>
+      </g>
+
+      <!-- Scaled -->
+      <g>
+        <text x="380" y="70" class="lbl">Scaled Features</text>
+        <!-- Circular contours -->
+        <circle cx="450" cy="150" r="100" fill="none" stroke="var(--green)" stroke-width="1.5" opacity="0.7" />
+        <circle cx="450" cy="150" r="65" fill="none" stroke="var(--green)" stroke-width="1.5" opacity="0.7" />
+        <circle cx="450" cy="150" r="35" fill="none" stroke="var(--green)" stroke-width="2" opacity="0.7" />
+        <text x="410" y="220" class="lbl">Larger steps safe</text>
+        <text x="395" y="240" class="lbl">Faster convergence</text>
+      </g>
+
+      <text x="100" y="280" class="lbl">Standardize before training: x̃ = (x − μ) / σ</text>
+    </svg>
+  </div>
+
+  <h3>Model Selection and Cross-Validation</h3>
+  <p>The true test of a model is performance on unseen data. To estimate this, use k-fold cross-validation: split data into k disjoint folds, train on k−1 folds, test on the remaining fold, repeat k times, and average test errors. Typical choices: k = 5 or 10.</p>
+  <p>Use cross-validation to select hyperparameters (learning rate, regularization λ, batch size). For each candidate value, run k-fold CV and pick the value minimizing average validation error. This is more reliable than a single train/test split, especially for small datasets.</p>
+
+  <div class="security-box">
+    <h4>Common Mistakes to Avoid</h4>
+    <p>1. Not scaling features before training; 2. Choosing hyperparameters based on test loss (causes overfitting to test set); 3. Using the same learning rate for all parameters (vary with feature scale); 4. Ignoring the condition number of XᵀX (leads to numerical instability); 5. Training until zero training loss (fits noise).</p>
+  </div>
+
+  <div class="callout">
+    <h4>Workflow Summary</h4>
+    <p>1. Load and explore data. 2. Standardize features. 3. Choose initial hyperparameters (α, λ). 4. Train on fold 1-4, validate on fold 5 (repeat). 5. Select hyperparameters minimizing validation error. 6. Train on all data with selected hyperparameters. 7. Evaluate on held-out test set. 8. Deploy and monitor.</p>
+  </div>`,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://cs229.stanford.edu/main_notes.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">CS229 Main Lecture Notes</a> — Stanford's authoritative course notes with rigorous mathematical treatment and practical algorithms for linear regression and gradient descent</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://hastie.su.domains/ElemStatLearn/" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Hastie, Tibshirani & Friedman — The Elements of Statistical Learning</a> — Chapter 3 provides comprehensive coverage of linear methods for regression, including theoretical foundations and practical considerations</p>
+<p><a href="https://en.wikipedia.org/wiki/Linear_regression" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Linear Regression</a> — Overview of regression methodology and applications</p>`
+
+];
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">Linear <em>Regression</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 1–2 · Gradient Descent & Normal Equations</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

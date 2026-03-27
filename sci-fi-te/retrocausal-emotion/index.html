@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retrocausality, Hope &amp; Depression — A Writer's Physics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b7aed; --accent-soft: #7c3aed0a;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #b598ff; --accent2: #9b7aed; --accent-soft: #b598ff0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #b598ff; --accent2: #9b7aed; --accent-soft: #b598ff0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b7aed; --accent-soft: #7c3aed0a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 36px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic; line-height: 1.5;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .tensions { margin-top: 16px; }
+    .tension {
+      font-size: 13px; color: var(--text); line-height: 1.5;
+      padding: 8px 12px; margin-bottom: 6px;
+      border-left: 2px solid var(--accent2); background: var(--accent-soft);
+    }
+    .tension strong { color: var(--bright); }
+
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 20px 24px; transition: all 0.2s;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .deliverable-card .section-title { margin-bottom: 6px; }
+    .deliverable-card .section-desc { margin-bottom: 10px; }
+
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> PAPER-DRIVE &middot; PHYSICS &middot; POETRY</div>
+    <h1>Retrocausality, Hope &amp; <em>Depression</em></h1>
+    <div class="subtitle">A writer&rsquo;s physics &mdash; how the block universe, bidirectional causation, and prospective psychology illuminate the geometry of feeling</div>
+    <div class="rule"></div>
+    <div class="meta">
+      46 sources across 7 sections &middot; 7 key tensions &middot; <strong>~500K of interactive deep-dives + synthesis paper + slide deck</strong><br>
+      Bridging theoretical physics (Carroll, Rovelli, Price, Wharton) with prospective psychology (Seligman, Snyder, Roepke)<br>
+      and somatic neuroscience (Levine, van der Kolk, Porges) &mdash; oriented toward literary application<br>
+      Source material for <em>Second Seconds</em> and <em>Schr&ouml;dinger&rsquo;s Gelato</em> &middot;
+      <a href=".project/changelog.md">Changelog</a> &middot;
+      <a href=".project/todo.md">TODO</a> &middot;
+      <a href=".project/methodology.md">Methodology</a>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Academic survey with 21 inline footnotes, hover tooltips, and formal bibliography. Structured for reference and citation.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+          <a href="survey.slides.html">Slides &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Essay: <em>Geometry of Feeling</em> <span class="status done">done</span></div>
+        <div class="section-desc">Writer&rsquo;s essay &mdash; same thesis, essayistic prose oriented toward creative application. ~6,500 words with consolidated bibliography.</div>
+        <div class="section-links">
+          <a href="geometry-of-feeling.html">Essay &rarr;</a>
+          <a href="geometry-of-feeling.md">Markdown &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Overview</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Overview <em>Deep Dive</em> <span class="status done">done</span></div>
+          <div class="section-desc">All 7 dimensions at summary level with full detail panels, SVG diagrams, source links, and writer&rsquo;s takeaways. Start here.</div>
+          <div class="section-links">
+            <a href="overview.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Section Deep Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Block Universe &amp; <em>Eternalism</em> <span class="status done">done</span></div>
+          <div class="section-desc">7 sources. Rietdijk-Putnam argument, entropy arrow, Carroll vs Smolin vs Rovelli, the experience problem. Why "now" is an address, not an edge.</div>
+          <div class="section-links">
+            <a href="s1-block-universe.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/01-block-universe.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">Retrocausality &amp; Bidirectional <em>Causation</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Price&rsquo;s time-symmetry argument, TSVF (Aharonov), Bell&rsquo;s theorem in time (Leifer &amp; Pusey), Berkson&rsquo;s bias as mechanism. The future constrains the present.</div>
+          <div class="section-links">
+            <a href="s2-retrocausality.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/02-retrocausality.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">Hope as Retrocausal <em>Signal</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. Seligman&rsquo;s prospective psychology, default circuit = future simulation, memory as hope chest, Snyder&rsquo;s pathways + agency. The bridge between prospection and retrocausality.</div>
+          <div class="section-links">
+            <a href="s3-hope.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/03-hope.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Depression as Bidirectional <em>Loop</em> <span class="status done">done</span></div>
+          <div class="section-desc">5 sources. Roepke &amp; Seligman on faulty prospection as core cause, Clark&rsquo;s predictive processing, the self-sealing cage of priors, the retrocausal mirror. Two advanced waves.</div>
+          <div class="section-links">
+            <a href="s4-depression.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/04-depression.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Free Will, Agency &amp; <em>Determinism</em> <span class="status done">done</span></div>
+          <div class="section-desc">5 sources. Carroll&rsquo;s layers of reality, poetic naturalism, Rovelli + Spinoza, the writer&rsquo;s problem of holding freedom and geometry simultaneously.</div>
+          <div class="section-links">
+            <a href="s5-free-will.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/05-free-will.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Time, Memory &amp; <em>Embodiment</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. Rovelli&rsquo;s thermal time, Barbour&rsquo;s Platonia, Levine&rsquo;s somatic experiencing, van der Kolk, Porges&rsquo; polyvagal theory. The body as the instrument where physics becomes phenomenology.</div>
+          <div class="section-links">
+            <a href="s6-embodiment.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/06-embodiment.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Literary <em>Applications</em> <span class="status done">done</span></div>
+          <div class="section-desc">6 sources. Vonnegut (block universe as dark comedy), Chiang (simultaneous perception), Borges, Eliot, Nolan. Six structural conceits for confessional poetry.</div>
+          <div class="section-links">
+            <a href="s7-literary.dd.html">Deep Dive &rarr;</a>
+            <a href="notes/07-literary.md">Markdown &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Key Tensions</h2>
+    <div class="tensions">
+      <div class="tension"><strong>T1: Is time fundamental or emergent?</strong> Smolin says fundamental. Rovelli says emergent. Barbour says it doesn&rsquo;t exist. Carroll bridges.</div>
+      <div class="tension"><strong>T2: Retrocausality &mdash; real physics or fringe?</strong> Price/Wharton say it&rsquo;s the natural reading. Mainstream physics is skeptical. Bell confused it with superdeterminism.</div>
+      <div class="tension"><strong>T3: Prospection vs retrocausality &mdash; metaphor or mechanism?</strong> Seligman denies backward causation. The phenomenology maps perfectly. The vocabulary differs; the geometry may be the same.</div>
+      <div class="tension"><strong>T4: Depression as broken machinery vs boundary condition.</strong> Clinical: fix the prediction system. Retrocausal: the body is reading the block accurately. Therapeutic answer must be the first. Poetic truth may be the second.</div>
+      <div class="tension"><strong>T5: Compatibilism&rsquo;s adequacy.</strong> Carroll says free will is real at the emergent level. Critics say he changed the subject.</div>
+      <div class="tension"><strong>T6: Body time vs block time.</strong> If all moments coexist equally, why does the body carry the past forward so stubbornly? The body experiences the gradient, not the block.</div>
+      <div class="tension"><strong>T7: The Epistemological Trap.</strong> Kube's "cognitive immunization" implies the self-sealing quality of depressive prospection is not a failure of intelligence but a deployment of it. The smarter the system, the more sophisticated its antibodies against positive disconfirmation.</div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Resources</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Literature <em>Collection</em></div>
+          <div class="section-desc">46 entries organized by section. Source adequacy table. 7 key tensions identified.</div>
+          <div class="section-links">
+            <a href="literature-collection.md">Collection &rarr;</a>
+            <a href="notes/00-synthesis.md">Synthesis Notes &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Slide <em>Deck</em> <span class="status done">done</span></div>
+          <div class="section-desc">26 slides. Arrow-key navigation. SVG diagrams on key slides. Title &rarr; block universe &rarr; retrocausality &rarr; hope &rarr; depression &rarr; free will &rarr; embodiment &rarr; literary &rarr; synthesis.</div>
+          <div class="section-links">
+            <a href="survey.slides.html">Slides &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Project <em>Management</em></div>
+          <div class="section-desc">Methodology, changelog, TODO, and continuation prompt.</div>
+          <div class="section-links">
+            <a href=".project/methodology.md">Methodology &rarr;</a>
+            <a href=".project/changelog.md">Changelog &rarr;</a>
+            <a href=".project/todo.md">TODO &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      Part of <a href="../../">read-rd</a> &middot;
+      Related: <a href="../../physics/block-universe.dd.html">Block Universe</a> &middot;
+      <a href="../nonlinear-time.dd.html">Non-linear Time</a> &middot;
+      <a href="../time-travel-fiction/index.html">Time Travel in Fiction</a><br>
+      Literature collection and deep-dive generation assisted by Claude
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">◐</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system';
+  function apply() {
+    if (state === 'system') { root.removeAttribute('data-theme'); btn.textContent = '◐'; }
+    else { root.setAttribute('data-theme', state); btn.textContent = state === 'dark' ? '☀' : '☽'; }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'system') state = sys === 'dark' ? 'light' : 'dark';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+})();
+</script>
+</body>
+</html>

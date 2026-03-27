@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PS2: VAE & Flows — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'PS2 Overview', title: '<em>Problem</em> Set Overview' },
+  { num: '02', short: 'VAE Theory', title: '<em>VAE</em> Theory Review' },
+  { num: '03', short: 'VAE Impl', title: '<em>VAE</em> Implementation' },
+  { num: '04', short: 'VAE Analysis', title: '<em>VAE</em> Analysis' },
+  { num: '05', short: 'Flows Theory', title: '<em>Normalizing</em> Flows Theory' },
+  { num: '06', short: 'Flow Impl', title: '<em>Flow</em> Implementation' },
+  { num: '07', short: 'Comparison', title: '<em>VAE</em> vs Flow Comparison' },
+  { num: '08', short: 'Takeaways', title: 'Key <em>Takeaways</em>' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 PS2 Overview
+  `<p>Problem Set 2 is a comprehensive 80-point assignment covering variational autoencoders (VAEs) and normalizing flows—two foundational generative modeling techniques for weeks 3-4 of XCS236. Students implement VAE components including encoder networks, decoder networks, reparameterization tricks, and the evidence lower bound (ELBO) loss. The assignment emphasizes understanding latent variable models, approximate inference, and the variational principle underlying VAEs.</p>
+  <p>The second half explores normalizing flows, which provide exact density estimation through invertible transformations. Students build RealNVP-style coupling layers and train flow models on synthetic and real data. The problem set culminates in comparing VAEs and flows across multiple dimensions: likelihood accuracy, sample quality, training stability, and computational efficiency. This dual focus demonstrates how approximate and exact generative models trade off expressiveness with tractability.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">80</div><div class="sl">Points Total</div></div>
+    <div class="st"><div class="sv">Weeks 3–4</div><div class="sl">Coverage</div></div>
+    <div class="st"><div class="sv">2</div><div class="sl">Model Types</div></div>
+    <div class="st"><div class="sv">PyTorch</div><div class="sl">Framework</div></div>
+  </div>`,
+
+  // 02 VAE Theory
+  `<p>Variational Autoencoders perform approximate inference over latent variables z given data x. The ELBO (Evidence Lower Bound) decomposes as a reconstruction loss and KL divergence regularizer. The reconstruction term encourages the decoder to reconstruct x accurately from z, while the KL term pushes the posterior q(z|x) close to a standard normal prior p(z). This balance prevents posterior collapse and ensures meaningful latent representations.</p>
+  <p>The reparameterization trick enables backpropagation through stochastic sampling by writing z = μ + σ ⊙ ε, where ε ~ N(0, I). This reformulation eliminates the gradient barrier around the sampling operation. The encoder learns to predict mean μ and log-variance log(σ²) for each data point, allowing efficient training of the full model end-to-end with standard optimizers.</p>`,
+
+  // 03 VAE Implementation
+  `<p>The VAE encoder is a neural network that maps data x to latent parameters (μ, log σ). Typically a 2–4 layer MLP or CNN depending on data type, it outputs a d-dimensional mean vector and variance vector. The decoder network mirrors this architecture, mapping latent z back to data space with output distribution parameters (e.g., Bernoulli logits for binary data, Gaussian parameters for continuous). Both networks are trained jointly via the ELBO objective.</p>
+  <p>The training loop involves forward pass through encoder, reparameterization sampling, forward pass through decoder, and simultaneous computation of reconstruction loss and KL divergence. Common practice uses β-scheduling to gradually increase the KL weight from 0 to 1, preventing early posterior collapse. Optimization typically uses Adam with learning rates between 1e-3 and 1e-4. Implementation challenges include numerical stability (using log-variance to avoid negative values) and debugging posterior variance to ensure it doesn't degenerate.</p>`,
+
+  // 04 VAE Analysis
+  `<p>Latent space visualization reveals structure learned by VAEs. Plotting 2D latent codes with their reconstructions shows that similar data points cluster nearby in z-space. Interpolation between latent codes produces smooth transitions in data space, demonstrating that VAEs learn continuous meaningful representations. Reconstruction quality is measured by per-pixel or per-sample error, with well-trained VAEs achieving low MSE or binary cross-entropy on held-out test sets.</p>
+  <p>The KL divergence term controls how tightly the posterior matches the prior. High KL values suggest the model is using latent capacity; low KL indicates posterior collapse where the model ignores z and relies on the decoder's capacity to memorize. Posterior variance is also diagnostic: healthy VAEs have non-trivial variance per dimension, ensuring stochasticity in sampling. Log-likelihood estimates can be computed via importance sampling, providing an upper bound on the true marginal likelihood.</p>`,
+
+  // 05 Normalizing Flows Theory
+  `<p>Normalizing flows transform a simple base distribution (e.g., standard normal) through a sequence of invertible transformations. If z₀ ~ p₀(z₀) and z_k = f_k(z_{k-1}), the probability under the transformed distribution follows the change-of-variables formula: log p_k(z_k) = log p₀(z₀) - Σ log |det ∇f_i|. Computing these Jacobian determinants enables exact likelihood evaluation—a key advantage over VAEs which only lower bound the likelihood.</p>
+  <p>Coupling layers (as in RealNVP) split latent dimensions into two groups: one is transformed by a neural network function, the other passes through. This design allows tractable Jacobian computation (triangular structure) while preserving expressiveness through composition. Affine coupling layers apply learnable scale and shift parameters, making them flexible yet computationally efficient. Building a flow requires stacking these layers with careful architectural choices to balance expressiveness and stability.</p>`,
+
+  // 06 Flow Implementation
+  `<p>A RealNVP flow consists of alternating coupling layers, each parameterized by scale and translation networks. The scale network outputs log α and translation network outputs β, both conditioned on frozen dimensions. The forward pass applies the transformation x_A' = x_A * exp(α(x_B)) + β(x_B) where A and B are complementary dimension groups. The inverse is analytically tractable, enabling efficient sampling and likelihood evaluation.</p>
+  <p>Training uses maximum likelihood: optimize log p(x) = log p_base(f⁻¹(x)) - Σ log |det ∇f_i|. Implementation requires careful handling of dimension masking to ensure alternating groups, stable exponential evaluations (using log-space), and periodic batch normalization for improved training stability. Common architectures use 8–16 coupling layers with 2–3 hidden layers per network, achieving strong likelihoods on standard benchmarks. Computational cost scales linearly with depth and is typically higher than VAE training.</p>`,
+
+  // 07 Flow vs VAE Comparison
+  `<p>Normalizing flows compute exact likelihood p(x), while VAEs only bound it from below via ELBO. On standard datasets, flows often achieve higher test likelihoods, particularly on images with sharp pixel distributions. However, VAEs train faster and require less careful hyperparameter tuning. Sample quality differs subtly: flow samples from invertible transformations can exhibit mode-covering behavior, while VAEs with diverse decoders produce perceptually coherent but sometimes blurrier samples. The tradeoff between exact vs. approximate inference manifests in both theory and practice.</p>
+  <p>VAEs excel at representation learning due to structured latent space; flows provide accurate density estimation for likelihood-based applications. VAEs are more stable during training with fewer hyperparameter sensitivities, while flows demand careful architectural design and batch normalization tuning. In terms of computational cost, VAEs are typically 2–4× faster per epoch. For downstream tasks like classification or anomaly detection using latent codes, VAEs remain preferable; for tasks requiring accurate likelihood estimation (e.g., model selection, probability weighting), flows are superior.</p>`,
+
+  // 08 Key Takeaways
+  `<p>Latent variable models are central to modern deep generative modeling. VAEs offer interpretable inference networks and structured latent spaces but sacrifice exact likelihood. Normalizing flows provide exact likelihood through clever architectural design (coupling layers) but sacrifice interpretability and latent structure. Understanding the ELBO, reparameterization trick, and change-of-variables formula forms a foundation for advanced topics like hierarchical VAEs, conditional flows, and neural ODE-based generative models.</p>
+  <p>Practical insights: posterior collapse is VAE's main failure mode—address via β-scheduling or free bits. Flows require stable Jacobian computation and careful normalization. Neither model is universally best; choice depends on application. For representation learning and unsupervised discovery, choose VAEs; for likelihood-based model evaluation and density estimation, choose flows. Future directions include combining both paradigms (e.g., hierarchical flows) and scaling to high-dimensional data via hierarchical architectures and more efficient invertible designs.</p>`,
+
+  // 09 References
+  `<p>Problem Set 2 covers two foundational paradigms in generative modeling: approximate inference via variational autoencoders and exact likelihood estimation via normalizing flows. The references below span theoretical foundations, landmark papers, intuitive explanations, and implementation resources. Understanding both approaches deeply—their strengths, limitations, and when each is appropriate—is essential for modern generative AI research and applications.</p>
+  <p>Start with conceptual resources to build intuition about the ELBO, reparameterization trick, and invertible transformations. Progress to landmark papers for rigorous mathematics and empirical validation. Use PyTorch documentation and implementation blogs when coding. The comparative perspective between VAEs and flows is crucial: both are powerful, but they represent different points in the expressiveness-tractability tradeoff space.</p>`
+];
+
+const details = [
+  // 01 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 01</div>
+    <h2><em>Problem</em> Set Overview</h2>
+  </div>
+  <p>XCS236 Problem Set 2 integrates two cornerstone generative modeling approaches: variational autoencoders and normalizing flows. At 80 points across two to three weeks of coursework, this problem set bridges unsupervised learning, probabilistic modeling, and deep neural architectures. The assignment is structured in three main parts: (1) VAE implementation from scratch using PyTorch, (2) normalizing flow construction with RealNVP coupling layers, and (3) comparative analysis between the two models.</p>
+  <h3>Core Learning Objectives</h3>
+  <p>By completing this problem set, students develop fluency in variational inference, invertible neural networks, and likelihood-based generative modeling. The hands-on coding components reinforce theoretical concepts like the ELBO decomposition, Jacobian-determinant computation, and posterior inference. Students learn to debug and diagnose common failure modes (posterior collapse in VAEs, training instability in flows) and gain intuition for when each model family is appropriate for a given task or dataset.</p>
+  <h3>Dataset and Evaluation</h3>
+  <p>Typical datasets include MNIST, Fashion-MNIST, or a synthetic dataset like 2D Gaussian mixtures. Evaluation metrics span reconstruction error, sample quality (FID or visual inspection), likelihood (ELBO for VAE, exact log p(x) for flows), and latent space structure (through interpolation or clustering metrics). Autograded test cases validate encoder/decoder architecture, loss computation correctness, and final model performance on held-out data.</p>
+  `,
+
+  // 02 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 02</div>
+    <h2><em>VAE</em> Theory Review</h2>
+  </div>
+  <p>The variational autoencoder marginalizes latent variables to compute a lower bound on the log-likelihood: ELBO(x) = E_q[log p(x|z)] - KL(q(z|x) || p(z)). The first term (reconstruction loss) encourages accurate generation given latents; the second (KL regularization) prevents the posterior from straying far from the prior. This formulation sidesteps the intractable computation of p(z|x) by optimizing over tractable approximations q(z|x).</p>
+  <h3>Mathematical Foundations</h3>
+  <p>The ELBO is derived from the KL divergence inequality: KL(q(z|x) || p(z|x)) ≥ 0, which rearranges to log p(x) ≥ E_q[log p(x,z)] - E_q[log q(z|x)] = ELBO. Equality holds when q perfectly matches the true posterior p(z|x). For a Gaussian prior p(z) = N(0, I) and Gaussian approximate posterior q(z|x) = N(μ(x), σ²(x)I), the KL term has a closed form: KL = 0.5 * Σ(μ² + σ² - log(σ²) - 1). The reconstruction term depends on the data likelihood (Bernoulli for binary, Gaussian for continuous).</p>
+  <h3>Reparameterization and Optimization</h3>
+  <p>Naively sampling z ~ q(z|x) breaks the gradient flow from the decoder loss back to the encoder. The reparameterization trick rewrites z = μ + σ ⊙ ε with ε ~ N(0, I), exposing μ and σ as deterministic functions of x. Gradients now flow through these parameter functions. In practice, this enables unbiased, low-variance gradient estimates via the REINFORCE or score-function estimator alternatives, but reparameterization is the gold standard for continuous latent variables.</p>
+  `,
+
+  // 03 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 03</div>
+    <h2><em>VAE</em> Implementation</h2>
+  </div>
+  <p>A complete VAE consists of four components: (1) Encoder network q(z|x), (2) Decoder network p(x|z), (3) Prior p(z), and (4) Loss computation. The encoder is a neural network mapping input dimension d_x to latent dimension d_z, outputting mean and log-variance. The decoder maps d_z back to d_x with appropriate output distribution. Both are typically MLPs for tabular/synthetic data and CNNs for images. The prior is almost always a standard normal N(0, I) for computational convenience.</p>
+  <h3>Loss Function and Training Dynamics</h3>
+  <p>The ELBO loss combines reconstruction and KL terms. For images with binary/continuous pixels, use binary cross-entropy or MSE respectively. For KL, directly use the closed-form Gaussian KL. A key hyperparameter is the weight β on the KL term; training from β=0 and increasing to 1 (warm-up) prevents posterior collapse. Monitor posterior variance (should stay positive and non-trivial) and reconstruction loss (should decrease).</p>
+  <h3>Common Implementation Pitfalls</h3>
+  <p>Use log-variance in the encoder to avoid negative variances. Ensure variance is at least 1e-6 via a small constant offset. Reset log-variance initialization for each training run to avoid biasing the model. If posterior collapses (KL → 0, variance → 1), reduce β warm-up schedule or increase latent dimension. Verify encoder and decoder architectures are symmetric (especially for symmetric datasets). Test sampling and reconstruction on a held-out batch before full training.</p>
+  `,
+
+  // 04 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 04</div>
+    <h2><em>VAE</em> Analysis</h2>
+  </div>
+  <p>After training, analyze the VAE across multiple dimensions. Reconstruction quality: plot original vs. reconstructed samples; measure MSE or cross-entropy on test set. Latent space structure: sample pairs from test data, interpolate linearly in z-space, and observe smoothness of reconstructions. For 2D latents, visualize the entire manifold via a grid of latent codes. High-dimensional latents can be reduced to 2D via t-SNE or UMAP, colored by data labels or attributes.</p>
+  <h3>Posterior Variance and Mode Coverage</h3>
+  <p>Examine per-dimension posterior variance across the training set. Healthy VAEs have 0.5 < σ² < 2.0 per dimension; collapsed dimensions have σ² ≈ 1 everywhere. If a few dimensions are unused, the model may not be learning distributed representations. Use posterior variance to diagnose whether to increase latent dimension or adjust the KL weight β. Likelihood estimates via importance sampling (IWAE bound with multiple samples) provide a more accurate picture than ELBO, though ELBO still bounds it tightly.</p>
+  <h3>Ablation and Interpretation</h3>
+  <p>Disable the KL term (β=0) and observe how reconstruction improves but latent space degenerates (posterior collapse). This demonstrates the necessity of regularization. Increase KL weight above 1 and observe sharper posteriors but worse reconstruction. Vary latent dimension and measure the trade-off. Decode principal directions of latent variance to visualize which data attributes each dimension controls. These analyses build intuition for the VAE's representation-learning mechanism.</p>
+  `,
+
+  // 05 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 05</div>
+    <h2><em>Normalizing</em> Flows Theory</h2>
+  </div>
+  <p>A normalizing flow is a composition of invertible transformations T = T_K ∘ ... ∘ T_1 that map a simple base distribution p_0 (e.g., N(0, I)) to a complex data distribution. The change-of-variables formula gives: log p_K(x) = log p_0(T⁻¹(x)) - Σ_i log |det ∇T_i(T_{i-1}⁻¹(x))|. By carefully designing T_i so that log-determinants are tractable, we achieve exact likelihood in O(d) time rather than the exponential cost of naive computation.</p>
+  <h3>Coupling Layers and RealNVP</h3>
+  <p>Coupling layers partition variables into two groups: one passes through unchanged, the other is transformed by a neural network function. Formally, for groups A and B: (x_A', x_B') = (x_A ⊙ exp(α(x_B)) + β(x_B), x_B) where α and β are neural networks. The Jacobian is triangular, so its determinant is the product of diagonal entries, which are the exponentiated outputs of α. This design achieves O(d) Jacobian computation while maintaining expressiveness through stacking.</p>
+  <h3>Expressiveness and Limitations</h3>
+  <p>A single coupling layer fixes half the dimensions, limiting expressiveness. Stacking multiple layers with dimension masks (swapping which group is transformed) overcomes this. Typical architectures use 8–16 layers. Coupling layers cannot express highly multimodal or disconnected distributions within each fixed dimension group, so careful initialization and batch normalization are crucial. Alternative flows (masked autoencoders, neural autoregressive) trade off Jacobian tractability for higher expressiveness.</p>
+  `,
+
+  // 06 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 06</div>
+    <h2><em>Flow</em> Implementation</h2>
+  </div>
+  <p>Building a RealNVP flow requires defining coupling layers and stacking them. Each layer takes a dimension mask (which dimensions are frozen), and neural networks for scale α and translation β. Forward pass: multiply frozen-dimension outputs by exp(α(free dims)) and add β(free dims). Inverse pass: subtract β and divide by exp(α), reversing the operations. Log-determinant: sum of α outputs (since we compute exp and take log). Implement both forward and inverse to enable sampling and likelihood computation.</p>
+  <h3>Training and Numerical Stability</h3>
+  <p>Objective: maximize log p(x) = log p_base(f⁻¹(x)) - Σ log |det ∇f_i|. For base distribution, use standard normal. Compute both terms for each batch and average. Key stability points: (1) Use log-space exponentials to avoid overflow: log(exp(a)) = a; (2) Clamp α outputs to avoid extreme scale factors; (3) Apply batch normalization between layers to center and scale activations. Learning rate typically 1e-3 to 1e-4; use Adam optimizer. Monitor log p(x) on validation set and check that it increases over epochs.</p>
+  <h3>Common Pitfalls and Debugging</h3>
+  <p>Verify the forward and inverse passes are truly inverses by checking f⁻¹(f(x)) ≈ x in float32 precision. Numerically unstable exponentials (large α) indicate poor scale network outputs; add regularization or clipping. If likelihood plateaus early, increase the number of layers or hidden dimensions in α and β networks. Check dimension masks are correctly alternating. If training diverges, reduce learning rate or increase batch normalization momentum.</p>
+  `,
+
+  // 07 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 07</div>
+    <h2><em>VAE</em> vs Flow Comparison</h2>
+  </div>
+  <p>Exact vs. approximate likelihood is the core distinction. Flows compute log p(x) exactly; VAEs compute ELBO which lower-bounds it. On test sets, flows typically achieve 0.5–2 nats higher log-likelihood, depending on dataset complexity and architecture. However, VAEs train faster (2–4× per epoch) and are more robust to hyperparameter choices. VAEs provide a learned encoder q(z|x) useful for representation learning; flows are solely for generation and density estimation.</p>
+  <h3>Sample Quality and Mode Coverage</h3>
+  <p>Both models generate high-quality samples on standard benchmarks. VAEs sometimes produce blurrier reconstructions due to the ELBO penalty on KL; flows can produce sharper samples but may have mode collapse if architectural capacity is limited. Interpolation in the latent space is natural for VAEs (z-space is interpretable); for flows, interpolation in data space (decoding samples, interpolating, re-encoding) is more meaningful. Inception score or FID metrics show comparable quality, with flows often slightly better.</p>
+  <h3>Downstream Task Performance</h3>
+  <p>For unsupervised feature learning (e.g., clustering, classification on latent codes), VAEs excel due to structured latent space. For likelihood-based applications (anomaly detection via p(x), model selection, importance weighting), flows are preferable. In practice, a hybrid approach combines both: train a VAE for representation learning, then train a flow on the latent codes for improved density estimation.</p>
+  `,
+
+  // 08 Detail
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 08</div>
+    <h2>Key <em>Takeaways</em></h2>
+  </div>
+  <p>Latent variable models formalize the idea that high-dimensional data is generated from lower-dimensional structure. VAEs leverage variational inference to learn both this structure and an encoder for inference; flows leverage invertible transformations to compute exact likelihood. Both are powerful tools; mastering both opens doors to advanced generative modeling (score-based models, diffusion, VAE/flow hybrids, hierarchical architectures).</p>
+  <h3>Theory to Practice</h3>
+  <p>The ELBO and change-of-variables formula are central to understanding modern generative models. Reparameterization tricks and Jacobian computation are algorithmic innovations that enable gradient-based learning. Debugging generative models requires monitoring posterior variance, reconstruction loss, KL terms (for VAE), and likelihood (for flows). Understanding failure modes—posterior collapse, training instability—is as important as understanding success cases.</p>
+  <h3>Future Directions</h3>
+  <p>Hierarchical VAEs stack latent variables to capture multi-scale structure. Conditional flows extend flows to p(x|y) for classification or controllable generation. Neural ODE-based flows (FFJORD) replace discrete layers with continuous dynamical systems, enabling arbitrary dimension flexibility. Score-based generative models and diffusion (ubiquitous in modern applications) generalize flows and VAEs via perturbed data distributions. The foundations from this problem set transfer directly to all these advanced topics.</p>
+  `,
+
+  // 09 References
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
+    <h2>References & <em>Further</em> Reading</h2>
+  </div>
+  <h3>Landmark Papers</h3>
+  <ul class="s-list">
+    <li><a href="https://arxiv.org/abs/1312.6114" target="_blank">Auto-Encoding Variational Bayes (Kingma & Welling, 2013)</a> — The foundational VAE paper introducing the ELBO and reparameterization trick; essential reading for understanding approximate inference in generative models.</li>
+    <li><a href="https://arxiv.org/abs/1505.05770" target="_blank">Variational Inference with Normalizing Flows (Rezende & Mohamed, 2015)</a> — Introduces flows for flexible posterior approximation; demonstrates how invertible transformations enhance variational inference.</li>
+    <li><a href="https://arxiv.org/abs/1605.08803" target="_blank">Density Estimation using Real NVP (Dinh et al., 2016)</a> — RealNVP paper detailing coupling layers and affine transformations; directly relevant to normalizing flow implementation in PS2.</li>
+    <li><a href="https://arxiv.org/abs/1906.04341" target="_blank">Glow: Generative Flow using Invertible 1x1 Convolutions (Kingma & Dhariwal, 2018)</a> — Advanced flow architecture improving expressiveness via invertible convolutions and actnorm; illustrates modern flow design.</li>
+    <li><a href="https://arxiv.org/abs/2006.11239" target="_blank">Denoising Diffusion Probabilistic Models (Ho et al., 2020)</a> — Connects to PS3; diffusion models generalize VAE concepts to iterative denoising.</li>
+    <li><a href="https://arxiv.org/abs/2011.13456" target="_blank">Score-Based Generative Modeling through Stochastic Differential Equations (Song et al., 2021)</a> — Unified framework connecting flows, VAEs, and diffusion via score matching; advanced but highly relevant context.</li>
+  </ul>
+  <h3>Intuitive Explanations & Blogs</h3>
+  <ul class="s-list">
+    <li><a href="https://lilianweng.github.io/posts/2018-08-12-vae/" target="_blank">Lilian Weng: From Autoencoder to Beta-VAE</a> — Excellent pedagogical explanation of VAEs, posterior collapse, and the β-VAE variant for balancing reconstruction and KL terms.</li>
+    <li><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank">Lilian Weng: What are Diffusion Models?</a> — Contextualizes VAEs and flows within the broader diffusion paradigm; bridges PS2 and PS3 concepts.</li>
+    <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng: Blog (All Posts)</a> — Comprehensive resource covering VAEs, flows, diffusion, score matching, and more; highly recommended across all problem sets.</li>
+  </ul>
+  <h3>Background & Mathematical Foundations</h3>
+  <ul class="s-list">
+    <li><a href="https://en.wikipedia.org/wiki/Evidence_lower_bound" target="_blank">Wikipedia: Evidence Lower Bound (ELBO)</a> — Mathematical foundations of the ELBO; essential for understanding the VAE objective.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence" target="_blank">Wikipedia: Kullback–Leibler Divergence</a> — KL divergence definition and interpretation; central to VAE regularization.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Inverse_function" target="_blank">Wikipedia: Inverse Function & Change of Variables</a> — Background on invertible transformations and the change-of-variables formula used in flows.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant" target="_blank">Wikipedia: Jacobian Matrix and Determinant</a> — Essential for understanding Jacobian computation in normalizing flows.</li>
+  </ul>
+  <h3>Implementation Resources</h3>
+  <ul class="s-list">
+    <li><a href="https://pytorch.org/docs/stable/" target="_blank">PyTorch Official Documentation</a> — Complete reference for tensors, autograd, nn modules, and optimization; essential for VAE and flow implementation.</li>
+    <li><a href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html" target="_blank">PyTorch 60-Minute Blitz</a> — Quick introduction to PyTorch fundamentals; useful refresher before diving into PS2 coding.</li>
+  </ul>
+  <h3>Course Context</h3>
+  <ul class="s-list">
+    <li><a href="https://cs236.stanford.edu/" target="_blank">Stanford CS236: Deep Generative Models</a> — Official course website; lectures and problem sets spanning the full generative modeling curriculum including VAEs, flows, and diffusion.</li>
+  </ul>
+  <p><strong>Reading Strategy:</strong> Begin with Lilian Weng's blog posts for conceptual clarity. Read the Kingma & Welling VAE paper for rigorous ELBO derivations. Study the Dinh et al. RealNVP paper for coupling layer details. Use Wikipedia for mathematical background (Jacobians, KL divergence). Refer to PyTorch docs while implementing. Revisit papers as you code to deepen understanding.</p>
+  `
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · PROBLEM SET 2</div>
+        <div class="hero-title">PS2: VAE & <em>Flows</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>80 Points · Variational Autoencoders & Normalizing Flows</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

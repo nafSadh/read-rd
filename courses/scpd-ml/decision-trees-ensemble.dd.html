@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decision Trees & Ensemble Methods — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+// Data arrays for Decision Trees & Ensemble Methods
+const sections = [
+  { num: '01', short: 'Decision Trees', title: 'Decision Trees' },
+  { num: '02', short: 'Information Gain', title: 'Information Gain' },
+  { num: '03', short: 'Gini Impurity', title: 'Gini Impurity' },
+  { num: '04', short: 'Pruning & Regularization', title: 'Pruning & Regularization' },
+  { num: '05', short: 'Bagging', title: 'Bagging' },
+  { num: '06', short: 'Random Forests', title: 'Random Forests' },
+  { num: '07', short: 'Boosting', title: 'Boosting' },
+  { num: '08', short: 'Gradient Boosting', title: 'Gradient Boosting' }
+,
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+
+const summaries = [
+  // Section 1: Decision Trees
+  `<p>Decision trees recursively partition the feature space into increasingly homogeneous regions, creating a hierarchical structure of binary or multi-way splits. At each node, the algorithm selects the feature and threshold that best separates the data according to a chosen criterion, building a tree where leaves represent final predictions and internal nodes represent decision rules. Trees excel at capturing non-linear relationships and interactions without feature scaling.</p><p>The interpretability of decision trees is unmatched: each path from root to leaf traces a human-readable rule like "if x₁ ≤ 5.2 and x₂ > 3.1 then predict class A." This transparency makes trees invaluable in applications requiring explainability, from medical diagnosis to lending decisions. However, individual trees suffer from high variance and tend to overfit on training data, motivating the use of ensemble methods.</p>`,
+
+  // Section 2: Information Gain
+  `<p>Information gain measures the reduction in entropy from a split, quantifying how much a feature decreases uncertainty about the target variable. Entropy H(S) = -Σ pᵢ log₂(pᵢ) represents the impurity of a set S; a lower entropy means more homogeneous labels. The information gain from splitting on feature X is IG(S,X) = H(S) - Σ |Sᵥ|/|S| · H(Sᵥ), where the sum weights the entropy of child nodes by their relative sizes. This criterion, used in algorithms like ID3 and C4.5, greedily selects splits that maximize information gain.</p><p>The greedy approach ensures efficient tree construction but does not guarantee globally optimal trees. Information gain has a bias toward high-cardinality features with many possible values, since they create more child nodes and often achieve lower weighted entropy purely by fragmentation. Practitioners often use gain ratio (normalizing by split entropy) or other criteria to mitigate this effect and build more balanced, interpretable trees.</p>`,
+
+  // Section 3: Gini Impurity
+  `<p>Gini impurity provides an alternative to entropy, measuring the probability of misclassifying a randomly selected element if it were labeled according to the class distribution in a node. Defined as Gini(S) = 1 - Σ pᵢ², it ranges from 0 (pure) to 0.5 (maximum impurity at binary classification). The Gini-based split criterion selects the feature that minimizes weighted child impurity: Gini(S,X) = Σ |Sᵥ|/|S| · Gini(Sᵥ). Gini is computationally simpler than entropy since it avoids logarithms and is the default in scikit-learn's DecisionTreeClassifier.</p><p>Empirically, Gini and entropy typically produce similar trees despite their conceptual differences. Gini tends to be slightly faster to compute and creates marginally more balanced splits in certain datasets. Neither method is universally superior; the choice often depends on domain conventions and computational constraints. Both are greedy heuristics that work well in practice but occasionally miss the globally optimal structure.</p>`,
+
+  // Section 4: Pruning & Regularization
+  `<p>Trees grown to full depth invariably overfit: they memorize training noise and fail to generalize. Pre-pruning constrains tree growth by stopping expansion when splits no longer improve validation performance or when constraints are hit—such as maximum tree depth, minimum samples per leaf, or minimum impurity decrease. These hyperparameters directly control model complexity and are easily tuned via cross-validation. Post-pruning, conversely, grows a full tree then removes nodes whose deletion reduces cost-complexity loss, removing the least valuable subtrees first in a sequence from which the best size is selected via validation.</p><p>Cost-complexity pruning balances tree size against training error: CCP(T) = Error(T) + α·|Leaves(T)|, where α controls the penalty on tree size. Larger α favors smaller trees; tuning α on a validation set identifies the optimal complexity. Pre-pruning is faster and often sufficient in practice. Post-pruning, implemented via the pruning path, can sometimes find better trees by exploring the full complexity spectrum. Modern libraries like scikit-learn automate both approaches, making pruning a standard best practice for production trees.</p>`,
+
+  // Section 5: Bagging
+  `<p>Bootstrap aggregation (bagging) reduces variance by training multiple models on bootstrap samples—random samples drawn with replacement from the training set—then averaging their predictions. Each bootstrap sample has approximately 63.2% unique examples; the remaining 36.8% are duplicates. Bagging is trivial to parallelize since each model trains independently, making it scalable to large datasets. For regression, predictions average; for classification, voting aggregates class labels. Bagging particularly benefits high-variance, low-bias models like unpruned decision trees, turning an ensemble into a robust predictor.</p><p>Out-of-bag (OOB) error estimates generalization without a separate validation set: for each training example, aggregate predictions from only the bootstrap samples that did not contain it (roughly one-third of the ensemble). OOB error is an unbiased estimate nearly equivalent to leave-one-out cross-validation but computed at negligible cost. Bagging cannot reduce bias; if the base learner is systematically biased, the ensemble inherits that bias. Despite this limitation, bagging is simple, effective, and forms the foundation for random forests, which add feature subsampling to further improve generalization.</p>`,
+
+  // Section 6: Random Forests
+  `<p>Random forests extend bagging by introducing feature subsampling at each split: at each node, only a random subset of √d features (for classification) or d/3 features (for regression) is eligible for splitting, reducing correlation between trees. This decorrelation is critical—if all trees make the same splits on the same features, their predictions are highly correlated and ensemble variance reduction is minimal. By forcing each tree to explore different feature subsets, random forests generate a more diverse ensemble, reducing the effective correlation and amplifying variance reduction.</p><p>Random forests are robust, minimal-tuning algorithms that often perform competitively without hyperparameter tuning. Key hyperparameters are the number of trees (more is safer but slower), max_features (controlling feature subsampling), max_depth, and min_samples_leaf. Feature importance is easily extracted: the total impurity decrease across all splits for each feature, averaged over all trees, quantifies predictive value. Random forests scale to large datasets and handle high-dimensional data gracefully, making them a practical go-to ensemble for many tasks and a strong baseline for benchmarking.</p>`,
+
+  // Section 7: Boosting
+  `<p>Boosting trains weak learners sequentially, with each new learner focused on examples the previous ensemble mislabeled. AdaBoost maintains sample weights, initially uniform; after each weak learner trains, weights on misclassified examples increase, forcing subsequent learners to focus on hard cases. The final ensemble is a weighted combination where each learner's weight depends on its training accuracy: α_m = 0.5 · log((1 - err_m) / err_m), where err_m is the weighted error rate. This exponential weighting of mistakes creates a strong feedback loop that drives the ensemble toward low training error.</p><p>Boosting reduces bias by iteratively correcting residuals and errors, complementing bagging's variance reduction. The sequential nature precludes parallelization, but boosting typically needs far fewer base learners than bagging to achieve equivalent generalization. The exponential loss minimized by AdaBoost magnifies the penalty on hard examples, making boosting sensitive to outliers and mislabeled data. Modern variants like LogitBoost and multiclass extensions improve stability. Boosting's power to turn weak learners into strong predictors—combined with its interpretability—made it a foundational technique in machine learning, preceding deep learning as the dominant ensemble method.</p>`,
+
+  // Section 8: Gradient Boosting
+  `<p>Gradient boosting generalizes boosting to arbitrary loss functions by framing ensemble learning as gradient descent in function space. Instead of reweighting samples, gradient boosting fits each new model to the negative gradient (residuals) of the loss function with respect to the current ensemble's predictions. For squared error loss, residuals are simply actual − predicted; for log-loss, they are pseudo-residuals ∂L/∂f. The new tree is scaled by a learning rate (shrinkage) η before adding to the ensemble, controlling step size and improving generalization. Regularization (tree depth, min_samples_leaf, learning rate) is crucial to prevent overfitting.</p><p>XGBoost, LightGBM, and CatBoost are production-grade implementations adding tree-specific regularization (L1/L2 penalties on leaf weights, tree complexity penalties), efficient column-wise splitting, and learned categorical encodings. These libraries dominate Kaggle competitions and real-world applications because of speed, accuracy, and robustness. Gradient boosting subsumes AdaBoost and enables custom loss functions, from quantile regression to ranking metrics. With careful regularization tuning, gradient boosting consistently achieves state-of-the-art performance on tabular data, rivaling deep learning on structured tasks and requiring far less computational resources.</p>`
+,
+
+  // 09 References & Further Reading
+  `<p><strong>Key References:</strong></p>
+<ul style="font-size: 14px; line-height: 1.8;">
+  <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
+  <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Course Materials</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Decision_tree_learning" target="_blank">Decision Tree Learning - Wikipedia</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Random_forest" target="_blank">Random Forests - Wikipedia</a></li>
+  <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 15)</a></li>
+  <li><a href="https://arxiv.org/abs/1603.02754" target="_blank">XGBoost: A Scalable Tree Boosting System</a></li>
+</ul>`];
+
+const details = [
+  // Detail 1: Decision Trees
+  `<div class="detail-header"><div class="num">01</div><h2>Decision Trees</h2></div>
+  <p>A decision tree is a hierarchical model that partitions the feature space through recursive binary (or multi-way) splits. Starting at the root, each internal node tests a feature against a threshold; the true branch follows if the condition is satisfied, otherwise the false branch is traversed. This process continues until reaching a leaf, which outputs a class label (classification) or continuous value (regression). The learned rules are transparent and mimic human decision-making, making trees invaluable for interpretable machine learning.</p>
+  <p>Tree construction greedily selects splits to minimize impurity—entropy or Gini impurity—at each node. This greedy strategy is computationally efficient (O(dn log n) for n samples and d features) but does not guarantee globally optimal trees. Early stopping via max_depth, min_samples_leaf, or min_impurity_decrease prevents overfitting by constraining tree growth. Unpruned trees memorize training data, achieving near-zero training error but poor test performance. Pruning—removing the least valuable subtrees—recovers generalization at the cost of training accuracy.</p>
+  <h3>Tree Structure & Splitting</h3>
+  <p>At each split, the algorithm scans candidate thresholds for each feature and selects the split minimizing the impurity of the resulting child nodes. For a split on feature X at threshold t, the weighted child impurity is |L|/|S| · Imp(L) + |R|/|S| · Imp(R), where L and R are left and right child subsets and S is the parent. Trees naturally handle missing values through surrogate splits and categorical features through one-hot encoding or ordinal encoding.</p>
+  <h3>Advantages & Limitations</h3>
+  <p>Trees are interpretable, require no feature scaling, capture interactions automatically, and handle mixed feature types. Conversely, individual trees are high-variance (small data changes cause large tree structure changes), prone to overfitting, and create non-convex decision boundaries that may miss simple linear patterns. Trees also have a bias toward high-cardinality features, making feature engineering and regularization essential for good generalization.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><polygon points="0 0, 10 5, 0 10" fill="currentColor" class="lbl"/></marker>
+      </defs>
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Decision Tree Structure</text>
+      <!-- Root -->
+      <circle cx="350" cy="70" r="30" class="node-hi"/>
+      <text x="350" y="70" text-anchor="middle" class="node-text" font-size="11">X₁ ≤ 5.2</text>
+      <!-- Left subtree -->
+      <line x1="320" y1="100" x2="200" y2="130" class="edge"/>
+      <circle cx="200" cy="150" r="25" class="node"/>
+      <text x="200" y="155" text-anchor="middle" class="node-sub" font-size="10">X₂ ≤ 3.1</text>
+      <!-- Right subtree -->
+      <line x1="380" y1="100" x2="500" y2="130" class="edge"/>
+      <circle cx="500" cy="150" r="25" class="node"/>
+      <text x="500" y="155" text-anchor="middle" class="node-sub" font-size="10">X₃ ≤ 1.8</text>
+      <!-- Left-Left -->
+      <line x1="175" y1="175" x2="100" y2="220" class="edge"/>
+      <rect x="85" y="220" width="30" height="25" rx="2" class="node"/>
+      <text x="100" y="235" text-anchor="middle" class="node-text" font-size="10">A</text>
+      <!-- Left-Right -->
+      <line x1="225" y1="175" x2="300" y2="220" class="edge"/>
+      <rect x="285" y="220" width="30" height="25" rx="2" class="node"/>
+      <text x="300" y="235" text-anchor="middle" class="node-text" font-size="10">B</text>
+      <!-- Right-Left -->
+      <line x1="475" y1="175" x2="420" y2="220" class="edge"/>
+      <rect x="405" y="220" width="30" height="25" rx="2" class="node"/>
+      <text x="420" y="235" text-anchor="middle" class="node-text" font-size="10">B</text>
+      <!-- Right-Right -->
+      <line x1="525" y1="175" x2="580" y2="220" class="edge"/>
+      <rect x="565" y="220" width="30" height="25" rx="2" class="node"/>
+      <text x="580" y="235" text-anchor="middle" class="node-text" font-size="10">C</text>
+      <!-- Depth labels -->
+      <text x="20" y="75" class="lbl" font-size="10">Depth 0</text>
+      <text x="20" y="160" class="lbl" font-size="10">Depth 1</text>
+      <text x="20" y="245" class="lbl" font-size="10">Depth 2</text>
+    </svg>
+  </div>
+  <h3>Overfitting & Regularization</h3>
+  <p>A fully grown tree achieves zero training error by creating leaves with pure labels, but this memorization does not generalize. Regularization via max_depth, min_samples_leaf, or cost-complexity pruning trades training accuracy for test accuracy. The optimal tree depth is found via cross-validation; shallow trees underfit while deep trees overfit. Post-pruning grows a full tree then removes nodes in order of cost-complexity, selecting the subtree that minimizes validation error.</p>`,
+
+  // Detail 2: Information Gain
+  `<div class="detail-header"><div class="num">02</div><h2>Information Gain</h2></div>
+  <p>Information theory provides a principled framework for measuring split quality via information gain. Entropy quantifies the uncertainty in a set of labels: H(S) = -Σ p_c log₂(p_c), where p_c is the proportion of class c in S. A pure set (all same class) has H = 0; a balanced binary set has H = 1. When a split partitions S into subsets S_v, the weighted child entropy is Σ |S_v|/|S| · H(S_v). Information gain IG(S, X) = H(S) - Σ |S_v|/|S| · H(S_v) quantifies entropy reduction—the information learned from splitting on feature X.</p>
+  <p>Tree construction greedily selects the feature and threshold maximizing information gain at each node. This approach, used in ID3 and C4.5, is computationally efficient and often produces good trees. However, information gain is biased toward features with many possible values: a feature with k distinct values creates k potential splits, each potentially lowering weighted entropy simply through fragmentation rather than genuine purity improvement. This bias can lead to overly complex splits and poor generalization.</p>
+  <h3>Information Gain Formula & Computation</h3>
+  <p>For a feature X and threshold t, the information gain is IG(S, X ≤ t) = H(S) - [|S_left|/|S| · H(S_left) + |S_right|/|S| · H(S_right)]. Computing IG for all candidate thresholds—typically the midpoints between consecutive sorted values of X—requires O(n log n) sorting and O(n) IG computation per feature, totaling O(dn log n) for d features. In practice, fast libraries use histogram-based approximations, partitioning feature values into bins to reduce computation.</p>
+  <h3>Gain Ratio & Intrinsic Value</h3>
+  <p>To mitigate the bias toward high-cardinality features, gain ratio normalizes information gain by the intrinsic value of the split: GainRatio(S, X) = IG(S, X) / H_split(X), where H_split(X) = -Σ |S_v|/|S| · log₂(|S_v|/|S|) measures how evenly a feature partitions the set. Features that create many balanced child subsets have high intrinsic value and lower gain ratio. C4.5 uses gain ratio to prefer simpler, more interpretable splits over those fragmenting data into many small groups.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Information Gain Visualization</text>
+      <!-- Parent node -->
+      <circle cx="350" cy="70" r="35" class="node-hi"/>
+      <text x="350" y="65" text-anchor="middle" class="node-text" font-size="12">H = 0.97</text>
+      <text x="350" y="82" text-anchor="middle" class="node-sub" font-size="9">6A, 4B</text>
+      <!-- Split line -->
+      <line x1="50" y1="150" x2="650" y2="150" class="lbl" stroke-dasharray="4,4" stroke-width="1"/>
+      <!-- Left child -->
+      <circle cx="180" cy="220" r="32" class="node"/>
+      <text x="180" y="215" text-anchor="middle" class="node-text" font-size="11">H = 0.68</text>
+      <text x="180" y="233" text-anchor="middle" class="node-sub" font-size="9">5A, 1B</text>
+      <!-- Right child -->
+      <circle cx="520" cy="220" r="32" class="node"/>
+      <text x="520" y="215" text-anchor="middle" class="node-text" font-size="11">H = 0.92</text>
+      <text x="520" y="233" text-anchor="middle" class="node-sub" font-size="9">1A, 3B</text>
+      <!-- Connector lines -->
+      <line x1="315" y1="100" x2="180" y2="188" class="edge"/>
+      <line x1="385" y1="100" x2="520" y2="188" class="edge"/>
+      <!-- Formulas -->
+      <text x="50" y="280" class="lbl" font-size="11">IG = H(parent) - [6/10·H(L) + 4/10·H(R)]</text>
+      <text x="50" y="300" class="lbl" font-size="11">IG = 0.97 - [0.6·0.68 + 0.4·0.92] = 0.24 bits</text>
+      <text x="50" y="320" class="lbl" font-size="11">This feature reduces entropy; prefer over splits with lower IG</text>
+    </svg>
+  </div>
+  <h3>Limitations & Extensions</h3>
+  <p>Information gain is a greedy heuristic that does not account for future splits or interactions. A split with lower immediate IG might enable better downstream splits, but greedy selection misses this. Also, IG assumes discrete or binned features; continuous features require threshold scanning. Modern tree libraries (XGBoost, LightGBM) use histogram-based approximations and second-order statistics, trading fine-grained IG for computational efficiency. Despite its limitations, IG remains a powerful, intuitive split criterion that aligns well with information-theoretic principles and produces interpretable, accurate trees in practice.</p>`,
+
+  // Detail 3: Gini Impurity
+  `<div class="detail-header"><div class="num">03</div><h2>Gini Impurity</h2></div>
+  <p>Gini impurity measures the probability of misclassifying a random element if labeled according to the class distribution of a node: Gini(S) = 1 - Σ p_c². For binary classification with balanced classes, Gini = 0.5; for pure class, Gini = 0. Unlike entropy (which uses logarithms), Gini is algebraically simpler and does not require transcendental functions. The split criterion selects the feature minimizing weighted child Gini: Gini(S, X) = Σ |S_v|/|S| · Gini(S_v). In scikit-learn's DecisionTreeClassifier and RandomForestClassifier, Gini is the default.</p>
+  <p>Empirically, Gini and entropy produce very similar trees and generalization performance. Gini favors slightly more balanced splits, while entropy is more sensitive to the largest minority classes. For high-dimensional problems, Gini's computational simplicity (avoiding log operations) provides marginal speedup. The choice between Gini and entropy is more a matter of convention and computational budget than fundamental performance differences; most practitioners use whichever criterion is the library default and focus on regularization hyperparameters for performance gains.</p>
+  <h3>Gini Index & Misclassification Error</h3>
+  <p>Gini(S) = 1 - Σ p_c² can also be interpreted as Gini = 2 · p(A) · p(B) for binary classification, the probability of selecting two examples of different classes at random. This interpretation connects Gini to the expected misclassification rate if a random label is chosen. For k classes, Gini ranges from 0 (pure) to (k-1)/k. Classification error (1 - max(p_c)) is another impurity measure but is less sensitive to class imbalance and less suitable for building trees; Gini and entropy are preferred in practice.</p>
+  <h3>Computational Efficiency</h3>
+  <p>Computing Gini requires only frequencies p_c and their squares, no logarithms. For a dataset of n samples, Gini(S) is O(k) where k is the number of classes (typically small). Scanning all candidate thresholds for d features costs O(dn log n), identical to entropy. However, Gini's simpler operations reduce constant factors, providing 5–10% speedup in tree construction. For very large datasets where tree construction is a bottleneck, this efficiency gain justifies Gini's use. For typical problems, the choice is immaterial, and regularization hyperparameters have far larger impact on generalization.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Gini vs Entropy Comparison</text>
+      <!-- X-axis: probability -->
+      <line x1="80" y1="280" x2="650" y2="280" stroke="var(--border)" stroke-width="1"/>
+      <text x="650" y="300" class="lbl" font-size="10">p(Class A)</text>
+      <!-- Y-axis -->
+      <line x1="80" y1="50" x2="80" y2="280" stroke="var(--border)" stroke-width="1"/>
+      <text x="50" y="55" class="lbl" font-size="10">Impurity</text>
+      <!-- Gini curve -->
+      <path d="M 80 150 Q 200 250 350 280 Q 500 250 650 150" stroke="var(--accent)" stroke-width="2" fill="none"/>
+      <text x="400" y="260" class="lbl-hi" font-size="11">Gini(p) = 2p(1-p)</text>
+      <!-- Entropy curve -->
+      <path d="M 80 100 Q 200 200 350 260 Q 500 200 650 100" stroke="var(--cyan)" stroke-width="2" fill="none" opacity="0.7"/>
+      <text x="500" y="130" class="lbl-hi" font-size="11" opacity="0.7">Entropy(p) = -p log₂(p)...</text>
+      <!-- Labels -->
+      <text x="80" y="295" class="lbl" font-size="9" text-anchor="middle">0.0</text>
+      <text x="350" y="295" class="lbl" font-size="9" text-anchor="middle">0.5</text>
+      <text x="650" y="295" class="lbl" font-size="9" text-anchor="middle">1.0</text>
+      <text x="70" y="155" class="lbl" font-size="9" text-anchor="end">0.5</text>
+      <text x="70" y="280" class="lbl" font-size="9" text-anchor="end">0.0</text>
+    </svg>
+  </div>
+  <h3>Bias Toward Balanced Splits</h3>
+  <p>Gini impurity, like entropy, is biased toward features with many distinct values. A feature with k values can create k potential splits; each fragment reduces weighted Gini through increased granularity, not necessarily through purer classification. Practitioners often limit max_features or use gain ratio analogues to counter this bias. Some tree libraries use alternative split criteria like XGBoost's second-order statistics (gradient and hessian), which are more robust to feature cardinality.</p>
+  <h3>Modern Extensions</h3>
+  <p>While Gini and entropy dominate classical trees, modern gradient boosting libraries use custom loss functions tailored to the prediction task. XGBoost minimizes regularized learning objectives; LightGBM optimizes Leaf-wise splits using second-order approximations; CatBoost leverages categorical feature interactions. These extensions trade the simplicity of Gini for improved accuracy on complex, high-dimensional datasets. For foundational understanding and most practical tasks, Gini remains the standard, reliable choice.</p>`,
+
+  // Detail 4: Pruning & Regularization
+  `<div class="detail-header"><div class="num">04</div><h2>Pruning & Regularization</h2></div>
+  <p>Fully grown trees achieve near-zero training error by memorizing noise. Regularization constrains growth to recover generalization. Pre-pruning stops expansion early using hard constraints: max_depth limits tree height, min_samples_leaf ensures leaves contain enough samples, min_impurity_decrease requires splits to improve purity beyond a threshold, min_weight_fraction_leaf bounds the fraction of training samples. These hyperparameters are tuned via cross-validation; typical values are max_depth ∈ [3, 15] and min_samples_leaf ∈ [1, 20].</p>
+  <p>Post-pruning grows an unpruned tree, then removes nodes whose deletion reduces cost-complexity loss. Cost-complexity pruning scores each subtree as CCP(T) = Error(T) + α·|Leaves(T)|, where α is a regularization parameter. Larger α penalizes tree size, favoring smaller trees; α=0 prefers the original tree. A sequence of trees from maximum complexity (α=0) to minimum complexity (single root) is computed efficiently via a pruning path. Scikit-learn's cost_complexity_pruning_path() and ccp_alpha parameter implement this; the optimal α is selected via cross-validation on the validation set's CCP values.</p>
+  <h3>Pre-Pruning Strategy</h3>
+  <p>Pre-pruning is faster (no need to grow a full tree) and often sufficient. Common strategies: (1) Grid search over max_depth, min_samples_leaf, min_impurity_decrease using k-fold cross-validation; (2) Early stopping during tree growth if validation error increases for consecutive splits; (3) Monitoring OOB error in bagging/forests. Pre-pruning is the practical choice for production systems where training time matters. The hyperparameter search space is modest (few knobs), and default values (max_depth=None, min_samples_leaf=1) are permissive starting points.</p>
+  <h3>Post-Pruning & Cost-Complexity</h3>
+  <p>Post-pruning can sometimes find subtly better trees by exploring the full complexity spectrum. The pruning path generates a sequence T₀ ⊃ T₁ ⊃ ... ⊃ T_root where T_i+1 is obtained by removing the node that minimizes the increase in training error per leaf removed. For each α, the tree in the path minimizing CCP(T, α) is optimal for that regularization strength. Cross-validation error on the validation set selects the best α. The cost-complexity framework is theoretically elegant and often used in academic settings; for practitioners, pre-pruning is usually sufficient.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Pruning Trade-off: Training vs Test Error</text>
+      <!-- Axes -->
+      <line x1="80" y1="320" x2="650" y2="320" stroke="var(--border)" stroke-width="1"/>
+      <line x1="80" y1="50" x2="80" y2="320" stroke="var(--border)" stroke-width="1"/>
+      <text x="660" y="325" class="lbl" font-size="10">Tree Size (Leaves)</text>
+      <text x="20" y="55" class="lbl" font-size="10" text-anchor="middle">Error</text>
+      <!-- Training error (decreasing) -->
+      <path d="M 100 280 L 200 240 L 300 180 L 400 120 L 500 80 L 600 60" stroke="var(--red)" stroke-width="2" fill="none"/>
+      <text x="320" y="150" class="lbl-hi" font-size="11" fill="var(--red)">Training Error</text>
+      <!-- Test error (U-shaped) -->
+      <path d="M 100 100 L 200 90 L 300 85 L 400 90 L 500 120 L 600 180" stroke="var(--green)" stroke-width="2" fill="none"/>
+      <text x="450" y="70" class="lbl-hi" font-size="11" fill="var(--green)">Test Error</text>
+      <!-- Optimal point -->
+      <circle cx="350" cy="85" r="5" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"/>
+      <text x="350" y="45" text-anchor="middle" class="lbl-hi" font-size="10">Optimal Complexity</text>
+      <!-- Annotations -->
+      <text x="130" y="350" class="lbl" font-size="9">Small tree</text>
+      <text x="350" y="350" class="lbl" font-size="9" text-anchor="middle">Balanced</text>
+      <text x="570" y="350" class="lbl" font-size="9" text-anchor="end">Large tree</text>
+    </svg>
+  </div>
+  <h3>Hyperparameter Tuning</h3>
+  <p>GridSearchCV or RandomizedSearchCV automate hyperparameter tuning. Example: <code>GridSearchCV(DecisionTreeClassifier(), param_grid={'max_depth': [3,5,7,10], 'min_samples_leaf': [1,5,10]}, cv=5)</code>. Cross-validation ensures the selected hyperparameters generalize to unseen data. For large datasets, randomized search reduces computation. For production systems, early stopping (monitoring validation error during training) or online tuning (adapting hyperparameters as data arrives) can dynamically optimize complexity.</p>
+  <h3>Regularization Best Practices</h3>
+  <p>Start with weak regularization (large max_depth, small min_samples_leaf) and gradually increase constraints until cross-validation error stabilizes. Use feature selection (selecting high-variance, low-noise features) to reduce the model's capacity to fit noise. Ensemble methods (bagging, boosting) often obviate the need for aggressive pre-pruning by averaging predictions across diverse subtrees. For critical applications (medical, financial), prioritize interpretability: smaller, shallower trees with aggressive min_samples_leaf constraints ensure that every split is statistically robust.</p>`,
+
+  // Detail 5: Bagging
+  `<div class="detail-header"><div class="num">05</div><h2>Bagging</h2></div>
+  <p>Bootstrap aggregation (bagging) trains multiple models on bootstrap samples—random samples drawn with replacement from the training data—then aggregates predictions. Each bootstrap sample has size n (same as original data) but contains roughly 63.2% unique examples; 36.8% are duplicates. For regression, predictions are averaged; for classification, majority voting is used (or soft voting averaging class probabilities). Bagging is trivial to parallelize since each bootstrap sample is independent, enabling scalability to massive datasets via distributed training.</p>
+  <p>Bagging reduces variance without biasing predictions. Mathematically, if models have variance σ² and correlation ρ, the ensemble variance is ρσ² + (1 - ρ)σ²/m where m is the ensemble size. Uncorrelated models (ρ ≈ 0) achieve near σ²/m variance, a factor-m reduction. Bagging works best with high-variance, low-bias base learners like unpruned decision trees, turning an ensemble of overfitting trees into a robust predictor. Bagging cannot reduce bias; if the base learner systematically underestimates (or overestimates), the ensemble inherits that bias.</p>
+  <h3>Out-of-Bag Error Estimation</h3>
+  <p>A key advantage of bagging is free validation via out-of-bag (OOB) error. For each training example x_i, only ~37% of bootstrap samples exclude it; aggregate predictions from those samples (those that did not contain x_i). OOB error is an unbiased estimate of test error, nearly equivalent to leave-one-out cross-validation but computed at negligible cost during training. OOB error is plotted versus ensemble size to identify the number of models needed for convergence; typically, error stabilizes after 50–100 trees.</p>
+  <h3>Feature Importance from Bagging</h3>
+  <p>Average feature importances across the ensemble: sum the impurity decrease (or other importance metrics) from all splits on each feature, dividing by the ensemble size. OOB importances permute each feature in OOB samples and measure prediction degradation—features whose shuffling increases OOB error are important. OOB importances are often more stable and unbiased than impurity-based importances, especially for correlated features. For high-dimensional datasets, importance analysis identifies which features truly drive predictions, guiding feature engineering and domain understanding.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Bagging Ensemble Architecture</text>
+      <!-- Original data -->
+      <rect x="50" y="60" width="80" height="40" rx="3" class="node-hi"/>
+      <text x="90" y="88" text-anchor="middle" class="node-text" font-size="11">Dataset</text>
+      <!-- Three bootstrap samples -->
+      <text x="350" y="50" text-anchor="middle" class="lbl" font-size="10">Bootstrap Samples (with replacement)</text>
+      <rect x="200" y="80" width="60" height="35" rx="3" class="node"/>
+      <text x="230" y="104" text-anchor="middle" class="node-sub" font-size="9">Sample 1</text>
+      <rect x="320" y="80" width="60" height="35" rx="3" class="node"/>
+      <text x="350" y="104" text-anchor="middle" class="node-sub" font-size="9">Sample 2</text>
+      <rect x="440" y="80" width="60" height="35" rx="3" class="node"/>
+      <text x="470" y="104" text-anchor="middle" class="node-sub" font-size="9">Sample 3</text>
+      <!-- Trees -->
+      <rect x="200" y="150" width="60" height="35" rx="3" class="node"/>
+      <text x="230" y="174" text-anchor="middle" class="node-sub" font-size="9">Tree 1</text>
+      <rect x="320" y="150" width="60" height="35" rx="3" class="node"/>
+      <text x="350" y="174" text-anchor="middle" class="node-sub" font-size="9">Tree 2</text>
+      <rect x="440" y="150" width="60" height="35" rx="3" class="node"/>
+      <text x="470" y="174" text-anchor="middle" class="node-sub" font-size="9">Tree 3</text>
+      <!-- Aggregation -->
+      <rect x="250" y="230" width="200" height="40" rx="3" class="node-hi"/>
+      <text x="350" y="260" text-anchor="middle" class="node-text" font-size="11">Aggregate (Avg or Vote)</text>
+      <!-- Arrows -->
+      <line x1="130" y1="80" x2="200" y2="97" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="130" y1="80" x2="350" y2="80" stroke="var(--border-hi)" stroke-width="1.5" stroke-dasharray="2,2"/>
+      <line x1="130" y1="80" x2="470" y2="97" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="230" y1="115" x2="230" y2="150" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="350" y1="115" x2="350" y2="150" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="470" y1="115" x2="470" y2="150" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="280" y1="185" x2="310" y2="230" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="350" y1="185" x2="350" y2="230" stroke="var(--border-hi)" stroke-width="1.5"/>
+      <line x1="420" y1="185" x2="390" y2="230" stroke="var(--border-hi)" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <h3>Bias-Variance Trade-off</h3>
+  <p>Bagging is a variance reduction technique; it does not reduce bias. Averaging m models with variance σ² and correlation ρ yields ensemble variance ρσ² + (1-ρ)σ²/m. If ρ = 0 (uncorrelated models), variance drops by factor m; if ρ = 1 (perfectly correlated), variance is unchanged. With high-variance, low-bias learners, bagging creates diverse models (ρ is small), achieving significant variance reduction. With low-variance, high-bias learners (e.g., shallow trees, linear models), diversity is limited (ρ is large), and bagging provides minimal benefit.</p>
+  <h3>Comparison to Single Models</h3>
+  <p>Bagging always reduces variance (never increases it); test error improves if variance reduction outweighs any bias increase (usually small). For unpruned trees, bagging is dramatically superior: single trees overfit; bagged trees generalize well. For already-regularized models (pruned trees, linear regression with L2 penalty), bagging provides marginal gains since the base learner's bias is already low and variance is controlled. Bagging is a simple, powerful technique for high-variance models, especially when training parallelization is feasible.</p>`,
+
+  // Detail 6: Random Forests
+  `<div class="detail-header"><div class="num">06</div><h2>Random Forests</h2></div>
+  <p>Random forests extend bagging by adding feature subsampling at each split: instead of considering all d features, only a random subset is eligible for splitting. Typical choices are √d features for classification and d/3 for regression. This forced diversity decorrelates trees—if all bagged trees explore the same features, their splits are correlated and variance reduction is minimal. By constraining each tree to a random feature subset, random forests generate diverse, uncorrelated trees, reducing the ensemble correlation ρ and amplifying variance reduction by factor (1-ρ)/ρ.</p>
+  <p>Random forests are robust, minimal-tuning algorithms that often perform competitively on tabular data without extensive hyperparameter tuning. The default max_features (√d for classification) is nearly optimal for many datasets. Other key hyperparameters are n_estimators (number of trees, typically 100–1000), max_depth (None for full growth), min_samples_leaf (typically 1–5), and max_samples (bootstrap sample size). Random forests scale well to high-dimensional data, handle mixed feature types, require no feature scaling, and naturally encode feature importances.</p>
+  <h3>Feature Subsampling Strategy</h3>
+  <p>At each node, a random subset of max_features features is evaluated for splitting. This is different from feature selection (dropping irrelevant features globally); instead, each tree dynamically considers different features, even if globally available. For datasets with many irrelevant features, feature subsampling prevents trees from finding spurious correlations. With d features and max_features = √d, the probability a strong feature is ignored at a node is ~1 - √d/d, ensuring that most important features appear in most trees but with sufficient variation for diversity.</p>
+  <h3>Hyperparameter Tuning Guidelines</h3>
+  <p>n_estimators: More trees reduce variance at the cost of computation; 100–1000 is typical. Plot OOB error vs n_estimators; once stable (usually by 100 trees), increasing further provides diminishing returns. max_features: Default (√d or d/3) is near-optimal; tuning rarely helps. max_depth: Default (None, grow full) often works; shallow trees (max_depth=10) add regularization if overfitting is severe. min_samples_leaf: Higher values (5–20) reduce variance but increase bias; useful for noisy datasets. GridSearchCV tunes these systematically, but random forests are often competitive without tuning.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Random Forest Feature Subsampling</text>
+      <!-- Feature pool -->
+      <text x="50" y="60" class="lbl" font-size="10">Available Features: d = 6</text>
+      <g id="features">
+        <circle cx="100" cy="80" r="6" class="node"/>
+        <text x="100" y="85" text-anchor="middle" class="node-sub" font-size="8">X₁</text>
+        <circle cx="130" cy="80" r="6" class="node"/>
+        <text x="130" y="85" text-anchor="middle" class="node-sub" font-size="8">X₂</text>
+        <circle cx="160" cy="80" r="6" class="node"/>
+        <text x="160" y="85" text-anchor="middle" class="node-sub" font-size="8">X₃</text>
+        <circle cx="190" cy="80" r="6" class="node"/>
+        <text x="190" y="85" text-anchor="middle" class="node-sub" font-size="8">X₄</text>
+        <circle cx="220" cy="80" r="6" class="node"/>
+        <text x="220" y="85" text-anchor="middle" class="node-sub" font-size="8">X₅</text>
+        <circle cx="250" cy="80" r="6" class="node"/>
+        <text x="250" y="85" text-anchor="middle" class="node-sub" font-size="8">X₆</text>
+      </g>
+      <!-- Three trees with different subsets -->
+      <text x="350" y="60" class="lbl" font-size="10">Each Tree: max_features = √6 ≈ 2</text>
+      <!-- Tree 1 -->
+      <rect x="80" y="130" width="140" height="180" rx="3" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="150" y="145" text-anchor="middle" class="lbl-hi" font-size="10">Tree 1: {X₂, X₄}</text>
+      <circle cx="150" cy="170" r="12" class="node-hi"/>
+      <text x="150" y="175" text-anchor="middle" class="node-sub" font-size="9">X₂</text>
+      <circle cx="100" cy="240" r="10" class="node"/>
+      <text x="100" y="243" text-anchor="middle" class="node-sub" font-size="8">X₄</text>
+      <circle cx="200" cy="240" r="10" class="node"/>
+      <text x="200" y="243" text-anchor="middle" class="node-sub" font-size="8">A</text>
+      <!-- Tree 2 -->
+      <rect x="280" y="130" width="140" height="180" rx="3" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="350" y="145" text-anchor="middle" class="lbl-hi" font-size="10">Tree 2: {X₁, X₅}</text>
+      <circle cx="350" cy="170" r="12" class="node-hi"/>
+      <text x="350" y="175" text-anchor="middle" class="node-sub" font-size="9">X₁</text>
+      <circle cx="300" cy="240" r="10" class="node"/>
+      <text x="300" y="243" text-anchor="middle" class="node-sub" font-size="8">B</text>
+      <circle cx="400" cy="240" r="10" class="node"/>
+      <text x="400" y="243" text-anchor="middle" class="node-sub" font-size="8">X₅</text>
+      <!-- Tree 3 -->
+      <rect x="480" y="130" width="140" height="180" rx="3" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="550" y="145" text-anchor="middle" class="lbl-hi" font-size="10">Tree 3: {X₃, X₆}</text>
+      <circle cx="550" cy="170" r="12" class="node-hi"/>
+      <text x="550" y="175" text-anchor="middle" class="node-sub" font-size="9">X₃</text>
+      <circle cx="500" cy="240" r="10" class="node"/>
+      <text x="500" y="243" text-anchor="middle" class="node-sub" font-size="8">C</text>
+      <circle cx="600" cy="240" r="10" class="node"/>
+      <text x="600" y="243" text-anchor="middle" class="node-sub" font-size="8">X₆</text>
+      <!-- Annotation -->
+      <text x="350" y="330" text-anchor="middle" class="lbl" font-size="10">Different feature subsets → Decorrelated trees → Reduced correlation ρ → Better ensemble</text>
+    </svg>
+  </div>
+  <h3>Feature Importance & Interpretability</h3>
+  <p>Random forests extract global feature importance: for each feature, sum the impurity decrease from all splits across all trees, normalized by the number of trees. Features appearing in many splits with large impurity drops are important; those rarely selected have low importance. Permutation importance, computed on OOB samples, shuffles each feature and measures OOB error increase—robust to feature correlations. Feature importance guides feature engineering, data collection priorities, and domain understanding, making random forests interpretable despite their ensemble nature.</p>
+  <h3>Advantages Over Single Trees & Bagging</h3>
+  <p>Random forests reduce correlation between trees via feature subsampling, achieving better variance reduction than standard bagging at minimal computational cost. For datasets with many irrelevant features, random forests are dramatically superior to bagging, since feature subsampling prevents individual trees from picking up spurious correlations. Random forests are industry standard for tabular data: easy to use (few hyperparameters), robust (minimal tuning required), scalable (parallelizable), and interpretable (feature importance). They serve as excellent baselines and are often competitive with more complex methods like gradient boosting.</p>`,
+
+  // Detail 7: Boosting
+  `<div class="detail-header"><div class="num">07</div><h2>Boosting</h2></div>
+  <p>Boosting trains weak learners sequentially, with each new learner focused on examples the previous ensemble mislabeled. Unlike bagging, which trains learners in parallel on random samples, boosting creates a sequential dependency: each learner's training distribution depends on the prior learner's errors. AdaBoost, the canonical boosting algorithm, maintains sample weights initialized uniformly; after each weak learner trains, weights on misclassified examples are increased exponentially, forcing the next learner to focus on hard cases. The final prediction is a weighted combination of weak learners, where each learner's weight depends on its training accuracy.</p>
+  <p>Boosting reduces bias by iteratively correcting residuals, complementing bagging's variance reduction. The exponential weighting of mistakes creates a powerful feedback loop: a weak learner (slightly better than random, ≥50% accuracy on weighted data) reduces weighted error, and the ensemble's training error decreases exponentially with the number of boosting rounds. Unlike bagging, which can be parallelized, boosting requires sequential training (each learner depends on priors). Boosting is also sensitive to outliers and mislabeled data—examples that many learners misclassify receive very high weights, potentially driving the ensemble astray.</p>
+  <h3>AdaBoost Algorithm & Exponential Loss</h3>
+  <p>AdaBoost minimizes exponential loss: L(y, f) = exp(-y·f), where y ∈ {-1, +1} and f is the ensemble prediction. Exponential loss magnifies the penalty on hard examples (those with large |y·f|), driving the algorithm to focus on difficult cases. The weight update after learning weak learner h_m with weighted error ε_m is: w_i^(m+1) ∝ w_i^(m) · exp(-α_m · y_i · h_m(x_i)), where α_m = 0.5 · log((1-ε_m)/ε_m). Learners with low error (ε_m < 0.5) receive positive α_m, amplifying their contribution; errors above 50% are rejected (α_m < 0). The ensemble is f(x) = Σ α_m · h_m(x).</p>
+  <h3>Weak Learner Requirements</h3>
+  <p>A weak learner is any classifier achieving >50% accuracy on the weighted distribution (better than random guessing in binary classification). Decision stumps (depth-1 trees) are the canonical choice: simple, fast, and surprisingly effective when boosted. Shallow trees (max_depth=2 or 3) also work well. Weak learners must be responsive to sample weights (skew learning toward high-weight examples); linear models, SVMs, and neural networks typically support this via sample_weight parameters. Weak learners should have low bias but high variance; boosting reduces variance through averaging, so overfitting on weighted data is acceptable.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">AdaBoost Boosting Rounds</text>
+      <!-- Round 1 -->
+      <text x="100" y="60" class="lbl" font-size="9">Round 1</text>
+      <circle cx="60" cy="90" r="18" class="node"/>
+      <text x="60" y="97" text-anchor="middle" class="node-sub" font-size="8">h₁</text>
+      <text x="100" y="95" class="lbl" font-size="9" text-anchor="start">Error: 0.3</text>
+      <text x="100" y="110" class="lbl" font-size="9" text-anchor="start">α₁ = 0.42</text>
+      <!-- Misclassified samples -->
+      <circle cx="40" cy="140" r="5" class="node"/>
+      <circle cx="60" cy="150" r="5" class="node"/>
+      <circle cx="80" cy="145" r="5" class="node"/>
+      <text x="100" y="150" class="lbl" font-size="8" text-anchor="start">↑ Increase weights</text>
+      <!-- Round 2 -->
+      <text x="300" y="60" class="lbl" font-size="9">Round 2</text>
+      <circle cx="260" cy="90" r="18" class="node"/>
+      <text x="260" y="97" text-anchor="middle" class="node-sub" font-size="8">h₂</text>
+      <text x="300" y="95" class="lbl" font-size="9" text-anchor="start">Error: 0.25</text>
+      <text x="300" y="110" class="lbl" font-size="9" text-anchor="start">α₂ = 0.60</text>
+      <!-- Misclassified samples -->
+      <circle cx="240" cy="140" r="5" class="node"/>
+      <circle cx="280" cy="150" r="5" class="node"/>
+      <circle cx="300" cy="145" r="5" class="node"/>
+      <text x="300" y="170" class="lbl" font-size="8" text-anchor="start">Focus on hard cases</text>
+      <!-- Round 3 -->
+      <text x="500" y="60" class="lbl" font-size="9">Round 3</text>
+      <circle cx="460" cy="90" r="18" class="node"/>
+      <text x="460" y="97" text-anchor="middle" class="node-sub" font-size="8">h₃</text>
+      <text x="500" y="95" class="lbl" font-size="9" text-anchor="start">Error: 0.20</text>
+      <text x="500" y="110" class="lbl" font-size="9" text-anchor="start">α₃ = 0.81</text>
+      <!-- Final ensemble -->
+      <rect x="150" y="240" width="400" height="50" rx="3" class="node-hi"/>
+      <text x="350" y="260" text-anchor="middle" class="node-text" font-size="12">Final Ensemble: f(x) = 0.42·h₁(x) + 0.60·h₂(x) + 0.81·h₃(x)</text>
+      <text x="350" y="280" text-anchor="middle" class="node-sub" font-size="10">Stronger learners weighted more</text>
+    </svg>
+  </div>
+  <h3>Multiclass & Loss Functions</h3>
+  <p>Binary AdaBoost extends to multiclass via one-vs-rest or one-vs-one schemes. SAMME (Stagewise Additive Modeling using a Multiclass Exponential loss) directly handles K-class problems, replacing the binary exponential loss with a generalized version. LogitBoost replaces exponential loss with log-loss (logistic regression loss), which is more robust to outliers. Gentle AdaBoost uses regression (least-squares fitting of residuals) instead of classification, often producing smoother boosting curves. These variants trade some of AdaBoost's theoretical guarantees for improved robustness.</p>
+  <h3>Boosting vs Bagging</h3>
+  <p>Bagging trains in parallel, reducing variance without changing bias; boosting trains sequentially, reducing bias. Boosting typically requires fewer learners than bagging for equivalent performance (20–50 boosting rounds vs 100+ bags) but is slower to train. Boosting is sensitive to noise and outliers (large weights on mislabeled examples); bagging is more robust. For clean data, boosting is preferred; for noisy data, bagging or robust boosting variants (LogitBoost, gentle AdaBoost) are safer. Modern practice increasingly favors gradient boosting, which generalizes both and offers additional flexibility.</p>`,
+
+  // Detail 8: Gradient Boosting
+  `<div class="detail-header"><div class="num">08</div><h2>Gradient Boosting</h2></div>
+  <p>Gradient boosting generalizes boosting to arbitrary loss functions by framing ensemble learning as gradient descent in function space. Instead of reweighting samples, gradient boosting fits each new model to the negative gradient (residuals) of the loss function. For squared error loss L(y,f) = (y-f)², the gradient is ∂L/∂f = -(y-f), so fitting a tree to residuals (actual - predicted) directly minimizes the loss. For log-loss (classification), pseudo-residuals are ∂L/∂f = y - p(y|x), the class label minus predicted probability. This flexibility enables custom loss functions: quantile loss for quantile regression, ranking metrics for learning-to-rank, etc.</p>
+  <p>XGBoost, LightGBM, and CatBoost are production-grade implementations dominating Kaggle competitions and real-world applications. Beyond the basic gradient descent idea, these libraries add: (1) Regularization via L1/L2 penalties on leaf weights and tree complexity; (2) Second-order statistics (Newton-Raphson using gradient and hessian), enabling faster convergence; (3) Efficient exact/approximate splitting algorithms (histogram-based partitioning); (4) Built-in handling of categorical features (CatBoost). With proper regularization (learning rate, tree depth, early stopping), gradient boosting achieves state-of-the-art performance on tabular data, often rivaling neural networks with far less compute.</p>
+  <h3>Algorithm & Learning Rate (Shrinkage)</h3>
+  <p>Gradient boosting iterates: (1) Compute pseudo-residuals r_i = -∂L/∂f(x_i) for all training samples; (2) Fit a tree to residuals r_i; (3) Update ensemble: f^(m+1) = f^(m) + η·tree_m, where η ∈ (0,1] is the learning rate. Lower learning rates (η=0.01) require more rounds but often generalize better; higher rates (η=0.1) train faster but risk overfitting. Shrinkage (small η) acts as regularization, preventing any single tree from dominating. Typical configurations use η=0.01–0.1 and n_estimators=100–10000, with early stopping on validation loss to prevent overfitting.</p>
+  <h3>Regularization & Hyperparameters</h3>
+  <p>Key hyperparameters control regularization: learning_rate (η) controls step size; max_depth (typically 3–8) limits tree complexity; min_child_weight or min_samples_leaf enforces minimum leaf population; subsample (0.5–1.0) performs row subsampling; colsample_bytree (0.5–1.0) performs column subsampling. L1/L2 regularization penalties (reg_lambda, reg_alpha) penalize non-zero leaf weights. early_stopping_rounds monitors validation loss, stopping if it stagnates, preventing overfitting. Hyperparameter tuning via grid/random search is standard; starting with default values (learning_rate=0.1, max_depth=6) often works well.</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Gradient Boosting: Sequential Residual Fitting</text>
+      <!-- Iteration 0: Initial -->
+      <text x="50" y="60" class="lbl-hi" font-size="10">Iteration 0: f₀ = constant</text>
+      <circle cx="100" cy="100" r="20" class="node-hi"/>
+      <text x="100" y="110" text-anchor="middle" class="node-text" font-size="10">base</text>
+      <text x="150" y="110" class="lbl" font-size="9">Initial predictions</text>
+      <!-- Residuals 1 -->
+      <text x="50" y="160" class="lbl-hi" font-size="10">Iteration 1: Fit tree to residuals</text>
+      <rect x="80" y="180" width="120" height="60" rx="3" class="node"/>
+      <text x="140" y="215" text-anchor="middle" class="node-sub" font-size="10">Residuals: r_i = y_i - ŷ_i</text>
+      <!-- Tree 1 -->
+      <circle cx="280" cy="200" r="15" class="node"/>
+      <text x="280" y="205" text-anchor="middle" class="node-sub" font-size="9">Tree 1</text>
+      <!-- Update -->
+      <text x="50" y="280" class="lbl-hi" font-size="10">Update: f₁ = f₀ + η·Tree₁</text>
+      <text x="150" y="310" class="lbl" font-size="9">Improved predictions</text>
+      <!-- Residuals 2 -->
+      <text x="50" y="340" class="lbl-hi" font-size="10">Iteration 2: Fit tree to new residuals</text>
+      <rect x="80" y="360" width="120" height="40" rx="3" class="node"/>
+      <text x="140" y="385" text-anchor="middle" class="node-sub" font-size="9">r_i = y_i - f₁(x_i)</text>
+      <!-- Learning curve on right -->
+      <text x="450" y="60" class="lbl-hi" font-size="10">Training & Validation Loss</text>
+      <line x1="420" y1="320" x2="650" y2="320" stroke="var(--border)" stroke-width="1"/>
+      <line x1="420" y1="80" x2="420" y2="320" stroke="var(--border)" stroke-width="1"/>
+      <path d="M 440 300 L 480 200 L 520 140 L 560 110 L 600 100" stroke="var(--red)" stroke-width="2" fill="none"/>
+      <text x="450" y="310" class="lbl-hi" font-size="9" fill="var(--red)">Train</text>
+      <path d="M 440 250 L 480 180 L 520 150 L 560 145 L 600 160" stroke="var(--green)" stroke-width="2" fill="none"/>
+      <text x="500" y="135" class="lbl-hi" font-size="9" fill="var(--green)">Validation</text>
+      <!-- Early stopping -->
+      <circle cx="600" cy="160" r="5" fill="var(--accent)"/>
+      <text x="620" y="165" class="lbl" font-size="8">Stop</text>
+    </svg>
+  </div>
+  <h3>XGBoost, LightGBM, & CatBoost</h3>
+  <p>XGBoost (eXtreme Gradient Boosting) introduces second-order Taylor expansion of the loss, enabling Newton-Raphson optimization and achieving faster convergence. LightGBM builds trees leaf-wise (deepest nodes first) rather than level-wise, reducing tree depth and improving generalization. CatBoost natively handles categorical features via target encoding and symmetric tree growth. All three libraries include GPU support, distributed training, and extensive hyperparameter options. For practitioners, they are industry-standard solutions, dominating machine learning competitions and production systems. XGBoost is the most mature and widely adopted; LightGBM is fastest on large datasets; CatBoost excels with categorical features.</p>
+  <h3>When to Use Gradient Boosting</h3>
+  <p>Gradient boosting excels on tabular data (structured features in rows/columns), where it often outperforms neural networks with far less computation. Use gradient boosting when: (1) interpretability matters (examine feature importance, tree structures); (2) hyperparameter tuning is affordable (grid/random search); (3) performance is critical (boosting typically beats random forests). Avoid if: (1) training data is very small (boosting overfits easily without regularization); (2) features are text/images (use deep learning); (3) interpretability is paramount (inspect individual trees, but ensembles are less transparent than single trees). Modern practice increasingly combines gradient boosting with other methods: stacking ensembles, neural network features + boosting, etc., leveraging complementary strengths.</p>`
+,
+
+  // 09 References & Further Reading
+  `<div class="detail-header">
+  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
+  <h2><em>Sources</em> & References</h2>
+</div>
+
+<h3>Course Materials</h3>
+<p><a href="https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Breiman — Random Forests (2001)</a> — Seminal paper on random forest ensembles with theoretical analysis and empirical results</p>
+
+<h3>Textbooks & Papers</h3>
+<p><a href="https://statweb.stanford.edu/~jhf/ftp/trebst.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Friedman — Greedy Function Approximation (2001)</a> — Introduces gradient boosting machines with detailed algorithmic description</p>
+<p><a href="https://hastie.su.domains/ElemStatLearn/" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Hastie, Tibshirani & Friedman — The Elements of Statistical Learning</a> — Chapters 9-10 cover trees, ensemble methods, and boosting</p>`
+
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">Decision Trees & <em>Ensembles</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 4 · Trees, Random Forests & Boosting</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

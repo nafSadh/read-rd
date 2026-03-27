@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Humor Is Irreducibly Social — Slides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#9b7aed;--accent-soft:#2e6ab408;--green:#2e6e3e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--green:#4ee8a8;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;transition:background .4s,color .3s}
+.deck{height:100vh;width:100vw;position:relative;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;transform:translateX(40px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}.slide.prev{opacity:0;transform:translateX(-40px)}
+.slide.from-left{transform:translateX(-40px);opacity:0;transition:none}
+.slide .badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.slide .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.slide h1{font-family:var(--sans);font-size:48px;font-weight:500;color:var(--bright);letter-spacing:.5px;line-height:1.15;text-align:center;max-width:800px}
+.slide h1 em{font-style:italic;font-family:var(--serif);color:var(--accent);font-weight:400}
+.slide h2{font-family:var(--sans);font-size:32px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.3;text-align:center;max-width:750px;margin-bottom:24px}
+.slide h2 em{font-style:italic;font-family:var(--serif);color:var(--accent);font-weight:400}
+.slide p{font-family:var(--serif);font-size:22px;line-height:1.8;text-align:center;max-width:650px;letter-spacing:.2px;margin-bottom:16px}
+.slide p em{color:var(--bright)}.slide .small{font-size:16px;color:var(--dim);line-height:1.7}
+.slide .mono{font-family:var(--mono);font-size:14px;color:var(--dim);letter-spacing:.5px}
+.slide .cite{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.5px}
+.slide .quote{font-family:var(--serif);font-size:26px;font-style:italic;color:var(--bright);line-height:1.7;max-width:650px;border-left:3px solid var(--accent);padding-left:24px;text-align:left}
+.slide .quote-attr{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:1px;margin-top:12px;text-transform:uppercase}
+.slide .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:750px;width:100%;margin-top:16px}
+.slide .card{padding:24px;border:1px solid var(--border);text-align:left}
+.slide .card h3{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.slide .card p{font-size:16px;text-align:left;line-height:1.7;margin:0}
+.slide .stat-row{display:flex;gap:0;border:1px solid var(--border);max-width:650px;width:100%;margin:16px 0}
+.slide .stat{flex:1;padding:16px 10px;text-align:center;border-right:1px solid var(--border)}
+.slide .stat:last-child{border-right:none}
+.slide .stat .val{font-family:var(--mono);font-size:22px;color:var(--bright);font-weight:500;display:block}
+.slide .stat .lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans);margin-top:4px;display:block}
+.slide .ev{border-left:3px solid var(--accent);padding:12px 20px;max-width:650px;width:100%;margin-bottom:12px;text-align:left;background:var(--accent-soft)}
+.slide .ev strong{color:var(--bright)}.slide .ev p{text-align:left;font-size:17px;margin:0;line-height:1.7}
+.progress{position:fixed;bottom:0;left:0;height:3px;background:var(--accent);transition:width .3s ease;z-index:100}
+.controls{position:fixed;bottom:20px;right:20px;z-index:100;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2)}
+.ctrl-btn{width:40px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);transition:all .2s;font-family:var(--sans)}
+.ctrl-btn:last-child{border-right:none}.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.slide-counter{position:fixed;bottom:24px;left:24px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:1px;z-index:100}
+@media(max-width:800px){.slide{padding:40px 24px}.slide h1{font-size:32px}.slide h2{font-size:24px}.slide p{font-size:18px}.slide .quote{font-size:20px}.slide .grid-2{grid-template-columns:1fr;gap:16px}.slide .stat-row{flex-wrap:wrap}.slide .stat{min-width:45%}}
+</style></head>
+<body data-theme="light">
+<div class="deck" id="deck"></div>
+<div class="progress" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="controls">
+  <button class="ctrl-btn" onclick="prev()">&larr;</button>
+  <button class="ctrl-btn" onclick="toggleTheme()" id="theme-btn"></button>
+  <button class="ctrl-btn" onclick="next()">&rarr;</button>
+</div>
+<script>
+const slides = [
+  // 0 — Title
+  `<div class="badge"><span class="dot"></span> POSITION PAPER &middot; SCIENCE OF HUMOR</div>
+   <h1>Humor Is Irreducibly <em>Social</em></h1>
+   <p class="mono" style="margin-top:24px">9 LINES OF EVIDENCE</p>
+   <p class="small" style="margin-top:12px">The cognitive theories have the emphasis backwards. Humor is primarily a social technology.</p>`,
+
+  // 1 — The inversion
+  `<div class="badge"><span class="dot"></span> THE CLAIM</div>
+   <h2>The Emphasis Is <em>Backwards</em></h2>
+   <p>The dominant theories &mdash; incongruity, benign violation, cognitive-evolutionary &mdash; frame humor as fundamentally <em>cognitive</em>, happening to occur in social settings.</p>
+   <p>This paper argues: humor is primarily a <em>social technology</em>. The cognitive mechanisms serve the social function, not the other way around.</p>
+   <p class="small">The engine is cognitive. The purpose is connection.</p>`,
+
+  // 2 — Provine's data
+  `<div class="badge"><span class="dot"></span> EVIDENCE 1 &middot; PROVINE&rsquo;S DATA</div>
+   <h2>The 30:1 <em>Ratio</em></h2>
+   <div class="stat-row">
+     <div class="stat"><span class="val">30&times;</span><span class="lbl">More laughter in groups <span class="cite">[NS-04]</span></span></div>
+     <div class="stat"><span class="val">46%</span><span class="lbl">Speaker laughs more</span></div>
+     <div class="stat"><span class="val">Most</span><span class="lbl">Follows non-humorous speech</span></div>
+   </div>
+   <p style="margin-top:16px">If humor were primarily cognitive, people would laugh at roughly the same rate alone and in groups. The 30:1 ratio is not what a cognitive theory predicts.</p>
+   <p class="small">It is exactly what a <em>social</em> theory predicts.</p>`,
+
+  // 3 — Dunbar's grooming
+  `<div class="badge"><span class="dot"></span> EVIDENCE 2 &middot; SOCIAL GROOMING</div>
+   <h2>Grooming at a <em>Distance</em></h2>
+   <div class="grid-2">
+     <div class="card"><h3>Primate Grooming</h3><p>1:1. Time-intensive. Opioid-mediated bonding. Scales to ~50 individuals.</p></div>
+     <div class="card"><h3>Social Laughter</h3><p>1:Many. Simultaneous. Same opioid pathway. Scales to ~150 (Dunbar&rsquo;s number). <span class="cite">[HH-06]</span></p></div>
+   </div>
+   <p class="small" style="margin-top:16px">Crucially: <em>social</em> laughter drives the endorphin release, not solo laughter. The social context is required for the neurochemistry.</p>`,
+
+  // 4 — Contagion
+  `<div class="badge"><span class="dot"></span> EVIDENCE 3 &middot; CONTAGION</div>
+   <h2>Laughter Without <em>Humor</em></h2>
+   <p>Hearing laughter alone &mdash; without any humorous content &mdash; is sufficient to trigger laughter. <span class="cite">[NS-08]</span></p>
+   <p>Mediated by the mirror neuron system: hearing laughter activates premotor cortex as if laughing. <span class="cite">[NS-06]</span></p>
+   <p class="small">TV laugh tracks work <em>even when we know they&rsquo;re fake</em>. The trigger is not &ldquo;something is funny&rdquo; but &ldquo;someone near me is laughing.&rdquo; Contagion is stronger for in-group members.</p>`,
+
+  // 5 — Mate selection
+  `<div class="badge"><span class="dot"></span> EVIDENCE 4 &middot; MATE SELECTION</div>
+   <h2>The #1 Desired <em>Trait</em></h2>
+   <p>Sense of humor is consistently rated the most desired trait in a romantic partner, across studies and cultures. <span class="cite">[HH-07]</span></p>
+   <div class="grid-2">
+     <div class="card"><h3>Women prefer</h3><p>Humor <em>producers</em> &mdash; signals cognitive fitness, intelligence, creativity.</p></div>
+     <div class="card"><h3>Men prefer</h3><p>Humor <em>appreciators</em> &mdash; signals receptivity and bonding capacity. <span class="cite">[HH-08]</span></p></div>
+   </div>
+   <p class="small" style="margin-top:16px">Under the social model: humor signals the ability to <em>bond</em>. In a cooperative species, bonding capacity is the ultimate fitness indicator.</p>`,
+
+  // 6 — Dark humor as bonding
+  `<div class="badge"><span class="dot"></span> EVIDENCE 5 &middot; DARK HUMOR</div>
+   <h2>Shared Transgression as <em>Bond</em></h2>
+   <p>Veterans develop gallows humor that is <em>deliberately incomprehensible to outsiders</em>. <span class="cite">[DH-04]</span></p>
+   <p>&ldquo;You had to be there&rdquo; is the point. The exclusionary quality is the bonding mechanism.</p>
+   <p class="small">Willinger (2017): dark humor appreciation requires <em>low</em> aggression <span class="cite">[DH-03]</span> &mdash; the function is not hostility but play. And play is fundamentally social.</p>`,
+
+  // 7 — Cultural + memes
+  `<div class="badge"><span class="dot"></span> EVIDENCE 6 &middot; CULTURAL STRUCTURES</div>
+   <h2>Humor Lives <em>Between People</em></h2>
+   <div class="grid-2">
+     <div class="card"><h3>Manzai (Japan)</h3><p>1000-year duo tradition. Humor lives in the <em>dynamic between performers</em>. Audience as overhearers of a social interaction. <span class="cite">[CU-01]</span></p></div>
+     <div class="card"><h3>Internet Memes</h3><p>Collectively authored humor. Sharing = signaling group membership. The lifecycle mirrors social currency dynamics, not cognitive processing. <span class="cite">[CU-03]</span></p></div>
+   </div>`,
+
+  // 8 — Health mediation (strongest evidence)
+  `<div class="badge"><span class="dot"></span> EVIDENCE 7 &middot; THE STRONGEST EVIDENCE</div>
+   <h2>Non-Humorous Laughter <em>Wins</em></h2>
+   <p>2022 meta-analysis (45 studies, 2,547 participants): <strong>non-humorous laughter</strong> (laughter yoga) showed <em>higher</em> effect sizes on mental health than humorous laughter. <span class="cite">[HH-04]</span></p>
+   <p>The physical act of laughing in a group matters more than cognitive humor appreciation.</p>
+   <p class="small">If humor&rsquo;s health benefits were cognitive, humor-based interventions should outperform. They don&rsquo;t. The body doesn&rsquo;t distinguish genuine from simulated laughter &mdash; and the social bonding occurs either way.</p>`,
+
+  // 9 — AI test
+  `<div class="badge"><span class="dot"></span> EVIDENCE 8 &middot; THE AI TEST</div>
+   <h2>No Social Relationships = <em>No Humor</em></h2>
+   <p>LLMs have vast pattern-matching, enormous cultural knowledge, sophisticated language understanding. Yet on HumorBench-hard, no LLM exceeds 60%. <span class="cite">[AI-04]</span></p>
+   <p>The social-first position explains why: LLMs have no audience to bond with, no in-group to signal, no status to negotiate.</p>
+   <p class="small">Even AI humor requires a <em>human social context</em> to land. The most genuinely funny AI outputs are the unintentional ones. <span class="cite">[AI-03]</span></p>`,
+
+  // 10 — Counterarguments
+  `<div class="badge"><span class="dot"></span> COUNTERARGUMENTS</div>
+   <h2>What About&hellip;</h2>
+   <div class="ev"><p><strong>Solo laughter?</strong> Real but 30&times; rarer. Much is parasocial &mdash; laughing with an imagined author. Language persists in solitary thought because it was built for communication.</p></div>
+   <div class="ev"><p><strong>Puns?</strong> Pure pattern manipulation &mdash; but overwhelmingly produced <em>for audiences</em>. The groan is a social ritual. Puns are rated the least funny form of humor: thinnest social payload.</p></div>
+   <div class="ev"><p><strong>The cognitive mechanisms are real?</strong> Yes. The claim is not that cognition is absent but that it is <em>instrumental</em>. The vocal apparatus is the mechanism of language; describing it does not describe communication.</p></div>`,
+
+  // 11 — The position
+  `<div class="badge"><span class="dot"></span> THE POSITION</div>
+   <div class="quote">We don&rsquo;t laugh because things are funny. We laugh because we are together. The funniness is a technology for being together more effectively.</div>
+   <p style="margin-top:32px">The funniest person in the room is not the cleverest but the one most attuned to the people around them.</p>
+   <p class="small">Humor is not a cognitive performance. It is an act of belonging.</p>`,
+
+  // 12 — Colophon
+  `<div class="badge"><span class="dot"></span> COLOPHON</div>
+   <h1>Humor Is Irreducibly <em>Social</em></h1>
+   <p class="mono" style="margin-top:16px">9 LINES OF EVIDENCE &middot; POSITION PAPER</p>
+   <p class="small" style="margin-top:24px">Part of <em>read-rd</em> &mdash; The Science of Humor<br><a href="position-paper.html" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--dim)">Position Paper</a> &middot; <a href="survey-paper.html" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--dim)">Survey Paper</a> &middot; <a href="index.html" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--dim)">Project Index</a></p>`
+];
+
+const deck = document.getElementById('deck');
+slides.forEach((html, i) => { const d = document.createElement('div'); d.className = 'slide' + (i === 0 ? ' active' : ''); d.innerHTML = html; deck.appendChild(d); });
+let current = 0; const total = slides.length; const allSlides = document.querySelectorAll('.slide');
+
+function go(idx) {
+  if (idx < 0 || idx >= total || idx === current) return;
+  const fwd = idx > current;
+  allSlides.forEach(s => s.classList.remove('active','prev','from-left'));
+  if (!fwd) allSlides[idx].classList.add('from-left');
+  void allSlides[idx].offsetHeight;
+  allSlides[idx].classList.remove('from-left');
+  allSlides[idx].classList.add('active');
+  current = idx;
+  document.getElementById('progress').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+  history.replaceState(null, '', '#' + current);
+}
+
+function next() { go(current + 1); } function prev() { go(current - 1); }
+document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); go(0); } if (e.key === 'End') { e.preventDefault(); go(total - 1); } });
+let touchStartX = 0;
+deck.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+deck.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - touchStartX; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } });
+function toggleTheme() { const b = document.body, c = b.getAttribute('data-theme'), n = c === 'light' ? 'dark' : 'light'; b.setAttribute('data-theme', n); localStorage.setItem('sh-pos-slides-theme', n); document.getElementById('theme-btn').textContent = n === 'dark' ? '\u2600' : '\u263D'; }
+const st = localStorage.getItem('sh-pos-slides-theme') || 'light'; document.body.setAttribute('data-theme', st); document.getElementById('theme-btn').textContent = st === 'dark' ? '\u2600' : '\u263D';
+const initSlide = parseInt(location.hash.replace('#',''),10) || 0;
+go(Math.min(Math.max(initSlide,0), total-1));
+</script>
+</body></html>

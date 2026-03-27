@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCS236 Problem Set 3: GANs, EBMs & Diffusion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   LIGHT THEME (Academic)
+   ============================================ */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+
+/* ============================================
+   DARK THEME (Luxury, violet/cyan)
+   ============================================ */
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);
+  transition:background 1s}
+
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+
+
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+
+  </style>
+</head>
+<body data-theme="light">
+
+<script>
+const sections = [
+  { num: '01', short: 'Overview', title: '<em>PS3</em> Overview' },
+  { num: '02', short: 'GAN Implementation', title: '<em>GAN</em> Implementation' },
+  { num: '03', short: 'GAN Training', title: '<em>GAN</em> Training Challenges' },
+  { num: '04', short: 'EBM Theory', title: '<em>Energy-Based</em> Model Theory' },
+  { num: '05', short: 'EBM Training', title: '<em>EBM</em> Training' },
+  { num: '06', short: 'Diffusion Theory', title: '<em>Diffusion</em> Model Theory' },
+  { num: '07', short: 'Diffusion Implementation', title: '<em>Diffusion</em> Implementation' },
+  { num: '08', short: 'Takeaways', title: 'Key <em>Takeaways</em>' },
+  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
+];
+
+const summaries = [
+  // 01 Overview
+  `<p>Problem Set 3 is an 80-point assignment covering the final three weeks of XCS236, exploring three paradigms for deep generative modeling: Generative Adversarial Networks (GANs), Energy-Based Models (EBMs), and Diffusion Models. These approaches represent distinct theoretical foundations and practical tradeoffs in how machines learn to generate high-quality samples from data distributions.</p>
+  <p>The assignment progresses from understanding core adversarial training dynamics through implementing GANs, diagnosing failure modes like mode collapse, building intuition for energy landscapes and contrastive learning, and finally mastering diffusion-based generation which has become the state-of-the-art approach. Each paradigm reveals different insights about the geometry of learned representations and the costs of sample generation.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">80</div><div class="sl">Points</div></div>
+    <div class="st"><div class="sv">3</div><div class="sl">Weeks</div></div>
+    <div class="st"><div class="sv">8</div><div class="sl">Sections</div></div>
+    <div class="st"><div class="sv">3</div><div class="sl">Paradigms</div></div>
+  </div>`,
+
+  // 02 GAN Implementation
+  `<p>The GAN framework consists of two neural networks in adversarial competition: a Generator that transforms noise into synthetic samples, and a Discriminator that attempts to distinguish real from generated data. The generator aims to fool the discriminator, while the discriminator learns to become increasingly discerning. This minimax game dynamics drives both networks toward better representations.</p>
+  <p>The implementation requires designing appropriate network architectures, typically using convolutional layers for image generation. The generator maps from a latent vector (usually 100-dimensional Gaussian noise) through transposed convolutions to produce images, while the discriminator uses standard convolutions to output a binary classification. PyTorch provides the tools to define these networks and manage the training loop efficiently with alternating updates.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>Generator Architecture</h4>
+      <p>Transposed convolutions upsample latent codes to image resolution. Layer normalization stabilizes training dynamics and improves sample quality.</p>
+    </div>
+    <div class="feat">
+      <h4>Discriminator Architecture</h4>
+      <p>Standard convolutional layers downsample images to extract features. Binary classification head predicts real vs. generated likelihood.</p>
+    </div>
+    <div class="feat">
+      <h4>Loss Functions</h4>
+      <p>Binary cross-entropy between discriminator predictions and labels drives both networks. BCE loss is stable compared to pure minimax formulations.</p>
+    </div>
+    <div class="feat">
+      <h4>Training Loop</h4>
+      <p>Discriminator gradient step on real and fake batches, then generator step. Careful initialization and learning rates prevent collapse and instability.</p>
+    </div>
+  </div>`,
+
+  // 03 GAN Training Challenges
+  `<p>Mode collapse is the most infamous failure mode in GAN training, where the generator learns to produce only a narrow subset of the target distribution, often repeating similar-looking samples. This happens because the generator can exploit discriminator weaknesses to fool it without exploring the full data manifold. Diagnosing mode collapse involves visual inspection of generated samples for diversity and computing metrics like inception score and Frechet inception distance.</p>
+  <p>The Wasserstein distance (Earth-Mover distance) provides a more stable loss landscape than Jensen-Shannon divergence underlying traditional GANs. Wasserstein GANs (WGAN) clip discriminator weights to enforce Lipschitz constraints, enabling training without mode collapse. Gradient penalty methods further stabilize training by penalizing large gradients in the discriminator, ensuring smooth decision boundaries and enabling deeper networks with faster convergence and higher quality samples.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Mode</div><div class="sl">Collapse</div></div>
+    <div class="st"><div class="sv">Wasserstein</div><div class="sl">Distance</div></div>
+    <div class="st"><div class="sv">Gradient</div><div class="sl">Penalty</div></div>
+    <div class="st"><div class="sv">Spectral</div><div class="sl">Norm</div></div>
+  </div>`,
+
+  // 04 EBM Theory
+  `<p>Energy-Based Models represent probability distributions through energy functions: p(x) ∝ exp(-E(x)). Rather than generating samples directly, EBMs define scalar-valued functions that assign lower energies to high-probability regions and higher energies to low-probability regions. The normalization constant Z (partition function) integrates over all possible configurations, making exact likelihood computation intractable but enabling flexible model specification.</p>
+  <p>Learning in EBMs focuses on score matching, which trains the energy function gradient (score) to match data gradients without computing the partition function. This avoids the computational bottleneck that plagued earlier energy models. The learned score function ∇log p(x) points in the direction of increasing probability, enabling both sampling via Langevin dynamics and likelihood-free inference. Energy functions can be deep neural networks, making EBMs expressive function classes for capturing complex marginal distributions.</p>
+  <div class="callout">
+    <h4>Key Insight</h4>
+    <p>Energy-based models decouple representation learning from partition function normalization. By learning only the score function, we avoid the intractable sum over all configurations while maintaining expressive probability models.</p>
+  </div>`,
+
+  // 05 EBM Training
+  `<p>EBM training employs contrastive divergence, which approximates the true data distribution gradient using samples from the model distribution. The training objective minimizes energy on real data while increasing energy on model-generated samples. Early in training, model samples may be poor, so Langevin MCMC dynamics are used to refine them, converting the energy function into a sampler through iterative gradient ascent plus noise.</p>
+  <p>Stochastic Gradient Langevin Dynamics (SGLD) combines gradient updates with Gaussian noise proportional to the learning rate, enabling efficient approximate sampling while training. The noise temperature must be carefully calibrated—too high produces poor samples, too low traps chains in local modes. Replay buffers can store good negative samples from previous iterations, accelerating training by reducing Langevin steps per batch. This combination makes EBM training practical despite requiring expensive MCMC inference during learning.</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Contrastive Loss</div>
+      <div class="tl-text">Minimize E(x_real) - E(x_fake) to push model energies toward data manifold.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Langevin Sampling</div>
+      <div class="tl-text">Generate negative samples via Langevin dynamics: x ← x + (α/2)∇log p(x) + √α ξ.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">SGLD Training</div>
+      <div class="tl-text">Combine gradient descent with annealing noise schedule for stable, efficient learning.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Replay Buffer</div>
+      <div class="tl-text">Cache previous Langevin chains to amortize sampling cost and stabilize gradients.</div>
+    </div>
+  </div>`,
+
+  // 06 Diffusion Theory
+  `<p>Diffusion Models reverse a process that gradually corrupts data into pure noise, learning to denoise at each step. The forward process adds Gaussian noise according to a schedule (variance schedule), transitioning from p(x_0) to p(x_T) ≈ N(0, I) over T steps. The reverse process learns the inverse transitions, using a neural network to predict noise (or mean/variance) conditioned on time steps, reconstructing the original distribution through iterative refinement.</p>
+  <p>The training objective comes from the Evidence Lower Bound (ELBO), which decomposes into weighted sum of denoising losses at each timestep. Denoising Diffusion Probabilistic Models (DDPM) train a U-Net to predict noise added at each step, conditioned on timestep embeddings that encode the noise level. The loss down-weights early timesteps (high noise) where predictions are easier and up-weights late timesteps where fine details matter. Sampling reverses the process, starting from pure noise and iteratively denoising to produce high-quality samples.</p>
+  <div class="verdict">
+    <div class="v-col pro">
+      <h4>Advantages</h4>
+      <ul>
+        <li>Stable training without adversarial dynamics or mode collapse</li>
+        <li>Theoretically principled through probabilistic interpretation</li>
+        <li>Scales to high-resolution image generation with architectural improvements</li>
+        <li>Enables guided generation via classifier gradients or guidance weights</li>
+      </ul>
+    </div>
+    <div class="v-col con">
+      <h4>Challenges</h4>
+      <ul>
+        <li>Sampling requires many sequential denoising steps (typically 50-1000)</li>
+        <li>Higher computational cost than GAN inference (single forward pass)</li>
+        <li>Noise schedule and timestep embeddings require careful tuning</li>
+        <li>Understanding failure modes less developed than GANs or EBMs</li>
+      </ul>
+    </div>
+  </div>`,
+
+  // 07 Diffusion Implementation
+  `<p>A diffusion model implementation centers on a U-Net architecture that processes images at multiple scales, incorporating timestep embeddings through a transformer-style conditioning mechanism. Timestep embeddings encode the current noise level (and thus position in the denoising process), allowing the network to adapt predictions appropriately. The network includes skip connections and attention blocks to maintain spatial resolution information while modeling long-range dependencies.</p>
+  <p>The training loop computes forward diffusion by sampling timesteps uniformly and computing noisy versions using the closed-form formula x_t = √(ᾱ_t) x_0 + √(1 - ᾱ_t) ε. The network predicts the noise ε, and loss is computed as MSE between predicted and actual noise. Sampling implements the reverse process, starting from x_T ~ N(0, I) and iteratively applying the learned reverse transition. At each step, the network predicts noise for the current timestep, which is subtracted along with a carefully-chosen variance term to gradually denoise toward the original distribution.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <h4>U-Net Architecture</h4>
+      <p>Encoder-decoder structure with skip connections preserves spatial information while capturing global context through attention blocks.</p>
+    </div>
+    <div class="feat">
+      <h4>Timestep Embeddings</h4>
+      <p>Sinusoidal positional encodings of timestep t condition network behavior on noise level and signal-to-noise ratio.</p>
+    </div>
+    <div class="feat">
+      <h4>Training Loss</h4>
+      <p>MSE between predicted and true noise, weighted to emphasize later denoising steps where details matter most.</p>
+    </div>
+    <div class="feat">
+      <h4>Sampling Loop</h4>
+      <p>Reverse Markov chain: x_{t-1} = (1/√ā_t)[x_t - (1-ā_t)/√(1-ᾱ_t) * ŷ] + σ_t z, where ŷ is predicted noise.</p>
+    </div>
+  </div>`,
+
+  // 08 Takeaways
+  `<p>The three generative modeling paradigms represent distinct points in the architecture-theory-practice tradeoff space. GANs offer fast sampling through single forward passes but suffer from training instability and mode collapse requiring adversarial safeguards. Energy-based models provide elegant theoretical frameworks with flexible energy functions and principled contrastive learning, but expensive MCMC sampling during training and inference limits practical scalability. Diffusion models achieve superior sample quality and training stability through iterative refinement, now dominating state-of-the-art generative AI applications.</p>
+  <p>Understanding all three deepens appreciation for generative modeling's landscape: adversarial training explores minimax game theory, energy models reveal information-theoretic perspectives on probability, and diffusion processes show how multi-step refinement enables better optimization and sample quality. The field continues evolving with hybrid approaches combining insights from each paradigm, acceleration techniques for faster diffusion sampling, and conditional generation methods leveraging all three model classes. Practitioners should understand each approach's strengths to select appropriate models for specific generative tasks and datasets.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">GANs</div><div class="sl">Fast Sampling</div></div>
+    <div class="st"><div class="sv">EBMs</div><div class="sl">Principled Theory</div></div>
+    <div class="st"><div class="sv">Diffusion</div><div class="sl">State-of-Art</div></div>
+    <div class="st"><div class="sv">Hybrid</div><div class="sl">Future</div></div>
+  </div>`,
+
+  // 09 References
+  `<p>Problem Set 3 covers the final major paradigms in modern generative modeling: adversarial networks, energy-based models, and diffusion models. These represent the cutting edge of generative AI research, with diffusion models now achieving state-of-the-art results across image, audio, and video generation. The references below span foundational papers, technical overviews, and implementation resources for all three approaches.</p>
+  <p>Start with seminal papers (Goodfellow et al. for GANs, Ho et al. and Song et al. for diffusion) to understand core concepts. Use Lilian Weng's blog for clear explanations bridging theory and intuition. Consult implementation guides when coding. Energy-based models are particularly useful for understanding probabilistic modeling from first principles, while GANs and diffusion models represent practical state-of-the-art in generative AI. Understanding all three gives complete perspective on modern generative modeling.</p>`
+];
+
+const details = [
+  // 01 Overview Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 01</div>
+    <h2><em>PS3</em> Overview</h2>
+  </div>
+  <p>Problem Set 3 represents the capstone exploration of deep generative modeling within the XCS236 course structure. The assignment spans 80 points across eight detailed sections, each building upon conceptual and practical foundations established in earlier problem sets. The problem set covers material from weeks 5–8, which represent a progression through three increasingly powerful and nuanced approaches to learning generative distributions.</p>
+  <p>The three major paradigms—Generative Adversarial Networks, Energy-Based Models, and Diffusion Models—emerged at different times in machine learning history and reflect evolving understanding of how neural networks can learn to generate data. GANs introduced adversarial training in 2014, fundamentally changing how we think about neural network competition and game-theoretic learning dynamics. Energy-Based Models have roots in statistical physics and Boltzmann machines but gained renewed attention through score matching innovations. Diffusion Models represent the newest paradigm, drawing inspiration from non-equilibrium thermodynamics and gaining dominance in recent years through superior empirical results.</p>
+  <h3>Problem Set Structure</h3>
+  <p>The assignment progresses logically from GAN implementation through training challenge mitigation, then introduces energy-based perspectives with both theoretical foundations and practical training procedures, before culminating in diffusion model theory and implementation. This sequencing allows students to build intuition gradually, moving from sample generation through adversarial means, to energy landscape reasoning, to multi-step refinement processes. By the conclusion, students have implemented representatives from each paradigm, encountering the unique challenges and insights each offers.</p>
+  <h3>Learning Objectives</h3>
+  <p>Upon completing this problem set, students should be able to: (1) implement functional GAN architectures and diagnose failure modes through visual inspection and quantitative metrics; (2) understand adversarial training dynamics including mode collapse and its remediation through Wasserstein objectives and gradient penalties; (3) formulate probability distributions through energy functions and derive score matching training objectives; (4) apply contrastive divergence and Langevin sampling for efficient EBM inference; (5) implement diffusion-based generation through noise scheduling and U-Net architectures; (6) compare and contrast the three paradigms regarding sample quality, training stability, inference cost, and theoretical interpretability; (7) select appropriate generative models for different application domains and constraints.</p>`,
+
+  // 02 GAN Implementation Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 02</div>
+    <h2><em>GAN</em> Implementation</h2>
+  </div>
+  <p>The foundational GAN architecture consists of two neural networks designed to operate in complementary roles within an adversarial training framework. The Generator function G(z) takes a latent code z (typically sampled from a standard normal distribution) and produces synthetic samples that match the dimensionality and statistical properties of real data. The Discriminator function D(x) outputs a scalar probability estimate indicating whether input x is real or synthetically generated. Both networks are implemented as deep convolutional neural networks with distinct architectural patterns suited to their respective roles.</p>
+  <p>Generator architecture typically employs transposed convolution operations (also called deconvolutions or fractionally-strided convolutions) to progressively upsample latent vectors into full-resolution images. A common pattern starts with a dense layer that reshapes noise vectors into spatial tensors, then applies successive transposed convolutions with stride 2 to double spatial dimensions at each layer. Batch normalization between layers stabilizes training by reducing internal covariate shift, while ReLU activations maintain non-linearity. The final layer applies tanh activation to map outputs to [-1, 1], matching preprocessing conventions for real images.</p>
+  <h3>Discriminator Implementation</h3>
+  <p>Discriminators use standard convolutional layers that progressively downsample input images through stride 2 operations, extracting increasingly abstract features. Each convolution applies learned kernels followed by batch normalization and leaky ReLU activations (with negative slope ~0.2 to prevent dying ReLU issues). After spatial dimensions reduce to 1×1 through the network, a flattening operation precedes fully-connected layers that compute the final discrimination score. Unlike generators which typically output real-valued samples, the discriminator outputs a scalar through sigmoid activation, producing a binary probability compatible with cross-entropy loss.</p>
+  <h3>Training Loop Mechanics</h3>
+  <p>Each training iteration alternates between discriminator and generator updates. For discriminator training, real samples and generated samples (from fresh generator outputs) are fed separately through the network. Real samples receive labels 1.0 (indicating genuine data) while generated samples receive labels 0.0 (indicating synthetic). Binary cross-entropy loss is computed separately for each group, summed, and backpropagated to update discriminator weights. For generator training, new samples are generated and passed through the fixed discriminator, but with labels 1.0 (fooling objective). The generator is updated only through this feedback, never seeing real data directly.</p>
+  <h3>Practical Implementation Considerations</h3>
+  <p>Successful GAN implementation requires careful hyperparameter selection and initialization. Learning rates for discriminator and generator may differ; typical ranges are 0.0001–0.0005 for Adam optimizer. Batch sizes substantially impact training stability—larger batches reduce gradient noise but increase memory requirements. Weight initialization schemes matter significantly; techniques like spectral normalization or careful Gaussian initialization with layer-dependent scaling can prevent training collapse. The latent dimension (typically 100–512) affects sample diversity and generator expressiveness. Training from scratch often takes 10,000–100,000 iterations depending on dataset size and model capacity, with progress monitored through generated sample visualization at regular intervals.</p>`,
+
+  // 03 GAN Training Challenges Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 03</div>
+    <h2><em>GAN</em> Training Challenges</h2>
+  </div>
+  <p>Mode collapse represents the most pervasive failure mode in GAN training, where the generator converges to producing samples from only a narrow subset of the target distribution. Rather than learning to generate diverse samples across the entire data manifold, the generator discovers that it can "trick" the discriminator by repeatedly producing nearly-identical high-quality samples from a single mode. This occurs because early in training the discriminator is weak, and the generator exploits this by over-specializing to fool it without exploring diversity. Once the discriminator improves, the generator may lack sufficient optimization landscape to escape this local solution.</p>
+  <p>The fundamental cause of mode collapse stems from the minimax formulation underlying standard GANs. As the discriminator improves, its loss becomes nearly zero on easy-to-distinguish samples, providing uninformative gradients to the generator. The generator thus faces vanishing gradients despite the discriminator incorrectly classifying some generated samples. This feedback breakdown is exacerbated when generator and discriminator capacities are mismatched—an overly-powerful discriminator can perfectly classify and provide no learning signal, while an under-capacity generator cannot express the full distribution.</p>
+  <h3>Wasserstein Distance & WGAN</h3>
+  <p>Wasserstein GANs (WGAN) address mode collapse by replacing the Jensen-Shannon divergence underlying standard GANs with the Wasserstein distance (Earth-Mover distance). The Wasserstein distance measures the minimum cost of transporting probability mass from generated to real distributions, providing a continuous, differentiable metric even when distributions don't overlap. This enables the discriminator (reframed as a critic) to provide meaningful gradients even when samples are far from real data, preventing gradient starvation. Training becomes more stable because the loss landscape becomes smoother and more informative throughout the entire sample space.</p>
+  <h3>Gradient Penalty for Lipschitz Enforcement</h3>
+  <p>Practical Wasserstein GANs implement the Wasserstein objective by enforcing a Lipschitz constraint on the critic function through gradient penalty. Rather than clipping weights (which damages expressiveness), gradient penalty adds a regularization term to the discriminator loss: λ·E[(||∇_x D(x)||_2 - 1)²], encouraging the gradient norm to stay near 1. This constraint ensures the critic is 1-Lipschitz, which is necessary for the Wasserstein estimate. Gradient penalty enables training with much larger learning rates and more discriminator steps per generator step, significantly stabilizing training dynamics.</p>
+  <h3>Diagnosis & Metrics</h3>
+  <p>Detecting mode collapse requires visual inspection of generated sample diversity across training iterations. Computing Inception Score (IS) and Fréchet Inception Distance (FID) provides quantitative metrics: IS measures sample quality and diversity using a pre-trained image classifier, while FID compares feature distributions between generated and real images. Significantly improving FID or IS during training while sample diversity decreases visually is a strong indicator of mode collapse. Monitoring discriminator and generator losses during training also reveals problems—stable training shows gradually changing loss curves, while mode collapse often causes sudden loss changes or discriminator loss plateauing at near-zero values.</p>`,
+
+  // 04 EBM Theory Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 04</div>
+    <h2><em>Energy-Based</em> Model Theory</h2>
+  </div>
+  <p>Energy-Based Models represent probability distributions through unnormalized energy functions, where p(x) = exp(-E(x))/Z with partition function Z = ∫exp(-E(x))dx. Low energy regions correspond to high probability regions in the data distribution, while high energy regions correspond to low probability areas. This perspective is borrowed from statistical physics, particularly Boltzmann machines, but generalized to arbitrary neural network energy functions. The beauty of this formulation is that we can design flexible energy functions without explicitly constraining them to be valid probability densities—the exponential family framework automatically produces normalized distributions.</p>
+  <p>The energy function E(x) is typically implemented as a deep neural network that maps high-dimensional data to scalar-valued energies. Unlike autoencoders or classifiers, the output is a single scalar representing the "energy cost" of configuration x. The network learns to assign low energies to regions containing real data samples and high energies to regions containing random noise or out-of-distribution samples. This scalar output is crucial because it enables computing gradients with respect to the input, yielding the score function ∇_x log p(x) = -∇_x E(x). The score points toward regions of increasing probability density, making it a fundamental quantity for both sampling and likelihood-free inference.</p>
+  <h3>Partition Function Challenge</h3>
+  <p>The normalization constant Z=∫exp(-E(x))dx is intractable to compute directly, requiring integration over all possible configurations. This intractability was historically the primary limitation of energy models—computing gradients of log p(x) requires ∇_x Z, which involves integrating exponential functions over the entire space. For binary variables, this requires summing 2^N terms; for continuous variables, it requires high-dimensional integration. This computational barrier motivated alternative approaches like GANs that avoid explicit density computation.</p>
+  <h3>Score Matching Solution</h3>
+  <p>Score matching circumvents the partition function problem by training only the score function ∇log p(x) without computing Z. The key insight is that the score matching objective matches model score ∇_θ log p_θ(x) to data score ∇ log p_data(x). Through integration by parts, this objective becomes ∫p_data(x)[||∇_θ log p_θ(x)||² - 2Tr(∇²_θ log p_θ(x))]dx, involving only derivatives of the energy function without the partition function. In practice, we estimate this using mini-batches: for each data sample x, compute the score matching loss as ||∇_x E(x)||² + Tr(∇²_x E(x)), where derivatives flow through the network. This makes training tractable while learning distributions with the same expressiveness as traditional energy models.</p>
+  <h3>Sampling via Langevin Dynamics</h3>
+  <p>Once trained, the score function enables sampling through Langevin dynamics: x_{t+1} = x_t + (α/2)∇_x log p(x_t) + √α ξ_t, where α is step size and ξ_t is Gaussian noise. This iterative process performs gradient ascent in log probability space with noise injection, gradually moving from random initialization toward high-probability regions. The noise term prevents the chain from converging to isolated modes and ensures ergodicity. After sufficient iterations and annealing the step size, samples approximately follow the learned distribution. The Langevin dynamics provide a principled connection between the score function and actual sample generation, making EBMs inherently generative once trained.</p>`,
+
+  // 05 EBM Training Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 05</div>
+    <h2><em>EBM</em> Training</h2>
+  </div>
+  <p>Training energy-based models employs contrastive divergence, a principle that combines maximum likelihood objective with approximation. Rather than directly minimizing KL divergence between model and data distributions (which requires the partition function), contrastive divergence minimizes the difference between data and model samples in the energy landscape. The training objective becomes minimizing E_data[E(x)] - E_model[E(x)], pushing model energies downward on data and upward on generated samples. This contrastive formulation motivates why these are called "contrastive" divergence—we explicitly contrast positive examples (data) against negative examples (model samples).</p>
+  <p>The critical challenge is obtaining model samples efficiently. Early in training, model samples are terrible, so running full Langevin dynamics from scratch for every batch would be computationally prohibitive. The solution combines initialization strategy with replay buffers. A replay buffer maintains a pool of generated samples from previous training iterations, whose energies have been partially optimized. At each training step, we retrieve samples from the buffer, run a few Langevin refinement steps, and update them in place. This amortizes the expensive MCMC inference cost across multiple training iterations, and the buffer ensures negative samples improve continuously as the energy function evolves.</p>
+  <h3>Langevin MCMC Implementation</h3>
+  <p>Implementing Langevin sampling for EBM training requires the Stochastic Gradient Langevin Dynamics (SGLD) update rule: x ← x + (α/2)∇_x E(x) + √α ξ, where we compute energy gradients with respect to input coordinates rather than parameters. This differs from standard gradient descent because we negate the energy gradient (moving toward low energy/high probability) and inject controlled noise. The step size α and noise magnitude must be calibrated carefully: too-large step sizes cause instability, while too-small sizes require many iterations for convergence. Temperature-based annealing helps—starting with larger step sizes to escape local modes, then reducing gradually to refine samples.</p>
+  <h3>Replay Buffer Management</h3>
+  <p>The replay buffer is a central data structure that caches negative samples across training iterations. Typically, it contains 10,000–100,000 samples organized by their learned energies. At each training step, we sample a minibatch from the buffer (often biased toward higher-energy samples to focus on decision boundary refinement), run Langevin steps to refine them, and update them in the buffer. To maintain sample freshness and diversity, we periodically inject new random samples. The buffer size and refresh rate are hyperparameters that significantly impact training speed and final model quality. Larger buffers provide more diverse negatives but require more memory, while smaller buffers train faster but may become stale.</p>
+  <h3>Practical Training Dynamics</h3>
+  <p>EBM training can be unstable if energies are allowed to grow unboundedly, as refinement becomes difficult. Regularization terms like L2 weight penalties or explicit energy regularization help keep energies well-scaled. The ratio of Langevin refinement steps to training steps is critical—too few refinement steps yield poor negative samples, while too many make training prohibitively slow. Typically, 10–100 Langevin steps per training batch is reasonable depending on dimensionality and energy landscape complexity. Monitoring the energy gap (E_data - E_model) provides crucial training diagnostics: positive gaps indicate progress, while stagnation suggests hyperparameter adjustment is needed.</p>`,
+
+  // 06 Diffusion Theory Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 06</div>
+    <h2><em>Diffusion</em> Model Theory</h2>
+  </div>
+  <p>Diffusion Models reverse a forward process that gradually corrupts data through Gaussian noise injection. The forward (diffusion) process defines a Markov chain q(x_1:T | x_0) = ∏_{t=1}^T q(x_t | x_{t-1}) where x_0 is real data and each transition adds Gaussian noise with fixed variance: q(x_t|x_{t-1}) = N(x_t; √(1-β_t)x_{t-1}, β_t I). The sequence of variances β_1,...,β_T is the noise schedule, which controls how quickly noise accumulates. Starting from data, successive applications of noise progressively degrade samples until x_T ≈ N(0,I) is pure noise. This diffusion process is fixed (non-trainable) but enables efficient sampling of q(x_t|x_0) in closed form.</p>
+  <p>The reverse process p_θ(x_{0:T}) learns to invert the forward diffusion, with trainable transitions p_θ(x_{t-1}|x_t) = N(x_{t-1}; μ_θ(x_t,t), Σ_θ(x_t,t)). Starting from x_T ∼ N(0,I) and applying reverse transitions iteratively, samples are progressively denoised back toward high-probability data regions. The reverse process is learned through neural networks parameterized by θ, typically with both mean and variance modeled (though variance is often fixed for simplicity). This formulation elegantly leverages Markov chain theory: if we know the reverse transition probabilities, we can sample from the data distribution by reversing a known diffusion process.</p>
+  <h3>Evidence Lower Bound (ELBO) Derivation</h3>
+  <p>Training diffusion models is formulated through the variational lower bound on log p(x_0): log p(x_0) ≥ ∑_t E_q[log(p_θ(x_{t-1}|x_t)/q(x_t|x_{t-1}))]. This ELBO decomposes into several terms: a reconstruction term comparing p(x_0|x_1) to q(x_1|x_0), KL divergence terms comparing learned reverse transitions to forward transitions, and a prior matching term for the final timestep. Importantly, the reconstruction and KL terms involve only single timestep distributions, making them tractable to evaluate. In practice, diffusion models weight these terms differently—down-weighting early timesteps (where predictions are easy due to high noise) and up-weighting late timesteps (where fine details matter).</p>
+  <h3>Noise Prediction Formulation</h3>
+  <p>Rather than predicting means and variances directly, effective diffusion models learn to predict the noise ε added at each step. Given the forward process generates x_t = √(ᾱ_t)x_0 + √(1-ᾱ_t)ε with ᾱ_t being the cumulative product of (1-β_t), we can rewrite the denoising objective as predicting the noise component. The network ε_θ(x_t, t) predicts the noise, and loss is computed as E[||ε - ε_θ(x_t,t)||²]. This formulation is more stable than directly predicting means because noise predictions are less sensitive to input scale and easier for networks to learn. The relationship between predicted noise and the mean prediction is: μ_θ = (1/√(ᾱ_t))[x_t - (√(1-ᾱ_t)/√(ᾱ_t))ε_θ(x_t,t)].</p>
+  <h3>Noise Schedules</h3>
+  <p>The variance schedule {β_t} fundamentally shapes the diffusion process and learning difficulty. Linear schedules increase β_t uniformly from small to large values; cosine schedules create smoother transitions preserving signal-to-noise ratio longer into training. The cumulative products ᾱ_t = ∏_{s=1}^t (1-β_s) determine how much signal remains at each timestep. Well-designed schedules ensure that x_T is nearly pure noise while x_0 remains nearly identical to the original data. Poor schedules either leave significant signal at x_T (making final timesteps unnecessary) or corrupt data so quickly early timesteps learn trivial denoising tasks. The schedule's choice significantly impacts model quality and sampling speed, with recent research showing that careful schedule design enables faster sampling without quality loss.</p>`,
+
+  // 07 Diffusion Implementation Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 07</div>
+    <h2><em>Diffusion</em> Implementation</h2>
+  </div>
+  <p>The neural network at the heart of diffusion models is typically a U-Net architecture designed for image-to-image translation tasks. U-Nets combine an encoder that downsamples spatial dimensions through strided convolutions with a symmetric decoder that upsamples through transposed convolutions, connected by skip connections. This architecture preserves fine-grained spatial information necessary for high-quality image generation while maintaining receptive fields large enough for global context. For diffusion models, U-Nets operate on noisy input images and output predictions of the same dimensionality (either denoised images or noise coefficients).</p>
+  <p>Timestep conditioning in diffusion models uses learned embeddings similar to positional encodings in transformers. The continuous timestep t is first mapped to a fixed-dimensional embedding vector via sinusoidal embeddings and learned dense layers. This embedding is then injected into the U-Net at multiple points—typically through addition with intermediate feature maps or through FiLM (Feature-wise Linear Modulation) layers that scale and shift features based on the timestep embedding. This conditioning allows the network to adapt its denoising behavior based on the current noise level: early timesteps require coarse denoising of very noisy inputs, while late timesteps refine fine details in nearly-clean images.</p>
+  <h3>U-Net Architecture Details</h3>
+  <p>Encoder blocks typically consist of convolution → batch normalization → ReLU → convolution operations with stride 2 for downsampling. Each downsampling reduces spatial dimensions by half while increasing channel count. The decoder mirrors this structure with transposed convolutions for upsampling, progressively increasing spatial resolution. Skip connections concatenate features from corresponding encoder levels to the decoder, maintaining fine-grained information that would otherwise be lost through downsampling. Attention blocks further enhance the U-Net, enabling long-range spatial dependencies modeling through self-attention mechanisms. These attention blocks operate on flattened feature maps, compute attention weights globally, then reshape back to spatial structure.</p>
+  <h3>Training Pipeline</h3>
+  <p>Diffusion model training is remarkably straightforward. Each training iteration: (1) Sample a batch of real images from the dataset. (2) Sample random timesteps t uniformly from 1 to T. (3) Sample noise vectors ε from N(0,I). (4) Compute noisy images x_t = √(ᾱ_t)x_0 + √(1-ᾱ_t)ε using precomputed schedule constants. (5) Pass x_t and t to the U-Net to predict noise ε_θ(x_t,t). (6) Compute MSE loss between predicted and actual noise. (7) Backpropagate and update model weights. The simplicity enables stable training without adversarial dynamics—larger models and more data directly improve results. Training for high-resolution images may require 100,000+ iterations on large GPUs, with checkpoint-based training enabling convergence monitoring.</p>
+  <h3>Sampling Implementation</h3>
+  <p>Sampling reverses the diffusion process starting from x_T ∼ N(0,I). The sampling loop executes the reverse transition T times: for each timestep t from T down to 1, predict noise ε_θ(x_t,t), then update x_{t-1} = (1/√ᾱ_t)[x_t - (√(1-ᾱ_t)/√ᾱ_t)ε_θ(x_t,t)] + σ_t ξ where ξ ∼ N(0,I) and σ_t is the reverse process variance. The variance σ_t can be set to the forward process variance β_t or optimized. Sampling a single image requires T forward passes through the network, each taking ~ms on modern hardware, so complete sampling takes seconds per image. Advanced techniques like DDIM (Denoising Diffusion Implicit Models) skip timesteps without sacrificing much quality, reducing sampling time to milliseconds, enabling real-time applications.</p>`,
+
+  // 08 Takeaways Details
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 08</div>
+    <h2>Key <em>Takeaways</em></h2>
+  </div>
+  <p>The three generative modeling paradigms explored in this problem set represent distinct philosophical and practical approaches to the fundamental problem of learning data distributions. GANs frame generation as an adversarial game where two networks with opposing objectives drive each other toward equilibrium. This game-theoretic perspective enables single-step sampling—once trained, a single forward pass through the generator produces complete samples. However, adversarial training introduces instability and mode collapse risks, requiring careful tuning and architectural innovations like Wasserstein objectives and gradient penalties. The paradigm excels when fast sampling is critical and computational resources for training are abundant.</p>
+  <p>Energy-Based Models provide a thermodynamic perspective grounded in statistical physics, where probability distributions emerge from scalar-valued energy landscapes. This principled theoretical foundation enables flexible model design and interpretable probability assignments. Training through score matching and contrastive divergence avoids some pitfalls of adversarial training, enabling more stable learning. However, the requirement to sample via iterative Langevin dynamics during training and inference makes EBMs computationally expensive for high-dimensional problems. The paradigm shines when interpretability and theoretical grounding are priorities, or when conditional generation and energy-based control are desired.</p>
+  <h3>Diffusion Models and Modern Generative AI</h3>
+  <p>Diffusion Models have emerged as the state-of-the-art generative approach in recent years, dominating in text-to-image generation (DALL-E, Stable Diffusion, Midjourney) and image editing applications. The multi-step iterative refinement through denoising provides remarkable stability—training doesn't suffer from adversarial dynamics or mode collapse, instead reliably improving with more data and model capacity. The probabilistic formulation through the ELBO provides principled training objectives and enables principled likelihood-based inference. Sample quality substantially exceeds GANs, though computational requirements (1-50 seconds per sample) exceed GANs but are acceptable for many applications. Recent acceleration techniques progressively narrow the inference gap.</p>
+  <h3>Selecting Models for Applications</h3>
+  <p>Model selection depends on application constraints and objectives: Choose GANs when single-step sampling speed is critical and training stability is acceptable—typical for real-time interactive systems or embedded applications. Choose EBMs when the application requires energy-based control (optimizing the energy landscape), when interpretability and theoretical grounding are valued, or when conditional generation requires explicit probability modeling. Choose Diffusion Models when sample quality is paramount and inference time constraints are moderate, for applications where iterative refinement enhances perception, or when scaling to larger models and datasets is planned.</p>
+  <h3>Hybrid Approaches and Future Directions</h3>
+  <p>Cutting-edge research increasingly explores hybrid approaches combining insights from all three paradigms. Energy-Guided Diffusion uses energy functions to guide diffusion sampling toward high-probability regions. Adversarial Diffusion Models train diffusion networks with auxiliary discriminator objectives for enhanced quality. Diffusion-based EBM sampling accelerates EBM inference through diffusion processes. Understanding the distinct strengths—GANs' fast sampling, EBMs' principled theory, diffusion's stability—enables creative combinations achieving unprecedented capabilities. Practitioners should view this problem set as the foundation for evaluating these tools as generative AI continues its rapid evolution across academia and industry.</p>`,
+
+  // 09 References
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1"><circle cx="6" cy="6" r="5"/><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg> Section 09</div>
+    <h2>References & <em>Further</em> Reading</h2>
+  </div>
+  <h3>Landmark Papers — GANs</h3>
+  <ul class="s-list">
+    <li><a href="https://arxiv.org/abs/1406.2661" target="_blank">Generative Adversarial Networks (Goodfellow et al., 2014)</a> — The original GAN paper introducing the adversarial training framework and minimax objective; foundational for all GAN variants.</li>
+    <li><a href="https://arxiv.org/abs/1701.07957" target="_blank">Wasserstein GAN (Arjovsky et al., 2017)</a> — Addresses training instability through Wasserstein distance; enables more stable training and resolves mode collapse issues inherent in original GANs.</li>
+    <li><a href="https://arxiv.org/abs/1704.00028" target="_blank">Improved Training of Wasserstein GANs (Gulrajani et al., 2017)</a> — Introduces gradient penalty as alternative to weight clipping; significantly improves training stability and convergence speed.</li>
+  </ul>
+  <h3>Landmark Papers — Energy-Based Models</h3>
+  <ul class="s-list">
+    <li><a href="https://arxiv.org/abs/1906.02691" target="_blank">Your Local GAN: Designing Two Dimensional Local Attention Mechanisms for Generative Models (Salimans et al., 2018)</a> — Context for understanding energy-based perspectives in modern generative modeling.</li>
+    <li><a href="https://arxiv.org/abs/2112.07068" target="_blank">Score-Based Generative Modeling with Critically-Damped Langevin Dynamics (Jolicoeur-Martineau et al., 2021)</a> — Bridges energy-based models and score-based methods; shows connection between EBM score matching and diffusion-based approaches.</li>
+  </ul>
+  <h3>Landmark Papers — Diffusion Models</h3>
+  <ul class="s-list">
+    <li><a href="https://arxiv.org/abs/2006.11239" target="_blank">Denoising Diffusion Probabilistic Models (Ho et al., 2020)</a> — DDPM paper; seminal work establishing diffusion as a practical and stable generative modeling paradigm achieving high-quality image synthesis.</li>
+    <li><a href="https://arxiv.org/abs/2011.13456" target="_blank">Score-Based Generative Modeling through Stochastic Differential Equations (Song et al., 2021)</a> — Unifies diffusion and score-based models under continuous-time SDEs; provides theoretical framework and acceleration techniques.</li>
+    <li><a href="https://arxiv.org/abs/2010.02502" target="_blank">Denoising Diffusion Implicit Models (Song et al., 2020)</a> — DDIM paper; enables fast sampling by skipping timesteps without sacrificing quality; crucial for practical deployment.</li>
+    <li><a href="https://arxiv.org/abs/2112.10752" target="_blank">Diffusion Models Beat GANs on Image Synthesis (Dhariwal & Nichol, 2021)</a> — Demonstrates diffusion models surpassing GANs in sample quality; marks shift in state-of-the-art toward diffusion-based approaches.</li>
+  </ul>
+  <h3>Intuitive Explanations & Blogs</h3>
+  <ul class="s-list">
+    <li><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank">Lilian Weng: What are Diffusion Models?</a> — Clear, accessible explanation of diffusion model theory with connections to VAEs and score matching; excellent starting point.</li>
+    <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng: Blog (All Posts)</a> — Comprehensive blog covering GANs, diffusion, energy models, and all major generative modeling paradigms; highly recommended across problem sets.</li>
+  </ul>
+  <h3>Mathematical Background</h3>
+  <ul class="s-list">
+    <li><a href="https://en.wikipedia.org/wiki/Markov_chain" target="_blank">Wikipedia: Markov Chain</a> — Foundations for understanding diffusion processes as Markov chains; essential for diffusion model theory.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Langevin_equation" target="_blank">Wikipedia: Langevin Equation</a> — Stochastic differential equation underlying Langevin dynamics used in EBM sampling.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence" target="_blank">Wikipedia: Kullback–Leibler Divergence</a> — KL divergence appears throughout diffusion model theory (ELBO objective) and GAN training dynamics.</li>
+    <li><a href="https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence" target="_blank">Wikipedia: Jensen–Shannon Divergence</a> — Divergence underlying original GAN objective function; understanding its properties clarifies training dynamics.</li>
+  </ul>
+  <h3>Implementation & Practical Guides</h3>
+  <ul class="s-list">
+    <li><a href="https://pytorch.org/docs/stable/" target="_blank">PyTorch Official Documentation</a> — Complete reference for building GANs, EBMs, and diffusion models with PyTorch.</li>
+    <li><a href="https://pytorch.org/tutorials/" target="_blank">PyTorch Tutorials</a> — Step-by-step guides for common patterns in generative modeling implementation.</li>
+  </ul>
+  <h3>Course Context</h3>
+  <ul class="s-list">
+    <li><a href="https://cs236.stanford.edu/" target="_blank">Stanford CS236: Deep Generative Models</a> — Official course website with complete curriculum covering all generative modeling paradigms across three problem sets.</li>
+  </ul>
+  <p><strong>Reading Strategy for PS3:</strong> Start with Lilian Weng's blog posts for intuitive understanding. Read Goodfellow et al. (2014) for GAN foundations, then Arjovsky et al. (2017) for Wasserstein improvements. Read Ho et al. (2020) for diffusion models—the DDPM paper is the most important. Use Song et al. (2021) for advanced understanding and SDEs. Reference papers while coding; diffusion model architecture decisions are well-motivated by the theory. Energy-based models have less recent literature; understanding them deepens appreciation for why diffusion and GANs dominate current practice.</p>`
+];
+
+// Build DOM
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · PROBLEM SET 3</div>
+        <div class="hero-title">PS3: GANs & <em>Diffusion</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>80 Points · Adversarial, Energy-Based & Diffusion Models</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+// Build sidebar
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+// Sidebar hover tooltip
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => {
+  tipActive = false;
+  sidebarTip.classList.remove('visible');
+});
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Build main scroll
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+// Build details
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+// Functions
+let lastDetailIdx = 0;
+
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) {
+    closeRight();
+  } else {
+    openDetail(lastDetailIdx);
+  }
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+// Compact main header + sidebar scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeRight();
+});
+</script>
+
+</body>
+</html>

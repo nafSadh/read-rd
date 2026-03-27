@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Retrocausality, Hope & Depression — Slide Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b7aed;--accent-soft:#7c3aed08;
+  --green:#2e6e3e;--red:#8b2020;--teal:#0ea5e9;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#b598ff;--accent2:#9b7aed;--accent-soft:#b598ff0c;
+  --green:#4ee8a8;--red:#e87090;--teal:#4ee8d0;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;transition:background .4s,color .3s}
+
+.deck{height:100vh;width:100vw;position:relative;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;transform:translateX(40px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}
+.slide.prev{opacity:0;transform:translateX(-40px)}
+
+/* Slide typography */
+.slide .badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.slide .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.slide h1{font-family:var(--sans);font-size:48px;font-weight:500;color:var(--bright);letter-spacing:.5px;line-height:1.15;text-align:center;max-width:800px}
+.slide h1 em{font-style:italic;font-family:var(--serif);color:var(--accent);font-weight:400}
+.slide h2{font-family:var(--sans);font-size:32px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.3;text-align:center;max-width:750px;margin-bottom:24px}
+.slide h2 em{font-style:italic;font-family:var(--serif);color:var(--accent);font-weight:400}
+.slide p{font-family:var(--serif);font-size:22px;line-height:1.8;text-align:center;max-width:650px;letter-spacing:.2px;margin-bottom:16px}
+.slide p em{color:var(--bright)}
+.slide .small{font-size:16px;color:var(--dim);line-height:1.7}
+.slide .mono{font-family:var(--mono);font-size:14px;color:var(--dim);letter-spacing:.5px}
+
+.slide .quote{font-family:var(--serif);font-size:26px;font-style:italic;color:var(--bright);line-height:1.7;text-align:center;max-width:650px;border-left:3px solid var(--accent);padding-left:24px;text-align:left}
+.slide .quote-attr{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:1px;margin-top:12px;text-transform:uppercase}
+
+.slide .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:750px;width:100%;margin-top:16px}
+.slide .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;max-width:800px;width:100%;margin-top:16px}
+.slide .card{padding:24px;border:1px solid var(--border);text-align:left}
+.slide .card h3{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.slide .card p{font-size:16px;text-align:left;line-height:1.7;margin:0}
+
+.slide .diagram-wrap{margin:20px 0;padding:20px;background:var(--bg3);border:1px solid var(--border);max-width:500px;width:100%}
+.slide .diagram-wrap svg{width:100%;height:auto}
+.slide .diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+
+.slide .tension{border-left:3px solid var(--accent2);padding:12px 20px;max-width:650px;width:100%;margin-bottom:12px;text-align:left;background:var(--accent-soft)}
+.slide .tension strong{color:var(--bright)}
+.slide .tension p{text-align:left;font-size:17px;margin:0}
+
+/* Progress bar */
+.progress{position:fixed;bottom:0;left:0;height:3px;background:var(--accent);transition:width .3s ease;z-index:100}
+
+/* Controls */
+.controls{position:fixed;bottom:20px;right:20px;z-index:100;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2)}
+.ctrl-btn{width:40px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);transition:all .2s;font-family:var(--sans)}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+
+.slide-counter{position:fixed;bottom:24px;left:24px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:1px;z-index:100}
+
+@media(max-width:800px){
+  .slide{padding:40px 24px}
+  .slide h1{font-size:32px}
+  .slide h2{font-size:24px}
+  .slide p{font-size:18px}
+  .slide .quote{font-size:20px}
+  .slide .grid-2,.slide .grid-3{grid-template-columns:1fr;gap:16px}
+}
+</style></head>
+<body data-theme="light">
+
+<div class="deck" id="deck"></div>
+<div class="progress" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="controls">
+  <button class="ctrl-btn" onclick="prev()">&larr;</button>
+  <button class="ctrl-btn" onclick="toggleTheme()" id="theme-btn"></button>
+  <button class="ctrl-btn" onclick="next()">&rarr;</button>
+</div>
+
+<script>
+const slides = [
+  // 0 — Title
+  `<div class="badge"><span class="dot"></span> PAPER-DRIVE &middot; PHYSICS &middot; POETRY</div>
+   <h1>Retrocausality, Hope &amp; <em>Depression</em></h1>
+   <p>A writer's physics &mdash; how the block universe, bidirectional causation, and prospective psychology illuminate the geometry of feeling</p>
+   <p class="mono">43 SOURCES &middot; 7 SECTIONS &middot; 6 TENSIONS</p>`,
+
+  // 1 — Core Thesis
+  `<div class="badge"><span class="dot"></span> THESIS</div>
+   <h2>The Core <em>Insight</em></h2>
+   <div class="quote">The future is not something that happens to us. It is something that shapes us now, has always shaped us, and in the geometry of spacetime, <em>is</em> us.<div class="quote-attr">Synthesis of 43 sources</div></div>`,
+
+  // 2 — The 7 Sections
+  `<div class="badge"><span class="dot"></span> STRUCTURE</div>
+   <h2>Seven <em>Dimensions</em></h2>
+   <p class="small">Physics foundation &rarr; Emotional application &rarr; Literary output</p>
+   <div class="grid-2">
+     <div class="card"><h3>S1</h3><p>Block Universe &amp; Eternalism</p></div>
+     <div class="card"><h3>S2</h3><p>Retrocausality &amp; Bidirectional Causation</p></div>
+     <div class="card"><h3>S3</h3><p>Hope as Retrocausal Signal</p></div>
+     <div class="card"><h3>S4</h3><p>Depression as Bidirectional Loop</p></div>
+     <div class="card"><h3>S5</h3><p>Free Will, Agency &amp; Determinism</p></div>
+     <div class="card"><h3>S6</h3><p>Time, Memory &amp; Embodiment</p></div>
+     <div class="card"><h3>S7</h3><p>Literary Applications</p></div>
+     <div class="card"><h3>&mdash;</h3><p>Synthesis: The Geometry of Feeling</p></div>
+   </div>`,
+
+  // 3 — Block Universe
+  `<div class="badge"><span class="dot"></span> S1 &middot; BLOCK UNIVERSE</div>
+   <h2>All Times <em>Coexist</em></h2>
+   <p>Special relativity eliminates absolute simultaneity. The Rietdijk-Putnam argument: if an event is in your future and my past, it must exist regardless of perspective.</p>
+   <p>The future is <em>real</em>. The past is <em>real</em>. All events have equal ontological status.</p>`,
+
+  // 4 — Entropy Arrow
+  `<div class="badge"><span class="dot"></span> S1 &middot; ENTROPY</div>
+   <h2>The Only <em>Arrow</em></h2>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="120" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="16" text-anchor="middle" font-size="9" letter-spacing="1.5" fill="var(--dim)">&Delta;S &ge; 0 IS THE ONLY TIME-ASYMMETRIC LAW</text>
+     <line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+     <rect x="40" y="40" width="320" height="20" rx="3" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.6"/>
+     <text x="200" y="54" text-anchor="middle" font-size="7" fill="#5b5bd6">Newton, Maxwell, Schr&ouml;dinger, Einstein: ALL time-symmetric</text>
+     <rect x="40" y="70" width="320" height="20" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1"/>
+     <text x="200" y="84" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="600">Second Law of Thermodynamics: the ONLY exception</text>
+     <text x="200" y="108" text-anchor="middle" font-size="7" fill="var(--dim)">We remember the past because it was lower-entropy. That's it.</text>
+   </svg></div>`,
+
+  // 5 — Retrocausality
+  `<div class="badge"><span class="dot"></span> S2 &middot; RETROCAUSALITY</div>
+   <h2>The Future Constrains the <em>Present</em></h2>
+   <p>Price (2012): if the quantum state is real and QM is time-symmetric, retrocausality follows <em>necessarily</em>.</p>
+   <p>The critical factor is <em>discreteness</em>. Classical physics escapes retrocausality. Quantum physics cannot.</p>`,
+
+  // 6 — TSVF
+  `<div class="badge"><span class="dot"></span> S2 &middot; TSVF</div>
+   <h2>Two State <em>Vectors</em></h2>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="130" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="16" text-anchor="middle" font-size="9" letter-spacing="1.5" fill="var(--dim)">AHARONOV'S TWO-STATE VECTOR FORMALISM</text>
+     <line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+     <rect x="30" y="45" width="100" height="35" rx="4" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+     <text x="80" y="60" text-anchor="middle" font-size="7" fill="#5b5bd6">Preparation</text>
+     <text x="80" y="72" text-anchor="middle" font-size="6" fill="var(--dim)">|&psi;&rang; forward</text>
+     <rect x="270" y="45" width="100" height="35" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.8"/>
+     <text x="320" y="60" text-anchor="middle" font-size="7" fill="#7c3aed">Measurement</text>
+     <text x="320" y="72" text-anchor="middle" font-size="6" fill="var(--dim)">&lang;&phi;| backward</text>
+     <line x1="130" y1="62" x2="185" y2="62" stroke="#5b5bd6" stroke-width="1.5"/>
+     <line x1="270" y1="62" x2="215" y2="62" stroke="#7c3aed" stroke-width="1.5"/>
+     <circle cx="200" cy="62" r="14" fill="rgba(20,150,110,0.15)" stroke="#14966e" stroke-width="1.5"/>
+     <text x="200" y="66" text-anchor="middle" font-size="7" fill="#14966e">NOW</text>
+     <text x="200" y="110" text-anchor="middle" font-size="7" fill="var(--dim)">The present = intersection of past + future boundary conditions</text>
+   </svg></div>`,
+
+  // 7 — Crossword
+  `<div class="badge"><span class="dot"></span> S2 &middot; METAPHOR</div>
+   <div class="quote">The universe is more like a crossword puzzle than a story. The constraints run in both directions, and fitting the answer at 17-across changes what can go at 5-down.<div class="quote-attr">Price &amp; Wharton</div></div>`,
+
+  // 8 — Prospection
+  `<div class="badge"><span class="dot"></span> S3 &middot; HOPE</div>
+   <h2>The Brain's Default Mode Is <em>Future</em></h2>
+   <p>Seligman et al. (2013): the central organizing feature of cognition is <em>prospection</em> &mdash; the representation of possible futures.</p>
+   <p>When you "think of nothing," your brain simulates what comes next. The default mode network IS future simulation.</p>`,
+
+  // 9 — Memory as Hope Chest
+  `<div class="badge"><span class="dot"></span> S3 &middot; MEMORY</div>
+   <h2>Memory Is for <em>Doing</em></h2>
+   <p>Memory exists to serve prospection. It's unreliable because accuracy matters less than forward guidance.</p>
+   <p>Barrett: emotions are not reactions to the present but <em>predictions</em> about what's coming. The body is an anticipation engine.</p>`,
+
+  // 10 — Hope Theory
+  `<div class="badge"><span class="dot"></span> S3 &middot; SNYDER</div>
+   <h2>Hope = Pathways + <em>Agency</em></h2>
+   <div class="grid-2">
+     <div class="card"><h3>Pathways</h3><p>"I can find a way." The ability to generate alternative routes when blocked.</p></div>
+     <div class="card"><h3>Agency</h3><p>"I can start and keep going." The motivational energy to move along those routes.</p></div>
+   </div>
+   <p class="small" style="margin-top:20px">Hope &ne; optimism. Optimism says "things will be fine." Hope says "I can find the way."</p>`,
+
+  // 11 — Bridge
+  `<div class="badge"><span class="dot"></span> T3 &middot; THE BRIDGE</div>
+   <h2>Metaphor or <em>Mechanism?</em></h2>
+   <p>In the block universe, the future is <em>real</em>. The brain's representations of future states are representations of something that <em>actually exists</em>.</p>
+   <p>Seligman says: not backward causation. Price says: the distinction is verbal, not physical.</p>
+   <p><em>For a poem, it doesn't matter which.</em></p>`,
+
+  // 12 — Depression
+  `<div class="badge"><span class="dot"></span> S4 &middot; DEPRESSION</div>
+   <h2>The Dark <em>Mirror</em></h2>
+   <p>Roepke &amp; Seligman: negative prospection is not a <em>symptom</em> of depression but its <em>core causal element</em>.</p>
+   <p>The depressed person's defining feature is not their painful history but their inability to imagine a good future.</p>`,
+
+  // 13 — Self-sealing loop
+  `<div class="badge"><span class="dot"></span> S4 &middot; THE LOOP</div>
+   <h2>The Self-Sealing <em>Cage</em></h2>
+   <div class="diagram-wrap"><svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+     <rect x="0" y="0" width="400" height="160" fill="rgba(0,0,0,0.025)" rx="6"/>
+     <text x="200" y="16" text-anchor="middle" font-size="9" letter-spacing="1.5" fill="var(--dim)">PREDICTIVE PROCESSING IN DEPRESSION</text>
+     <line x1="30" y1="26" x2="370" y2="26" stroke="var(--border)" stroke-width="0.5"/>
+     <rect x="130" y="35" width="140" height="25" rx="4" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1"/>
+     <text x="200" y="52" text-anchor="middle" font-size="7" fill="#7c3aed">Pessimistic priors</text>
+     <rect x="130" y="68" width="140" height="25" rx="4" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+     <text x="200" y="85" text-anchor="middle" font-size="7" fill="#5b5bd6">Body generates pain</text>
+     <rect x="130" y="101" width="140" height="25" rx="4" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+     <text x="200" y="118" text-anchor="middle" font-size="7" fill="#5b5bd6">Pain confirms prediction</text>
+     <path d="M 270 118 Q 330 80 270 42" stroke="#e87070" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+     <text x="310" y="82" font-size="6" fill="#e87070">Loop closes</text>
+     <text x="200" y="148" text-anchor="middle" font-size="7" fill="var(--dim)">The model is self-sealing. It rejects positive evidence at the gate.</text>
+   </svg></div>`,
+
+  // 14 — Two waves
+  `<div class="badge"><span class="dot"></span> S4 &middot; RETROCAUSAL</div>
+   <h2>Two Advanced <em>Waves</em></h2>
+   <p>The block contains both the depression and the healing. Both advanced waves exist &mdash; from the bleak future and from the healed future.</p>
+   <p><em>Therapy is tuning the antenna toward the better signal.</em></p>`,
+
+  // 15 — Free Will
+  `<div class="badge"><span class="dot"></span> S5 &middot; FREE WILL</div>
+   <div class="quote">My atoms have no wants. There is something that I have that is a want, and the fact that I'm made of atoms doesn't make that go away.<div class="quote-attr">Sean Carroll</div></div>`,
+
+  // 16 — Levels
+  `<div class="badge"><span class="dot"></span> S5 &middot; COMPATIBILISM</div>
+   <h2>Levels of <em>Description</em></h2>
+   <div class="grid-3">
+     <div class="card"><h3>Agency</h3><p>Choices, values, deliberation. Valid.</p></div>
+     <div class="card"><h3>Neuroscience</h3><p>Neurons, circuits, plasticity. Valid.</p></div>
+     <div class="card"><h3>Physics</h3><p>Atoms, fields, determinism. Valid.</p></div>
+   </div>
+   <p class="small" style="margin-top:20px">All three are true. None negates the others. "Emergent" means real at this level, not fake.</p>`,
+
+  // 17 — Body
+  `<div class="badge"><span class="dot"></span> S6 &middot; EMBODIMENT</div>
+   <h2>The Body Keeps the <em>Score</em></h2>
+   <p>Levine: the body stores unresolved survival responses. Van der Kolk: flashbacks are re-activations, not memories. Porges: neuroception operates below awareness.</p>
+   <p>The body doesn't experience the block. It experiences the <em>gradient</em>.</p>`,
+
+  // 18 — Rovelli quote
+  `<div class="badge"><span class="dot"></span> S6 &middot; ROVELLI</div>
+   <div class="quote">We are the source of time.<div class="quote-attr">Carlo Rovelli, The Order of Time</div></div>
+   <p class="small" style="margin-top:24px">Time emerges from partial knowledge. Consciousness, memory, identity &mdash; all are thermodynamic phenomena, products of the entropy slope.</p>`,
+
+  // 19 — Literary
+  `<div class="badge"><span class="dot"></span> S7 &middot; LITERARY</div>
+   <h2>Form IS <em>Content</em></h2>
+   <div class="grid-2">
+     <div class="card"><h3>Vonnegut</h3><p>Block universe as dark comedy. "So it goes." The reader lives in the block.</p></div>
+     <div class="card"><h3>Chiang</h3><p>Simultaneous perception. Dual tenses. Grief and joy concurrent.</p></div>
+     <div class="card"><h3>Borges</h3><p>Forking paths. All possibilities coexist. Pre-Everett many-worlds.</p></div>
+     <div class="card"><h3>Eliot</h3><p>Temporal compression into verse. Literary eternalism at maximum density.</p></div>
+   </div>`,
+
+  // 20 — Conceits
+  `<div class="badge"><span class="dot"></span> S7 &middot; CONCEITS</div>
+   <h2>Six Structural <em>Conceits</em></h2>
+   <div class="grid-3">
+     <div class="card"><h3>1</h3><p>Temporal juxtaposition</p></div>
+     <div class="card"><h3>2</h3><p>Bidirectional address</p></div>
+     <div class="card"><h3>3</h3><p>Observer split</p></div>
+     <div class="card"><h3>4</h3><p>Gelato as measurement</p></div>
+     <div class="card"><h3>5</h3><p>Tralfamadorian move</p></div>
+     <div class="card"><h3>6</h3><p>Heptapod syntax</p></div>
+   </div>
+   <p class="small" style="margin-top:16px">Each conceit enacts a physics idea. The structure IS the argument.</p>`,
+
+  // 21 — Tensions intro
+  `<div class="badge"><span class="dot"></span> SYNTHESIS</div>
+   <h2>Six Unresolved <em>Tensions</em></h2>
+   <p>Not problems to solve. Productive contradictions to hold. The spaces where the next poems live.</p>`,
+
+  // 22 — T1-T3
+  `<div class="badge"><span class="dot"></span> TENSIONS 1&ndash;3</div>
+   <div class="tension"><p><strong>T1:</strong> Is time fundamental (Smolin) or emergent (Rovelli) or nonexistent (Barbour)?</p></div>
+   <div class="tension"><p><strong>T2:</strong> Retrocausality &mdash; natural reading of QM (Price) or fringe speculation?</p></div>
+   <div class="tension"><p><strong>T3:</strong> Prospection vs retrocausality &mdash; metaphor or mechanism? The phenomenology maps perfectly.</p></div>`,
+
+  // 23 — T4-T6
+  `<div class="badge"><span class="dot"></span> TENSIONS 4&ndash;6</div>
+   <div class="tension"><p><strong>T4:</strong> Depression as broken machinery (clinical) vs accurate perception of a bleak boundary condition (retrocausal).</p></div>
+   <div class="tension"><p><strong>T5:</strong> Compatibilism's adequacy. Free will is real at the emergent level &mdash; is that enough?</p></div>
+   <div class="tension"><p><strong>T6:</strong> Body time vs block time. The body experiences the gradient, not the geometry.</p></div>`,
+
+  // 24 — Conclusion
+  `<div class="badge"><span class="dot"></span> CONCLUSION</div>
+   <h2>Write <em>That</em></h2>
+   <p>The future is already shaping you. Hope is the advanced wave traveling backward from the version of yourself that made it through.</p>
+   <p><em>The poem you have not yet written is already influencing the one you are writing now.</em></p>`,
+
+  // 25 — Colophon
+  `<div class="badge"><span class="dot"></span> COLOPHON</div>
+   <h1>The Geometry of <em>Feeling</em></h1>
+   <p class="mono" style="margin-top:16px">43 SOURCES &middot; 7 SECTIONS &middot; 6 TENSIONS</p>
+   <p class="small" style="margin-top:24px">Source material for <em>Second Seconds</em> and <em>Schr&ouml;dinger's Gelato</em><br>Part of Retrocausality, Hope &amp; Depression &mdash; A Writer's Physics</p>`
+];
+
+// Build slides
+const deck = document.getElementById('deck');
+slides.forEach((html, i) => {
+  const div = document.createElement('div');
+  div.className = 'slide' + (i === 0 ? ' active' : '');
+  div.innerHTML = html;
+  deck.appendChild(div);
+});
+
+let current = 0;
+const total = slides.length;
+const allSlides = document.querySelectorAll('.slide');
+
+function go(idx) {
+  if (idx < 0 || idx >= total) return;
+  allSlides[current].classList.remove('active');
+  allSlides[current].classList.add(idx > current ? 'prev' : '');
+  setTimeout(() => allSlides[current === idx ? current : (idx > current ? current : current)].classList.remove('prev'), 400);
+  const oldCurrent = current;
+  current = idx;
+  allSlides[current].classList.remove('prev');
+  allSlides[current].classList.add('active');
+  // Clean prev class from old
+  setTimeout(() => allSlides[oldCurrent].classList.remove('prev'), 400);
+  document.getElementById('progress').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+}
+
+function next() { go(current + 1); }
+function prev() { go(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); go(0); }
+  if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+});
+
+// Touch support
+let touchStartX = 0;
+deck.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+deck.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+});
+
+function toggleTheme() {
+  const b = document.body;
+  const c = b.getAttribute('data-theme');
+  const n = c === 'light' ? 'dark' : 'light';
+  b.setAttribute('data-theme', n);
+  localStorage.setItem('theme', n);
+  document.getElementById('theme-btn').textContent = n === 'dark' ? '\u2600' : '\u263D';
+}
+const st = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', st);
+document.getElementById('theme-btn').textContent = st === 'dark' ? '\u2600' : '\u263D';
+
+// Init
+document.getElementById('progress').style.width = '0%';
+document.getElementById('counter').textContent = '1 / ' + total;
+</script>
+</body></html>

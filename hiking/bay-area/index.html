@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bay Area Hiking Guide — A Follow-Up to gurmeet.net/hiking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --green: #2e6e3e; --amber: #8a6e1e; --red: #8b2020;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+        --green: #4ee8a8; --amber: #e8c870; --red: #e87090;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      --green: #4ee8a8; --amber: #e8c870; --red: #e87090;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --green: #2e6e3e; --amber: #8a6e1e; --red: #8b2020;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); transition: all 0.2s; }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    .meta strong { color: var(--text); }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: var(--green); color: var(--green); }
+    .stats-bar {
+      display: flex; gap: 0; margin: 24px 0; border: 1px solid var(--border);
+    }
+    .stat {
+      flex: 1; padding: 14px 12px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-val {
+      font-family: var(--mono); font-size: 18px; color: var(--bright);
+      font-weight: 500; letter-spacing: 0.5px;
+    }
+    .stat-label {
+      font-size: 9px; color: var(--dim); margin-top: 3px;
+      text-transform: uppercase; letter-spacing: 0.8px; font-family: var(--sans);
+    }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .category-chips {
+      display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0;
+    }
+    .cat-chip {
+      font-family: var(--mono); font-size: 10px; color: var(--dim);
+      display: inline-block; border: 1px solid var(--border);
+      padding: 3px 10px; letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> HIKING GUIDE &middot; BAY AREA</div>
+    <h1>Bay Area <em>Hiking</em> Guide</h1>
+    <div class="subtitle">Detailed trail guides across 21 thematic categories &mdash; a follow-up to gurmeet.net/hiking</div>
+    <div class="rule"></div>
+    <div class="meta">
+      Extending <a href="https://gurmeet.net/hiking/">Gurmeet Singh&rsquo;s Bay Area Hiking page</a> with specific trail data<br>
+      <strong>~140 trails documented</strong> across 21 categories &middot; 5 interactive deep-dive pages<br>
+      Per-trail data: distance, elevation, difficulty, season, key features, descriptions<br>
+      ~80 sources consulted &middot; <a href=".project/methodology.md">Methodology</a>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-val">~140</div>
+        <div class="stat-label">Trails</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">21</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">5</div>
+        <div class="stat-label">Deep Dives</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">~80</div>
+        <div class="stat-label">Sources</div>
+      </div>
+    </div>
+
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">01</div>
+        <div class="section-body">
+          <div class="section-title">NATURE &mdash; Peaks, <em>Redwoods</em>, Waterfalls &amp; Wildflowers <span class="status done">done</span></div>
+          <div class="section-desc">43 trails: 10 peak summits (Mission Peak to Mt St Helena), 17 redwood groves (Muir Woods through Portola), 9 waterfalls (Cataract Falls to Murietta), 7 wildflower routes (Chimney Rock to Russian Ridge). Distances from 0.5mi to 19.5mi; elevations from 30ft to 5,000ft.</div>
+          <div class="category-chips">
+            <span class="cat-chip">Peaks</span>
+            <span class="cat-chip">Redwoods</span>
+            <span class="cat-chip">Waterfalls</span>
+            <span class="cat-chip">Wildflowers</span>
+          </div>
+          <div class="section-links">
+            <a href="s1-nature.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">02</div>
+        <div class="section-body">
+          <div class="section-title">WATER &mdash; Lakes, <em>Creeks</em>, Coastline &amp; Beach Walks <span class="status done">done</span></div>
+          <div class="section-desc">26 trails: 8 lake loops (Lake Chabot to Nicasio), 5 creek trails (Cataract Falls to Tamalpais Creek), 8 coastal routes (Tennessee Valley to Alamere Falls), 5 beach walks (Stinson to Pescadero). Marin, Peninsula, and East Bay coverage.</div>
+          <div class="category-chips">
+            <span class="cat-chip">Lakes</span>
+            <span class="cat-chip">Creeks</span>
+            <span class="cat-chip">Coastline</span>
+            <span class="cat-chip">Beach Walks</span>
+          </div>
+          <div class="section-links">
+            <a href="s2-water.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">03</div>
+        <div class="section-body">
+          <div class="section-title">VIEWS &mdash; Ocean Views, <em>Bay Views</em> &amp; Green Hills <span class="status done">done</span></div>
+          <div class="section-desc">17 trails: 5 ocean vista trails (Sweeney Ridge to Matt Davis), 6 bay viewpoints (Ring Mountain to Batteries to Bluffs), 6 green hill routes (Briones to Pleasanton Ridge). East Bay rolling grasslands and Marin coastal headlands.</div>
+          <div class="category-chips">
+            <span class="cat-chip">Ocean Views</span>
+            <span class="cat-chip">Bay Views</span>
+            <span class="cat-chip">Green Hills</span>
+          </div>
+          <div class="section-links">
+            <a href="s3-views.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">04</div>
+        <div class="section-body">
+          <div class="section-title">ADVENTURE &mdash; Caves, <em>Full Moon</em>, River Crossings, Ropes &amp; Swings <span class="status done">done</span></div>
+          <div class="section-desc">17 trails: 3 Pinnacles cave systems (Bear Gulch, Balconies, High Peaks), 3 full moon hikes (Mt Tam moonlight, Lands End, Point Reyes), 3 river crossing routes (Ohlone Trail to Sunol), 4 climbing areas (Castle Rock to Mt Tam), 4 rope swings (Billy Goat Hill to Lands End).</div>
+          <div class="category-chips">
+            <span class="cat-chip">Caves</span>
+            <span class="cat-chip">Full Moon</span>
+            <span class="cat-chip">River Crossings</span>
+            <span class="cat-chip">Ropes</span>
+            <span class="cat-chip">Swings</span>
+          </div>
+          <div class="section-links">
+            <a href="s4-adventure.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">05</div>
+        <div class="section-body">
+          <div class="section-title">SPECIAL &mdash; Lighthouses, <em>Monasteries</em>, Islands, Wildlife &amp; Bridges <span class="status done">done</span></div>
+          <div class="section-desc">18 trails: 4 lighthouses (Point Reyes to Pigeon Point), 3 Buddhist centers (Green Gulch to Land of Medicine Buddha), 3 Angel Island routes, 5 wildlife viewing spots (tule elk, elephant seals, raptors, whales), 3 walkable bridges (Golden Gate to Bay Bridge East Span).</div>
+          <div class="category-chips">
+            <span class="cat-chip">Lighthouses</span>
+            <span class="cat-chip">Monasteries</span>
+            <span class="cat-chip">Islands</span>
+            <span class="cat-chip">Wildlife</span>
+            <span class="cat-chip">Bridges</span>
+          </div>
+          <div class="section-links">
+            <a href="s5-special.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Project <em>Methodology</em></div>
+          <div class="section-desc">Complete research methodology: source collection process, reading strategy, data verification, coverage statistics, geographic distribution, and explicit limitations.</div>
+          <div class="section-links">
+            <a href=".project/methodology.md">Methodology &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      A companion resource to <a href="https://gurmeet.net/hiking/">gurmeet.net/hiking</a><br>
+      Research methodology inspired by the <a href="../ai/agentic-lm-survey/">Agentic LLMs in the Wild survey</a><br>
+      Trail data compiled from NPS, California State Parks, AllTrails, East Bay Regional Parks, and regional hiking guides
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">◐</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system';
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '◐';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '☀' : '☽';
+    }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'system') state = sys === 'dark' ? 'light' : 'dark';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+})();
+</script>
+</body>
+</html>
