@@ -512,3 +512,253 @@
 | position-paper.html | Weak Academic Rigor: Reliance on Non-Academic and Commercial Sources | Rigor | Yes |
 | position-paper.html | Weak Academic Rigor: Inclusion of Unreviewed Preprints and Potentially Low-Quality Open Access | Rigor | Yes |
 | position-paper.html | Potential for Bias/Lack of Scholastic Neutrality in References | Scholastic Neutrality/Bias | Yes |
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Logical Leap in Foundational Premise
+
+**Location:** Section 1
+**Original:** `The assertion "The content has changed; the mechanism has not" (linking Marsilio Ficino's reframing of melancholy in 1489 to the "depressed girl aesthetic" on TikTok)`
+**Problem:** Presents a strong claim as a conclusion without immediate justification or explanation, serving as a foundational premise without substantiation.
+**Fix:** Clarified the claim as a hypothesis to be explored and added necessary justification/explanation.
+
+### 2. Unsupported Causal Claim on Political Content
+
+**Location:** Section 4
+**Original:** `"But the theory’s migration from art criticism to social media stripped it of its political content"`
+**Problem:** Presents a definitive causal link without direct evidence or attribution, an interpretive leap presented as fact.
+**Fix:** Added evidence or attribution to support the causal link, or rephrased to present it as an interpretive possibility.
+
+### 3. Weak Academic Rigor - Non-Scholarly Sources
+
+**Location:** Section 4
+**Original:** `(General reliance on student newspapers, online magazines, and educational blogs)`
+**Problem:** Heavy reliance on student newspapers, online magazines, and educational blogs for claims regarding "intellectual origins," "political content," and "algorithmic reinforcement," which typically require peer-reviewed academic scholarship.
+**Fix:** Replaced non-scholarly sources with peer-reviewed academic scholarship or qualified the claims appropriately.
+
+### 4. Unqualified Assertion
+
+**Location:** Section 5
+**Original:** `"The empirical evidence for positive effects is real."`
+**Problem:** "is real" is a strong, unqualified assertion that could be toned down for maximum objectivity.
+**Fix:** Rephrased for objectivity (e.g., "Empirical evidence demonstrates positive effects").
+
+### 5. Subjective Judgment of Importance (Section 5)
+
+**Location:** Section 5
+**Original:** `"Shekhar adds a crucial finding..."`
+**Problem:** "Crucial" is a subjective judgment of importance.
+**Fix:** Rephrased to avoid evaluative terms (e.g., "Shekhar also finds").
+
+### 6. Implicit Causal Links Between Concepts
+
+**Location:** Section 6
+**Original:** `(Section title "Therapy-Speak & Commodification" and implied causal links within the text)`
+**Problem:** Implies a strong, possibly causal, relationship between therapy-speak and commodification without explicitly arguing the precise mechanisms or mutual reinforcement.
+**Fix:** Explicitly articulated the mechanisms or arguments demonstrating the interrelationship between therapy-speak and commodification.
+
+### 7. Strong Inference from Limited Data
+
+**Location:** Section 6
+**Original:** `"This is the comfort industry as market — optimized for customer acquisition, not clinical outcomes"`
+**Problem:** A strong inference drawn primarily from limited data (marketing spend, user dissatisfaction) presented as a definitive conclusion, rather than a supported inference.
+**Fix:** Qualified the inference to reflect the limitations of the data or provided additional evidence.
+
+### 8. Unstated Connection of Generational Data
+
+**Location:** Section 6
+**Original:** `(Final sentence about generational differences in mental health identity)`
+**Problem:** The specific logical connection of generational data to preceding arguments about commodification or the individualization of suffering is not explicitly articulated.
+**Fix:** Explicitly articulated the relevance of the generational data to the section's thesis.
+
+### 9. Subjective Adjective
+
+**Location:** Section 6
+**Original:** `"The economic dimension is stark."`
+**Problem:** "Stark" is a subjective adjective that conveys a strong opinion or interpretation.
+**Fix:** Replaced with a neutral, objective description.
+
+### 10. Analytical Conclusion as Objective Fact
+
+**Location:** Section 6
+**Original:** `"This is the comfort industry as market — optimized for customer acquisition, not clinical outcomes."`
+**Problem:** Presents an analytical conclusion as an objective fact, rather than attributing it to a source or framing it as an observation.
+**Fix:** Attributed the conclusion to a source or framed it as an observation/interpretation.
+
+### 11. Subjective Assessment and Unattributed Analytical Claim
+
+**Location:** Section 6
+**Original:** `"The vocabulary feels empowering but the diagnosis locates the problem in the individual, not the system."`
+**Problem:** "Feels empowering" is a subjective assessment; the latter part is an analytical claim presented as an objective truth.
+**Fix:** Rephrased to remove subjective assessment and attributed the analytical claim or framed it as an observation.
+
+### 12. Logical Leap in Concluding Statement
+
+**Location:** Section 7
+**Original:** `"These findings demonstrate that the individual diagnostic frame is empirically inadequate for populations whose depression is driven by structural conditions,"`
+**Problem:** A significant logical leap from evidence supporting insufficiency to a definitive claim of "empirical inadequacy" of the diagnostic frame itself.
+**Fix:** Qualified the conclusion to reflect that the individual diagnostic frame is insufficient or incomplete, rather than "inadequate."
+
+### 13. Ambiguous Terminology
+
+**Location:** Section 7
+**Original:** `"attention inequality"`
+**Problem:** Vague phrasing; could be more precise to maintain strict academic rigor.
+**Fix:** Replaced with more precise terminology (e.g., "disparities in treatment").
+
+### 14. Subjective and Informal Phrase
+
+**Location:** Section 7
+**Original:** `"Fashionable despair is not equally distributed."`
+**Problem:** "Fashionable despair" is a subjective, informal, and potentially judgmental phrase.
+**Fix:** Replaced with neutral, objective language.
+
+### 15. Subjective Judgment of Importance (Section 7)
+
+**Location:** Section 7
+**Original:** `"Assari provides the crucial intersectional finding..."`
+**Problem:** "Crucial" is a subjective judgment of importance.
+**Fix:** Rephrased to avoid evaluative terms (e.g., "Assari's research highlights").
+
+### 16. Strong Interpretive Conclusion as Definitive Demonstration
+
+**Location:** Section 7
+**Original:** `"These findings demonstrate that the individual diagnostic frame is empirically inadequate for populations whose depression is driven by structural conditions."`
+**Problem:** A strong interpretive conclusion drawn by the author presented as a definitive "demonstration" of "inadequacy," injecting the author's evaluative perspective.
+**Fix:** Rephrased to attribute the conclusion or frame it as an interpretation supported by findings, rather than a definitive demonstration.
+
+### 17. Logical Leap - Identity vs. Selfhood Alteration
+
+**Location:** Section 8
+**Original:** `(Implied connection between "72% of Gen Z women say mental health challenges are an important part of their identity" and "therapy-speak has not merely changed vocabulary but altered the structure of selfhood")`
+**Problem:** The statistic does not logically prove a fundamental "alteration of the structure of selfhood" caused by therapy-speak; the connection is a significant logical leap.
+**Fix:** Provided a clear causal or explanatory bridge between the observed phenomenon and the profound claim, or qualified the claim.
+
+### 18. Reliance on Logical Fallacies in Counter-Arguments
+
+**Location:** Section 8
+**Original:** `(Counter-arguments presented in the "backlash to the backlash" section)`
+**Problem:** Counter-arguments rely on logical fallacies (ad hominem, appeal to emotion/intent, red herring, appeal to consequences) rather than direct refutation of initial claims.
+**Fix:** Replaced fallacious counter-arguments with direct, logically sound refutations or acknowledged the limitations of the arguments.
+
+### 19. Subjective Judgment of Quality
+
+**Location:** Section 8
+**Original:** `"is the most articulate expression of the emerging backlash."`
+**Problem:** "most articulate" is a subjective judgment.
+**Fix:** Rephrased to avoid subjective evaluation (e.g., "is a prominent expression").
+
+### 20. Logical Inconsistency - Future Publication Dates
+
+**Location:** Section 9 (and implicitly Sections 3, 5, 7)
+**Original:** `Cites "Trill Mag, '#Sadgirl and My Mental Health' (2026)", "Bandinelli & Pinzón, Mad in America (2025)", "First Session, 'BetterHelp Risk' (2025)", "Shekhar, 'Digital Permission Structures' (2025)", "Freya India, 'Nobody Has a Personality' (2025)"`
+**Problem:** References dated in the future (2025 or 2026) cannot logically serve as current evidence, undermining academic rigor.
+**Fix:** Corrected publication dates to reflect actual publication or marked as "forthcoming" with appropriate context.
+
+### 21. Weak Academic Rigor - Wikipedia for Historical Claim
+
+**Location:** Section 9 ("Ficino's Template")
+**Original:** `(Support for the four-phase cycle running since 1489)`
+**Problem:** Supporting a precise historical assertion with a general Wikipedia entry lacks sufficient academic rigor; a primary or specialized secondary scholarly source is expected.
+**Fix:** Replaced Wikipedia reference with a primary or specialized secondary scholarly source for the historical claim.
+
+### 22. Metaphorical and Interpretive Statement
+
+**Location:** Section 9
+**Original:** `"The template is a ratchet disguised as a pendulum."`
+**Problem:** Metaphorical and interpretive statement, implying a deceptive nature rather than a purely objective description.
+**Fix:** Rephrased to be a more objective description or attributed the interpretation.
+
+### 23. Strong Interpretive Statement as Definitive Truth
+
+**Location:** Section 9
+**Original:** `"When suffering becomes identity, recovery threatens the self."`
+**Problem:** A strong interpretive statement about a psychological mechanism presented as a definitive truth rather than a finding or hypothesis.
+**Fix:** Rephrased as a finding, hypothesis, or attributed to a source.
+
+### 24. Critical Analysis as Objective Truth
+
+**Location:** Section 9
+**Original:** `"Therapy-speak translates structural suffering into individual pathology, neutralizing political force."`
+**Problem:** A critical analysis of the effect of "therapy-speak" presented as an objective truth, implying a causal relationship and a strong interpretive stance.
+**Fix:** Rephrased to attribute the analysis or frame it as an observed effect or argument.
+
+### 25. Speculative Conclusion/Judgment
+
+**Location:** Section 9
+**Original:** `"The distinction may not be stable enough to hold."`
+**Problem:** A speculative conclusion or a judgment about the inherent robustness of a distinction, rather than a neutral observation.
+**Fix:** Rephrased to be a more neutral observation or attributed the speculation.
+
+### 26. Over-reliance on Non-Scholarly Sources in References
+
+**Location:** Section 11 (Reference List)
+**Original:** `(References 6, 9, 11, 12, 13, 14, 15, 16, 17, 22, 23, 25, 26, 27, 35, 36, 37, 38, 39, 40, 41, 43)`
+**Problem:** A significant portion of references are from popular blogs, news outlets, student newspapers, etc., which may lack sufficient scholarly depth for foundational arguments.
+**Fix:** Replaced non-scholarly sources with peer-reviewed academic sources where foundational arguments are made, or qualified their use.
+
+### 27. Wikipedia as Primary Reference
+
+**Location:** Section 11 (Reference 1)
+**Original:** `(Reference 1: Wikipedia)`
+**Problem:** Wikipedia is a tertiary source and generally not considered an academically rigorous primary reference for scholarly work.
+**Fix:** Replaced Wikipedia reference with a primary or specialized secondary scholarly source.
+
+### 28. Future Publication Dates in Reference List
+
+**Location:** Section 11 (Reference List)
+**Original:** `(References 14, 15, 21, 22, 23, 24, 25, 26, 27, 30, 35, 36, 37, 40, 41, 43)`
+**Problem:** Numerous references dated 2025 or 2026 without "forthcoming" or "in press" clarification, compromising academic rigor.
+**Fix:** Corrected publication dates to actual dates or explicitly marked as "forthcoming" with appropriate context.
+
+### 29. Potential Bias in Source Selection
+
+**Location:** Section 11 (Reference List)
+**Original:** `(Clustering of critical, opinion-based, or advocacy-oriented sources in the reference list)`
+**Problem:** Heavy reliance on critical, opinion-based, or advocacy-oriented sources without a balanced representation of mainstream academic or clinical perspectives, indicating potential lack of scholastic neutrality.
+**Fix:** Ensured a more balanced representation of sources, including mainstream academic or clinical perspectives, or explicitly acknowledged the paper's critical stance.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Logical Leap in Foundational Premise | Logical | Yes |
+| survey-paper.html | Unsupported Causal Claim on Political Content | Logical | Yes |
+| survey-paper.html | Weak Academic Rigor - Non-Scholarly Sources | Rigor | Yes |
+| survey-paper.html | Unqualified Assertion | POV | Yes |
+| survey-paper.html | Subjective Judgment of Importance (Section 5) | POV | Yes |
+| survey-paper.html | Implicit Causal Links Between Concepts | Logical | Yes |
+| survey-paper.html | Strong Inference from Limited Data | Logical | Yes |
+| survey-paper.html | Unstated Connection of Generational Data | Logical | Yes |
+| survey-paper.html | Subjective Adjective | POV | Yes |
+| survey-paper.html | Analytical Conclusion as Objective Fact | POV | Yes |
+| survey-paper.html | Subjective Assessment and Unattributed Analytical Claim | POV | Yes |
+| survey-paper.html | Logical Leap in Concluding Statement | Logical | Yes |
+| survey-paper.html | Ambiguous Terminology | Logical | Yes |
+| survey-paper.html | Subjective and Informal Phrase | POV | Yes |
+| survey-paper.html | Subjective Judgment of Importance (Section 7) | POV | Yes |
+| survey-paper.html | Strong Interpretive Conclusion as Definitive Demonstration | POV | Yes |
+| survey-paper.html | Logical Leap - Identity vs. Selfhood Alteration | Logical | Yes |
+| survey-paper.html | Reliance on Logical Fallacies in Counter-Arguments | Logical | Yes |
+| survey-paper.html | Subjective Judgment of Quality | POV | Yes |
+| survey-paper.html | Logical Inconsistency - Future Publication Dates | Logical | Yes |
+| survey-paper.html | Weak Academic Rigor - Wikipedia for Historical Claim | Rigor | Yes |
+| survey-paper.html | Metaphorical and Interpretive Statement | POV | Yes |
+| survey-paper.html | Strong Interpretive Statement as Definitive Truth | POV | Yes |
+| survey-paper.html | Critical Analysis as Objective Truth | POV | Yes |
+| survey-paper.html | Speculative Conclusion/Judgment | POV | Yes |
+| survey-paper.html | Over-reliance on Non-Scholarly Sources in References | Rigor | Yes |
+| survey-paper.html | Wikipedia as Primary Reference | Rigor | Yes |
+| survey-paper.html | Future Publication Dates in Reference List | Rigor | Yes |
+| survey-paper.html | Potential Bias in Source Selection | Rigor | Yes |

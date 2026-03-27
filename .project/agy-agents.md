@@ -28,3 +28,4 @@
 - [✓] `c:\Users\nafsa\src\read-rd\craft\constructed-languages\survey-paper.html`: Success
 - [✓] `c:\Users\nafsa\src\read-rd\cog-sci\sleep-and-dreams\survey-paper.html`: Success
 - [✓] `c:\Users\nafsa\src\read-rd\ai\genai-2026-outlook\scenarios-paper.html`: Success
+- [✓] `c:\Users\nafsa\src\read-rd\cog-sci\fashionable-despair\survey-paper.html`: Success
