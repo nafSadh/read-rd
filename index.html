@@ -37,6 +37,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .head h1{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:500;color:var(--bright);letter-spacing:.5px}
 .head h1 em{font-style:italic;color:var(--accent);font-weight:400}
 .head-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:4px 10px;border:1px solid var(--border);transition:all .2s}
+.nav-link:hover{color:var(--accent);border-color:var(--accent)}
+.nav-bold{color:var(--bright);font-weight:600;border-color:var(--border-hi)}
 .head-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);width:40%;opacity:.5;margin-top:8px}
 .ctrl-row{display:flex;gap:0}
 .ctrl-btn{width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--dim);background:transparent;border:1px solid var(--border);transition:color .2s,background .2s}
@@ -92,15 +95,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         <button class="ctrl-btn" onclick="toggleTheme()" id="theme-btn"></button>
       </div>
     </div>
-    <div style="font-family:'Jost',sans-serif;font-size:13px;color:var(--dim);letter-spacing:0.3px">read, research, dive deep</div>
-    <div style="display:flex;align-items:baseline;gap:12px;margin-top:2px">
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.5px"><a href="https://read.sadh.app" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a></span>
-      <span class="head-meta" id="stats" style="margin:0"></span>
-    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:0.5px"><a href="https://read.sadh.app" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a><span style="margin:0 6px">—</span><span style="font-family:'Jost',sans-serif;font-size:13px;letter-spacing:0.3px">read, research, dive deep</span></div>
     <div class="head-rule"></div>
-    <div style="display:flex;gap:12px;margin-top:10px">
-      <a href="pages-with-images.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:4px 10px;border:1px solid var(--border);transition:all .2s">37 Images</a>
-      <a href="narrated-pages.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:4px 10px;border:1px solid var(--border);transition:all .2s">19 Narrations</a>
+    <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
+      <a href="courses/scpd.html" class="nav-link nav-bold">Courses</a>
+      <a href="digests/index.html" class="nav-link nav-bold">Digests</a>
+      <a href="pages-with-images.html" class="nav-link">37 Images</a>
+      <a href="narrated-pages.html" class="nav-link">19 Narrations</a>
     </div>
   </div>
   <div class="tree" id="tree"></div>
@@ -111,53 +112,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 const chev = `<svg class="dir-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 3 9 7 5 11"/></svg>`;
 
 const dirs = [
-  { name:'courses', icon:'🎓', label:'Courses', children:[
-    {t:'SCPD Study Hub',f:'courses/scpd.html',fmt:'app'},
-    { name:'scpd-ml', icon:'🧠', label:'XCS229 · Machine Learning', children:[
-      {t:'Course Overview',f:'courses/scpd-ml/xcs229.dd.html',fmt:'dd'},
-      {t:'Linear Algebra',f:'courses/scpd-ml/linear-algebra.dd.html',fmt:'dd'},
-      {t:'Linear Regression',f:'courses/scpd-ml/linear-regression.dd.html',fmt:'dd'},
-      {t:'Logistic Regression',f:'courses/scpd-ml/logistic-regression.dd.html',fmt:'dd'},
-      {t:'GLM',f:'courses/scpd-ml/glm.dd.html',fmt:'dd'},
-      {t:'Generative Algorithms',f:'courses/scpd-ml/generative-algorithms.dd.html',fmt:'dd'},
-      {t:'SVMs & Kernels',f:'courses/scpd-ml/svm-kernels.dd.html',fmt:'dd'},
-      {t:'Decision Trees & Ensembles',f:'courses/scpd-ml/decision-trees-ensemble.dd.html',fmt:'dd'},
-      {t:'Neural Networks',f:'courses/scpd-ml/neural-networks.dd.html',fmt:'dd'},
-      {t:'Unsupervised Learning',f:'courses/scpd-ml/unsupervised.dd.html',fmt:'dd'},
-      {t:'PCA & ICA',f:'courses/scpd-ml/pca-ica.dd.html',fmt:'dd'},
-      {t:'Bias-Variance & Regularization',f:'courses/scpd-ml/bias-variance.dd.html',fmt:'dd'},
-      {t:'Reinforcement Learning',f:'courses/scpd-ml/reinforcement-learning.dd.html',fmt:'dd'},
-      {t:'Kernel Methods',f:'courses/scpd-ml/kernel-methods.dd.html',fmt:'dd'},
-      {t:'Autoencoders',f:'courses/scpd-ml/autoencoders.dd.html',fmt:'dd'},
-      {t:'CNNs & RNNs',f:'courses/scpd-ml/cnn-rnn.slides.html',fmt:'slides'},
-      {t:'Transformers',f:'courses/scpd-ml/transformers.slides.html',fmt:'slides'},
-      {t:'KV Cache',f:'courses/scpd-ml/kv-cache.dd.html',fmt:'dd'},
-      {t:'KV Cache Guide',f:'courses/scpd-ml/kv-cache.guide.html',fmt:'guide'},
-      {t:'KV Cache Slides',f:'courses/scpd-ml/kv-cache.slides.html',fmt:'slides'},
-      {t:'Problem Sets Overview',f:'courses/scpd-ml/problem-sets.dd.html',fmt:'dd'},
-      {t:'PS1 (25 pts)',f:'courses/scpd-ml/ps1.dd.html',fmt:'dd'},
-      {t:'PS2 (35 pts)',f:'courses/scpd-ml/ps2.dd.html',fmt:'dd'},
-      {t:'PS3 (35 pts)',f:'courses/scpd-ml/ps3.dd.html',fmt:'dd'},
-      {t:'PS4 (50 pts)',f:'courses/scpd-ml/ps4.dd.html',fmt:'dd'},
-      {t:'PS5 (55 pts)',f:'courses/scpd-ml/ps5.dd.html',fmt:'dd'},
-    ]},
-    { name:'scpd-deep-gen-ai', icon:'🎨', label:'XCS236 · Deep Generative AI', children:[
-      {t:'Course Overview',f:'courses/scpd-deep-gen-ai/xcs236.dd.html',fmt:'dd'},
-      {t:'Intro to Generative Models',f:'courses/scpd-deep-gen-ai/intro.dd.html',fmt:'dd'},
-      {t:'Autoregressive Models',f:'courses/scpd-deep-gen-ai/autoregressive.dd.html',fmt:'dd'},
-      {t:'MLE & Latent Variables',f:'courses/scpd-deep-gen-ai/mle-latent.dd.html',fmt:'dd'},
-      {t:'Variational Autoencoders',f:'courses/scpd-deep-gen-ai/vae.dd.html',fmt:'dd'},
-      {t:'Normalizing Flows',f:'courses/scpd-deep-gen-ai/normalizing-flows.dd.html',fmt:'dd'},
-      {t:'GANs',f:'courses/scpd-deep-gen-ai/gan.dd.html',fmt:'dd'},
-      {t:'Energy-Based Models',f:'courses/scpd-deep-gen-ai/ebm.dd.html',fmt:'dd'},
-      {t:'Score-Based Models',f:'courses/scpd-deep-gen-ai/score-based.dd.html',fmt:'dd'},
-      {t:'Diffusion Models',f:'courses/scpd-deep-gen-ai/diffusion.dd.html',fmt:'dd'},
-      {t:'Evaluation',f:'courses/scpd-deep-gen-ai/evaluation.dd.html',fmt:'dd'},
-      {t:'PS1 (40 pts)',f:'courses/scpd-deep-gen-ai/ps1.dd.html',fmt:'dd'},
-      {t:'PS2 (80 pts)',f:'courses/scpd-deep-gen-ai/ps2.dd.html',fmt:'dd'},
-      {t:'PS3 (80 pts)',f:'courses/scpd-deep-gen-ai/ps3.dd.html',fmt:'dd'},
-    ]},
-  ]},
   { name:'ai', icon:'🤖', label:'AI Research', children:[
     {t:'Agentic LLM Survey',f:'ai/agentic-lm-survey/index.html',fmt:'app'},
     {t:'GenAI 2026 Outlook',f:'ai/genai-2026-outlook/index.html',fmt:'app'},
@@ -216,9 +170,6 @@ const dirs = [
   { name:'hiking', icon:'🥾', label:'Hiking', children:[
     {t:'Bay Area Trails',f:'hiking/bay-area/index.html',fmt:'app'},
   ]},
-  { name:'digests', icon:'📰', label:'AI Research Digests', children:[
-    {t:'Digest Reader',f:'digests/index.html',fmt:'app'},
-  ]},
 ];
 
 function countFiles(n){if(n.f!==undefined)return n.planned?0:1;let c=0;(n.children||[]).forEach(x=>c+=countFiles(x));return c}
@@ -267,16 +218,6 @@ function toggleTheme() {
   try{const s=localStorage.getItem('rd-theme');if(s)document.documentElement.setAttribute('data-theme',s)}catch(e){}
   const tree=document.getElementById('tree');
   buildTree(dirs,tree,0);
-
-  // Default: collapse course subdirs
-  document.querySelectorAll('.dir').forEach(d=>{
-    const nm=d.dataset.name;
-    if(nm==='scpd-ml'||nm==='scpd-deep-gen-ai') d.classList.add('collapsed');
-  });
-
-  let tf=0,tp=0;
-  dirs.forEach(d=>{tf+=countFiles(d);tp+=countPlanned(d)});
-  document.getElementById('stats').textContent=`${tf} files · ${dirs.length} sections`+(tp>0?` · ${tp} planned`:'');
 
   const fmts={};
   function cf(ns){ns.forEach(n=>{if(n.children)cf(n.children);else if(n.fmt&&!n.planned)fmts[n.fmt]=(fmts[n.fmt]||0)+1})}
