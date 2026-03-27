@@ -192,3 +192,39 @@
 | survey-paper.html | Methodological Weakness: Reliance on Non-Academic Sources | Methodological Weakness | Yes |
 | survey-paper.html | Weak Academic Rigor in Source Selection and Inconsistent Quality | Weak Academic Rigor | Yes |
 | survey-paper.html | Logical Anomaly: Future-Dated Reference | Logical Anomaly | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Reviewer:** Claude (claude-sonnet-4-6)
+**File reviewed:** survey-paper.html
+
+### Assessment of Prior State
+
+At the time of this pass, the HTML had already undergone a substantial prior edit that addressed the majority of the 22 issues flagged in this review. All quoted "original" problem phrases (e.g., "destroyed," "killed by a founder," "communities beat grammars, every time," "most valuable findings are not within," "intuited," "imprisoning it," "right as art," "Both are right," "confirms this from the opposite direction," "particularly instructive," "Brainfuck...valid expressions...art," "same creative impulse") were absent from the file.
+
+### Changes Made in This Pass
+
+**1. Definitive claim qualified (Issue 14 — partial residue)**
+- **Location:** Section 01, second paragraph (line 72)
+- **Before:** `"The tension is not resolvable &mdash; different purposes demand different ownership models."`
+- **After:** `"This tension may not admit a universal resolution &mdash; different purposes appear to demand different ownership models."`
+- **Reason:** "Is not resolvable" is a definitive assertion; the revised phrasing presents the same point as an observation rather than a universal fact.
+
+**2. Reference list mismatch corrected (related to Issue 1 cleanup)**
+- **Location:** Section 09 (References), entries [5] and [6]
+- **Before:** `[5]` = Nicaraguan Sign Language, `[6]` = Brainfuck
+- **After:** `[5]` = Brainfuck, `[6]` = Nicaraguan Sign Language
+- **Reason:** The abstract inline citation `[5]` links to the Brainfuck Wikipedia URL (matching the fix for Issue 1, which removed NSL from the abstract). The reference list had the two entries swapped, creating a mismatch. NSL is correctly cited as `[12]` elsewhere via the PNAS source.
+
+### Issues Skipped (with Reasons)
+
+**Issue 20 (Methodological Weakness — Wikipedia reliance):** The Methods/Limitations section already explicitly acknowledges this as a limitation ("While efforts were made to cross-reference information with academic sources, this approach may introduce a potential for superficiality..."). Replacing the actual reference sources would require sourcing decisions beyond the scope of a prose fix.
+
+**Issue 21 (Non-academic references):** Similarly acknowledged in the Limitations section. Replacing individual Wikipedia references with peer-reviewed alternatives is a research task, not an editorial fix.
+
+**Issue 22 (Future-dated reference [25]):** Reference [25] is the Brooker 2025 blog post. As of the document date (2026-03-27), 2025 is in the past — this is no longer a logical anomaly and requires no change.
+
+**Issues 1–19 (all):** Already resolved in a prior edit pass. The problematic original phrases are not present in the current file.

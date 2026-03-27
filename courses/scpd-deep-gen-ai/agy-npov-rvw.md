@@ -147,3 +147,42 @@ No logical issues found.
 No subjective POV found.
 
 ---
+
+## Claude Fix Pass
+
+**File reviewed:** `gan.dd.html`
+**Date:** 2026-03-27
+
+All issues flagged in the two review passes above were already resolved in the current state of `gan.dd.html` prior to this pass. A prior edit pass had already addressed them. The findings per issue:
+
+### Pass 1 Fixes — Already Applied
+
+| Section | Issue | Status |
+|---------|-------|--------|
+| S1 POV | "elegantly formulates unsupervised learning as a competition" | Already fixed — "elegantly" was removed; text now reads "The framework formulates unsupervised learning as a competition." |
+| S2 Logic | "minimax formulation ensures convergence" overstates practical guarantee | Already fixed — text now explicitly states the formulation "defines a theoretical global optimum" and adds "however, practical optimization with gradient-based methods does not guarantee convergence to this point and often faces challenges such as mode collapse and training instability." |
+
+### Pass 2 Fixes — Already Applied
+
+| Section | Issue | Status |
+|---------|-------|--------|
+| S1 POV | "The min-max formulation is elegant" | Already fixed — now reads "The min-max formulation describes a system..." |
+| S1 POV | "hidden strength of GANs" | Already fixed — now reads "a significant characteristic of GANs." |
+| S2 POV | "This theoretical result is profound" | Already fixed — now reads "This theoretical result defines the 'ground truth' discriminator..." |
+| S3 POV | "most notorious failure mode" | Already fixed — now reads "a significant and frequently discussed failure mode." |
+| S3 POV | "from the perspective of learning, it is catastrophic" | Already fixed — now reads "it represents a severe limitation in achieving the learning objective of modeling the full data distribution." |
+| S3 POV | "notoriously sensitive to hyperparameters" | Already fixed — now reads "GANs exhibit high sensitivity to hyperparameters." |
+| S4 POV | "crude but effective", "superior alternative", "minimal computational overhead", "proper learning rate scheduling", "noticeably more stable", "more aggressive training", "practical improvements" | Already fixed — WGAN section (lines 459–464) uses neutral language: "straightforward", "alternative method", "limited computational overhead", "appropriate learning rate scheduling", "greater stability", "increased training frequency". |
+| S6 POV | "unprecedented control" | Already fixed — now reads "enable a high degree of control." |
+| S6 POV | "seemingly minor choices" | Already fixed — now reads "These architectural innovations accumulate to substantial improvements in quality and stability." |
+| S7 POV | "we evaluate two separate aspects", "beautiful samples", "conceptually clean", "highly interpretable", "valuable" | Already fixed — none of these phrases appear in the current file. |
+| S8 POV | "surprisingly common", "feature...and a...bug", "remarkably high-quality", "good enough" / "fool humans" | Already fixed — none of these phrases appear in the current file; S8 text is neutral throughout. |
+
+### No Changes Made in This Pass
+
+All flagged items had been addressed before this pass. No edits to `gan.dd.html` were required.
+
+### Items Skipped (Not in Scope)
+
+- Two uses of "profoundly" remain in `gan.dd.html` (lines 373, 436: "profoundly affect training dynamics") — these were not flagged in the review notes and describe a widely accepted technical observation, so they were left unchanged.
+- "superior convergence and quality" (line 504, Progressive GANs section) — not explicitly flagged in the review notes; left unchanged.

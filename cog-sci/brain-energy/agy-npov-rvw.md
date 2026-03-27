@@ -312,3 +312,54 @@
 | tensions-paper.html | Intermingling of source types in reference list | Structural | Yes |
 | tensions-paper.html | Qualitative judgment in reference description | POV | Yes |
 | tensions-paper.html | Evaluative terms in reference description | POV | Yes |
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Reviewer:** Claude (claude-sonnet-4-6)
+**File reviewed:** tensions-paper.html
+
+### Status of Antigravity-flagged issues (issues 1–37)
+
+When this pass began, the file had already been substantially revised by a prior editing pass. Issues 1–32 (all POV and logical issues) and issues 33–34, 36–37 (reference list POV/structural issues) were already resolved in the existing HTML. The following changes were still needed:
+
+### Changes Made
+
+**Issue 26 residual — "well-replicated" and "top-tier journals" (Section 1, line 180)**
+- Original: `"These are not preliminary observations -- they are well-replicated molecular findings published in top-tier journals."`
+- Problem: "well-replicated" and "top-tier" are evaluative descriptors not directly attributed to a source.
+- Fixed to: `"These findings have been consistently replicated across independent laboratories and published in high-impact peer-reviewed journals."`
+
+**Issue 1/26 residual — "The clinical side is thinner" (Section 1, line 181)**
+- Original: `"The clinical side is thinner."`
+- Problem: "thinner" is a colloquial subjective comparative implying lesser quality.
+- Fixed to: `"The clinical evidence base is more limited."`
+
+**Issue 25/26 residual — "The biology is not wrong" (Section 1, line 182)**
+- Original: `"The biology is not wrong; the clinical testing has simply not yet caught up."`
+- Problem: "not wrong" is a defensive authorial assertion of correctness; "simply not yet caught up" is an informal framing with a tone of certainty.
+- Fixed to: `"The mechanistic evidence remains intact; clinical testing has not yet reached sufficient scale to draw definitive conclusions."`
+
+**Issue 25 residual — "the clinical case becomes strong" (Section 1, line 183)**
+- Original: `"If they confirm the pilot data, the clinical case becomes strong."`
+- Problem: "becomes strong" is a subjective evaluative judgment.
+- Fixed to: `"If they confirm the pilot data, the clinical evidence base would be substantially strengthened."`
+
+**Issue 21 residual — "dramatic recovery stories" (Section 3, line 199)**
+- Original: `"Popular media amplifies dramatic recovery stories while ignoring non-responders"`
+- Problem: "dramatic" is an evaluative adjective (flagged in issue 21; the abstract instance was previously fixed but this Section 3 instance was missed).
+- Fixed to: `"Popular media amplifies notable recovery stories while giving less attention to non-responders"`
+
+### Items Skipped (with reasons)
+
+**Issue 35 — Intermingling of source types in reference list**
+- Suggested fix: categorize references by type (peer-reviewed, books, news/commentary).
+- Skipped: The current reference list uses a uniform numbered format consistent with how the footnote anchors (`#ref-N`) are wired throughout the document body. Splitting into named categories would require renumbering or restructuring the anchor IDs, which risks breaking footnote links. The references now have neutral descriptions (issues 36–37 were fixed), making the categorization a stylistic enhancement rather than an accuracy fix. Left for a dedicated structural pass if desired.
+
+**"BHB mechanisms go far beyond simple fuel provision" (Section 3, line 198)**
+- This rhetorical construction ("far beyond") could be read as evaluative emphasis, but it serves as a factual transition into the enumerated multi-mechanism list (HDAC inhibition, NLRP3 suppression, BDNF upregulation, epigenetic modification). It is not flagged in the 37 issues. Left as-is.
+
+**"Clinical trials are the only way to bridge that gap" (Section 1, line 182)**
+- This is a strong assertion but reflects standard evidence-hierarchy methodology rather than a POV judgment about the subject matter. Not flagged in the 37 issues. Left as-is.
