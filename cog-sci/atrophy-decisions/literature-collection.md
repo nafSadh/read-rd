@@ -105,6 +105,40 @@
 
 ---
 
+---
+
+## S8: Deliberation as Capacity Consumption — Termination-Condition Model
+
+| ID | Source | Key Data / Claims | Date |
+|----|--------|-------------------|------|
+| S8-01 | Baumeister, R.F. et al. — "Ego Depletion: Is the Active Self a Limited Resource?" (*Journal of Personality and Social Psychology*) | Foundational study: participants who exerted self-control on an initial task made worse choices or gave up sooner on subsequent tasks; choosing itself is depleting. | 1998 |
+| S8-02 | Hagger, M.S. et al. — "Ego Depletion and the Strength Model of Self-Control: A Meta-Analysis" (*Psychological Bulletin*, 136(4), 495–525) | Meta-analysis of 198 studies; ego depletion effects robust across paradigms; deliberation consumes the same resource pool required for subsequent choice quality. | 2010 |
+| S8-03 | Danziger, S., Levav, J., & Avnaim-Pesso, L. — "Extraneous Factors in Judicial Decisions" (*PNAS*, 108(17), 6889–6892) | Parole board judges grant favorable rulings at ~65% immediately after breaks vs. near 0% at session end; capacity depletion forces default (denial). Replication caveat: Weinshall-Margel & Shapard (2011) dispute. | 2011 |
+| S8-04 | Pignatiello, G.A. et al. — "Decision Fatigue: A Conceptual Analysis" (*Journal of Health Psychology*, PMC) | Systematic review: decision quality degrades over decision sequence; shift to status quo / default is primary coping mechanism under depleted capacity. | 2018 |
+| S8-05 | Friese, M. et al. — "Self-Control and Limited Willpower: Current Status of Ego Depletion Theory" (*Current Opinion in Psychology*, ScienceDirect) | 2024 update: replicability debate resolved for stronger manipulations; extends to initiative, planning, and decision timing. | 2024 |
+| S8-06 | Simon, H.A. — "A Behavioral Model of Rational Choice" (*Quarterly Journal of Economics*, 69(1), 99–118) | Satisficing as capacity-bounded stopping rule: search ends when a "good enough" option is found, not when the optimal option is identified. Reframed: satisficing is deliberation terminated by capacity exhaustion, not by conclusion. | 1955 |
+| S8-07 | Steel, P. — "The Nature of Procrastination: A Meta-Analytic and Theoretical Review" (*Psychological Bulletin*, 133(1), 65–94) | Meta-analysis: procrastination is quintessential self-regulatory failure; task aversiveness depletes self-control; deferred decisions do not improve by waiting — capacity floor is simply displaced temporally. | 2007 |
+| S8-08 | Sirois, F.M. — "Procrastination and the Priority of Short-Term Mood Regulation: Consequences for Future Self" (*Social and Personality Psychology Compass*, 7(2), 115–127) | Procrastination functions via capacity offloading to the future self; but the future self inherits the same (often more depleted) capacity floor, compounding the termination problem. | 2013 |
+
+---
+
+## S9: Incubation, Expert Pre-Commitment, and Sleep Restoration
+
+| ID | Source | Key Data / Claims | Date |
+|----|--------|-------------------|------|
+| S9-01 | Dijksterhuis, A. & Nordgren, L.F. — "A Theory of Unconscious Thought" (*Perspectives on Psychological Science*, 1(2), 95–109) | Unconscious Thought Theory (UTT): unconscious processing (incubation) has high capacity and does not deplete System 2; distracted subjects outperform deliberators on complex multi-attribute choices. Critically contested: replication rates mixed. | 2006 |
+| S9-02 | Dijksterhuis, A. & Strick, M. — "A Case for Thinking Without Consciousness" (*Perspectives on Psychological Science*, 11(1), 117–122) | 2016 update to UTT: incubation integrates information without consuming deliberative capacity; qualitatively distinct from effortful deliberation. | 2016 |
+| S9-03 | PMC — "First Neural Evidence for the Unconscious Thought Process" (PMC3831564) | fMRI evidence that unconscious thought recruits different neural circuits than conscious deliberation; does not engage PFC executive network; consistent with non-depleting processing hypothesis. | 2013 |
+| S9-04 | Klein, G. — "A Recognition-Primed Decision (RPD) Model of Rapid Decision Making" (in *Decision Making in Action: Models and Methods*) | RPD model: experienced decision-makers (firefighters, military commanders) recognize situational patterns and act without comparing options; expertise enables commitment before deliberative capacity is consumed. | 1993 |
+| S9-05 | Frontiers in Psychology — "Naturalistic Decision-Making in Sport: Recognition Primed Decision Model" (*Frontiers in Psychology*, 13:936140) | RPD validated across sport, military, medicine: expert pattern recognition enables pre-atrophy commitment; deliberation is bypassed, not depleted. | 2022 |
+| S9-06 | PMC — "Examining the Effects of Sleep Deprivation on Decision-Making: A Scoping Review" (PMC12189852, MDPI *Behavioral Sciences*) | Scoping review: sleep deprivation impairs deliberative decision quality; sleep restores PFC-mediated executive function; overnight rest = deliberative capacity replenishment. | 2025 |
+| S9-07 | PMC — "The Role of Sleep and the Effects of Sleep Loss on Cognitive, Affective, and Behavioral Processes" (PMC12168795) | Comprehensive review: sleep deprivation reduces top-down regulatory capacity; restoration of mPFC-amygdala inhibitory circuit via REM sleep; "sleeping on it" works because it replenishes the capacity floor. | 2025 |
+| S9-08 | Karmarkar, U.R. — "Should You Sleep on It? The Effects of Overnight Sleep on Subjective Preference-Based Choice" (*Journal of Behavioral Decision Making*, 30(5)) | Overnight sleep increases positive recall of choice sets; decision satisfaction improves; consistent with capacity-restoration interpretation. | 2017 |
+| S9-09 | PMC — "The Online Metacognitive Control of Decisions" (*Communications Psychology*, PMC11332065) | Metacognitive stopping model: evaluation M compares uncertainty reduction value against opportunity cost of prolonged deliberation; wise timing of commitment is a trainable metacognitive skill. | 2024 |
+| S9-10 | PMC — "Decision Paralysis: Recognition and Patient-Centered Discourse" (*Clinical Medicine*, PMC10149428) | Chronic indecision operationalized clinically as commitment circuit failure; prolonged deliberation without commitment degrades the capacity to commit; analysis paralysis is self-reinforcing atrophy of the decision-execution pathway. | 2023 |
+
+---
+
 ## Collection Statistics
 
 | Section | Sources | Adequate? |
@@ -116,4 +150,6 @@
 | S5: Identity Atrophy | 7 | Yes |
 | S6: Biological Substrate | 8 | Yes |
 | S7: Counterpoint / Resilience | 8 | Yes |
-| **Total** | **52** | |
+| S8: Deliberation as Capacity Consumption | 8 | Yes |
+| S9: Incubation, Expert Pre-Commitment, Sleep | 10 | Yes |
+| **Total** | **70** | |
