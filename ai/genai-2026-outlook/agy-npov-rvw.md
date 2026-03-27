@@ -710,3 +710,549 @@
 | scenarios-paper.html | Prescriptive advice with strong negative judgment | POV | Yes |
 | scenarios-paper.html | Lack of full citation details | Logical | Yes |
 | scenarios-paper.html | Inconsistent citation format | Logical | Yes |
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Subjective Judgment in Description
+
+**Location:** Section 2
+**Original:** `"uncertain rationality"`
+**Problem:** This phrase introduces a subjective judgment about the nature of the capital expenditure wave.
+**Fix:** Rephrased to a neutral, descriptive term or attributed to a specific viewpoint.
+
+### 2. Subjective Value Assignment
+
+**Location:** Section 2
+**Original:** `"more importantly"`
+**Problem:** This phrase explicitly assigns subjective value or significance to identifying disagreements over agreements.
+**Fix:** Removed or rephrased to avoid subjective weighting.
+
+### 3. Undefined Terminology
+
+**Location:** Section 3
+**Original:** `"paper-drive methodology"`
+**Problem:** The term is used without definition, hindering clarity and academic rigor.
+**Fix:** Defined the term or replaced it with a more standard, understandable phrase.
+
+### 4. Unverified Claim of Representativeness
+
+**Location:** Section 3
+**Original:** `"with both sides of key debates represented"`
+**Problem:** This claim about source balance lacks sufficient detail or evidence to be logically verified.
+**Fix:** Added methodological detail to demonstrate how representativeness was ensured, or rephrased as an intention rather than a verified outcome.
+
+### 5. Implicit Assumption of Equivalence in Source Types
+
+**Location:** Section 3
+**Original:** (Implicit in source list)
+**Problem:** Diverse source types are presented without explanation of how their varying methodologies or biases were considered.
+**Fix:** Added nuance to the methodology section, explaining how different source types were weighted or analyzed.
+
+### 6. Logical Leap from Conditional to Unconditional Conclusions
+
+**Location:** Section 4
+**Original:** `"If this holds," "Epoch AI projects... Power, not algorithms, *is becoming* the binding constraint"` leading to `"Models *are* commoditizing. The model *is becoming* the least interesting part of the stack"`
+**Problem:** The "Consensus" section presents implications as definitive outcomes without acknowledging underlying conditions or predictions.
+**Fix:** Rephrased the "Consensus" to reflect the conditional nature of the premises or explicitly attributed the definitive statements.
+
+### 7. Strong Extrapolation from Limited Data
+
+**Location:** Section 4
+**Original:** `"models are converging toward indistinguishability"`
+**Problem:** This conclusion is a strong extrapolation from a narrowing 5.4% gap on a single benchmark, potentially overstating certainty.
+**Fix:** Qualified the conclusion with more cautious language (e.g., "suggests strong convergence," "approaching indistinguishability") or provided additional supporting evidence.
+
+### 8. Interpretive Statement Presented as Fact
+
+**Location:** Section 4
+**Original:** `"But the headline metrics obscure a structural shift."`
+**Problem:** Implies a specific interpretation of the data rather than a neutral presentation.
+**Fix:** Rephrased to attribute the interpretation or present it as a hypothesis.
+
+### 9. Definitive Interpretive Conclusion
+
+**Location:** Section 4
+**Original:** `"Power, not algorithms, is becoming the binding constraint."`
+**Problem:** Presented as a definitive statement of fact, but is an interpretive conclusion.
+**Fix:** Attributed the conclusion or rephrased it as an observation or emerging consensus.
+
+### 10. Subjective Judgment on Importance
+
+**Location:** Section 4
+**Original:** `"The efficiency counter-narrative deserves attention:"`
+**Problem:** Subjective judgment on what "deserves attention."
+**Fix:** Rephrased to neutrally introduce the counter-narrative without subjective weighting.
+
+### 11. Subjective, Non-Academic Commentary
+
+**Location:** Section 4
+**Original:** `"The model is becoming the least interesting part of the stack."`
+**Problem:** Highly subjective and non-academic commentary, presented as part of a "Consensus" without attribution.
+**Fix:** Removed or attributed to a specific source/viewpoint.
+
+### 12. Unsupported Assertion / Potential Tension
+
+**Location:** Section 5
+**Original:** `"Image quality has plateaued at the top"`
+**Problem:** Presented as a consensus immediately after citing a significant quality improvement, creating tension without explanation.
+**Fix:** Clarified the context of the plateau or provided evidence to reconcile the apparent contradiction.
+
+### 13. Overgeneralization from Limited Evidence
+
+**Location:** Section 5
+**Original:** `"Copyright, not capability, is the binding constraint for commercial adoption"`
+**Problem:** Extrapolates a single, multi-faceted case (Sora shutdown) to represent *the* binding constraint for *all* commercial adoption.
+**Fix:** Qualified the statement to reflect the specific context of the example or provided broader evidence.
+
+### 14. Rhetorical Superlative Without Attribution
+
+**Location:** Section 5
+**Original:** `"The Sora shutdown on March 24, 2026 is the most significant structural event."`
+**Problem:** "most significant" is a subjective superlative.
+**Fix:** Removed the superlative or attributed it to a specific source.
+
+### 15. Unattributed Performance Metrics
+
+**Location:** Section 6
+**Original:** `"40% median cost reduction, 80% customer service containment, 23% speed-to-market improvement"`
+**Problem:** Specific performance metrics are presented as factual results but lack a direct citation or indication of their source.
+**Fix:** Added citations for all specific performance metrics.
+
+### 16. Asserted Causal Link Without Explicit Evidence
+
+**Location:** Section 6
+**Original:** `"The failure mode is not the LLM — it's the integration layer"`
+**Problem:** A strong causal assertion made without direct evidence to definitively rule out LLM quality as a contributing factor.
+**Fix:** Qualified the assertion, presented it as a hypothesis, or provided explicit evidence to support the singular cause.
+
+### 17. "Consensus" as Authorial Interpretation
+
+**Location:** Section 6
+**Original:** `"Consensus: Integration, not model quality, is the bottleneck"`
+**Problem:** Presented as a consensus, but functions more as the author's conclusion rather than demonstrated broad agreement.
+**Fix:** Attributed the conclusion or rephrased it as an observation or emerging viewpoint.
+
+### 18. Subjective Superlative (Widest Gap)
+
+**Location:** Section 6
+**Original:** `"The agent story is where the gap between hype and reality is widest."`
+**Problem:** Subjective superlative.
+**Fix:** Rephrased to describe the gap without subjective comparison.
+
+### 19. Injected Personal POV/Subjective Language
+
+**Location:** Section 6
+**Original:** `"provides the sobering counterpoint"`
+**Problem:** Injected personal POV/subjective language.
+**Fix:** Rephrased to neutrally introduce the counterpoint.
+
+### 20. Subjective Descriptors
+
+**Location:** Section 6
+**Original:** `"Brittle API connectors"`, `"But the security gap is acute"`
+**Problem:** Subjective descriptors.
+**Fix:** Replaced with neutral, objective descriptions.
+
+### 21. Colloquial and Subjective Judgment
+
+**Location:** Section 6
+**Original:** `"Narrow beats general."`
+**Problem:** Colloquial and subjective judgment.
+**Fix:** Rephrased in formal, academic language.
+
+### 22. Informal, Strong, and Subjective Judgment
+
+**Location:** Section 6
+**Original:** `"Production is nothing like demos."`
+**Problem:** Informal, strong, and subjective judgment.
+**Fix:** Rephrased in formal, academic language, attributing the observation if possible.
+
+### 23. Interpretation Presented as Central Finding
+
+**Location:** Section 7
+**Original:** `"The central finding is a paradox."`
+**Problem:** Presents an interpretation as a central finding.
+**Fix:** Rephrased to state the findings and then describe the paradoxical nature.
+
+### 24. Interpretive Characterization of Data Relationship
+
+**Location:** Section 7
+**Original:** `"Three major enterprise surveys converge:"`
+**Problem:** "Converge" is an interpretation of the relationship between the surveys.
+**Fix:** Rephrased to neutrally describe the consistency or similarity of findings.
+
+### 25. Subjective Descriptor (Enormous Gap)
+
+**Location:** Section 7
+**Original:** `"The gap between "we use AI" and "AI materially improved our business" is enormous."`
+**Problem:** "Enormous" is a subjective descriptor.
+**Fix:** Replaced with a quantitative description or a neutral qualitative term.
+
+### 26. Evaluative and Informal Characterizations
+
+**Location:** Section 7
+**Original:** `"truly reimagining"` and `"bolting AI onto existing processes."`
+**Problem:** Evaluative and somewhat informal characterizations.
+**Fix:** Replaced with neutral, formal descriptions of organizational approaches.
+
+### 27. Subjective Superlatives (Strongest, Most)
+
+**Location:** Section 7
+**Original:** `"Coding is the strongest use case:"`, `"Junior workers benefit most:"`
+**Problem:** Subjective superlatives.
+**Fix:** Rephrased to state the high effectiveness or benefit without subjective comparison.
+
+### 28. Subjective Judgment of Utility
+
+**Location:** Section 7
+**Original:** `"McKinsey's most actionable finding:"`
+**Problem:** "Most actionable" is a subjective judgment of utility.
+**Fix:** Rephrased to neutrally present the finding.
+
+### 29. Definitive Conclusions Presented as Objective Facts
+
+**Location:** Section 7
+**Original:** `"Skills, not technology, are the bottleneck. Leadership commitment is the differentiator."`
+**Problem:** These are definitive conclusions/interpretations presented as objective facts.
+**Fix:** Attributed these conclusions or phrased them more cautiously as findings or interpretations.
+
+### 30. Evocative Language
+
+**Location:** Section 8
+**Original:** `"But underneath the calm surface,"`
+**Problem:** Slightly evocative language.
+**Fix:** Replaced with neutral, academic phrasing.
+
+### 31. Subjective Judgment of Consequence
+
+**Location:** Section 8
+**Original:** `"The Dallas Fed's analysis is the most consequential:"`
+**Problem:** Injected subjective judgment.
+**Fix:** Removed the subjective judgment or attributed it.
+
+### 32. Strong, Non-Attributed Interpretation/Prediction
+
+**Location:** Section 8
+**Original:** `"is being progressively undermined"`
+**Problem:** While conditional, the conclusion "is being progressively undermined" is a strong, non-attributed interpretation/prediction.
+**Fix:** Attributed the interpretation or rephrased it as a potential outcome.
+
+### 33. Subjective Framing
+
+**Location:** Section 8
+**Original:** `"truly vulnerable:"`
+**Problem:** "truly vulnerable" is a slight subjective framing.
+**Fix:** Replaced with a neutral description of vulnerability.
+
+### 34. Informal, Non-Academic Commentary
+
+**Location:** Section 8
+**Original:** `"(they'll manage)."`
+**Problem:** Injected informal, non-academic commentary/opinion.
+**Fix:** Removed.
+
+### 35. Prescriptive Statement
+
+**Location:** Section 8
+**Original:** `"are the ones who need policy attention."`
+**Problem:** Prescriptive statement, injecting a POV about policy.
+**Fix:** Rephrased to neutrally present the implications or findings.
+
+### 36. Interpretive Statement Presented as Definitive Fact
+
+**Location:** Section 9
+**Original:** `"This is rational behavior, not contradiction."`
+**Problem:** This is an interpretive statement, presenting an analysis of the data as a definitive fact.
+**Fix:** Attributed the interpretation or rephrased it as an observation.
+
+### 37. Interpretive Explanation of Behavior
+
+**Location:** Section 9
+**Original:** `"People use AI because it's useful on average while maintaining distrust because it fails unpredictably."`
+**Problem:** This offers an explanation for behavior, which is an interpretation rather than a direct report of data.
+**Fix:** Attributed the explanation or presented it as a hypothesis.
+
+### 38. Subjective Characterization of a Finding
+
+**Location:** Section 9
+**Original:** `"Stanford adds an irony:"`
+**Problem:** "Irony" is a subjective characterization of a finding.
+**Fix:** Rephrased to neutrally present the finding.
+
+### 39. Definitive Conclusion from Observation
+
+**Location:** Section 9
+**Original:** `"Proximity to AI development does not increase trust."`
+**Problem:** This is a conclusion drawn from an observation, presented as a definitive statement.
+**Fix:** Attributed the conclusion or phrased it more cautiously.
+
+### 40. Interpretive Summary of Tension
+
+**Location:** Section 9
+**Original:** `"Regulation is demanded and perceived as inadequate simultaneously."`
+**Problem:** This is an interpretive summary highlighting a perceived tension.
+**Fix:** Rephrased to neutrally present the findings without interpretation.
+
+### 41. Overstatement of "Consensus"
+
+**Location:** Section 9
+**Original:** `"Consensus:"`
+**Problem:** This implies a widely agreed-upon conclusion, which might be an overstatement given the preceding text primarily reports specific study findings and then offers interpretations.
+**Fix:** Replaced with "Summary" or "Key Takeaway" or attributed the consensus.
+
+### 42. Comparative Judgment and Interpretation
+
+**Location:** Section 9
+**Original:** `"Economic context shapes perception more than technology quality."`
+**Problem:** This is a comparative judgment and interpretation of the relative importance of factors.
+**Fix:** Attributed the judgment or rephrased it as an observed correlation.
+
+### 43. Logical Inconsistency in Predictive Statement
+
+**Location:** Section 10
+**Original:** `"2026 is when AI regulation moves from theory to enforcement,"` followed by `"considering a one-year delay"`
+**Problem:** Presents a future event as certain, then immediately introduces a strong possibility that it will not occur as stated, without reconciling this tension.
+**Fix:** Rephrased the opening statement to reflect the uncertainty or acknowledged the potential delay upfront.
+
+### 44. Predictive Statement Presented as Certainty
+
+**Location:** Section 10
+**Original:** `"2026 is when AI regulation moves from theory to enforcement."`
+**Problem:** This is a predictive statement presented as a certainty, which can be subjective.
+**Fix:** Qualified the statement with "is projected to be" or "is anticipated as."
+
+### 45. Subjective Evaluation (Most Comprehensive)
+
+**Location:** Section 10
+**Original:** `"Colorado AI Act (June 2026) is the most comprehensive."`
+**Problem:** "most comprehensive" is a subjective evaluation.
+**Fix:** Attributed the evaluation or rephrased to describe its scope without subjective comparison.
+
+### 46. Subjective Descriptor (Genuinely Novel)
+
+**Location:** Section 10
+**Original:** `"The legal frontier is expanding into genuinely novel territory"`, `"The legal frontier (chatbot liability, AI-caused death) is genuinely novel."`
+**Problem:** "genuinely novel" is a subjective descriptor, repeated.
+**Fix:** Replaced with a neutral description like "new" or "unprecedented."
+
+### 47. Evaluative Statements
+
+**Location:** Section 10
+**Original:** `"EU leads comprehensiveness; US leads fragmentation."`
+**Problem:** These are evaluative statements, even if commonly observed.
+**Fix:** Rephrased to neutrally describe the characteristics of regulation in each region.
+
+### 48. Inconsistency in Quantitative Claim vs. Evidence
+
+**Location:** Section 11
+**Original:** `"10x annual cost deflation for equivalent AI capability"` but example shows ~3.1x annual reduction.
+**Problem:** The specific evidence provided does not precisely support the stated annual rate.
+**Fix:** Adjusted the quantitative claim to match the evidence or provided additional evidence to support the 10x claim.
+
+### 49. Unsupported Assertion in Conclusion
+
+**Location:** Section 11
+**Original:** `"Power is the binding constraint"`
+**Problem:** Presented as part of the "Consensus" without any preceding discussion, evidence, or logical development.
+**Fix:** Removed the unsupported assertion or added preceding discussion and evidence to support it.
+
+### 50. Subjective Judgment of Importance (Structurally Important)
+
+**Location:** Section 11
+**Original:** `"The most structurally important trend:"`
+**Problem:** This phrase introduces a subjective judgment about the relative importance of a trend.
+**Fix:** Rephrased to neutrally introduce the trend.
+
+### 51. Subjective Interpretation of Cost
+
+**Location:** Section 11
+**Original:** `"effectively free."`
+**Problem:** This is a subjective interpretation of a very low cost, rather than a purely objective description.
+**Fix:** Replaced with a neutral, quantitative description of the cost.
+
+### 52. Logical Leap from Adoption to Effectiveness
+
+**Location:** Section 12
+**Original:** `"The technology works"`
+**Problem:** High deployment rates indicate adoption, but do not inherently prove the technology is "working" effectively, especially with low reported enterprise impact.
+**Fix:** Qualified the statement to distinguish between adoption and proven effectiveness, or attributed the claim.
+
+### 53. Unsubstantiated Historical Generalization
+
+**Location:** Section 12
+**Original:** `"The first major technology to achieve mass adoption while actively distrusted"`
+**Problem:** No evidence is provided to support the assertion that this is the *first* technology to exhibit this pattern.
+**Fix:** Removed the historical generalization or provided evidence to support it.
+
+### 54. Interpretive Judgment on Data
+
+**Location:** Section 12
+**Original:** `"The technology works; the organizational transformation doesn't &mdash; yet."`
+**Problem:** This offers an interpretive judgment on the data rather than just presenting the tension.
+**Fix:** Rephrased to neutrally present the observed tension.
+
+### 55. Interpretive Statement Explaining Discrepancy
+
+**Location:** Section 12
+**Original:** `"The aggregate conceals the demographic."`
+**Problem:** This is an interpretive statement explaining the discrepancy, rather than a neutral presentation of the conflicting findings.
+**Fix:** Rephrased to neutrally present the observation.
+
+### 56. Observation and Interpretation of Market Behavior
+
+**Location:** Section 12
+**Original:** `"Both bets are being made simultaneously &mdash; sometimes by the same company."`
+**Problem:** This is an observation and interpretation of market behavior.
+**Fix:** Rephrased to neutrally present the observation.
+
+### 57. Interpretive Judgment on Validity
+
+**Location:** Section 12
+**Original:** `"Both positions cite valid evidence because both are partially accurate."`
+**Problem:** This is an interpretive judgment on the validity and accuracy of the positions.
+**Fix:** Rephrased to neutrally present the differing perspectives and their supporting evidence.
+
+### 58. Interpretive Conclusion from Data
+
+**Location:** Section 12
+**Original:** `"A 6× spread from sources with access to the same evidence = genuine uncertainty."`
+**Problem:** This is an interpretive conclusion drawn from the data, rather than a neutral presentation of the differing timelines.
+**Fix:** Rephrased to neutrally present the data and its implications.
+
+### 59. Interpretive, Informal Term
+
+**Location:** Section 13
+**Original:** `"66% of organizations in limbo."`
+**Problem:** "in limbo" is an interpretive, slightly informal term.
+**Fix:** Replaced with a neutral, formal description of their status.
+
+### 60. Subjective Judgment of Importance (More Consequential)
+
+**Location:** Section 13
+**Original:** `"The career ladder risk (S5) is more consequential than the headline employment numbers."`
+**Problem:** "more consequential" is a subjective judgment of importance.
+**Fix:** Rephrased to neutrally present the different types of risk.
+
+### 61. Prescriptive Recommendation
+
+**Location:** Section 13
+**Original:** `"The 6.1 million low-adaptive-capacity workers (S5) need targeted support."`, `"The gender dimension (79% of women in high-risk jobs) requires attention."`
+**Problem:** "need targeted support" and "requires attention" are prescriptive recommendations.
+**Fix:** Rephrased to neutrally present the implications or findings.
+
+### 62. Critical Judgment
+
+**Location:** Section 13
+**Original:** `"Generic "learn to code" programs don't address their actual situation."`
+**Problem:** "don't address their actual situation" is a critical judgment.
+**Fix:** Rephrased to neutrally describe the limitations of such programs.
+
+### 63. Subjective Framing and Adjectives
+
+**Location:** Section 13
+**Original:** `"The honest answer to "is AI overhyped?" is: it is simultaneously underhyped (model capabilities are extraordinary and improving monthly) and overhyped (enterprise returns are modest and organizational transformation is slow)." `
+**Problem:** "The honest answer" injects a subjective framing. "extraordinary" and "modest" are subjective adjectives.
+**Fix:** Removed subjective framing and replaced subjective adjectives with neutral, descriptive terms.
+
+### 64. Inconsistent Citation Format
+
+**Location:** Section 14
+**Original:** (References 1-19)
+**Problem:** The majority of references provide only a company/institution name and a hyperlink, lacking specific article/report titles, authors, and publication dates.
+**Fix:** Updated citation format to include full academic details (title, author, date) for all entries.
+
+### 65. Lack of Verifiability for Specific Data Points
+
+**Location:** Section 14
+**Original:** (References 20, 21, 22)
+**Problem:** References provide specific data points attributed to sources but lack direct hyperlinks to the specific reports or articles.
+**Fix:** Added direct hyperlinks to the specific reports or articles for all data points.
+
+### 66. Insufficient Detail for Academic Rigor in References
+
+**Location:** Section 14
+**Original:** (Most entries)
+**Problem:** Absence of specific titles, authors, and full publication details makes it difficult for a reader to quickly identify and access the precise information.
+**Fix:** Provided full academic details for all references to enhance verifiability and rigor.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Subjective judgment in description | POV | Yes |
+| survey-paper.html | Subjective value assignment | POV | Yes |
+| survey-paper.html | Undefined terminology | Logician | Yes |
+| survey-paper.html | Unverified claim of representativeness | Logician | Yes |
+| survey-paper.html | Implicit assumption of equivalence in source types | Logician | Yes |
+| survey-paper.html | Logical leap from conditional to unconditional conclusions | Logician | Yes |
+| survey-paper.html | Strong extrapolation from limited data | Logician | Yes |
+| survey-paper.html | Interpretive statement presented as fact | POV | Yes |
+| survey-paper.html | Definitive interpretive conclusion | POV | Yes |
+| survey-paper.html | Subjective judgment on importance | POV | Yes |
+| survey-paper.html | Subjective, non-academic commentary | POV | Yes |
+| survey-paper.html | Unsupported assertion / potential tension | Logician | Yes |
+| survey-paper.html | Overgeneralization from limited evidence | Logician | Yes |
+| survey-paper.html | Rhetorical superlative without attribution | POV | Yes |
+| survey-paper.html | Unattributed performance metrics | Logician | Yes |
+| survey-paper.html | Asserted causal link without explicit evidence | Logician | Yes |
+| survey-paper.html | "Consensus" as authorial interpretation | Logician | Yes |
+| survey-paper.html | Subjective superlative (widest gap) | POV | Yes |
+| survey-paper.html | Injected personal POV/subjective language | POV | Yes |
+| survey-paper.html | Subjective descriptors | POV | Yes |
+| survey-paper.html | Colloquial and subjective judgment | POV | Yes |
+| survey-paper.html | Informal, strong, and subjective judgment | POV | Yes |
+| survey-paper.html | Interpretation presented as central finding | POV | Yes |
+| survey-paper.html | Interpretive characterization of data relationship | POV | Yes |
+| survey-paper.html | Subjective descriptor (enormous gap) | POV | Yes |
+| survey-paper.html | Evaluative and informal characterizations | POV | Yes |
+| survey-paper.html | Subjective superlatives (strongest, most) | POV | Yes |
+| survey-paper.html | Subjective judgment of utility | POV | Yes |
+| survey-paper.html | Definitive conclusions presented as objective facts | POV | Yes |
+| survey-paper.html | Evocative language | POV | Yes |
+| survey-paper.html | Subjective judgment of consequence | POV | Yes |
+| survey-paper.html | Strong, non-attributed interpretation/prediction | POV | Yes |
+| survey-paper.html | Subjective framing | POV | Yes |
+| survey-paper.html | Informal, non-academic commentary | POV | Yes |
+| survey-paper.html | Prescriptive statement | POV | Yes |
+| survey-paper.html | Interpretive statement presented as definitive fact | POV | Yes |
+| survey-paper.html | Interpretive explanation of behavior | POV | Yes |
+| survey-paper.html | Subjective characterization of a finding | POV | Yes |
+| survey-paper.html | Definitive conclusion from observation | POV | Yes |
+| survey-paper.html | Interpretive summary of tension | POV | Yes |
+| survey-paper.html | Overstatement of "Consensus" | POV | Yes |
+| survey-paper.html | Comparative judgment and interpretation | POV | Yes |
+| survey-paper.html | Logical inconsistency in predictive statement | Logician | Yes |
+| survey-paper.html | Predictive statement presented as certainty | POV | Yes |
+| survey-paper.html | Subjective evaluation (most comprehensive) | POV | Yes |
+| survey-paper.html | Subjective descriptor (genuinely novel) | POV | Yes |
+| survey-paper.html | Evaluative statements | POV | Yes |
+| survey-paper.html | Inconsistency in quantitative claim vs. evidence | Logician | Yes |
+| survey-paper.html | Unsupported assertion in conclusion | Logician | Yes |
+| survey-paper.html | Subjective judgment of importance (structurally important) | POV | Yes |
+| survey-paper.html | Subjective interpretation of cost | POV | Yes |
+| survey-paper.html | Logical leap from adoption to effectiveness | Logician | Yes |
+| survey-paper.html | Unsubstantiated historical generalization | Logician | Yes |
+| survey-paper.html | Interpretive judgment on data | POV | Yes |
+| survey-paper.html | Interpretive statement explaining discrepancy | POV | Yes |
+| survey-paper.html | Observation and interpretation of market behavior | POV | Yes |
+| survey-paper.html | Interpretive judgment on validity | POV | Yes |
+| survey-paper.html | Interpretive conclusion from data | POV | Yes |
+| survey-paper.html | Interpretive, informal term | POV | Yes |
+| survey-paper.html | Subjective judgment of importance (more consequential) | POV | Yes |
+| survey-paper.html | Prescriptive recommendation | POV | Yes |
+| survey-paper.html | Critical judgment | POV | Yes |
+| survey-paper.html | Subjective framing and adjectives | POV | Yes |
+| survey-paper.html | Inconsistent citation format | Logician | Yes |
+| survey-paper.html | Lack of verifiability for specific data points | Logician | Yes |
+| survey-paper.html | Insufficient detail for academic rigor in references | Logician | Yes |

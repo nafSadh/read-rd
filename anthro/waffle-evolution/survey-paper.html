@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waffle Evolution — Survey Paper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#2e6ab406;--grad2:#9b7aed04}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#9b7aed06;--grad2:#4ee8d004}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.7}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent)}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:200px;min-width:200px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo{font-family:var(--serif);font-size:20px;color:var(--bright);font-weight:500;letter-spacing:.5px}
+.sidebar-logo em{font-style:italic;color:var(--accent)}
+.sidebar-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:10px 16px;text-decoration:none;color:var(--text);transition:all .25s;border-left:2px solid transparent}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;letter-spacing:.5px}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.sidebar-foot a{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none;letter-spacing:.5px}
+.sidebar-foot a:hover{color:var(--accent)}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--bg2);color:var(--dim);font-size:16px;transition:all .2s}
+.theme-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.main{flex:1;margin-left:200px;padding:0 0 120px}
+.paper-hero{padding:60px 80px 40px;max-width:860px;margin:0 auto;position:relative}
+.paper-hero::after{content:'';position:absolute;bottom:0;left:80px;right:80px;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent)}
+.paper-badge{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.paper-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.paper-title{font-family:var(--serif);font-size:42px;font-weight:500;color:var(--bright);line-height:1.15;letter-spacing:.5px;margin-bottom:14px}
+.paper-title em{font-style:italic;color:var(--accent)}
+.paper-subtitle{font-family:var(--sans);font-size:15px;color:var(--dim);line-height:1.7;max-width:640px}
+.paper-meta{display:flex;gap:24px;margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.paper-body{max-width:860px;margin:0 auto;padding:0 80px}
+.paper-section{padding:48px 0;border-bottom:1px solid var(--border);position:relative}
+.paper-section:last-child{border-bottom:none}
+.paper-section .s-num{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.paper-section h2{font-family:var(--serif);font-size:32px;font-weight:500;color:var(--bright);line-height:1.25;letter-spacing:.5px;margin-bottom:24px}
+.paper-section h2 em{font-style:italic;color:var(--accent)}
+.paper-section h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:36px 0 14px;text-transform:uppercase;letter-spacing:2.5px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.paper-section p{font-family:var(--serif);font-size:17px;line-height:2;margin-bottom:18px;letter-spacing:.2px}
+.paper-section strong{color:var(--bright);font-weight:600}
+.paper-stat-row{display:flex;gap:0;margin:20px 0;border:1px solid var(--border)}
+.paper-stat{flex:1;padding:14px 10px;text-align:center;border-right:1px solid var(--border)}
+.paper-stat:last-child{border-right:none}
+.paper-stat .val{font-family:var(--mono);font-size:16px;color:var(--bright);font-weight:500;display:block}
+.paper-stat .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans);margin-top:3px;display:block}
+.callout{border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:24px 0}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-family:var(--serif);font-style:italic;color:var(--bright)}
+.diagram-wrap{margin:24px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.tension-card{border-left:3px solid var(--cyan);padding:16px 0 16px 20px;margin:20px 0}
+[data-theme="light"] .tension-card{border-left-color:var(--accent)}
+.tension-card h4{font-family:var(--sans);font-size:10px;color:var(--cyan);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+[data-theme="light"] .tension-card h4{color:var(--accent)}
+.tension-card p{font-family:var(--serif);font-size:16px;line-height:1.9;margin:0;color:var(--text)}
+.ref-list{list-style:none;padding:0;margin:16px 0}
+.ref-list li{font-family:var(--mono);font-size:11px;color:var(--dim);padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%);line-height:1.6}
+.ref-list li:last-child{border-bottom:none}
+.ref-list a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+.ref-list a:hover{color:var(--accent)}
+sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}
+sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;font-size:11px}
+sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:12px;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+sup.fn:hover .tip{display:block}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.paper-hero{padding:32px 24px 28px}.paper-hero::after{left:24px;right:24px}.paper-body{padding:0 24px}.paper-title{font-size:28px}.paper-stat-row{flex-wrap:wrap}.paper-stat{min-width:45%}}
+  </style>
+</head>
+<body data-theme="light">
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">Waffle <em>Ev.</em></div>
+    <div class="sidebar-sub">Survey Paper</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#abstract" class="sidebar-item active"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Abstract</span></a>
+    <a href="#medieval" class="sidebar-item"><span class="sidebar-num">01</span><span class="sidebar-label">Medieval Origins</span></a>
+    <a href="#belgian" class="sidebar-item"><span class="sidebar-num">02</span><span class="sidebar-label">Belgian Identity</span></a>
+    <a href="#american" class="sidebar-item"><span class="sidebar-num">03</span><span class="sidebar-label">American Adoption</span></a>
+    <a href="#wafflehouse" class="sidebar-item"><span class="sidebar-num">04</span><span class="sidebar-label">Waffle House</span></a>
+    <a href="#chicken" class="sidebar-item"><span class="sidebar-num">05</span><span class="sidebar-label">Chicken &amp; Waffles</span></a>
+    <a href="#industrial" class="sidebar-item"><span class="sidebar-num">06</span><span class="sidebar-label">Industrialization</span></a>
+    <a href="#global" class="sidebar-item"><span class="sidebar-num">07</span><span class="sidebar-label">Global Variations</span></a>
+    <a href="#synthesis" class="sidebar-item"><span class="sidebar-num">08</span><span class="sidebar-label">Synthesis</span></a>
+    <a href="#references" class="sidebar-item"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">References</span></a>
+  </div>
+  <div class="sidebar-foot">
+    <a href="index.html">&larr; Project</a>
+    <a href="tensions-paper.html">Tensions &rarr;</a>
+  </div>
+</div>
+<button class="theme-btn" id="theme-btn" title="Toggle theme">&#9684;</button>
+<div class="main">
+  <div class="paper-hero">
+    <div class="paper-badge"><span class="dot"></span>WAFFLE EVOLUTION &middot; SURVEY PAPER &middot; 72 SOURCES</div>
+    <h1 class="paper-title">Waffle <em>Evolution</em></h1>
+    <p class="paper-subtitle">An anthropological survey of the waffle as technology, food, cultural artifact, and social institution — from medieval communion irons to the FEMA disaster index, across 7 dimensions and 72 sources.</p>
+    <div class="paper-meta">
+      <span>March 2026</span>
+      <span>7 Dimensions</span>
+      <span>72 Sources</span>
+      <span>4 Tensions</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <section class="paper-section" id="abstract">
+      <div class="s-num">ABSTRACT</div>
+      <h2>Abstract</h2>
+      <p>The waffle is older, stranger, and more culturally loaded than popular accounts suggest. Its history begins not with food but with an instrument: the hinged iron press, heated over an open fire, used since the 9th century to produce the thin wafers of the Christian Eucharist. From this sacred origin, the waffle traverses eleven centuries — through guild formation, aristocratic patronage, colonial migration, American social ritual, soul food culture, industrial food production, and global recombination — to arrive as an Eggo in a freezer aisle and as a FEMA disaster severity metric in the American South.</p>
+      <p>This survey maps the waffle's evolution across <strong>7 dimensions</strong> drawing on <strong>72 sources</strong> including Smithsonian Magazine, PBS Food, Wikipedia's food history articles, Garden &amp; Gun, the FEMA/Snopes documentation of the Waffle House Index, CNN Travel, and culinary history journalism. The analysis identifies <strong>4 tensions</strong> that run through the waffle's history: authenticity vs. industrialization; local identity vs. globalization; origin myth vs. documented history; and the sacred-to-profane transition. These tensions are not resolvable — they are the substance of the waffle's cultural meaning.</p>
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">9th c.</span><span class="lbl">Earliest iron</span></div>
+        <div class="paper-stat"><span class="val">1270</span><span class="lbl">Oublieurs guild</span></div>
+        <div class="paper-stat"><span class="val">1964</span><span class="lbl">World's Fair moment</span></div>
+        <div class="paper-stat"><span class="val">73%</span><span class="lbl">Eggo market share</span></div>
+      </div>
+    </section>
+
+    <section class="paper-section" id="medieval">
+      <div class="s-num">SECTION 01</div>
+      <h2>Medieval <em>Origins</em></h2>
+      <p>The waffle's history begins with an instrument, not a food. In the 9th and 10th centuries, two closely related iron implements emerged simultaneously across northwestern Europe: the <em>fer à hosties</em> (communion wafer iron) and the <em>moule à oublies</em> (secular wafer iron).<sup class="fn"><a>[1]</a><span class="tip">Aleteia, "How waffles evolved from communion wafers," 2021</span></sup> The communion wafer iron produced the Eucharistic host; the oublie iron produced a secular street food. Both instruments were nearly identical in construction — two hinged iron plates on long wooden handles, heated over an open fire — but their social contexts were radically different: one was the technology of the sacred, the other of the market.</p>
+      <p>The word family traces to Frankish <em>wafla</em> ("honeycomb" or "cake"), giving rise to Old French <em>walfre</em> (1185) and Middle Dutch <em>wafele</em> (late 13th century).<sup class="fn"><a>[2]</a><span class="tip">Wikipedia, "Waffle," etymology</span></sup> The etymology preserves the grid pattern as the defining visual feature — the technology named the food. The <strong>oublieurs guild</strong> was constituted in Paris in <strong>1270</strong>, formalizing waffle-adjacent food production as organized labor with churchyard vending rights. The earliest known waffle recipe appears in <em>Le Ménagier de Paris</em> (c. 1390), marking the point at which the <em>gaufre</em> became a distinct, codified food with deeper grid pockets, leavened batter, butter, and eggs.<sup class="fn"><a>[3]</a><span class="tip">Gofrex, "History of waffles from the Middle Ages to the present day"</span></sup></p>
+      <p>By the 15th and 16th centuries, waffle irons had become prestige objects — engraved with aristocratic coats of arms, city seals, and heraldic imagery. The iron was a medium for the display of identity and authority, not merely a cooking tool. The secularization of waffle culture occurred gradually across the 14th through 17th centuries as oublie vendors expanded from churchyards into city streets, domestic cookbooks incorporated waffle recipes, and the food's religious associations became incidental rather than definitional.</p>
+      <div class="callout">
+        <h4>The structural persistence of the grid</h4>
+        <p>From the 9th-century communion iron to the 21st-century Eggo, the defining structural feature of all waffle variants is the grid pattern pressed by the iron. Eleven centuries of culinary evolution have not changed this fundamental form.</p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="belgian">
+      <div class="s-num">SECTION 02</div>
+      <h2>Belgian <em>Identity</em></h2>
+      <p>The phrase "Belgian waffle" conceals a foundational ambiguity: Belgium has two distinct waffle traditions that are genuinely different foods. The <strong>Brussels waffle</strong> — rectangular, light, crisp, yeast-leavened, topped with cream and fruit — and the <strong>Liège waffle</strong> — oval, dense, brioche-dough, pearl sugar caramelized in cooking, traditionally eaten plain — differ in dough composition, texture, shape, eating context, and historical origin. Neither tradition, in Belgium, is called a "Belgian waffle."<sup class="fn"><a>[4]</a><span class="tip">Wikipedia, "Belgian waffle"</span></sup></p>
+      <p>The Liège waffle carries an origin story associating it with the 18th-century cook of the Prince-Bishop of Liège, who was asked to create a new sweet delicacy. The story is likely apocryphal. The Brussels waffle's export trajectory is precisely documented: <strong>Maurice and Rose Vermersch</strong> first introduced their Brussels waffles at the 1962 Seattle World's Fair, then at the 1964 New York World's Fair at Flushing Meadows. Observing that many Americans could not locate Brussels on a map, Maurice renamed the product "Belgian waffle." Rose added whipped cream and strawberries — a topping combination not traditional in Belgium — that proved decisive in American reception. The stand sold approximately <strong>2,500 waffles per day</strong>.<sup class="fn"><a>[5]</a><span class="tip">Tasting Table, "How The 1964 World's Fair Helped Popularize The Belgian Waffle"</span></sup></p>
+      <p>In 2011, Brussels MP Joël Riguelle raised parliamentary concern that traditional Brussels waffles were being displaced by Liège-style waffles with toppings — a hybrid satisfying tourist expectations but belonging to neither tradition. The intervention reveals the degree to which the waffle had become a protected cultural artifact in Belgian political discourse. Meanwhile, the "Belgian waffle" recognized internationally is a 1964 American construction bearing little resemblance to what Belgians actually eat.</p>
+    </section>
+
+    <section class="paper-section" id="american">
+      <div class="s-num">SECTION 03</div>
+      <h2>American <em>Adoption</em></h2>
+      <p>Waffles arrived in North America through Dutch colonial settlers in the 17th century, establishing a household and community food tradition in the mid-Atlantic colonies before any founding-era figure was involved. The popular narrative centering Thomas Jefferson — who brought four waffle irons from Amsterdam on his 1789 return from France — is documented in part but substantially mythologized. Garden &amp; Gun's investigation of the Monticello primary record found limited evidence for Jefferson's role as a waffle innovator; the food was already known in Dutch-descended American households.<sup class="fn"><a>[6]</a><span class="tip">Garden &amp; Gun, "A Pressing Mystery: Thomas Jefferson and the Waffle"</span></sup></p>
+      <p>What is well documented is the <strong>waffle frolic</strong> — an 18th and 19th-century American social institution in which a host made waffles continuously for guests over an extended evening. The waffle iron's demands (one waffle at a time, continuous attention, ten-minute cooking over open fire) created natural conditions for sustained social gathering. At plantation households including Monticello, the labor was performed by enslaved cooks who managed the 10–12-pound iron while the food was consumed as a leisure item by the household's white members — a dimension systematically absent from popular origin narratives.</p>
+    </section>
+
+    <section class="paper-section" id="wafflehouse">
+      <div class="s-num">SECTION 04</div>
+      <h2>Waffle House as <em>Institution</em></h2>
+      <p>Waffle House was founded on Labor Day weekend 1955 in Avondale Estates, Georgia, by <strong>Joe Rogers Sr.</strong> and <strong>Tom Forkner</strong>. Rogers brought restaurant experience from the Toddle House chain; Forkner proposed the name; Rogers insisted on 24-hour operations — the decision that defines the chain's cultural significance. Today Waffle House operates over <strong>1,900 locations</strong> across <strong>25 states</strong>, every one open 24 hours a day, 365 days a year. The chain has no locks on its doors.<sup class="fn"><a>[7]</a><span class="tip">Wikipedia, "Joe Rogers (businessman)"; Georgia Historical Society, "The Waffle House"</span></sup></p>
+      <p>The <strong>Waffle House Index</strong> was coined by <strong>Craig Fugate</strong> in August 2004 following Hurricane Charley, when Fugate was directing Florida's emergency management division. The Index uses the operational status of the nearest Waffle House as a proxy for local disaster severity: <em>green</em> (full menu — infrastructure intact), <em>yellow</em> (limited menu — partial disruption), <em>red</em> (closed — severe disaster, maximum response required). FEMA unofficially uses the Index in disaster response assessment, confirmed by Snopes fact-checking. The Index's validity rests on Waffle House's combination of 24-hour operations, disaster preparedness investment, and rapid-response "jump teams" that reopen closed locations as soon as safety permits.<sup class="fn"><a>[8]</a><span class="tip">Wikipedia, "Waffle House Index"; Snopes fact-check confirmed</span></sup></p>
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">1955</span><span class="lbl">Founded, Avondale Estates GA</span></div>
+        <div class="paper-stat"><span class="val">1,900+</span><span class="lbl">Locations, 25 states</span></div>
+        <div class="paper-stat"><span class="val">2004</span><span class="lbl">Index coined (Hurricane Charley)</span></div>
+        <div class="paper-stat"><span class="val">3</span><span class="lbl">Index levels: green/yellow/red</span></div>
+      </div>
+    </section>
+
+    <section class="paper-section" id="chicken">
+      <div class="s-num">SECTION 05</div>
+      <h2>Chicken &amp; <em>Waffles</em></h2>
+      <p>Chicken and waffles has two documented and distinct lineages with no direct connection between them. The <strong>Pennsylvania Dutch tradition</strong> (17th–18th century) featured shredded or roasted chicken atop a waffle with white cream gravy — a German-immigrant food culture serving the dish at church dinners and community events. The <strong>Harlem soul food tradition</strong> (1930s–1940s) featured fried chicken alongside a plain waffle — a late-night meal for jazz musicians navigating the gap between dinner and breakfast at venues including the Wells Supper Club (opened 1938).<sup class="fn"><a>[9]</a><span class="tip">PBS Food, "Discover the History of Chicken and Waffles"; Wikipedia, "Chicken and waffles"</span></sup></p>
+      <p>The dish's national dissemination is directly traceable to <strong>Roscoe's House of Chicken 'N Waffles</strong>, founded in Long Beach in <strong>1975</strong> by Harlem native <strong>Herb Hudson</strong>. Celebrity patronage (Stevie Wonder, Natalie Cole, Redd Foxx) drove rapid cultural visibility; the Los Angeles Times later called Roscoe's "such an L.A. institution that people don't even question the strange combo anymore." The mainstreaming of chicken and waffles in the 2000s–2010s involved significant cultural translation — versions appearing on suburban brunch menus often bear little resemblance to either original lineage.<sup class="fn"><a>[10]</a><span class="tip">Roscoe's House of Chicken 'N Waffles, "Our Story"; Resy retrospective, 2020</span></sup></p>
+    </section>
+
+    <section class="paper-section" id="industrial">
+      <div class="s-num">SECTION 06</div>
+      <h2>Industrialization &amp; <em>Eggo</em></h2>
+      <p>The electrification of the waffle iron began with the Simplex Electric Heating Company in <strong>1906</strong> and General Electric's prototype in <strong>1911</strong> (production beginning c. 1918). By the 1930s, electric waffle irons were standard middle-class kitchen appliances — the first significant democratization of waffle-making since the medieval guild era. The open-hearth iron era, spanning a millennium, ended within a generation of electrification.<sup class="fn"><a>[11]</a><span class="tip">Smithsonian Magazine, "A Brief History of the Waffle Iron"</span></sup></p>
+      <p>The leap to industrial food production was accomplished by <strong>Frank Dorsa</strong>, a San Jose machinist, in <strong>1953</strong>. Dorsa applied industrial engineering to waffle production, inventing a large carousel mechanism equipped with multiple waffle irons, rotating continuously, producing thousands of waffles per hour which were immediately flash-frozen. His frozen waffles reached shelves as "Froffles" in 1953, were renamed <strong>Eggo</strong> in 1955, and acquired by the <strong>Kellogg Company</strong> in 1968. Kellogg's advertising agency Leo Burnett developed the "L'eggo my Eggo" campaign in 1972. By 2009, Eggo held a <strong>73% share</strong> of the U.S. frozen waffle market.<sup class="fn"><a>[12]</a><span class="tip">Wikipedia, "Eggo"; Wikipedia, "Frank Dorsa"; Mashed, "The Untold Truth Of Eggo Waffles"</span></sup></p>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="500" height="110" fill="rgba(0,0,0,0.02)" rx="4"/>
+          <text x="250" y="15" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#65707a" letter-spacing="1.5">WAFFLE IRON TECHNOLOGY TIMELINE</text>
+          <line x1="30" y1="50" x2="470" y2="50" stroke="#d6d0c4" stroke-width="1"/>
+          <circle cx="50" cy="50" r="4" fill="#2e6ab4"/>
+          <text x="50" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#2e6ab4">9th c.</text>
+          <text x="50" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">Open fire</text>
+          <text x="50" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">iron</text>
+          <circle cx="145" cy="50" r="4" fill="#2e6ab4"/>
+          <text x="145" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#2e6ab4">1906</text>
+          <text x="145" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">Simplex</text>
+          <text x="145" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">electric</text>
+          <circle cx="215" cy="50" r="4" fill="#2e6ab4"/>
+          <text x="215" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#2e6ab4">1911</text>
+          <text x="215" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">GE</text>
+          <text x="215" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">prototype</text>
+          <circle cx="305" cy="50" r="4" fill="#9b7aed"/>
+          <text x="305" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#9b7aed">1953</text>
+          <text x="305" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">Dorsa</text>
+          <text x="305" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">carousel</text>
+          <circle cx="375" cy="50" r="4" fill="#9b7aed"/>
+          <text x="375" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#9b7aed">1968</text>
+          <text x="375" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">Kellogg</text>
+          <text x="375" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">acquires</text>
+          <circle cx="450" cy="50" r="4" fill="#9b7aed"/>
+          <text x="450" y="38" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#9b7aed">2009</text>
+          <text x="450" y="65" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">73%</text>
+          <text x="450" y="74" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">market share</text>
+          <text x="100" y="95" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">— domestic appliance era —</text>
+          <text x="380" y="95" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#65707a">— industrial era —</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="paper-section" id="global">
+      <div class="s-num">SECTION 07</div>
+      <h2>Global <em>Variations</em></h2>
+      <p>The global distribution of waffle forms raises a question about diffusion versus independent invention. The Dutch <strong>stroopwafel</strong> and Norwegian <strong>hjertevafler</strong> derive clearly from the European gaufre tradition. The stroopwafel — originating in Gouda around 1810–1840, credited to baker Gerard Kamphuisen, originally called <em>armenkoeken</em> ("poor people's cookies") because of its origin in bakery scraps — traveled from regional poverty food to Dutch national export commodity and global airport staple across two centuries.<sup class="fn"><a>[13]</a><span class="tip">Wikipedia, "Stroopwafel"; Dutch Waffle Company history</span></sup></p>
+      <p>The Norwegian heart-shaped waffle (hjertevafler) is tied to both the concept of <em>kos</em> (cozy social warmth) and, through linguistic accident, to a religious feast day: March 25 is Waffle Day in Norway, Sweden, and Denmark because the Swedish Feast of Annunciation (<em>Vårfrudagen</em>) was phonetically contracted to <em>Våffeldagen</em> ("Waffle Day"). A religious occasion became a secular food celebration through the drift of spoken language — a micro-version of the waffle's entire sacred-to-profane history.<sup class="fn"><a>[14]</a><span class="tip">Visit Norway, "Waffle is the king of kos"; Bowl of Delicious, Norwegian Waffles</span></sup></p>
+      <p>The <strong>Hong Kong egg waffle</strong> (雞蛋仔, <em>gai daan jai</em>) presents the strongest case for independent invention: arising in the 1950s from a grocery shop owner's use of excess eggs, evaporated milk, and a honeycomb mold, it reached the same basic form — egg batter pressed in a patterned iron — through a completely different cultural path. Its global spread via food tourism and social media in the 2010s represents reverse diffusion: a non-European variant traveling back to the continent of the waffle's European origins.<sup class="fn"><a>[15]</a><span class="tip">Wikipedia, "Egg waffle"; CNN Travel, "Bubble waffles"</span></sup></p>
+    </section>
+
+    <section class="paper-section" id="synthesis">
+      <div class="s-num">SECTION 08</div>
+      <h2><em>Synthesis</em></h2>
+      <p>The waffle's eleven-century evolution traces a recurring pattern: sacred/institutional origin → secularization → national/regional identity formation → colonial and commercial migration → industrialization → global recombination. The pattern is not unique to the waffle — it describes the lifecycle of many foods that begin as ritual objects and end as commodity products — but the waffle traces it with unusual clarity because the iron technology creates a visible formal constant across all iterations. The grid is always there.</p>
+      <p>The survey's most significant finding is the pervasiveness of the <strong>origin myth problem</strong>. Nearly every major waffle origin story is contested, apocryphal, or unverifiable: the Liège waffle's Prince-Bishop, Thomas Jefferson's Amsterdam irons, Gerard Kamphuisen's Gouda scraps, the Wells Supper Club's jazz-musician clientele. This pattern is not accidental — origin myths function to anchor foods to places, people, and founding moments that confer legitimacy. The myth is often more culturally durable than the accurate history because the myth does something the history cannot: it provides an identity.</p>
+      <p>The four tensions identified in this survey — authenticity vs. industrialization, local identity vs. globalization, origin myth vs. history, sacred vs. profane — are not problems to be solved. They are the substance of the waffle's cultural meaning. The Eggo is not a debased form of the gaufre; it is the gaufre as transformed by industrial capitalism. The "Belgian waffle" is not a fraud; it is Belgian waffle culture as transformed by export economics and an American fair. The tensions hold the history together.</p>
+      <div class="tension-card">
+        <h4>Core finding</h4>
+        <p>The waffle is best understood not as a food with a history but as an iron technology that has generated different foods in different social contexts across eleven centuries — each claiming to be the real waffle, each being correct in its own terms.</p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="references">
+      <div class="s-num">REFERENCES</div>
+      <h2>Selected <em>References</em></h2>
+      <ul class="ref-list">
+        <li>[1] <a href="https://aleteia.org/2021/06/29/how-waffles-evolved-from-communion-wafers/" target="_blank">Aleteia — "How waffles evolved from communion wafers" (2021)</a></li>
+        <li>[2] <a href="https://en.wikipedia.org/wiki/Waffle" target="_blank">Wikipedia — Waffle (etymology and history)</a></li>
+        <li>[3] <a href="https://gofrex.com/en/history-of-waffles-from-the-middle-ages-to-the-present-day/" target="_blank">Gofrex — "History of waffles from the Middle Ages to the present day"</a></li>
+        <li>[4] <a href="https://en.wikipedia.org/wiki/Belgian_waffle" target="_blank">Wikipedia — Belgian waffle</a></li>
+        <li>[5] <a href="https://www.tastingtable.com/1249994/964-worlds-fair-belgian-waffle/" target="_blank">Tasting Table — "How The 1964 World's Fair Helped Popularize The Belgian Waffle"</a></li>
+        <li>[6] <a href="https://gardenandgun.com/articles/a-pressing-mystery-thomas-jefferson-and-the-waffle/" target="_blank">Garden &amp; Gun — "A Pressing Mystery: Thomas Jefferson and the Waffle"</a></li>
+        <li>[7] <a href="https://en.wikipedia.org/wiki/Joe_Rogers_(businessman)" target="_blank">Wikipedia — Joe Rogers (businessman); </a><a href="https://www.georgiahistory.com/ghmi_marker_updated/the-waffle-house/" target="_blank">Georgia Historical Society — The Waffle House</a></li>
+        <li>[8] <a href="https://en.wikipedia.org/wiki/Waffle_House_Index" target="_blank">Wikipedia — Waffle House Index; </a><a href="https://www.snopes.com/fact-check/fema-waffle-house-index/" target="_blank">Snopes — FEMA Waffle House Index fact-check</a></li>
+        <li>[9] <a href="https://www.pbs.org/food/stories/history-chicken-and-waffles" target="_blank">PBS Food — "Discover the History of Chicken and Waffles"</a></li>
+        <li>[10] <a href="https://www.roscoeschickenandwaffles.com/our-story/" target="_blank">Roscoe's House of Chicken 'N Waffles — "Our Story"</a></li>
+        <li>[11] <a href="https://www.smithsonianmag.com/innovation/brief-history-waffle-iron-180972980/" target="_blank">Smithsonian Magazine — "A Brief History of the Waffle Iron"</a></li>
+        <li>[12] <a href="https://en.wikipedia.org/wiki/Eggo" target="_blank">Wikipedia — Eggo; </a><a href="https://en.wikipedia.org/wiki/Frank_Dorsa" target="_blank">Wikipedia — Frank Dorsa</a></li>
+        <li>[13] <a href="https://en.wikipedia.org/wiki/Stroopwafel" target="_blank">Wikipedia — Stroopwafel; </a><a href="https://dutchwafflecompany.us/blogs/blog/the-history-of-the-stroopwafel-from-gouda-to-worldwide-obsession" target="_blank">Dutch Waffle Company — Stroopwafel history</a></li>
+        <li>[14] <a href="https://www.visitnorway.com/things-to-do/food-and-drink/waffle-is-the-king-of-kos/" target="_blank">Visit Norway — "Waffle is the king of kos"</a></li>
+        <li>[15] <a href="https://en.wikipedia.org/wiki/Egg_waffle" target="_blank">Wikipedia — Egg waffle; </a><a href="https://www.cnn.com/travel/article/hong-kong-bubble-waffles" target="_blank">CNN Travel — "Bubble waffles: The uniquely Hong Kong snack"</a></li>
+      </ul>
+      <p style="margin-top:24px;font-family:var(--mono);font-size:11px;color:var(--dim)">Full literature collection (72 sources, organized by section): <a href="literature-collection.md" style="color:var(--text);border-bottom:1px dotted var(--border)">literature-collection.md</a></p>
+    </section>
+
+  </div>
+</div>
+<script>
+(function(){
+  const btn=document.getElementById('theme-btn');const root=document.documentElement;root.setAttribute('data-theme','light');let dark=false;
+  btn.addEventListener('click',()=>{dark=!dark;root.setAttribute('data-theme',dark?'dark':'light');btn.textContent=dark?'\u2600':'\u263D';});
+  const items=document.querySelectorAll('.sidebar-item');
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){items.forEach(i=>i.classList.remove('active'));const a=document.querySelector('.sidebar-item[href="#'+e.target.id+'"]');if(a)a.classList.add('active');}});},{rootMargin:'-20% 0px -60% 0px'});
+  document.querySelectorAll('.paper-section').forEach(s=>obs.observe(s));
+})();
+</script>
+</body>
+</html>

@@ -128,3 +128,77 @@ No logical issues found.
 *   **"PMC: Religious Trauma Syndrome — Futile Fate of Faith"**: The phrase "Futile Fate of Faith" is a subjective, judgmental commentary that is not part of the actual academic title of the referenced work. It injects a personal opinion about the subject matter.
 
 ---
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Rhetorical premise without supporting evidence
+
+**Location:** Section 3
+**Original:** `"If CSR explains *why* religion is cognitively possible..."`
+**Problem:** The opening sentence presents a significant theoretical premise (that CSR explains the *why*) as a given, without providing any supporting evidence or elaboration within the text itself.
+**Fix:** Provide supporting evidence or elaboration for this theoretical premise, or rephrase to present it as a hypothesis rather than a given.
+
+### 2. Unsubstantiated inference about religious exploration
+
+**Location:** Section 3
+**Original:** `"in a secular society, the same cognitive style might produce religious exploration"`
+**Problem:** This statement is presented as a logical consequence of analytical thinking predicting "questioning local norms." However, the text does not provide direct evidence or a citation to support this specific inference about "religious exploration," making it a logical leap.
+**Fix:** Provide direct evidence or a citation to support the specific inference about "religious exploration" in secular societies.
+
+### 3. Overstated initial claim about religious belief origin
+
+**Location:** Section 3
+**Original:** `"Religious belief appears to be primarily a System 1 (fast, intuitive) product"`
+**Problem:** This is a strong claim. Although the text immediately follows with crucial qualifications and counter-examples, the initial strong framing could be perceived as an overstatement before these necessary nuances are introduced.
+**Fix:** Rephrase the initial claim to soften its assertion or introduce the nuances earlier to provide a more balanced initial statement.
+
+### 4. Unreferenced assertion in "The Self-Report Gap"
+
+**Location:** Section 5
+**Original:** `"Behavioral evidence indicates that, while self-reports may suggest universal generosity, observed behavior demonstrates generosity flowing primarily within religious networks"`
+**Problem:** This statement is presented as a conclusion from "behavioral evidence" within the context of the self-report gap, but no specific evidence or reference is provided at this point to support this claim.
+**Fix:** Provide specific evidence or a reference to support this claim at its point of introduction.
+
+### 5. Unsupported extension of research scope (design stance)
+
+**Location:** Section 6
+**Original:** `"the design stance never fully disappears; it merely goes underground, re-emerging under cognitive load, time pressure, or during existential crisis"`
+**Problem:** This claim is presented as a direct implication of Kelemen's research on children's promiscuous teleology. However, the text does not provide a specific citation or explicit logical bridge from Kelemen's work on children to the re-emergence in adults under specific conditions.
+**Fix:** Provide a specific citation or an explicit logical bridge to connect Kelemen's research on children to the re-emergence of the design stance in adults under specific conditions.
+
+### 6. Interpretive conclusion presented as direct finding (deconversion)
+
+**Location:** Section 6
+**Original:** `"not a single event but the culmination of a personality shift already underway"`
+**Problem:** This statement, characterizing deconversion, is an interpretive conclusion drawn from Bleidorn and colleagues' finding that personality changes *precede* deconversion. While a reasonable inference, it is presented as a definitive characterization rather than an interpretation of the data.
+**Fix:** Rephrase the statement to present it as an interpretation or inference drawn from the data, rather than a definitive finding.
+
+### 7. Un-cited generalization about deconversion grief
+
+**Location:** Section 6
+**Original:** `"simultaneous loss of a meaning system, social network, family approval, and daily routine can produce a grief response that mimics bereavement"`
+**Problem:** This is a strong psychological claim presented without specific citation for this particular outcome or the "mimics bereavement" comparison.
+**Fix:** Provide a specific citation for this claim or qualify it as a plausible hypothesis requiring further empirical support.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Rhetorical premise without supporting evidence | Unproven Assertion | Yes |
+| survey-paper.html | Unsubstantiated inference about religious exploration | Logical Leap | Yes |
+| survey-paper.html | Overstated initial claim about religious belief origin | Strong Claim | Yes |
+| survey-paper.html | Unreferenced assertion in "The Self-Report Gap" | Unreferenced Assertion | Yes |
+| survey-paper.html | Unsupported extension of research scope (design stance) | Logical Leap/Unsupported Extension | Yes |
+| survey-paper.html | Interpretive conclusion presented as direct finding (deconversion) | Interpretive Conclusion | Yes |
+| survey-paper.html | Un-cited generalization about deconversion grief | Un-cited Generalization | Yes |

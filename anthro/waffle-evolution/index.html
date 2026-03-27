@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waffle Evolution — An Anthropological Survey of the Waffle Across Time and Society</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip {
+      color: var(--border); border-bottom-color: transparent; cursor: default;
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      transition: all 0.2s;
+    }
+    .deliverable-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .deliverable-card .section-title { margin-bottom: 6px; }
+    .deliverable-card .section-desc { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Anthropological Survey &middot; March 2026</div>
+    <h1>Waffle <em>Evolution</em></h1>
+    <div class="subtitle">An anthropological survey of the waffle as technology, food, cultural artifact, and social institution &mdash; from medieval communion wafers to the FEMA disaster index.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>The waffle is older than most people assume and stranger than almost anyone considers. It descends from the communion wafer &mdash; the <em>oublie</em> pressed in iron molds outside European churches in the 9th century &mdash; and arrives, 1,100 years later, in the freezer aisle as an Eggo, or at a Waffle House as a disaster resilience metric. Between those endpoints lie guild formations, royal patronage, Thomas Jefferson's Amsterdam irons, Belgian national politics, jazz clubs in Harlem, and Hong Kong street vendors inventing a new form from scratch in the 1950s.</p>
+      <p>This survey maps the waffle's evolution across <strong>7 dimensions</strong> and <strong>72 sources</strong> &mdash; food history archives, culinary journalism (Smithsonian, PBS, Garden &amp; Gun), Wikipedia's detailed food articles, regional and national cultural documentation, and FEMA disaster management literature. Each section deep-dive is built only after source assessment. The most revealing findings are the <em>tensions</em> &mdash; places where the waffle becomes a lens for examining authenticity, identity, industrialization, and myth-making.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Comprehensive survey synthesizing all 7 dimensions. From sacred wafer to fast food. 72 sources, SVG diagrams.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Four <em>Tensions</em> <span class="status done">done</span></div>
+        <div class="section-desc">Authenticity vs. industrialization. Local identity vs. globalization. Origin myth vs. history. Sacred vs. profane.</div>
+        <div class="section-links">
+          <a href="tensions-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Medieval <em>Origins</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Oublie wafers, communion iron technology, the oublieurs guild (1270), Le Ménagier de Paris recipe (~1390). The transition from religious production to secular street food. Iron as instrument of power.</div>
+          <div class="section-links">
+            <a href="s1-medieval-origins.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">Belgian <em>Identity</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Liège vs. Brussels as genuinely different foods with contested histories. The 1964 New York World's Fair and the Vermersch family. How "Belgian waffle" became an American construction. Joël Riguelle's 2011 parliamentary concern.</div>
+          <div class="section-links">
+            <a href="s2-belgian-identity.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">American <em>Adoption</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Thomas Jefferson's Amsterdam waffle irons (1789). Dutch colonial waffle tradition. Waffle frolics and waffle parties as social institution. The enslaved cooks who made Jefferson's waffles. 19th-century American waffle culture.</div>
+          <div class="section-links">
+            <a href="s3-american-adoption.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Waffle House as <em>Institution</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Joe Rogers and Tom Forkner, Avondale Estates, 1955. 1,900+ locations, 25 states. The FEMA Waffle House Index: Craig Fugate, Hurricane Charley 2004, the three-level color system. 24/7 resilience as cultural symbol.</div>
+          <div class="section-links">
+            <a href="s4-waffle-house.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Chicken &amp; <em>Waffles</em> <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. Two lineages: Pennsylvania Dutch (shredded chicken, white gravy, 17th century) and Harlem soul food (fried chicken, jazz musicians, Wells Supper Club 1938). Roscoe's (1975) as national dissemination vector. The dish as cultural journey.</div>
+          <div class="section-links">
+            <a href="s5-chicken-waffles.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Industrialization &amp; <em>Eggo</em> <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. Frank Dorsa's carousel waffle iron (1953). Froffles → Eggo → Kellogg. Electric waffle iron: Simplex 1906, GE 1911. 73% frozen waffle market share by 2009. How industrial production transformed a homemade food.</div>
+          <div class="section-links">
+            <a href="s6-industrialization-eggo.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Global <em>Variations</em> <span class="status done">done</span></div>
+          <div class="section-desc">10 sources. Hong Kong egg waffles (雞蛋仔, 1950s). Dutch stroopwafel (Gouda, c.1810–1840, "armenkoeken"). Norwegian hjertevafler (heart-shaped, cardamom, Waffle Day March 25). Korean and global recombinations. Independent invention vs. diffusion.</div>
+          <div class="section-links">
+            <a href="s7-global-variations.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Four Tensions</h2>
+    <div style="padding: 0 0 12px;">
+      <div class="section-desc">The most productive analytical findings are the contradictions &mdash; places where the waffle's history reveals something about how food, identity, and culture actually work. These four tensions run through every section.</div>
+    </div>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">T1</span> <strong>Authenticity vs. industrialization</strong> &mdash; Eggo holds 73% of the frozen waffle market. Kellogg's sells more waffles in a day than all artisan waffle makers sell in a year. Yet "real" waffles are made fresh, in iron, to order. What does authenticity mean when the industrial product has defined the category for two generations? <a href="tensions-paper.html">[Tensions]</a></li>
+      <li class="tension-item"><span class="tension-num">T2</span> <strong>Local identity vs. globalization</strong> &mdash; The "Belgian waffle" that 2 billion people recognize is a 1964 American invention: Rose Vermersch's whipped cream and strawberry combination on a Brussels-style waffle renamed because Americans didn't know where Brussels was. The waffle Belgians actually eat bears little resemblance to this product. <a href="tensions-paper.html">[Tensions]</a></li>
+      <li class="tension-item"><span class="tension-num">T3</span> <strong>Origin myth vs. history</strong> &mdash; Thomas Jefferson probably didn't introduce waffles to America. Gerard Kamphuisen may or may not have invented the stroopwafel. The Liège waffle's Prince-Bishop story is likely apocryphal. Yet these origin myths persist because they are useful — they anchor foods to places, people, and moments of cultural founding. <a href="tensions-paper.html">[Tensions]</a></li>
+      <li class="tension-item"><span class="tension-num">T4</span> <strong>Sacred vs. profane</strong> &mdash; The communion wafer and the Eggo are separated by eleven centuries and share the same basic grid pattern pressed in the same basic iron technology. The journey from Eucharist to breakfast food is total, yet structurally the iron has not changed. The sacred origin is invisible inside the profane product. <a href="tensions-paper.html">[Tensions]</a></li>
+    </ul>
+
+    <div class="footer">
+      Part of <a href="../../">read:rd</a> &middot; <a href="https://read.sadh.app">read.sadh.app</a> &middot;
+      See also: <a href="../religion-today/">Religion Today</a> &middot; <a href="../flag-history/">Flag History</a><br>
+      Literature collection and deep-dive generation assisted by Claude
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">&#9684;</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system';
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '\u25D0';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '\u2600' : '\u263D';
+    }
+  }
+  btn.addEventListener('click', () => {
+    if (state === 'system') state = sys === 'light' ? 'dark' : 'light';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+  apply();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bananas Foster — A Paper Drive in Seven Dimensions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip {
+      color: var(--border); border-bottom-color: transparent; cursor: default;
+    }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      transition: all 0.2s;
+    }
+    .deliverable-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .deliverable-card .section-title { margin-bottom: 6px; }
+    .deliverable-card .section-desc { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Anthropological Survey &middot; March 2026</div>
+    <h1>Bananas <em>Foster</em></h1>
+    <div class="subtitle">A paper drive in seven dimensions &mdash; one dish as a lens for banana trade empires, colonial food systems, Southern cuisine, restaurant theater, and dessert culture.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>In 1951, a chef at Brennan's Restaurant in New Orleans combined butter, brown sugar, rum, and bananas into a tableside flambé. The dish was named for a civic reformer. The banana came from a port that processed half of all US banana imports. The fruit variety used no longer exists commercially. The company that supplied it destabilized governments across Central America. The flambé technique traces to Victorian royal kitchens. The dessert is now an international icon claimed by a city whose supply chain reaches back to labor massacres and CIA coups.</p>
+      <p>This survey maps seven dimensions across <strong>7 sections</strong> and <strong>57 sources</strong> &mdash; institutional histories, peer-reviewed botany, political economy scholarship, culinary journalism, and primary restaurant documentation. Each section was built after assessing whether sources were sufficient. The most revealing findings are the <em>tensions</em> &mdash; places where the pleasure of the dish and the history behind it refuse easy reconciliation.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Comprehensive synthesis across all 7 dimensions. The hidden supply chain thesis. 57 sources.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Four <em>Tensions</em> <span class="status done">done</span></div>
+        <div class="section-desc">Where the pleasure of the dish and the history behind it refuse easy reconciliation. 4 unresolved contradictions.</div>
+        <div class="section-links">
+          <a href="tensions-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Section Deep-Dives</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">The <em>Invention</em> <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. Brennan's Vieux Carré Restaurant, 1951. Owen Brennan, Ella Brennan, and Chef Paul Blangé. Richard Foster and the New Orleans Crime Commission. New Orleans as banana port context. 35,000 pounds of bananas flambéed annually at Brennan's today.</div>
+          <div class="section-links">
+            <a href="s1-invention.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">The Banana <em>Trade</em> <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. New Orleans processed half of all US banana imports. United Fruit Company HQ in New Orleans under Samuel Zemurray. UFC controlled 80&ndash;90% of US banana trade by 1930s. "El Pulpo." 1954 Guatemala coup (Operation PBSUCCESS). O. Henry's "banana republic" (1904).</div>
+          <div class="section-links">
+            <a href="s2-banana-trade.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">The <em>Flambé</em> as Theater <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. Guéridon service origins (Russian service, 1810). Escoffier and Cherries Jubilee (Queen Victoria, 1897). Crêpes Suzette (Monte Carlo, 1895). Tableside theater's mid-century American apex. Bananas Foster as its emblematic American dish. 2025 revival of tableside performance.</div>
+          <div class="section-links">
+            <a href="s3-flambe-theater.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">New Orleans <em>Food Culture</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. Creole cuisine as synthesis: French sauces, African techniques (okra, filé), Spanish rice and peppers, Caribbean ingredients, German sausages. The Creole Trinity. Brennan's positioning Creole cooking as fine dining. How Bananas Foster fits and diverges from the broader tradition.</div>
+          <div class="section-links">
+            <a href="s4-nola-food-culture.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Spread &amp; <em>Variations</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. From one restaurant to international menus. Chocolate Bananas Foster, bourbon substitutions, healthier adaptations. Foster sauce on pancakes and French toast. Artisanal chocolate (Raaka, Ethel M). "Bananas Foster" as detachable flavor concept.</div>
+          <div class="section-links">
+            <a href="s5-spread-variations.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Banana History &amp; <em>Botany</em> <span class="status done">done</span></div>
+          <div class="section-desc">8 sources. The Gros Michel: sweet, thick-skinned, the original Bananas Foster banana &mdash; now commercially extinct. Panama disease (Fusarium oxysporum Race 1) wiped it out in the 1950s&ndash;60s. Cavendish transition. TR4 now threatens Cavendish. Clonal monoculture as structural vulnerability.</div>
+          <div class="section-links">
+            <a href="s6-banana-botany.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Food, Colonialism &amp; <em>Commodity</em> <span class="status done">done</span></div>
+          <div class="section-desc">9 sources. Company-store voucher wages; racially segmented workforces; 1928 Banana Massacre (Ciénaga, Colombia). 2007 Chiquita DOJ fine for paramilitary payments. An iconic American comfort food whose primary ingredient was grown under conditions of systematic exploitation and political violence.</div>
+          <div class="section-links">
+            <a href="s7-food-colonialism.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Four Tensions</h2>
+    <div style="padding: 0 0 12px;">
+      <div class="section-desc">The most valuable findings in any survey are the contradictions &mdash; places where credible evidence, attending to the same object, points in opposite directions. These four tensions define what Bananas Foster is and what it asks of those who eat it.</div>
+    </div>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">T1</span> <strong>Celebration vs. complicity</strong> &mdash; The dish is named for a civic reformer working to clean up the French Quarter. The banana it required was supplied by corporations that destabilized democracies. Can the pleasure of the dessert be separated from the political economy that made it possible? <a href="s2-banana-trade.dd.html">[S2]</a> <a href="s7-food-colonialism.dd.html">[S7]</a></li>
+      <li class="tension-item"><span class="tension-num">T2</span> <strong>Authenticity vs. adaptation</strong> &mdash; The Gros Michel banana used at Brennan's in 1951 no longer exists commercially. Every version of Bananas Foster served today uses a Cavendish, a different species with different flavor. The original recipe cannot be reproduced with the original ingredient. <a href="s6-banana-botany.dd.html">[S6]</a></li>
+      <li class="tension-item"><span class="tension-num">T3</span> <strong>Local icon vs. global commodity</strong> &mdash; New Orleans claims Bananas Foster as a definitive local dish, a product of the city's Creole culinary tradition. But neither ingredient in the dish's name &mdash; the banana or the butter &mdash; originates locally. The dish depends on a globalized colonial supply chain. <a href="s2-banana-trade.dd.html">[S2]</a> <a href="s4-nola-food-culture.dd.html">[S4]</a></li>
+      <li class="tension-item"><span class="tension-num">T4</span> <strong>Theater vs. substance</strong> &mdash; The flambé is the dish's defining gesture, yet alcohol burns off during ignition, minimally affecting flavor. Tableside service makes guests feel important and willing to pay more for what is often food of lesser quantity. Is the fire meaningful technique or pure spectacle? <a href="s3-flambe-theater.dd.html">[S3]</a></li>
+    </ul>
+
+    <div class="footer">
+      Part of <a href="../../">read:rd</a> · <a href="https://read.sadh.app" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a> &middot;
+      See also: <a href="../religion-today/">Religion Today</a><br>
+      Literature collection and deep-dive generation assisted by Claude
+    </div>
+  </div>
+
+<button id="theme-toggle" style="position:fixed;bottom:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Toggle theme">&#9684;</button>
+<script>
+(function(){
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  let state = 'system';
+  function apply() {
+    if (state === 'system') {
+      root.removeAttribute('data-theme');
+      btn.textContent = '\u25D0';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '\u2600' : '\u263D';
+    }
+  }
+  btn.addEventListener('click', () => {
+    if (state === 'system') state = sys === 'light' ? 'dark' : 'light';
+    else if (state === 'dark') state = 'light';
+    else state = 'system';
+    apply();
+  });
+  apply();
+})();
+</script>
+</body>
+</html>

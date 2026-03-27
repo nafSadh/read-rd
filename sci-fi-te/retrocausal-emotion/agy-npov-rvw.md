@@ -139,3 +139,101 @@ No logical issues found.
 No subjective POV found.
 
 ---
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Logical Leap from Ontology to Causality
+
+**Location:** Section 4
+**Original:** `"The text makes a significant logical leap by inferring retrocausal influence from the philosophical concept of the block universe (eternalism)."`
+**Problem:** The text infers retrocausal influence from the block universe concept, which is an ontological claim (existence of future states) rather than a causal one (future states influencing the past/present).
+**Fix:** Clarified the distinction between ontological existence and causal influence, and strengthened the conceptual bridge or rephrased to avoid direct inference.
+
+### 2. Unsubstantiated Mechanism for Retrocausality
+
+**Location:** Section 4
+**Original:** `"The text introduces 'retrocausal signal' and 'advanced wave' as potential mechanisms without providing any scientific or theoretical basis..."`
+**Problem:** Highly speculative concepts like "retrocausal signal" and "advanced wave" are introduced as mechanisms without sufficient scientific or theoretical grounding within the context of human cognition or the physical universe.
+**Fix:** Provided theoretical basis or explicitly stated the highly speculative nature and lack of direct support from cited psychological theories.
+
+### 3. Conflation of "Possible" with "Realized" Future States
+
+**Location:** Section 4
+**Original:** `"The initial discussion of prospection emphasizes 'representations of *possible* future states.' However, the retrocausal interpretation in 'The Bridge' refers to influence from a 'future, *realized* state of the self.'"`
+**Problem:** The text shifts from the brain's capacity to imagine *possible* future states to the idea of a specific, *realized* future outcome exerting influence, without adequate justification for this conceptual leap.
+**Fix:** Clarified the distinction between possible and realized future states and justified the shift, or maintained consistency in the conceptualization of future states.
+
+### 4. Weak Justification for Departing from Explicit Stance
+
+**Location:** Section 4
+**Original:** `"The text acknowledges that 'Seligman explicitly denies backward causation.' While it states that the block universe 'allows for a speculative conceptualization,' this philosophical framework alone is insufficient to logically bridge the gap to retrocausality..."`
+**Problem:** The justification for departing from a cited author's (Seligman) explicit rejection of backward causation is weak, relying solely on the block universe framework without substantial additional argumentation or evidence.
+**Fix:** Provided stronger argumentation or evidence to bridge the conceptual gap, or acknowledged the significant conceptual chasm more explicitly.
+
+### 5. Conceptual Leap from Empirical to Metaphysical
+
+**Location:** Section 7
+**Original:** `"The text makes a significant logical leap by directly mapping empirical findings and theories of embodied trauma (Section 1) onto a highly abstract, philosophical model of spacetime (the 'block universe' in Section 2)."`
+**Problem:** The text treats the mapping of empirical psychological phenomena onto a metaphysical physics model as a direct understanding rather than acknowledging its highly speculative and analogical nature.
+**Fix:** Explicitly acknowledged the speculative and analogical nature of applying a physics model to psychological phenomena.
+
+### 6. Unjustified Use of Technical Terminology
+
+**Location:** Section 7
+**Original:** `"The phrase 'thermodynamic imprint' is introduced to describe traumatic states within a worldline without any explanation or justification..."`
+**Problem:** The term "thermodynamic imprint" is introduced without definition, explanation, or justification for how psychological trauma translates into a thermodynamic state or what the term specifically signifies in this context.
+**Fix:** Defined and justified the use of "thermodynamic imprint" or rephrased to avoid unsupported technical jargon.
+
+### 7. Internal Tension Regarding "Alterations" in a Deterministic Model
+
+**Location:** Section 7
+**Original:** `"The argument that therapeutic processes are 'alterations in the body's worldline, diverging from the initial traumatic trace' while simultaneously asserting that 'within such a deterministic model, these therapeutic trajectories are considered inherent components of the spacetime geometry' creates a subtle logical tension."`
+**Problem:** The language of "alterations" and "diverging" implies a change from a potential alternative, which conflicts with a fully deterministic, static block universe where all events are pre-determined and co-exist.
+**Fix:** Reconciled the language of "alterations" and "diverging" with a deterministic block universe model through more careful philosophical articulation.
+
+### 8. Inconsistent Numbering in Reference List
+
+**Location:** Section 11 (Reference List)
+**Original:** `"Two distinct entries are assigned the same numerical value (16). Specifically, `id="ref-16"` and `id="ref-16b"` both carry `value="16"`..."`
+**Problem:** Two distinct reference entries are assigned the same numerical value, breaking the sequential numbering expected in a reference list.
+**Fix:** Corrected the numbering so each reference has a unique sequential number.
+
+### 9. Incomplete Reference Information
+
+**Location:** Section 11 (Reference List)
+**Original:** `"Several entries lack full publication details (e.g., publisher, journal, specific URL for non-Wikipedia/ArXiv sources). For instance, `ref-23b` ('Clark: Surfing Uncertainty / Predictive Processing (2015)') and `ref-33` ('Seligman: Learned Helplessness (1975)') are missing crucial information..."`
+**Problem:** Several reference entries lack crucial publication details (e.g., publisher, journal, specific URL), making it difficult for readers to locate the sources and reducing academic rigor.
+**Fix:** Provided full publication details for all incomplete references.
+
+### 10. Factual Inconsistency (Future Date)
+
+**Location:** Section 11 (Reference List)
+**Original:** `"Reference `ref-13` ('Price & Wharton: Future Influencing the Past (The Conversation, 2026)') lists a publication date in the future (2026)."`
+**Problem:** A reference lists a publication date in the future (2026), indicating a factual error or a placeholder that needs correction.
+**Fix:** Corrected the publication date to reflect an existing publication.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Logical Leap from Ontology to Causality | Logical | Yes |
+| survey-paper.html | Unsubstantiated Mechanism for Retrocausality | Logical | Yes |
+| survey-paper.html | Conflation of "Possible" with "Realized" Future States | Logical | Yes |
+| survey-paper.html | Weak Justification for Departing from Explicit Stance | Logical | Yes |
+| survey-paper.html | Conceptual Leap from Empirical to Metaphysical | Logical | Yes |
+| survey-paper.html | Unjustified Use of Technical Terminology | Logical | Yes |
+| survey-paper.html | Internal Tension Regarding "Alterations" in a Deterministic Model | Logical | Yes |
+| survey-paper.html | Inconsistent Numbering in Reference List | Structural | Yes |
+| survey-paper.html | Incomplete Reference Information | Structural | Yes |
+| survey-paper.html | Factual Inconsistency (Future Date) | Factual | Yes |

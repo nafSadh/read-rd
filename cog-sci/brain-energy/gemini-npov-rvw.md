@@ -77,3 +77,34 @@ The paper provides a structured synthesis of the emerging field of metabolic psy
 **Grade: C**
 
 **Justification:** The paper is logically structured and synthesizes a complex array of information into a readable "tensions" framework. However, the use of **hallucinated or future-dated citations** (2025/2026) is a critical failure of scholastic rigor that would result in immediate rejection from any academic journal. Additionally, the "conversational" meta-commentary and subjective superlative use ("most valuable findings") detract from the required neutral point of view. With the citations corrected and the tone neutralized, this would easily be an A-range paper.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+
+### Changes Applied
+
+**POV Issues**
+- **Abstract opening superlative** — "The most valuable findings in any literature survey are the contradictions" replaced with "This survey focuses on identifying contradictions in the literature, as these tensions often highlight the boundaries of current understanding."
+- **"Honest position" meta-voice** — "The honest position in 2026 is:" replaced with "The current state of the field can be characterized as:" in the Conclusion.
+- **Palmer framing** — "presents the metabolic theory as a paradigm shift comparable to the germ theory of disease" replaced with "proposes that the metabolic theory represents a significant shift in psychiatric etiology, drawing comparisons to the historical impact of germ theory" to attribute the claim more clearly rather than mirroring promotional language.
+
+**Logical Consistency Issues**
+- **Equivocation on "paradigm shift"** — The four "Why both sides are right:" subheads were replaced with "Synthesis of Perspectives:" throughout (all four tensions), which better signals that both framings are being reconciled rather than adjudicated. This reduces the rhetorical oscillation between paradigm and incremental framings.
+
+**Scholastic Rigor Issues**
+- **Causal claim from theoretical model** — "The metabolic lens provides the upstream cause: energy deficit impairs neurotransmitter synthesis..." replaced with "According to the metabolic model, energy deficits are hypothesized to impair neurotransmitter synthesis..." to frame it as a hypothesis rather than an established fact.
+- **Unverified superlative in Conclusion** — "The most interesting finding from this survey is not any single study but the gap itself" replaced with "A notable observation arising from this survey is the discrepancy between mechanistic strength and clinical evidence." Also replaced the closing "most honest summary" with "most accurate summary."
+
+**Tone Issues**
+- **"Biological elegance"** — Replaced with "mechanistic plausibility" in Tension 3.
+- **"Gives up too easily"** — Replaced with "may be premature given the historical challenges of medication adherence."
+- **"Depression is just bad mitochondria" straw man** — Removed the quoted phrase and replaced the full sentence with "Social media simplifies the theory into reductive narratives that may fail to account for the complexity of the disorder, undermining scientific credibility."
+- **Conversational "The tension:" subheads** — All four instances replaced with "Analysis of Conflicting Evidence:" using a global replace.
+
+### Changes Skipped
+
+- **Temporal correction / future-dated citations** — The audit recommends replacing all 2025–2026 citations with verified pre-2024 sources. This was not applied. Several of these URLs (JAMA Psychiatry RCT ref-2, Singh et al. BJSM ref-15, Danan et al. Transl Psychiatry ref-14, Sethi & Palmer Nat Ment Health ref-13, Dietch et al. J Affect Disord ref-8, Behavioral Health Business ref-18) point to real or plausibly real publications dated 2025. Since today's date is 2026-03-27, these are not future citations — they are recent past citations. Removing them would degrade the paper's currency. The audit's framing of these as "hallucinated or future" citations was written from an assumed earlier date and does not apply as of this fix pass. The paper's "MARCH 2026" date in the paper-meta line is accurate and was left unchanged.
+- **"What would resolve it:" subheads** — Not flagged by the audit and left as-is; they are forward-looking analytical headers, not conversational markers.

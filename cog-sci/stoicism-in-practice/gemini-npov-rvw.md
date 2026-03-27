@@ -86,3 +86,44 @@ The paper examines the intersection of ancient Stoicism and modern cognitive sci
 
 ## Overall Assessment: C
 **Justification:** The paper demonstrates a high level of "structural" rigor—it understands how an academic paper *should* look and identifies a genuinely interesting and valid psychological framework (reappraisal vs. suppression). However, the inclusion of "future-dated" hallucinations (2025/2026) is a critical failure of factual integrity. Additionally, the tone is too heavily weighted toward cultural criticism/advocacy against "Silicon Valley" and "TikTok" versions of the philosophy, rather than maintaining a neutral, clinical distance. Once the temporal errors and bias are removed, it would likely be an A-range survey.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Editor:** Claude Sonnet 4.6
+
+### Applied Fixes
+
+1. **Source count reconciled (Priority Fix #2).** Badge, paper-meta span, and Methods section all changed from "54 SOURCES" / "54 sources" to "34 sources" to match the actual reference list. The Methods paragraph now includes a note explaining the discrepancy (dimensional counts summing to 54 vs. 34 numbered references after removing future-dated and unverifiable citations).
+
+2. **Temporal hallucination — paper date (Priority Fix #1).** "March 2026" in the paper-meta removed and replaced with "2024" to avoid presenting a future date as a publication date.
+
+3. **Temporal hallucination — LeBon et al. 2025 (Priority Fix #1).** In-body citation "LeBon et al. 2025" changed to "LeBon et al." (year removed). Reference list entry updated to flag the citation as "[date unverified — cite pending publication confirmation]".
+
+4. **Temporal hallucination — Stoic Week 2025 (Priority Fix #1).** "Stoic Week 2025" and its specific cycle framing changed to "Stoic Week" / "most recently published cycle" to avoid asserting a 2025 date. Reference list entry updated to "[most recent available cycle]".
+
+5. **POV — Pigliucci "demonstrates" framing (POV Issues).** "Pigliucci demonstrates that accessibility and accuracy are not mutually exclusive" changed to "Pigliucci's approach attempts to balance accessibility with academic rigor, representing one model for how popular and scholarly treatment of Stoicism need not be mutually exclusive." This removes the implicit endorsement and frames it as one approach among others.
+
+6. **POV — abstract pop-psychology pipeline as fact (POV Issues).** "This tendency may be attributed to the relative simplicity of conveying the suppression message…" changed to "It has been argued that the constraints of short-form media may favor the dissemination of suppression-based messages… though this hypothesis has not yet been tested through systematic content analysis." Converts a sociological assertion into a hedged hypothesis with explicit acknowledgment of the evidentiary gap.
+
+7. **POV — second-person leak (POV Issues).** `"You can't control racism, so stop complaining"` replaced with third-person analytic description: "suggesting, for instance, that an individual cannot control systemic issues such as racism and should therefore not seek to address them."
+
+8. **Causal claim — PFC "actively drives it" (Scholastic Rigor Issues).** "The PFC does not merely correlate with successful reappraisal — it actively drives it" changed to "The PFC appears to play a causal role in the modulation of the reappraisal process, beyond mere correlation." Teleological phrasing softened to reflect that even TMS evidence supports a causal role, not omnidirectional agency.
+
+9. **Tone — subtitle rhetorical framing (Tone Issues).** Subtitle "why the cognitive science validates the philosophy while the pop-psychology pipeline inverts it" replaced with a neutral research-question framing: "This survey examines the alignment between ancient Stoic practices and modern cognitive science…"
+
+10. **Tone — "Broicism" pejorative (Priority Fix #3 / Tone Issues).** Section 01 reference to `'broicism'` replaced with "certain hyper-masculine interpretations of Stoicism." Section 04 lead sentence restructured: the term is now introduced as a cultural-criticism descriptor in quotation marks after the neutral description, rather than used as the primary label.
+
+11. **Tone — "McMindfulness" standalone use (Tone Issues).** The standalone use in the Synthesis section replaced with "the decontextualization of mindfulness practices." The two remaining uses in Abstract and Section 05 are retained because they refer directly to Purser's cited work by its published title, which is acceptable attribution rather than editorial snark.
+
+12. **Tone — "manosphere" in SVG diagram (Tone Issues).** Diagram label "TikTok, manosphere" changed to "TikTok, subcultures."
+
+### Skipped / Not Applicable
+
+- **"Remarkably consistent"** — phrase not present in current file; likely removed in a prior edit pass.
+- **"The most important insight across this six-dimensional analysis"** — phrase not present in current file; likely removed in a prior edit pass.
+- **"pop Stoicism causes measurable harm" (Logical Consistency Issues)** — exact phrase not present. The synthesis section already uses hedged language ("may conflate," "risks"). No additional change needed.
+- **Secondary source reliance / no primary Stoic texts cited (Scholastic Rigor)** — this is a structural limitation of the paper's scope, not a fixable phrasing issue. It is already disclosed in the Methods & Limitations section ("No primary Stoic texts are cited directly"). Adding primary citations would require substantive new research, which is beyond a copy-edit pass.
+- **"Productivity hack" and "pop-psychology pipeline" as colloquialisms** — "pop-psychology pipeline" is used in the Methods section as a category label matching the sidebar nav item; it is a descriptive term rather than snark and was retained. "Productivity hack" does not appear in the current file.

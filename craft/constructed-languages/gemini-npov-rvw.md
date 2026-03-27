@@ -70,3 +70,41 @@ The paper provides a multi-disciplinary survey of constructed languages (conlang
 
 ## Overall Assessment: B-
 **Justification:** The paper is intellectually ambitious and successfully synthesizes disparate fields (linguistics, CS, and literature). However, its tone is currently that of a high-quality "Longread" or "Video Essay" rather than a formal research paper. It relies too heavily on secondary/tertiary sources (Wikipedia) and uses definitive, dramatic language where hedging and attribution are required for scholastic rigor. With the removal of "enthusiast" flourishes and better citation of primary linguistic research, it would easily reach an A-grade.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+
+### Applied Fixes
+
+1. **Section 05 heading — "Most Successful" superlative (POV + Rigor)**
+   - Old: `Programming Languages as the Most Successful Conlangs`
+   - New: `Programming Languages as the Most Widely Adopted Conlangs`
+
+2. **Section 05 opening sentence — unquantified superlative (POV + Rigor)**
+   - Old: "By any measure — number of speakers, practical utility, economic impact — programming languages are the most successful constructed languages ever created."
+   - New: "By metrics of adoption and economic utility, programming languages represent a significant and highly utilized branch of language construction."
+
+3. **Section 02 — "chicken-and-egg problem" colloquialism (Tone)**
+   - Old: "the chicken-and-egg problem (lack of speakers due to perceived lack of utility, and vice versa)"
+   - New: "a circular dependency regarding utility and adoption (lack of speakers due to perceived lack of utility, and vice versa)"
+
+4. **Section 04 T4 tension card — ontological claim stated as fact (Tone + POV)**
+   - Old: "The distinction between constructed and natural is a spectrum, not a binary."
+   - New: "This survey treats the distinction between constructed and natural languages as a gradient rather than a binary classification."
+
+5. **Abstract — uncited "870 years old" claim (Rigor)**
+   - Added inline footnote [30] linking to Wikipedia: Lingua Ignota, attributing the figure to Hildegard von Bingen (c. 1150).
+   - Added reference [30] to the reference list.
+
+### Skipped / Already Resolved in Prior Pass
+
+- **"Most valuable findings" (Abstract POV):** Already revised to "Significant insights are revealed by examining the tensions between these traditions" — no further action needed.
+- **"The lesson recurs: communities beat grammars, every time" (Tone):** Phrase entirely absent from the file; already removed.
+- **"killed by a founder who insisted that his creation was perfect" (Tone):** Phrase entirely absent from the file; already removed.
+- **"Schleyer destroyed Volapuk by refusing to cede control" (Rigor/Causal):** Already softened throughout — Section 01 and T2 card use "often cited as a significant factor," "attributed, in part, to," and "frequently cited as a factor." Meets the audit's recommended standard.
+- **Source elevation (Wikipedia → peer-reviewed) (Rigor Priority Fix):** Not applied. Replacing citations requires verifying availability of alternative sources and is outside the scope of a prose-level fix pass. The Limitations section already discloses Wikipedia reliance.
+- **Define "success" metrics formally (Rigor Priority Fix):** Addressed by rewriting the opening sentence of Section 05 to specify "adoption and economic utility" as the operative metrics, rather than the vague "by any measure."

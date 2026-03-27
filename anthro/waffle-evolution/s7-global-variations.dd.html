@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S7: Global Variations — Waffle Evolution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent-soft:#2e6ab410;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#2e6ab406;--grad2:#9b7aed04}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent-soft:#9b7aed0c;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#9b7aed06;--grad2:#4ee8d004}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.7}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent)}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:190px;min-width:190px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo{font-family:var(--serif);font-size:20px;color:var(--bright);font-weight:500}
+.sidebar-logo em{font-style:italic;color:var(--accent)}
+.sidebar-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:10px 16px;text-decoration:none;color:var(--text);transition:all .2s;border-left:2px solid transparent}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:20px;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.sidebar-foot a{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none}
+.sidebar-foot a:hover{color:var(--accent)}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--bg2);color:var(--dim);font-size:15px}
+.main{flex:1;margin-left:190px;padding:0 0 120px}
+.main-head{padding:48px 60px 28px;max-width:900px;margin:0 auto;border-bottom:1px solid var(--border)}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:38px;font-weight:500;color:var(--bright);line-height:1.15;letter-spacing:.5px;margin-bottom:10px}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{font-family:var(--sans);font-size:14px;color:var(--dim);max-width:620px;line-height:1.7}
+.main-body{max-width:900px;margin:0 auto;padding:0 60px}
+.section-block{padding:40px 0;border-bottom:1px solid var(--border)}
+.section-block:last-child{border-bottom:none}
+.s-num{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.section-block h2{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--bright);line-height:1.25;margin-bottom:20px;letter-spacing:.5px}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:28px 0 12px;text-transform:uppercase;letter-spacing:2.5px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.section-block p{font-family:var(--serif);font-size:17px;line-height:2;margin-bottom:16px}
+.section-block strong{color:var(--bright)}
+.callout{border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-family:var(--serif);font-style:italic;color:var(--bright)}
+.variant-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.variant-card{border:1px solid var(--border);padding:18px 20px}
+.variant-card h4{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.variant-card .vc-origin{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.5px;margin-bottom:10px}
+.variant-card p{font-family:var(--serif);font-size:15px;line-height:1.8;color:var(--text);margin:0}
+.ref-list{list-style:none;padding:0;margin:12px 0}
+.ref-list li{font-family:var(--mono);font-size:11px;color:var(--dim);padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%);line-height:1.6}
+.ref-list li:last-child{border-bottom:none}
+.ref-list a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+.ref-list a:hover{color:var(--accent)}
+sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}
+sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;font-size:11px}
+sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:12px;color:var(--text);white-space:normal;max-width:420px;min-width:180px;z-index:50;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+sup.fn:hover .tip{display:block}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.main-head,.main-body{padding:28px 20px}.hero-title{font-size:26px}.variant-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-theme="light">
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">Waffle <em>Ev.</em></div>
+    <div class="sidebar-sub">S7 · Global Variations</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#overview" class="sidebar-item active"><span class="sidebar-num">01</span><span class="sidebar-label">Overview</span></a>
+    <a href="#hk-egg" class="sidebar-item"><span class="sidebar-num">02</span><span class="sidebar-label">Hong Kong 雞蛋仔</span></a>
+    <a href="#stroopwafel" class="sidebar-item"><span class="sidebar-num">03</span><span class="sidebar-label">Stroopwafel</span></a>
+    <a href="#norwegian" class="sidebar-item"><span class="sidebar-num">04</span><span class="sidebar-label">Norwegian Heart</span></a>
+    <a href="#diffusion" class="sidebar-item"><span class="sidebar-num">05</span><span class="sidebar-label">Diffusion vs. Invention</span></a>
+    <a href="#refs" class="sidebar-item"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Sources</span></a>
+  </div>
+  <div class="sidebar-foot">
+    <a href="s6-industrialization-eggo.dd.html">&larr; S6</a>
+    <a href="index.html">Project</a>
+  </div>
+</div>
+<button class="theme-btn" id="theme-btn" title="Toggle theme">&#9684;</button>
+<div class="main">
+  <div class="main-head">
+    <div class="hero-badge"><span class="dot"></span>WAFFLE EVOLUTION &middot; SECTION 7 &middot; 10 SOURCES</div>
+    <h1 class="hero-title">Global <em>Variations</em></h1>
+    <p class="hero-sub">Hong Kong egg waffles invented independently in the 1950s. Stroopwafel from Gouda poor-house scraps around 1810. Norwegian heart-shaped waffles tied to a feast day. How the iron-pressed grid form arose across cultures, sometimes independently.</p>
+  </div>
+  <div class="main-body">
+
+    <div class="section-block" id="overview">
+      <div class="s-num">SECTION 01</div>
+      <h2>The Grid Form <em>Across Cultures</em></h2>
+      <p>The waffle's global distribution raises a question about the relationship between diffusion and independent invention. Some variants — Dutch stroopwafel, Norwegian hjertevafler — derive directly from the European gaufre tradition carried by Dutch and German influence. Others — Hong Kong egg waffles (雞蛋仔) — appear to represent independent invention: the same basic insight (press an egg batter between a patterned iron over heat) arrived at without documented connection to European waffle history.<sup class="fn"><a>[1]</a><span class="tip">Wikipedia, "Egg waffle"</span></sup></p>
+      <div class="variant-grid">
+        <div class="variant-card">
+          <h4>Hong Kong 雞蛋仔</h4>
+          <div class="vc-origin">Hong Kong &middot; 1950s &middot; independent invention</div>
+          <p>Egg puff waffle pressed in honeycomb mold. Evaporated milk batter. Crisp exterior, soft bubble interior. Street food, eaten plain or flavored.</p>
+        </div>
+        <div class="variant-card">
+          <h4>Stroopwafel</h4>
+          <div class="vc-origin">Gouda, Netherlands &middot; c.1810–1840 &middot; European tradition</div>
+          <p>Two thin waffle-like cookies sandwiched with caramel syrup. Originally "armenkoeken" (poor people's cookies) from baker's crumb scraps.</p>
+        </div>
+        <div class="variant-card">
+          <h4>Norwegian Hjertevafler</h4>
+          <div class="vc-origin">Norway &middot; 150+ years tradition &middot; European tradition</div>
+          <p>Heart-shaped, thin, dense. Cardamom-flavored. Served with brunost (brown cheese) and lingonberry jam. Tied to Waffle Day (March 25).</p>
+        </div>
+        <div class="variant-card">
+          <h4>Bubble Waffle (global)</h4>
+          <div class="vc-origin">From HK egg waffle &middot; 2010s global spread</div>
+          <p>The Hong Kong form goes global via food tourism and Instagram culture. Bubble waffle shops open across Europe and North America in 2010s.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" id="hk-egg">
+      <div class="s-num">SECTION 02</div>
+      <h2>Hong Kong <em>雞蛋仔</em></h2>
+      <p>The Hong Kong egg waffle (<em>gai daan jai</em>, literally "little egg") originated in Hong Kong and Macau in the <strong>1950s</strong>. The documented origin story holds that a grocery shop owner, faced with excess or slightly damaged eggs and the need to move inventory, developed an egg-rich batter combining eggs, sugar, flour, and evaporated milk. This batter was poured into a honeycomb-patterned metal plate — a mold producing small, oval bubbles rather than the flat grid of European waffles — and cooked over a flame to produce a waffle-like confection.<sup class="fn"><a>[2]</a><span class="tip">Wikipedia, "Egg waffle"</span></sup></p>
+      <p>The use of evaporated milk is significant: it reflects the specific material conditions of postwar Hong Kong, where evaporated milk (a British colonial import) was more available and affordable than fresh dairy. The egg waffle is thus a product of local ingredient availability, not a derivation from European waffle culture. It arrived at the same basic form — egg batter pressed in a patterned iron — by a different path.<sup class="fn"><a>[3]</a><span class="tip">Hope's Dreams Aspirations, "Traditional Hong Kong street food – 'Bubble Waffle'"</span></sup></p>
+      <h3>Global Spread of the Bubble Form</h3>
+      <p>The Hong Kong egg waffle remained a local street food for decades. Its global spread occurred primarily in the <strong>2010s</strong>, driven by food tourism, social media visibility (the bubble format is distinctively photogenic), and the international spread of Hong Kong and Chinese food culture. By 2018, a bubble waffle shop had been invited to set up at the Super Bowl — a marker of the form's arrival in mainstream American popular culture. CNN's travel coverage noted bubble waffle shops opening across Europe, drawing crowds and significant social media attention.<sup class="fn"><a>[4]</a><span class="tip">CNN Travel, "Bubble waffles: The uniquely Hong Kong snack that's popping up around the world"</span></sup></p>
+    </div>
+
+    <div class="section-block" id="stroopwafel">
+      <div class="s-num">SECTION 03</div>
+      <h2>Stroopwafel: From <em>Poor People's Cookie</em> to Global Airport Staple</h2>
+      <p>The stroopwafel (literally "syrup waffle") originated in <strong>Gouda</strong>, Netherlands, in the early 19th century. The canonical origin story credits <strong>Gerard Kamphuisen</strong>, a baker, with inventing the form by combining leftover crumbs and bakery scraps with syrup to produce a thin, affordable waffle-like cookie. The earliest documented stroopwafel recipe is dated to <strong>1840</strong>, though the form may be older. Like the Liège waffle's Prince-Bishop story, the Kamphuisen attribution rests on tradition rather than documentary verification.<sup class="fn"><a>[5]</a><span class="tip">Wikipedia, "Stroopwafel"</span></sup></p>
+      <p>The stroopwafel's early social identity was explicitly working-class: it was called <em>armenkoeken</em> — "poor people's cookies" — in Gouda, reflecting its origins in bakery waste. By the mid-19th century, the form had become successful enough that Gouda hosted over <strong>100 stroopwafel bakers</strong>. After 1870, the form spread to other Dutch cities; in the 20th century, factory production introduced it nationally and eventually internationally.<sup class="fn"><a>[6]</a><span class="tip">Dutch Waffle Company, "The History of the Stroopwafel: From Gouda to Worldwide Obsession"</span></sup></p>
+      <p>The stroopwafel's contemporary global presence is largely mediated by air travel: it became a standard offering at Schiphol Airport and other Dutch transit hubs, and its association with Dutch national identity — along with the practical ritual of balancing the cookie on a hot coffee cup to soften the caramel filling — made it a recognizable and exportable cultural artifact. The journey from "poor people's scraps" to global airport commodity is a compressed version of the broader waffle industrialization story.<sup class="fn"><a>[7]</a><span class="tip">DutchReview, "Stroopwafels unwrapped: Discover the sweet story behind the Dutch classic"</span></sup></p>
+    </div>
+
+    <div class="section-block" id="norwegian">
+      <div class="s-num">SECTION 04</div>
+      <h2>Norwegian <em>Hjertevafler</em></h2>
+      <p>The Norwegian heart-shaped waffle (<em>hjertevafler</em> or <em>vafler</em>) is distinguished by three features: its shape (a five-section heart pattern rather than a rectangular grid), its flavor (cardamom and vanilla, characteristic of Scandinavian baking), and its toppings (brunost brown cheese and lingonberry jam, or sour cream and jam — no whipped cream). Norwegian waffles are thinner and denser than Belgian or American styles, and are eaten as a snack or dessert rather than a breakfast food.<sup class="fn"><a>[8]</a><span class="tip">Visit Norway, "Waffle is the king of kos"</span></sup></p>
+      <p>The cultural significance of the Norwegian waffle is embedded in the concept of <em>kos</em> — a Norwegian term for coziness, warmth, and social comfort, roughly analogous to the Danish <em>hygge</em>. The waffle is described by Visit Norway as "the king of kos," a food associated with warmth, gathering, and the pleasurable suspension of ordinary routine. One Norwegian church reportedly serves over <strong>30,000 waffles annually</strong> from a permanent waffle station — a figure that suggests the degree to which the form has been institutionalized in communal life.<sup class="fn"><a>[9]</a><span class="tip">Skandibaking, "Hjertevafler (Norwegian Heart-Shaped Waffles)"</span></sup></p>
+      <div class="callout">
+        <h4>Waffle Day and the Feast of Annunciation</h4>
+        <p>In Norway, Sweden, and Denmark, <strong>March 25</strong> is both Waffle Day and the Feast of Annunciation. The coincidence is not accidental: in Swedish, the Feast of Annunciation is <em>Vårfrudagen</em> ("Our Lady's Day"), which was colloquially contracted to <em>Våffeldagen</em> ("Waffle Day") through phonetic similarity. A religious feast day became a secular food celebration through linguistic accident — a micro-version of the broader sacred-to-profane trajectory of the waffle's entire history.</p>
+      </div>
+    </div>
+
+    <div class="section-block" id="diffusion">
+      <div class="s-num">SECTION 05</div>
+      <h2>Diffusion vs. <em>Independent Invention</em></h2>
+      <p>The global distribution of waffle forms raises a genuine anthropological question: does the convergence of iron-pressed grid foods across cultures represent diffusion (the European form traveling outward) or independent invention (the same basic technology discovered separately)? The evidence supports both answers for different cases.</p>
+      <p>The stroopwafel and hjertevafler derive clearly from the European gaufre tradition via Dutch and Germanic influence — both the Low Countries and Scandinavia were within the core zone of medieval waffle culture. Their distinctive forms represent local adaptation, not independent invention. The Hong Kong egg waffle presents a stronger case for independent invention: it uses a different mold geometry, different batter chemistry, and arose in a food culture with no documented connection to European waffle tradition. The convergence on a pressed-batter-in-iron form may reflect something about the universality of the underlying technology rather than cultural diffusion.<sup class="fn"><a>[10]</a><span class="tip">Euronews, "International Waffle Day: How this sweet treat came to be" (March 2026)</span></sup></p>
+      <p>The 2010s global spread of bubble waffles — a Hong Kong form reaching Europe and North America via food tourism and social media — represents a third pattern: reverse diffusion, in which a non-European variant travels back to the continent of the waffle's European origins and establishes itself as a novel and desirable form. The European waffle had traveled east through colonial and commercial networks; the Hong Kong egg waffle traveled west through the attention economy.</p>
+    </div>
+
+    <div class="section-block" id="refs">
+      <div class="s-num">SOURCES</div>
+      <h2>Section <em>References</em></h2>
+      <ul class="ref-list">
+        <li>[1] <a href="https://en.wikipedia.org/wiki/Egg_waffle" target="_blank">Wikipedia — Egg waffle</a></li>
+        <li>[2] <a href="https://en.wikipedia.org/wiki/Egg_waffle" target="_blank">Wikipedia — Egg waffle (1950s origin, grocery owner)</a></li>
+        <li>[3] <a href="https://hopesdreamsaspirations.com/2015/12/23/traditional-hong-kong-street-food-bubble-waffle-%E9%9B%9E%E8%9B%8B%E4%BB%94/" target="_blank">Hope's Dreams Aspirations — "Traditional Hong Kong street food – 'Bubble Waffle'"</a></li>
+        <li>[4] <a href="https://www.cnn.com/travel/article/hong-kong-bubble-waffles" target="_blank">CNN Travel — "Bubble waffles: The uniquely Hong Kong snack that's popping up around the world"</a></li>
+        <li>[5] <a href="https://en.wikipedia.org/wiki/Stroopwafel" target="_blank">Wikipedia — Stroopwafel</a></li>
+        <li>[6] <a href="https://dutchwafflecompany.us/blogs/blog/the-history-of-the-stroopwafel-from-gouda-to-worldwide-obsession" target="_blank">Dutch Waffle Company — "The History of the Stroopwafel: From Gouda to Worldwide Obsession"</a></li>
+        <li>[7] <a href="https://dutchreview.com/culture/food/rags-riches-stroopwafel-story/" target="_blank">DutchReview — "Stroopwafels unwrapped: Discover the sweet story behind the Dutch classic"</a></li>
+        <li>[8] <a href="https://www.visitnorway.com/things-to-do/food-and-drink/waffle-is-the-king-of-kos/" target="_blank">Visit Norway — "Waffle is the king of kos"</a></li>
+        <li>[9] <a href="https://skandibaking.com/hjertevafler-norwegian-heart-shaped-waffles/" target="_blank">Skandibaking — "Hjertevafler (Norwegian Heart-Shaped Waffles)"</a></li>
+        <li>[10] <a href="https://www.euronews.com/culture/2026/03/25/international-waffle-day-how-this-sweet-treat-came-to-be-and-the-various-ways-to-celebrate" target="_blank">Euronews — "International Waffle Day" (March 2026)</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+<script>
+(function(){
+  const btn=document.getElementById('theme-btn');const root=document.documentElement;root.setAttribute('data-theme','light');let dark=false;
+  btn.addEventListener('click',()=>{dark=!dark;root.setAttribute('data-theme',dark?'dark':'light');btn.textContent=dark?'\u2600':'\u263D';});
+  const items=document.querySelectorAll('.sidebar-item');const sections=document.querySelectorAll('.section-block');
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){items.forEach(i=>i.classList.remove('active'));const a=document.querySelector('.sidebar-item[href="#'+en.target.id+'"]');if(a)a.classList.add('active');}});},{threshold:0.3});
+  sections.forEach(s=>obs.observe(s));
+})();
+</script>
+</body>
+</html>

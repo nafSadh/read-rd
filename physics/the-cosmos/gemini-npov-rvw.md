@@ -73,3 +73,66 @@ The paper provides a high-level synthesis of six critical "tensions" or unresolv
 **Grade: C-**
 
 **Justification:** The paper is well-organized and correctly identifies the major "hot topics" in the field. However, the inclusion of "hallucinated" future events and the reliance on non-scholarly sources (Wikipedia/news sites) makes it unacceptable for academic publication. It currently reads as a high-quality blog post or a speculative essay rather than a rigorous research synthesis. Closing the gap between "popular science writing" and "academic writing" is the primary requirement for improvement.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+
+### Changes Applied
+
+**POV — Authorial "we/our" voice (6 instances fixed)**
+- Abstract: "The honest position in 2026: we know what the universe is made of..." → removed; replaced with third-person restatement.
+- T1: "our model of the universe" → "the standard cosmological model"
+- T2: "it is not what we expected it to be" → "it is not what was expected"
+- T2: "theoretical approaches we have not yet conceived" → "theoretical frameworks not yet formulated"
+- T2: "We are approaching the neutrino floor" → "Current experiments are approaching the neutrino floor"
+- T3: "we understand even less about dark energy than we thought" → "the physical basis of dark energy is even less constrained than current models assume"
+- T5: "our best-tested theories" → "the best-tested theories in modern cosmology"
+- Conclusion: "whether we are alone" → "whether technological civilizations exist elsewhere"
+
+**POV — Subjective framing in abstract**
+- "The most valuable findings in any literature survey are the contradictions" → "This survey focuses on contradictions, as they often highlight the boundaries of current theoretical models."
+
+**Logical Consistency — Semantic paradox in abstract**
+- "we know what the universe is made of to 0.15% precision, and we do not know what 95% of it actually is" → "The total energy density of the universe is constrained to 0.15% precision, though the physical nature of 95% of that density remains unknown."
+
+**Logical Consistency — Multiverse internal contradiction**
+- The "What would resolve it" paragraph for T5 now explicitly distinguishes between the untestable multiverse *ensemble* and specific eternal inflation *models* that may produce observable signatures (e.g., bubble collision imprints in the CMB), resolving the contradiction identified in the audit.
+
+**Scholastic Rigor — Temporal hallucinations (3 fixes)**
+- `SYNTHESIS PAPER · MARCH 2026` → `SYNTHESIS PAPER · 2024`
+- "A November 2025 LIGO event suggesting a sub-solar-mass merger" → rewritten to describe LIGO's O4 run as ongoing with a conditional framing; ref-14 label and list entry updated accordingly.
+- "The Nature Astronomy 'Tensions in Cosmology 2025' conference found no consensus" → "No consensus on the source of the discrepancy has emerged from the broader literature"; ref-10 list entry updated to remove the future conference citation.
+- Conclusion paragraph "The period from 2026 to 2035 may be the most data-rich decade" → "The coming decade may be the most data-rich"; "250+ gravitational wave events" → "over 200 gravitational wave events" (anchored to verifiable 2024 count); "The honest summary of modern cosmology in 2026: we have measured..." → fully de-personalized and de-dated.
+
+**Scholastic Rigor — Unverified superlatives (2 fixes)**
+- "the world's most sensitive WIMP detector" → "one of the most sensitive WIMP detectors currently operational"
+- "the worst prediction in physics" → "a discrepancy of 120 orders of magnitude... widely cited as one of the most significant failures of vacuum energy prediction in theoretical physics"
+
+**Tone — Editorial flourishes (3 fixes)**
+- "humbling but not revolutionary" → "a significant calibration problem, but one that would leave the standard cosmological model intact"
+- "sobering" (Great Filter description) → removed; sentence restructured to analytical form
+- "smoking gun" in T4 section header → header retitled "T4. Cosmic Inflation: Universally Invoked, Directly Undetected"; sidebar nav updated to match. (Retained "smoking gun" metaphor in the T4 body where it appears in the phrase "search for inflation's smoking gun" in the conclusion — that instance was also replaced with "search for primordial B-mode polarization".)
+
+**Tone — Rhetorical section header (T6)**
+- "T6. The Silence: Why No Aliens?" → "T6. The Fermi Paradox and Technosignature Constraints"; sidebar nav updated to match.
+
+**Tone — Dismissive characterization (T5)**
+- "A theory that predicts everything predicts nothing." → removed; replaced with: "the lack of constrained observational consequences limits the framework's falsifiability."
+
+**Tone — T6 rhetorical framing**
+- "we cannot prove that something does not exist" → "the non-detection of technosignatures cannot establish that technological civilizations do not exist"
+
+### Changes Skipped
+
+**Citation quality (refs [7], [15], [18], [24], [25], [29], [33] — Wikipedia; [10], [13], [19] — popular media; [29] — Psychology Today)**
+- Skipped. Replacing citations requires verified primary sources (e.g., specific *Phys. Rev. D* or *ApJ* DOIs). Substituting placeholder URLs would be worse than the current state. This is flagged for a dedicated citation upgrade pass by the author.
+
+**T6 categorization caveat (Priority Fix #4)**
+- The audit recommends adding a stronger linking premise explaining why an astrobiological tension appears alongside physical/cosmological ones. Skipped — this requires adding new substantive content, which goes beyond neutralizing existing prose. Flagged for author review.
+
+**Weak anthropic principle phrasing ("we necessarily observe a universe compatible with our existence")**
+- Retained as-is. This is the standard technical formulation of the weak anthropic principle, not authorial voice. Changing it would alter the meaning of the defined concept.

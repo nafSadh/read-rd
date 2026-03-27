@@ -81,3 +81,37 @@ The most significant issue is the presence of "hallucinated" or "future-dated" c
 **Grade: C+**
 
 **Justification:** The paper is intellectually ambitious and demonstrates a high level of "structural" rigor—it knows how an academic paper *should* look and move. The synthesis of the "dream-lag effect" with "continuing bonds" is genuinely insightful. However, the use of future-dated citations (2025/2026) and the reliance on blog-level sources for critical psychological claims significantly undermine its scholastic validity. If the citations were corrected to real-world, peer-reviewed data, the grade would likely rise to an A-.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+**File edited:** `survey-paper.html`
+
+### Applied Fixes
+
+| # | Issue | Location | Change made |
+|---|-------|----------|-------------|
+| 1 | POV — "motivating phenomenon" leaks personal context into research justification | Abstract | Changed to "The phenomenon under investigation is a variant of dream experience characterized by…" |
+| 2 | POV — "this project" and implicit "rich" framing in Methods | Methods & Limitations | Changed to "The theoretical framework is illustrated by a single dream report; while providing depth, it lacks statistical generalizability." |
+| 3 | POV — informal "discourse review" framing without scope caveat | Methods & Limitations | Prepended "This survey constitutes a preliminary discourse review and is not intended to be an exhaustive meta-analysis." |
+| 4 | Logical consistency — vague "grammar preserved / meaning degrades" equivocates Broca/Wernicke roles | Section 01, Inner Speech subsection | Replaced with "syntactic structure is preserved while semantic coherence degrades… impairing the assignment of stable meaning to otherwise grammatical utterances." |
+| 5 | Rigor — superlative "single most reliable predictor" unsupported in fragmented field | Section 04, Step 1 | Changed to "Research suggests that emotional intensity may be a more robust predictor of incorporation than recency, with valence showing no significant correlation (r = −.02)." |
+| 6 | Tone — "emotional ventriloquism" treated with certainty of established clinical construct | Abstract | Added "as a descriptive framework" qualifier on first introduction. |
+| 7 | Tone — "emotional ventriloquism" re-introduced without qualifier in Section 04 | Section 04, opening paragraph | Added explicit sentence: "The term emotional ventriloquism, used throughout this section, is a proposed descriptive framework and has not been empirically validated as a clinical construct." |
+| 8 | Tone — callout box heading and body implied established status | Section 04, callout | Retitled from "The Proposed Term" to "Proposed Descriptive Framework"; added closing sentence clarifying it is not an established clinical construct and awaits empirical investigation. |
+| 9 | Rigor — future-dated refs 18, 23 used in body text without caveat | Section 03; Section 04 Step 4 | Added † footnote marker and "pending verification" tooltip text to inline citations for refs 18 and 23. |
+| 10 | Rigor — future-dated citations 18–20, 22–23 not flagged in Limitations | Methods & Limitations | Added explicit sentence listing the five forthcoming sources and directing readers to verify against published literature. |
+| 11 | Rigor — weak sourcing (Medium, blog) for exit-decision claim, no peer-review caveat | Section 03, Exit Decision paragraph | Prefixed claim with "Non-clinical accounts suggest…"; added ‡ footnote markers with "Non-peer-reviewed source; claim requires clinical corroboration" tooltips on refs 19 and 20. |
+| 12 | Rigor — weak sourcing not acknowledged in Limitations | Methods & Limitations | Added sentence directing future work to substitute Lucid Dreaming Treatment (LDT) peer-reviewed literature for refs 19–20. |
+
+### Skipped / Not Applicable
+
+| # | Issue | Reason |
+|---|-------|--------|
+| S1 | Tone — rhetorical question "Why invent new language for suffering…" | Phrase does not appear in the HTML; likely an auditor paraphrase of a prior draft. No match found. |
+| S2 | Tone — "heroic suffering" | Phrase does not appear in the HTML; likely an auditor paraphrase of a prior draft. No match found. |
+| S3 | Priority Fix — remove/replace all 2025–2026 citations with verified peer-reviewed sources | Requires external source research outside the scope of a text edit pass. Citations are annotated with forthcoming/unverified flags instead. Full re-sourcing deferred. |
+| S4 | Priority Fix — replace Wikipedia citations (refs 7, 10) with peer-reviewed sources | Requires external source research. Noted but not actioned in this pass. |

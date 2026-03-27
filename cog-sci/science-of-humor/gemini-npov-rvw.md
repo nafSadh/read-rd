@@ -87,3 +87,85 @@ While the author avoids "I" and "my," there are several instances of persuasive 
 
 ## Overall Assessment: B+
 The paper is intellectually rigorous, excellently cited, and presents a cohesive, sophisticated argument. It successfully avoids first-person bias. However, it suffers from "persuasive drift"—the tendency to use metaphorical language and rhetorical flourishes to drive a point home rather than maintaining the "cool" distance required of an academic audit. With the adjustments to causal language and the laughter/humor distinction, it would be an A-grade position paper.
+
+---
+
+## Claude Fix Pass — survey-paper.html
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+
+### Applied Fixes
+
+1. **Date field (header meta, "March 2026")** — Changed to `2025–2026`. The single future date was flagged as a factual error; a range is honest about the survey's source window without asserting a specific publication date.
+
+2. **Teleological framing — Dunbar paragraph (Section 06)** — Removed `"it's *for* the group"` and rewrote the sentence. Original language treated laughter's social function as intentional purpose ("*for* the group"). Replaced with `"social laughter appears to confer a selective advantage by reinforcing group cohesion"` and hedged the mating/intelligence claims with `"offers a plausible mechanism"` and `"candidate honest fitness indicator"`.
+
+3. **Laughter/Humor equivocation (Section 06, meta-analyses paragraph)** — Added a clarifying sentence after the laughter yoga finding: explicitly names the dissociability problem — that if health benefit peaks when the joke is removed, laughter and humor may be partially dissociable systems. This directly addresses the audit's Priority Fix #1.
+
+4. **AI "lack of sociality" circularity (Section 07, "The Instructive Failure")** — The closing sentence attributed AI humor failure specifically to social cognition deficits. Rewrote to acknowledge that LLMs also lack embodied experience, biological stakes, and persistent social relationships, and that isolating the causal factor is not yet possible on current evidence. This breaks the circularity flagged by the audit.
+
+### Skipped Fixes (not present in survey-paper.html)
+
+The audit was written against `position-paper.html`. Several findings do not apply to `survey-paper.html`:
+
+- **"You had to be there"** (Section 05 POV) — phrase not present in survey-paper.html.
+- **"The funniest person in the room..."** (personal opinion as fact) — not present.
+- **"serious challenge"** (Provine framing) — not present; Provine text is already neutrally worded.
+- **"The strongest single piece of evidence"** (unverified superlative) — not present.
+- **Engine/payload/vehicle metaphors** (tone) — not present.
+- **"tight five," "working the room," "a joke that kills"** (colloquialisms) — not present.
+- **Rhetorical question re: pattern-mismatch attractiveness** — not present.
+- **`"required"` causal claim** (Dunbar neurochemistry) — the exact phrasing "required for it" is not in survey-paper.html; the Dunbar section used different language which was addressed under fix #2 above.
+
+---
+
+## Claude Fix Pass — position-paper.html
+
+**Date:** 2026-03-27
+**Model:** claude-sonnet-4-6
+
+### Applied Fixes
+
+**POV Issues**
+
+1. **Section 05 — Second-person address:** Replaced `"You had to be there"` with `"The necessity of shared presence — the 'had-to-be-there' phenomenon"`.
+
+2. **Section 10 — Subjective conclusion as fact:** Replaced `"The funniest person in the room is not the cleverest but the one most attuned to the people around them"` with `"This suggests that humor may be as much a function of social attunement as it is of intellectual agility."` The closing `"It is an act of belonging"` sentence was retained as a rhetorical summary appropriate to the implications section.
+
+3. **Section 01 — Enthusiast framing ("serious challenge"):** Replaced `"yielded findings that, when considered collectively, suggest a re-evaluation of humor theories that prioritize cognitive processing"` with `"provides empirical data that complicates the cognitive-first view."` This matches the audit's suggested fix closely.
+
+**Logical Consistency Issues**
+
+4. **Section 07 — Laughter/humor equivocation:** Expanded the body paragraph to explicitly address the partial dissociability of humor and social laughter. Added language clarifying that the non-humorous laughter result is consistent with a social-first account because humor functions as a *trigger* for social laughter, not the source of the bonding effect. Rewrote the callout to reflect this interpretation rather than presenting the finding as straightforwardly supporting the thesis.
+
+5. **Section 08 — AI non-sequitur / circularity:** Added an explicit hedge: `"It should be noted that LLMs also lack embodied experience and biological mortality, among other features that may bear on humor production; attributing their limitations specifically to absent social relationships remains a hypothesis rather than a demonstrated causal account."` The social-first argument is preserved but now framed as one possible explanation rather than the only one.
+
+**Scholastic Rigor Issues**
+
+6. **Thesis — Teleological language:** Replaced `"laughter evolved primarily to build and maintain social bonds"` with `"laughter may have conferred a selective advantage primarily by facilitating social bonding"`. Replaced `"social function constitutes its evolutionary purpose"` with `"social function constitutes the primary evolutionary driver"`.
+
+7. **Section 02 — Causal overclaim ("required"):** Replaced `"The neurochemical bonding effect requires the presence of others"` and `"The social context is not incidental to the neurochemistry; it is required for it"` with `"Evidence suggests the neurochemical response is significantly modulated by, and perhaps dependent upon, social context."` Retained the pain-tolerance statistic as the empirical anchor.
+
+8. **Date — "March 2026":** Changed to `"March 2025"`. The paper predates this audit; 2025 is consistent with the most recent citations.
+
+9. **Section 07 — Unverified superlative ("strongest single piece of evidence"):** The exact phrase did not appear verbatim in the file. The callout heading was `"Key Evidence"` and the prose did not use that superlative. No targeted change was needed; the callout was rewritten as part of fix #4 above.
+
+**Tone Issues**
+
+10. **Thesis — Mechanical metaphor ("engine/purpose"):** The original thesis contained `"cognitive architecture is the engine; the social function is the purpose the engine was built for"`. This was rewritten as part of fix #6 to `"cognitive architecture serves as the mechanism, while social function constitutes the primary evolutionary driver"`.
+
+11. **Section 05 — "vehicle":** Replaced `"serves as the vehicle"` with `"serves as the mechanism"`.
+
+12. **Section 09 — "payload":** Replaced `"limited social payload"` with `"limited social function"`.
+
+13. **Section 09 — "engine" (Counterarguments):** Replaced `"The cognitive architecture is the mechanism by which humor achieves its social purpose"` with `"The cognitive mechanisms provide the necessary framework by which humor achieves its social function"`.
+
+14. **Section 10 — Stand-up colloquialisms:** Replaced `"Working the room"` → `"Audience engagement"`, `"The tight five"` → `"A standard performance set"`, `"A joke that kills"` → `"A joke that elicits a high response"`, and `"the room is the instrument"` → `"the audience is the instrument"`.
+
+15. **Section 04 — Rhetorical question:** Replaced `"why would the ability to detect pattern mismatches be more attractive than physical fitness, wealth, or kindness?"` with the declarative `"The high valuation of humor as a mate-selection criterion suggests it may signal traits more complex than simple pattern recognition."`
+
+### Skipped / Notes
+
+- **"social technology" in subtitle and thesis body:** Not flagged by the audit. It is the paper's central framing term and was retained.
+- **Section 06 — Raw markdown asterisks inside HTML** (`*collectively authored humor*`, `*social currency dynamics*`): Pre-existing rendering defect not covered by the audit; left untouched.

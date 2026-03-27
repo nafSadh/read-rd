@@ -77,3 +77,52 @@ While the paper avoids the overt first-person ("I" or "my"), it suffers from a "
 **Grade: B-**
 
 **Justification:** The paper is exceptionally well-organized and covers a sophisticated range of topics. It shows a strong grasp of the "tensions" within the field. However, it fails the rigor audit due to heavy reliance on Wikipedia and marketing blogs, as well as a "hallucinated" timeline (2026). It reads more like a high-quality long-form essay for a design magazine than a peer-reviewed research survey. With the priority fixes applied, it would likely move to an A- range.
+
+---
+
+## Claude Fix Pass
+
+**Date:** 2026-03-27
+**Applying model:** claude-sonnet-4-6
+
+### Applied
+
+1. **POV — Democratization framing (Section 01).**
+   Changed "The history of typography is a sequence of democratizations" to "One significant framework for understanding the history of typography is the sequence of technological democratizations..." to acknowledge competing historical frameworks.
+
+2. **Temporal — "March 2026" paper-meta date.**
+   Changed to "March 2025" to remove the hallucinated future-dated persona. Note: 2026 also appears in two citation URLs (`inkbotdesign.com/variable-fonts-explained-2026`, `devstars.com/2026-website-fonts-guide`) — these are source URLs and cannot be altered without breaking the references; they do not appear as prose claims.
+
+3. **Rigor — x-height superlative (Section 02).**
+   Changed "x-height is the single most important metric" to "x-height is considered by many practitioners to be among the most significant metrics" and "strongest predictor" to "a strong predictor."
+
+4. **Rigor — Trustworthiness statistic (Section 04).**
+   Removed the unhedged "roughly 40 percent" figure from the Todaymade marketing blog citation. Replaced with "In specific market research settings, serif fonts have been associated with a significant increase in perceived trustworthiness, though these results vary across demographics and study conditions."
+
+5. **Rigor — Format war generalization (Section 05 callout).**
+   Replaced the flat causal claim with "Historical trends in digital font formats suggest a recurring pattern where proprietary systems eventually yield to unified open standards, though this trajectory is drawn from a limited number of cases and should not be treated as a universal law."
+
+6. **Tone — $7,000 price point anecdote (Section 01).**
+   Replaced "put professional typesetting on anyone's desk for $7,000" with "substantially lowering the economic barrier to professional-grade typesetting."
+
+7. **Tone — Fraktur superlative (Section 06).**
+   Replaced "represents a particularly politically charged episode in typographic history" with "represents a significant instance of typography being used as an explicit tool of national identity and political ideology" (audit's exact suggested fix).
+
+8. **Logical consistency — Emoji/letterform bridge (Section 06).**
+   Added a sentence explicitly scoping emoji's inclusion: "Their inclusion here reflects their integration into the same technical and governance infrastructure as written type, rather than a claim that they belong within the formal anatomy of letterforms established in Section 02." This resolves the audit's typological equivocation flag.
+
+9. **Logical consistency — Neutrality paradox (Section 03 callout).**
+   Rewrote the callout to explicitly reconcile the Section 03 Arial observation (functional neutrality may be attainable at the reading-comprehension level) with Section 07's claim (cultural neutrality is not achievable). Added: "The two claims operate at different levels and are not contradictory."
+
+10. **Hedge subjective claims — History callout (Section 01).**
+    Prefaced the pattern callout with "Evidence across these cases suggests" and added "This pattern is interpretive and reflects one framework among others for reading this history."
+
+### Skipped
+
+- **Source elevation (Wikipedia and marketing blog citations).** The audit recommends replacing citations [1], [2], [9], [13], [14], [25], [28], [34] and marketing blog sources (Todaymade, Stryve, DevStars) with Bringhurst, Kinross, Meggs, or peer-reviewed journals. Skipped because: (a) the actual URLs for those academic sources are unknown and fabricating them would introduce broken or hallucinated links, which is worse than the current state; (b) the Methods section already self-discloses Wikipedia reliance as a named limitation, which is the correct scholarly mitigation. This fix requires a human researcher with library access.
+
+- **Caslon/Baskerville "warmth/rationality" language (Section 01).** Already corrected in a prior pass before this audit was applied. The current text uses "robust and traditional forms," "refined proportions and increased legibility," and "highly structured and geometric designs" — technical descriptors as the audit recommended.
+
+- **"Fascinating," "fierce," "stunning" tone words.** Already absent from the document. No matches found; these were removed in a prior pass.
+
+- **"Modern web typography in 2026" body-text reference.** Not present in the prose. The only 2026 occurrences remaining are in citation URLs, which cannot be altered.
