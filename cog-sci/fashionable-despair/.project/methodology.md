@@ -62,7 +62,7 @@ Discourse survey — mapping what people are saying across disciplines (cultural
 
 ## Reproducibility
 
-The entire project is publicly accessible at `nafsadh.github.io/read-rd/cog-sci/fashionable-despair/`. The literature collection (`literature-collection.md`) lists every source with URL, key claims, and date. Any reader can verify the sourcing by following the links. The methodology, changelog, and TODO are all public.
+The entire project is publicly accessible at `read.sadh.app/cog-sci/fashionable-despair/`. The literature collection (`literature-collection.md`) lists every source with URL, key claims, and date. Any reader can verify the sourcing by following the links. The methodology, changelog, and TODO are all public.
 
 To replicate or extend:
 1. Start with the literature collection as a baseline

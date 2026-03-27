@@ -204,7 +204,7 @@ Built using the reading-assist skill's slide-deck template (Crimson Pro/IBM Plex
 ### 7.1 Infrastructure
 
 - **Repository:** github.com/nafSadh/read-rd, subfolder `ai/agentic-lm-survey/`
-- **Deployment:** GitHub Pages at nafsadh.github.io/read-rd/ai/agentic-lm-survey/
+- **Deployment:** GitHub Pages at read.sadh.app/ai/agentic-lm-survey/
 - **PDF extraction:** PyMuPDF (`fitz`) for text extraction from downloaded arXiv PDFs
 - **Citation API:** Semantic Scholar Graph API for forward citation sweep
 - **Build system:** Python scripts generating standalone HTML from template CSS/JS + content arrays

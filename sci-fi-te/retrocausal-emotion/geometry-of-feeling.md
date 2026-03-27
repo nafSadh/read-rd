@@ -3,7 +3,7 @@
 > A writer's essay on block universe physics and emotional experience
 
 **46 sources** across 7 sections · **7 tensions** · ~7,500 words
-Part of [Retrocausality, Hope & Depression](https://nafsadh.github.io/read-rd/physics/retrocausal-emotion/index.html) ·
+Part of [Retrocausality, Hope & Depression](https://read.sadh.app/physics/retrocausal-emotion/index.html) ·
 Source material for *Second Seconds* and *Schrödinger's Gelato*
 
 This essay argues that theoretical physics — specifically the block universe, retrocausality, and bidirectional causation — and prospective psychology converge on a single structural insight: the future shapes the present. Not metaphorically. Not as prediction. As geometry. Hope and depression are not reactions to the future. They are the future's fingerprint on the present, readable in the body, articulable in verse, and grounded in the same mathematics that describes quantum correlations across time. Drawing on 46 sources across physics, psychology, somatic neuroscience, and literature, this essay maps the territory where the equation and the elegy describe the same landscape — and identifies seven unresolved tensions that define the frontier.
@@ -245,4 +245,4 @@ The six tensions remain unresolved because they are productive. The seventh — 
 ---
 
 46 sources · 7 sections · 7 tensions · One geometry
-Part of [Retrocausality, Hope & Depression](https://nafsadh.github.io/read-rd/physics/retrocausal-emotion/index.html) · A writer's physics
+Part of [Retrocausality, Hope & Depression](https://read.sadh.app/physics/retrocausal-emotion/index.html) · A writer's physics

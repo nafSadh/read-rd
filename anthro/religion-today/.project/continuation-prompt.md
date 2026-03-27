@@ -3,7 +3,7 @@
 ## Repo
 - URL: https://github.com/nafSadh/read-rd
 - PAT: (provide at runtime)
-- Live: https://nafsadh.github.io/read-rd/anthro/religion-today/
+- Live: https://read.sadh.app/anthro/religion-today/
 
 ## What's Done
 - Literature collection (52 sources)

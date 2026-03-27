@@ -147,7 +147,7 @@ Written as a single markdown file, structured as an argument paper:
 ### 6.1 Infrastructure
 
 - **Repository:** github.com/nafSadh/read-rd, subfolder `philosophy/persuasion-survey/`
-- **Deployment:** GitHub Pages at nafsadh.github.io/read-rd/philosophy/persuasion-survey/
+- **Deployment:** GitHub Pages at read.sadh.app/philosophy/persuasion-survey/
 - **Build system:** Deep-dive HTMLs built by injecting content arrays into template CSS/JS
 - **No PDF extraction:** Unlike the agentic LLM survey, this project did not download/extract PDFs
 

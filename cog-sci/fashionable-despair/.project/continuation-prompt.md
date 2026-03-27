@@ -3,7 +3,7 @@
 ## Repo & Location
 - Repo: `nafsadh/read-rd` on GitHub Pages
 - Project: `cog-sci/fashionable-despair/`
-- Live URL: `https://nafsadh.github.io/read-rd/cog-sci/fashionable-despair/`
+- Live URL: `https://read.sadh.app/cog-sci/fashionable-despair/`
 
 ## Project Status: COMPLETE
 
@@ -51,4 +51,4 @@ All planned deliverables have been built, verified, and deployed.
 - Paper-drive: `/mnt/skills/user/paper-drive/SKILL.md`
 - Read-aid: `/mnt/skills/user/read-aid/SKILL.md`
 
-github PAT (provide at runtime) __https://github.com/nafSadh/read-rd/__ __https://nafsadh.github.io/read-rd/__
+github PAT (provide at runtime) __https://github.com/nafSadh/read-rd/__ __https://read.sadh.app/__

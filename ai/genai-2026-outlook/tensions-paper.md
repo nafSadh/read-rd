@@ -110,4 +110,4 @@ The honest summary: generative AI in 2026 is extraordinary and confusing in equa
 
 ---
 
-*Based on the GenAI 2026 & After discourse survey. Full section deep-dives at [nafsadh.github.io/read-rd/ai/genai-2026-outlook](https://nafsadh.github.io/read-rd/ai/genai-2026-outlook/).*
+*Based on the GenAI 2026 & After discourse survey. Full section deep-dives at [read.sadh.app/ai/genai-2026-outlook](https://read.sadh.app/ai/genai-2026-outlook/).*

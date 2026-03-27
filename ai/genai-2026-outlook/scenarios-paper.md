@@ -166,4 +166,4 @@ The most useful thing a decision-maker can do is not to bet on a single scenario
 
 ---
 
-*Based on the GenAI 2026 & After discourse survey. Full analysis at [nafsadh.github.io/read-rd/ai/genai-2026-outlook](https://nafsadh.github.io/read-rd/ai/genai-2026-outlook/).*
+*Based on the GenAI 2026 & After discourse survey. Full analysis at [read.sadh.app/ai/genai-2026-outlook](https://read.sadh.app/ai/genai-2026-outlook/).*

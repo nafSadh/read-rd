@@ -10,7 +10,7 @@ I'm continuing work on a research project: **GenAI 2026 and After**.
 
 **Repo:** https://github.com/nafSadh/read-rd (PAT token is in the git remote URL)
 **Subfolder:** `ai/genai-2026-outlook/`
-**Live:** https://nafsadh.github.io/read-rd/ai/genai-2026-outlook/
+**Live:** https://read.sadh.app/ai/genai-2026-outlook/
 
 ### What this project is
 

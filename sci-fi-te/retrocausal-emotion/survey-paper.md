@@ -201,4 +201,4 @@ The central limitation is honest: **this is not a physics paper**. Retrocausalit
 ---
 
 46 sources · 7 sections · 7 tensions · One geometry
-Part of [Retrocausality, Hope & Depression](https://nafsadh.github.io/read-rd/physics/retrocausal-emotion/index.html) · A writer's physics
+Part of [Retrocausality, Hope & Depression](https://read.sadh.app/physics/retrocausal-emotion/index.html) · A writer's physics

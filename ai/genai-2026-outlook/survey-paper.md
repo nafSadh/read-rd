@@ -168,4 +168,4 @@ The implications cut across sections:
 
 ---
 
-*This survey was produced using a paper-drive methodology with source adequacy assessment before each section. All deep-dives, data, and analysis are available at [nafsadh.github.io/read-rd/ai/genai-2026-outlook](https://nafsadh.github.io/read-rd/ai/genai-2026-outlook/).*
+*This survey was produced using a paper-drive methodology with source adequacy assessment before each section. All deep-dives, data, and analysis are available at [read.sadh.app/ai/genai-2026-outlook](https://read.sadh.app/ai/genai-2026-outlook/).*

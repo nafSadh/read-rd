@@ -11,7 +11,7 @@ See [v1 proposal](agentic-llm-survey-proposal.v1.md) for the original scope.
 - **Taxonomy established:** Reason, Act, Interact, Operate + Cross-Cutting (Skills/Config)
 - **Literature collected:** 85 entries across 7 sections, 14 subsections
 - **22 papers read from PDFs** (~280 pages of actual text extraction)
-- **5 interactive deep-dives** (~314K HTML, ~95K markdown) published at [nafsadh.github.io/read-rd/ai/agentic-lm-survey/](https://nafsadh.github.io/read-rd/ai/agentic-lm-survey/)
+- **5 interactive deep-dives** (~314K HTML, ~95K markdown) published at [read.sadh.app/ai/agentic-lm-survey/](https://read.sadh.app/ai/agentic-lm-survey/)
 - **Industry sources** analyzed: Anthropic 2026 Trends Report, AAIF governance, tool landscape, OpenClaw incidents, protocol adoption data
 
 ### What's Not Done

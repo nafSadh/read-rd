@@ -2,7 +2,7 @@
 
 ## Repository
 - **Repo:** https://github.com/nafSadh/read-rd
-- **Live:** https://nafsadh.github.io/read-rd/physics/the-cosmos/
+- **Live:** https://read.sadh.app/physics/the-cosmos/
 - **Project dir:** `physics/the-cosmos/`
 
 ## What's Completed
