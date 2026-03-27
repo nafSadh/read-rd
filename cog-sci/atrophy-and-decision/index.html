@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atrophy &amp; Decision: How Decay Shapes Choice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #2e6ab4; --accent2: #3d7ed0; --accent-soft: #2e6ab410;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 20px 24px; transition: all 0.2s;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .deliverable-card .section-title { margin-bottom: 6px; }
+    .deliverable-card .section-desc { margin-bottom: 10px; }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14px; color: var(--text); line-height: 1.6;
+      padding: 6px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 6px; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body data-theme="light">
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Cognitive Science &middot; Research Project</div>
+    <h1>Atrophy &amp; Decision: <em>How Decay Shapes Choice</em></h1>
+    <div class="subtitle">Neural pruning, habit formation, decision fatigue, developmental foreclosure, social network atrophy, learned helplessness, and the philosophical implications for agency &mdash; a survey of how decay determines choice at every scale.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>Most decisions are not made from open possibility space &mdash; they are dictated by atrophy. This project surveys how capacities, connections, habits, and options that have degraded determine what gets chosen, more than active preference does. The thesis spans <strong>8 dimensions</strong> and <strong>40+ sources</strong>: from use-it-or-lose-it synaptic pruning through habit as atrophy of deliberation, decision fatigue as temporary capacity collapse, identity as progressive narrowing, social networks as degrading information environments, learned helplessness as motivational atrophy, and agency as the residue of non-atrophied capacity.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a> &middot;
+        <a href="notes/00-synthesis.md">Synthesis Notes</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">Academic survey across 8 dimensions: neural, behavioral, cognitive, developmental, social, motivational, philosophical. 40+ sources with inline citations, sidebar navigation.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Tensions <em>Paper</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">Six genuine contradictions: constraint vs. efficiency, helplessness vs. rational updating, determinism vs. agency, reversibility, individual vs. structural, the optimization paradox.</div>
+        <div class="section-links">
+          <a href="tensions-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Position <em>Paper</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">Defends the core thesis: atrophy is the primary architect of decision. 9 lines of evidence, 3 objections and rebuttals, implications for individual practice and policy.</div>
+        <div class="section-links">
+          <a href="position-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Dimensions Covered</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">D1</div>
+        <div class="section-body">
+          <div class="section-title">Neural Substrate: <em>Synaptic Pruning &amp; Skill Decay</em></div>
+          <div class="section-desc">Use-it-or-lose-it pruning, adolescent 50% synapse reduction, LTP/LTD molecular mechanisms, stress-induced dendritic atrophy, and how eliminated circuits cannot participate in future decisions.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D2</div>
+        <div class="section-body">
+          <div class="section-title">Habit &amp; Deliberation: <em>The Chunking of Choice</em></div>
+          <div class="section-desc">Dual-process theory, Type 1/Type 2 transition dynamics, basal ganglia habit circuits, expert chunking (50k+ patterns), and how automaticity atrophies the deliberative override.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D3</div>
+        <div class="section-body">
+          <div class="section-title">Decision Fatigue: <em>Temporary Capacity Depletion</em></div>
+          <div class="section-desc">Baumeister&rsquo;s ego depletion, the parole board study, status-quo default under depletion, replication debates across 23 labs, and the behavioral signature of depleted deliberation.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D4</div>
+        <div class="section-body">
+          <div class="section-title">Developmental Narrowing: <em>Identity as Progressive Foreclosure</em></div>
+          <div class="section-desc">Erikson&rsquo;s stages as cumulative commitment, psychosocial moratorium, path dependency in economics applied to life trajectories, and identity foreclosure as deliberate atrophy of alternatives.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D5</div>
+        <div class="section-body">
+          <div class="section-title">Social Atrophy: <em>Network Decay and Constrained Choice</em></div>
+          <div class="section-desc">Dunbar&rsquo;s number, the 5/15/50/150 network tier structure, social network contraction with age, information poverty from atrophied networks, and social media&rsquo;s failure to prevent decay.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D6</div>
+        <div class="section-body">
+          <div class="section-title">Learned Helplessness: <em>Motivational Atrophy</em></div>
+          <div class="section-desc">Seligman&rsquo;s original experiments, Maier &amp; Seligman&rsquo;s 2016 neuroscientific revision, dorsal raphe nucleus and default passivity, and the atrophy of outcome-expectancy as option collapse.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D7</div>
+        <div class="section-body">
+          <div class="section-title">Philosophy of Agency: <em>Freedom as Residual Capacity</em></div>
+          <div class="section-desc">Frankfurt&rsquo;s hierarchical compatibilism, first vs. second-order desires, neuroscientific challenges to compatibilism, and agency reconceptualized as a gradient of maintained capacity.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">D8</div>
+        <div class="section-body">
+          <div class="section-title">Entropy &amp; Path Dependency: <em>Structural Narrowing</em></div>
+          <div class="section-desc">Economic path dependency (North, David), cognitive lock-in, option narrowing under increasing commitment, and the paradox that early decisions are disproportionately determinative precisely because of their atrophying effects.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Key Tensions</h2>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">T1</span> <strong>Constraint vs. efficiency:</strong> Synaptic pruning simultaneously closes option space and enables cognitive competence &mdash; the same process is adaptive and constraining</li>
+      <li class="tension-item"><span class="tension-num">T2</span> <strong>Helplessness vs. rational updating:</strong> When does narrowed perceived option space reflect motivational damage vs. accurate inference about genuine powerlessness?</li>
+      <li class="tension-item"><span class="tension-num">T3</span> <strong>Determinism vs. agency:</strong> If atrophy dictates the decision space, is the agent making a choice in any morally significant sense?</li>
+      <li class="tension-item"><span class="tension-num">T4</span> <strong>Reversibility:</strong> Can atrophied capacity be restored, and does the answer change the practical import of the thesis?</li>
+      <li class="tension-item"><span class="tension-num">T5</span> <strong>Individual vs. structural:</strong> Whose atrophy? Does the thesis individualize what are fundamentally structural constraints?</li>
+      <li class="tension-item"><span class="tension-num">T6</span> <strong>Optimization paradox:</strong> Expert decision-making requires deliberation atrophy &mdash; does this vindicate atrophy or complicate the thesis?</li>
+    </ul>
+
+    <div class="footer">
+      <p>Project: <strong>Atrophy &amp; Decision</strong> &middot; 8 dimensions &middot; 40+ sources &middot; March 2026</p>
+      <p>Built with the <a href="../../.project/deep-dive-template.md">deep-dive template</a> &middot; <a href="../../.project/methodology.md">Paper-drive methodology</a></p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.body.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.body.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>
