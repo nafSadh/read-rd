@@ -1,3 +1,9 @@
+# Agent Tracking — read-rd
+
+> **Rule**: Every sub-agent spawned in this repo must be logged here. See `CLAUDE.md` and `.project/AGENTS.md` for full instructions.
+
+---
+
 # NPOV & Scholastic Rigor Review — Agent Tracking
 **Started**: 2026-03-27
 **Completed**: 2026-03-27
@@ -41,3 +47,19 @@
 
 ### Logical consistency
 No contradictions or broken arguments found in any project. Structure and methodology are sound across the board.
+
+---
+
+# Paper-Drive Build Agents
+
+## Active
+| # | Date | Agent ID | Task | Status | Output |
+|---|------|----------|------|--------|--------|
+| 11 | 2026-03-27 | waffle-evolution | Build anthro/waffle-evolution paper-drive (survey+tensions+position+7 DDs) | running | anthro/waffle-evolution/ |
+| 12 | 2026-03-27 | atrophy-decisions | Build cog-sci/atrophy-decisions paper-drive (survey+tensions+position+8 DDs) | running | cog-sci/atrophy-decisions/ |
+
+## Completed
+| # | Date | Agent ID | Task | Status | Output |
+|---|------|----------|------|--------|--------|
+| 13 | 2026-03-27 | bananas-foster | Build anthro/bananas-foster paper-drive | done | anthro/bananas-foster/ (7 DDs + survey) |
+| 14 | 2026-03-27 | ice-cream-culture | Build anthro/ice-cream-culture paper-drive | done | anthro/ice-cream-culture/ (7 DDs + survey) |
