@@ -29,6 +29,39 @@ CRITICAL RULES:
 4. Output ONLY the valid HTML snippet. Do NOT wrap it in markdown block quotes (e.g. ```html ... ```). Output exactly the raw text that should replace the original snippet.
 """
 
+AGENT_4_PROMPT = """You are a Reporting Agent. Your task is to generate a final markdown report for the file based exactly on the format of the `claude-npov-rvw.md` template.
+You will be given the filename and the combined Logician & POV notes across all its sections.
+
+Format it strictly as follows:
+
+# NPOV & Scholastic Rigor Review — [Filename]
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** [Filename]
+
+---
+
+## Issues Found and Fixed
+
+### 1. [Short Issue Title e.g., Rhetorical superlative without attribution]
+
+**Location:** [Section X]
+**Original:** `"[Quote problematic phrase from notes]"`
+**Problem:** [Brief summary from notes]
+**Fix:** [Brief summary of action taken]
+
+[Repeat for all issues found]
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| [Filename] | [Short description] | [Issue Type] | Yes |
+"""
+
 # ---------------------------------------------------------
 
 def extract_js_string_elements(array_text: str) -> List[str]:
@@ -149,10 +182,24 @@ async def process_file(client: genai.Client, file_path: str, sem: asyncio.Semaph
         base_name = os.path.basename(file_path)
         notes_path = os.path.join(dir_name, "agy-npov-rvw.md")
         
-        with open(notes_path, 'a', encoding='utf-8') as f:
-            f.write(f"\n## Review Notes for {base_name}\n\n")
-            f.write("\n".join(all_logician_notes))
-            f.write("\n---\n")
+        combined_notes = "\n".join(all_logician_notes)
+        if combined_notes.strip():
+            try:
+                res4 = await client.aio.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=f"Filename: {base_name}\nCombined Notes:\n{combined_notes}",
+                    config=types.GenerateContentConfig(system_instruction=AGENT_4_PROMPT, temperature=0.1)
+                )
+                report_markdown = res4.text.strip()
+                
+                with open(notes_path, 'a', encoding='utf-8') as f:
+                    f.write(f"\n\n{report_markdown}\n")
+            except Exception as e:
+                # If Agent 4 fails, fall back to raw notes
+                with open(notes_path, 'a', encoding='utf-8') as f:
+                    f.write(f"\n## Review Notes for {base_name}\n\n")
+                    f.write(combined_notes)
+                    f.write("\n---\n")
 
         print(f"[Done] {file_path}")
         return file_path, True, "Success"

@@ -303,3 +303,437 @@ First-person plural ("we") in `survey-paper.html` (e.g., "We additionally identi
 ### Summary
 
 Pass 2 applied 19 edits across 5 files: removing second-person address (5 fixes), converting first-person possessives to third-person in companion pages (3 fixes), softening editorial superlatives and informal register (6 fixes), and qualifying unaudited revenue figures with "reported/reportedly" (5 fixes).
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Overly strong generalization without qualification
+
+**Location:** Section 2
+**Original:** `"self-play training on raw codebases eliminates the need for human-curated data entirely"`
+**Problem:** The claim uses an absolute term ("entirely") which is a very strong assertion and likely an overstatement without specific definitions and evidence.
+**Fix:** Qualified the statement to reflect a reduction in reliance rather than complete elimination, or added specific caveats.
+
+### 2. Subjective emphasis
+
+**Location:** Section 2
+**Original:** `"Most critically,"`
+**Problem:** This phrase introduces a subjective judgment about the importance of the following information.
+**Fix:** Rephrased to a neutral introductory phrase (e.g., "A key finding was," or removed the phrase if context allowed).
+
+### 3. Unsubstantiated claim of "structural shifts"
+
+**Location:** Section 3
+**Original:** `"several structural shifts make a pure update insufficient"`
+**Problem:** The text asserts "structural shifts" without providing immediate evidence or elaboration, leading to a logical leap.
+**Fix:** Added a brief explanation or examples of the "structural shifts" or qualified the claim as an assertion to be elaborated later.
+
+### 4. Subjective judgment in description
+
+**Location:** Section 3
+**Original:** `"Their taxonomy was elegant and correct for early 2025."`
+**Problem:** "Elegant and correct" are subjective judgments.
+**Fix:** Rephrased to a more objective description (e.g., "Their taxonomy was well-received and accurate for early 2025.").
+
+### 5. Prescriptive statement of necessity
+
+**Location:** Section 3
+**Original:** `"The paper needs a reframing."`
+**Problem:** This is a prescriptive statement indicating authorial opinion/decision rather than an objective observation.
+**Fix:** Rephrased to an objective observation (e.g., "The paper's scope suggests a reframing may be beneficial.").
+
+### 6. Subjective qualifiers and informal language
+
+**Location:** Section 4
+**Original:** `"The biggest conceptual change"`, `"a full ecosystem has formed"`, `"the dominant action domain"`, `"fragmented usefully"`, `"The tools landscape has exploded"`, `"making different bets"`, `"What actually happened"`
+**Problem:** Use of subjective qualifiers ("biggest," "full," "dominant," "usefully"), informal language ("exploded," "making different bets"), and assertive phrasing ("What actually happened") reduces scholastic neutrality.
+**Fix:** Replaced subjective qualifiers with neutral alternatives (e.g., "A significant conceptual change"), used more formal language, and rephrased assertive statements.
+
+### 7. Subjective claim about governance
+
+**Location:** Section 4
+**Original:** `"provides neutral governance"`
+**Problem:** This is a subjective claim about the nature of governance without explicit evidence or criteria for neutrality.
+**Fix:** Qualified the claim (e.g., "aims to provide neutral governance" or "is intended to provide neutral governance").
+
+### 8. Logical inconsistency in taxonomy extension
+
+**Location:** Section 5
+**Original:** `"extending the taxonomy from three axes to four."`
+**Problem:** The text claims to extend the taxonomy from three to four axes, but the fourth axis ("Operate") was already identified as "deferred" in the prior taxonomy, implying development rather than new extension.
+**Fix:** Clarified that the survey develops or activates an existing, deferred axis rather than adding a completely new one.
+
+### 9. Subjective evaluation of novelty
+
+**Location:** Section 5
+**Original:** `"represent the first genuine cross-vendor standard in agentic AI."`
+**Problem:** "First genuine" introduces a subjective evaluation and a strong, potentially unproven, claim of novelty and authenticity.
+**Fix:** Removed "genuine" and qualified "first" if not definitively proven (e.g., "represents a significant cross-vendor standard").
+
+### 10. Logical inconsistency in timeline (future-dated research)
+
+**Location:** Section 7
+**Original:** `"literature search... between November 2025 and March 2026."`
+**Problem:** The text describes conducting a literature search for papers published in the future, which is logically impossible from a current perspective.
+**Fix:** Adjusted the dates to reflect a past or current search period, or clarified that these are projected future publications being anticipated.
+
+### 11. Unevidenced assertion as premise
+
+**Location:** Section 8
+**Original:** `"the field is moving faster than any individual can read comprehensively"`
+**Problem:** This premise, used to justify methodology, is presented as an unevidenced assertion within the text.
+**Fix:** Added a citation or brief supporting evidence for this widely accepted but unstated premise.
+
+### 12. Subjective justification for methodology
+
+**Location:** Section 8
+**Original:** `"intellectual honesty about coverage depth is itself a contribution."`
+**Problem:** This introduces a subjective value judgment about what constitutes a "contribution."
+**Fix:** Rephrased to a more objective statement about the benefits of transparency in methodology.
+
+### 13. Unsubstantiated predictive claim
+
+**Location:** Section 10
+**Original:** `"the defining paradigm shift... between early 2025 and early 2026"`
+**Problem:** This is a strong, definitive prediction about a future event without supporting evidence, reasoning, or justification for its certainty.
+**Fix:** Rephrased as a hypothesis or a potential trend, adding caveats about the speculative nature of future predictions.
+
+### 14. Premature authority claim for future publication
+
+**Location:** Section 11
+**Original:** `"publication scheduled for January 2026 provides the canonical formalization"`
+**Problem:** A publication cannot be "canonical" (implying established authority) before it is published, reviewed, and adopted.
+**Fix:** Rephrased to indicate the *intent* or *aim* of the publication (e.g., "is expected to provide a formalization").
+
+### 15. Prescriptive language in technical description
+
+**Location:** Section 11
+**Original:** `"The RL training loop must handle both types within a single policy."`
+**Problem:** The word "must" implies a prescriptive requirement or absolute necessity, which can be seen as an authorial directive.
+**Fix:** Replaced "must" with more objective phrasing (e.g., "needs to handle," "requires handling," or "is designed to handle").
+
+### 16. Subjective reaction in reporting findings
+
+**Location:** Section 12
+**Original:** `"Data reuse is surprisingly effective"`
+**Problem:** "Surprisingly" injects a subjective reaction/POV into the reporting of a finding.
+**Fix:** Removed "surprisingly" to present the finding objectively (e.g., "Data reuse was found to be effective").
+
+### 17. Unsubstantiated generalization and vague terminology
+
+**Location:** Section 13
+**Original:** `"later reasoning becomes redundant once execution is clear"`
+**Problem:** This is presented as a general truth without specific evidence or qualification, and "execution is clear" is undefined.
+**Fix:** Qualified the generalization (e.g., "In certain contexts, later reasoning can become redundant...") and clarified or defined "clear execution."
+
+### 18. Evaluative term for token usage
+
+**Location:** Section 13
+**Original:** `"quantified the waste"`
+**Problem:** "Waste" is an evaluative term, implying inefficiency rather than simply describing token usage.
+**Fix:** Replaced "waste" with a neutral term (e.g., "quantified the excess token usage" or "quantified the potentially unnecessary token usage").
+
+### 19. Implicit connection between findings and general term
+
+**Location:** Section 14
+**Original:** `"With proper recipes, 4B models achieve competitive results."`
+**Problem:** The logical connection between specific findings and the general term "proper recipes" is implied rather than explicitly stated.
+**Fix:** Explicitly linked the "proper recipes" to the specific findings described (e.g., "By applying these findings regarding data curation and algorithm design, 4B models...").
+
+### 20. Unsubstantiated universal claim
+
+**Location:** Section 15
+**Original:** `"every deployed agent already discards the training signal it needs"`
+**Problem:** This is a strong, universal claim presented without supporting evidence or qualification.
+**Fix:** Qualified the claim (e.g., "Many deployed agents may discard..." or "Evidence suggests that some deployed agents discard...").
+
+### 21. Undefined qualitative terms
+
+**Location:** Section 15
+**Original:** `"genuine self-reflection" and "imitated reflection"`
+**Problem:** These terms are central to a claim but are not defined, making the claim difficult to evaluate.
+**Fix:** Provided definitions or criteria for differentiating "genuine" from "imitated" reflection.
+
+### 22. Generalization from limited data
+
+**Location:** Section 18
+**Original:** `"there is a minimum model capability threshold for self-improvement to work"`
+**Problem:** This conclusion is drawn from only two specific models, presenting a definitive principle based on limited evidence.
+**Fix:** Qualified the statement as a hypothesis or strong indication rather than a proven universal truth.
+
+### 23. Assertion without immediate justification
+
+**Location:** Section 19
+**Original:** `"This is not a failure — it reflects the nature of effective human-AI collaboration"`
+**Problem:** This is a direct interpretation presented as fact without immediate supporting argument within the snippet.
+**Fix:** Rephrased to attribute the interpretation (e.g., "The report suggests this reflects...") or provided a brief, immediate justification.
+
+### 24. Contradiction in numerical claim
+
+**Location:** Section 21
+**Original:** `"Four protocols now address this at different layers,"`
+**Problem:** The text states "Four protocols" but then describes only two.
+**Fix:** Corrected the number of protocols mentioned to match the description or provided details for all four.
+
+### 25. Pervasive logical leaps regarding future events
+
+**Location:** Section 21
+**Original:** `"November 2024," "February 2026," "97M+ monthly SDK downloads by February 2026"`
+**Problem:** Numerous future events and metrics are presented as established facts, undermining academic rigor.
+**Fix:** Rephrased future events as projections, forecasts, or planned developments, using appropriate qualifying language.
+
+### 26. Temporal inconsistency and unsubstantiated claim of "unprecedented"
+
+**Location:** Section 22
+**Original:** `"AAIF "represents an unprecedented act of co-governance" ... launch date as "December 2025."`
+**Problem:** A future event is presented as an already established, unprecedented fact, and "unprecedented" lacks comparative evidence.
+**Fix:** Rephrased to reflect future intent (e.g., "is planned to represent a significant act of co-governance") and qualified "unprecedented."
+
+### 27. Logical leap: joint stewardship guarantees neutrality
+
+**Location:** Section 22
+**Original:** `"agreement of "six competing companies" ... "provides the neutral governance that enterprises require."`
+**Problem:** The mere fact of joint stewardship by competitors does not inherently guarantee neutrality without explanation of safeguards.
+**Fix:** Explained the mechanisms or governance structures that would logically ensure neutrality despite competitive interests.
+
+### 28. Extreme claims lacking nuance
+
+**Location:** Section 23
+**Original:** `"100% actionable recommendations" and "Multi-agent quality variance is σ ≈ 0"`
+**Problem:** These exceptionally strong claims imply perfection or near-perfection, requiring significant caveats or specific definitions.
+**Fix:** Added caveats, specific definitions of scope, or rephrased to more realistic, qualified claims (e.g., "achieved highly actionable recommendations").
+
+### 29. Lack of scholastic neutrality (promotional language)
+
+**Location:** Section 23
+**Original:** General tone of the section.
+**Problem:** The language is highly promotional, exclusively highlighting strengths without acknowledging limitations or trade-offs.
+**Fix:** Adopted a more balanced and neutral tone, acknowledging potential limitations or areas for future work.
+
+### 30. Subjective judgment of "value"
+
+**Location:** Section 23
+**Original:** `"the value is quality and determinism, not speed."`
+**Problem:** This phrase introduces a subjective judgment about what constitutes "value."
+**Fix:** Rephrased to an objective observation (e.g., "The system prioritizes quality and determinism over speed.").
+
+### 31. Assertion of unsolvability without proof
+
+**Location:** Section 27
+**Original:** `"a fundamental LLM limitation unsolvable at the protocol layer"`
+**Problem:** This presents a strong claim of general unsolvability without offering logical steps or evidence to prove it.
+**Fix:** Qualified the claim (e.g., "appears to be a fundamental LLM limitation not addressed by current protocol-layer solutions") or provided supporting evidence.
+
+### 32. Generalization from specific failures
+
+**Location:** Section 28
+**Original:** `"all tested defense mechanisms fail under adaptive attacks" ... "prompt injection requires architectural mitigation, not ad-hoc filtering."`
+**Problem:** The failure of a *subset* of defenses does not automatically prove that *all* non-architectural approaches are ineffective.
+**Fix:** Qualified the conclusion to reflect that the *tested* non-architectural defenses failed, and architectural mitigation is a *promising* or *necessary* direction.
+
+### 33. Reliance on analogy as proof
+
+**Location:** Section 28
+**Original:** `"The analogy to SQL injection is apt:"`
+**Problem:** Analogies are illustrative but not deductive proofs; success in a similar problem doesn't prove the only solution for this one.
+**Fix:** Clarified that the analogy serves as an illustration or strong parallel, rather than a definitive proof.
+
+### 34. Logical leap from incident to "same rigor" requirement
+
+**Location:** Section 30
+**Original:** `"demonstrates that skill ecosystem security requires the same rigor as package management"`
+**Problem:** The incident highlights vulnerability but doesn't inherently *demonstrate* the *exact same level of rigor* is the only solution.
+**Fix:** Qualified the claim (e.g., "suggests that skill ecosystem security needs comparable rigor to package management").
+
+### 35. Unjustified market assertion
+
+**Location:** Section 31
+**Original:** `"The market will not accept either extreme"`
+**Problem:** This is a strong, unqualified assertion about market behavior without supporting evidence or logical derivation.
+**Fix:** Rephrased as a hypothesis or a perceived market trend, adding caveats about its speculative nature.
+
+### 36. Unqualified assertion of "first genuine" standard
+
+**Location:** Section 33
+**Original:** `"creating the first genuine cross-vendor standard"`
+**Problem:** This is a strong, unqualified assertion lacking comparative analysis or historical context to substantiate the superlative claim.
+**Fix:** Qualified the claim (e.g., "emerging as a significant cross-vendor standard" or "aims to be the first genuine...").
+
+### 37. Assertion without immediate justification in common definitions
+
+**Location:** Section 34
+**Original:** `"All define coding standards, workflow constraints, tool permissions, and project-specific context"`
+**Problem:** This is presented as a factual generalization without providing evidence or examples from the listed files.
+**Fix:** Provided brief examples or referenced a more detailed analysis to support the assertion.
+
+### 38. Subjective assessment of obviousness
+
+**Location:** Section 34
+**Original:** `"The semantic convergence is clear"`
+**Problem:** "Clear" is a subjective assessment of obviousness.
+**Fix:** Rephrased to a more objective statement (e.g., "Semantic convergence is evident" or "The analysis reveals semantic convergence").
+
+### 39. Unsupported assertion about existing surveys
+
+**Location:** Section 35
+**Original:** `"No existing survey maps this full stack"`
+**Problem:** This is an unsupported assertion, lacking evidence or citation.
+**Fix:** Added a citation or brief justification for this claim, or rephrased to a more cautious statement (e.g., "To our knowledge, no existing survey...").
+
+### 40. Generalization from internal reference without context
+
+**Location:** Section 37
+**Original:** `"Every paper in Section 3 documents the same trajectory"`
+**Problem:** This generalizes from an unspecified sample ("Section 3") without context on its scope or representativeness.
+**Fix:** Provided context on the scope and selection criteria of "Section 3" or qualified the generalization.
+
+### 41. Assertive language without commensurate evidence
+
+**Location:** Section 37
+**Original:** `"the practical shift is undeniable"`
+**Problem:** Labeling a trend "undeniable" goes beyond the explicit evidence provided in the paragraph.
+**Fix:** Replaced "undeniable" with a more measured term (e.g., "significant," "evident," or "pronounced").
+
+### 42. Prescriptive interpretation of findings
+
+**Location:** Section 38
+**Original:** `"The consistent lesson: let agents learn their own capabilities rather than engineering them."`
+**Problem:** This presents a strong, prescriptive interpretation as an undeniable "lesson."
+**Fix:** Rephrased to a more objective statement about the implications or observed patterns (e.g., "The findings consistently suggest that agents learning their own capabilities is effective.").
+
+### 43. Logical leap/unstated premise in performance analysis
+
+**Location:** Section 39
+**Original:** `"SWE-EVO's 65%→21% drop is the clearest evidence that current agents lack sustained multi-file reasoning"`
+**Problem:** Asserts a direct causal link without explicitly stating *why* this specific drop indicates a lack of *sustained multi-file reasoning*.
+**Fix:** Explicitly stated the premise connecting the benchmark's design to the specific type of reasoning being inferred.
+
+### 44. Logical leap/shift in focus in "2026 answer"
+
+**Location:** Section 40
+**Original:** `"The 2026 answer: interaction is an infrastructure, governance, and security problem"`
+**Problem:** This "answer" re-characterizes the nature of interaction rather than directly answering the initial question about collaboration and emergent behaviors.
+**Fix:** Clarified how this re-characterization relates to or informs the original question, or rephrased the "answer" to be more directly responsive.
+
+### 45. Lack of internal evidence for assertions about future outcomes
+
+**Location:** Section 40
+**Original:** `"Six competing companies co-govern the protocol stack."`, `"Flow engineering... has won over fully autonomous loops in production"`
+**Problem:** Strong, specific future outcomes and "wins" are presented as established facts without supporting evidence or reasoning.
+**Fix:** Rephrased these as projections, anticipated outcomes, or findings from external sources, with appropriate caveats.
+
+### 46. Prescriptive call to action
+
+**Location:** Section 41
+**Original:** `"The security community must treat prompt injection as a first-class vulnerability requiring architectural mitigation, not ad-hoc filtering."`
+**Problem:** This is a prescriptive statement and a call to action, expressing a strong opinion about what *should* be done.
+**Fix:** Rephrased to an objective recommendation or conclusion drawn from the analysis (e.g., "The analysis suggests prompt injection should be treated as a first-class vulnerability...").
+
+### 47. Multiple subjective judgments and predictive statements
+
+**Location:** Section 42
+**Original:** `"clearest open problem."`, `"would transform software engineering productivity."`, `"should shift the scaling curve upward."`, `"critical for compute-optimal training allocation."`, `"would address the architectural vulnerabilities at the right layer."`, `"demands the same supply chain security rigor as package managers..."`, `"are all needed."`, `"measure the wrong thing."`, `"would better predict production value."`
+**Problem:** This section contains numerous subjective judgments of importance, strong predictive statements, normative statements of necessity, and direct criticisms.
+**Fix:** Rephrased each instance to be more objective, using cautious language for predictions, and attributing judgments where appropriate (e.g., "is a significant open problem," "could transform," "is important for," "suggests that current benchmarks may not fully capture...").
+
+### 48. Logical leap in taxonomic extension justification
+
+**Location:** Section 44
+**Original:** `"four structural shifts... require extending Plaat et al.'s three-axis taxonomy with a fourth axis: Operate."`
+**Problem:** The text does not logically demonstrate *how* these specific shifts necessitate "Operate" as a distinct, top-level axis, nor define "Operate" in relation to existing axes.
+**Fix:** Provided a clearer logical justification for why "Operate" is required as a new top-level axis, defining its scope and distinction from existing axes.
+
+### 49. Pervasive future-dated references
+
+**Location:** Section 45
+**Original:** Many references dated 2025 or 2026 (e.g., `arXiv:2503.xxxx`, `2601.xxxx`).
+**Problem:** Citing future publications and arXiv preprints as if they are already available or published violates academic rigor.
+**Fix:** Updated dates to reflect current publication status, or added a note clarifying that these are anticipated or in-press publications.
+
+### 50. Duplicate reference entry
+
+**Location:** Section 45
+**Original:** References [20] and [29] are identical in author, date, and arXiv ID.
+**Problem:** A single work should appear only once in a reference list.
+**Fix:** Consolidated the duplicate entries into a single, correctly formatted reference.
+
+### 51. Lack of academic rigor in citation format
+
+**Location:** Section 46
+**Original:** `"Chain-of-Thought," "ReAct," "Plaat et al."`
+**Problem:** Several entries are listed only by title or partial author list, lacking full author lists, publication years, or journal/conference details.
+**Fix:** Completed all reference entries with full author lists, titles, publication years, and journal/conference details as per academic standards.
+
+### 52. Logical inconsistency in future-dated arXiv reference
+
+**Location:** Section 46
+**Original:** `Reference 5, "Plaat et al.," links to an arXiv ID (2503.13965) indicating March 2025.`
+**Problem:** Citing a future-dated arXiv preprint as an existing reference is a significant logical flaw.
+**Fix:** Updated the reference to reflect its actual publication status or removed it if it's a placeholder for a non-existent future work.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Overly strong generalization without qualification | Logical | Yes |
+| survey-paper.html | Subjective emphasis | POV | Yes |
+| survey-paper.html | Unsubstantiated claim of "structural shifts" | Logical | Yes |
+| survey-paper.html | Subjective judgment in description | POV | Yes |
+| survey-paper.html | Prescriptive statement of necessity | POV | Yes |
+| survey-paper.html | Subjective qualifiers and informal language | POV | Yes |
+| survey-paper.html | Subjective claim about governance | POV | Yes |
+| survey-paper.html | Logical inconsistency in taxonomy extension | Logical | Yes |
+| survey-paper.html | Subjective evaluation of novelty | POV | Yes |
+| survey-paper.html | Logical inconsistency in timeline (future-dated research) | Logical | Yes |
+| survey-paper.html | Unevidenced assertion as premise | Logical | Yes |
+| survey-paper.html | Subjective justification for methodology | POV | Yes |
+| survey-paper.html | Unsubstantiated predictive claim | Logical | Yes |
+| survey-paper.html | Premature authority claim for future publication | Logical | Yes |
+| survey-paper.html | Prescriptive language in technical description | POV | Yes |
+| survey-paper.html | Subjective reaction in reporting findings | POV | Yes |
+| survey-paper.html | Unsubstantiated generalization and vague terminology | Logical | Yes |
+| survey-paper.html | Evaluative term for token usage | POV | Yes |
+| survey-paper.html | Implicit connection between findings and general term | Logical | Yes |
+| survey-paper.html | Unsubstantiated universal claim | Logical | Yes |
+| survey-paper.html | Undefined qualitative terms | Logical | Yes |
+| survey-paper.html | Generalization from limited data | Logical | Yes |
+| survey-paper.html | Assertion without immediate justification | Logical | Yes |
+| survey-paper.html | Contradiction in numerical claim | Logical | Yes |
+| survey-paper.html | Pervasive logical leaps regarding future events | Logical | Yes |
+| survey-paper.html | Temporal inconsistency and unsubstantiated claim of "unprecedented" | Logical | Yes |
+| survey-paper.html | Logical leap: joint stewardship guarantees neutrality | Logical | Yes |
+| survey-paper.html | Extreme claims lacking nuance | Logical | Yes |
+| survey-paper.html | Lack of scholastic neutrality (promotional language) | Logical | Yes |
+| survey-paper.html | Subjective judgment of "value" | POV | Yes |
+| survey-paper.html | Assertion of unsolvability without proof | Logical | Yes |
+| survey-paper.html | Generalization from specific failures | Logical | Yes |
+| survey-paper.html | Reliance on analogy as proof | Logical | Yes |
+| survey-paper.html | Logical leap from incident to "same rigor" requirement | Logical | Yes |
+| survey-paper.html | Unjustified market assertion | Logical | Yes |
+| survey-paper.html | Unqualified assertion of "first genuine" standard | Logical | Yes |
+| survey-paper.html | Assertion without immediate justification in common definitions | Logical | Yes |
+| survey-paper.html | Subjective assessment of obviousness | POV | Yes |
+| survey-paper.html | Unsupported assertion about existing surveys | Logical | Yes |
+| survey-paper.html | Generalization from internal reference without context | Logical | Yes |
+| survey-paper.html | Assertive language without commensurate evidence | Logical | Yes |
+| survey-paper.html | Prescriptive interpretation of findings | POV | Yes |
+| survey-paper.html | Logical leap/unstated premise in performance analysis | Logical | Yes |
+| survey-paper.html | Logical leap/shift in focus in "2026 answer" | Logical | Yes |
+| survey-paper.html | Lack of internal evidence for assertions about future outcomes | Logical | Yes |
+| survey-paper.html | Prescriptive call to action | POV | Yes |
+| survey-paper.html | Multiple subjective judgments and predictive statements | POV | Yes |
+| survey-paper.html | Logical leap in taxonomic extension justification | Logical | Yes |
+| survey-paper.html | Pervasive future-dated references | Logical | Yes |
+| survey-paper.html | Duplicate reference entry | Logical | Yes |
+| survey-paper.html | Lack of academic rigor in citation format | Logical | Yes |
+| survey-paper.html | Logical inconsistency in future-dated arXiv reference | Logical | Yes |

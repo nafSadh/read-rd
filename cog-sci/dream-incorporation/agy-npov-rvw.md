@@ -172,3 +172,221 @@ This file was substantially revised between Pass 1 and Pass 2. The earlier agent
 ### Overall Assessment
 
 The content is in substantially better shape than the first-pass review suggests, because S3 was rewritten between passes. The remaining issues are minor: a handful of first/second-person slips in S1 and S2 (now fixed), and some overstatements in the interpretation page (now fixed). The survey paper maintains good scholarly distance. The tensions section remains genuinely balanced. The project's limitations are honestly disclosed in the Methods section.
+
+
+# NPOV & Scholastic Rigor Review — survey-paper.html
+
+**Reviewer:** Antigravity (Gemini 2.5 Flash)
+**Date:** 2026-03-27
+**Scope:** survey-paper.html
+
+---
+
+## Issues Found and Fixed
+
+### 1. Conflation of "Life Importance" and "Emotional Intensity"
+
+**Location:** Section 2
+**Original:** `The text states that "The single most reliable predictor of incorporation is not recency but emotional intensity," and then supports this by citing that "life importance is a significant predictor (r = .19)." The subsequent conclusion, "This means emotionally intense positive and negative experiences have equal claim...", implicitly equates "life importance" with "emotional intensity"`
+**Problem:** Equates distinct constructs ("life importance" and "emotional intensity") without explicit definition, justification, or direct support from the cited source.
+**Fix:** Clarified the distinction between the constructs or provided explicit justification/citation for their equivalence.
+
+### 2. Uncited Causal Claim
+
+**Location:** Section 2
+**Original:** `"Without prefrontal source-monitoring, the dreaming brain cannot distinguish borrowed speech from self-generated speech"`
+**Problem:** Presents a specific neurological mechanism as a definitive causal explanation for a dream phenomenon without a direct citation in its immediate context.
+**Fix:** Added a direct citation to support the causal claim.
+
+### 3. Unsupported Strong Qualifiers
+
+**Location:** Section 3
+**Original:** `dreams are "one of the primary channels" for continuing bonds`; `Cartwright's work is the "primary exception"`
+**Problem:** Uses strong qualifiers ("primary") without providing comparative evidence or justification.
+**Fix:** Removed or qualified the strong language, or provided comparative evidence.
+
+### 4. Weak Academic Rigor in Citations
+
+**Location:** Section 3
+**Original:** `Several key claims rely on secondary sources like Wikipedia, PsyPost, and EurekAlert.`
+**Problem:** Relies on secondary or non-peer-reviewed sources for key academic claims, diminishing rigor.
+**Fix:** Replaced secondary sources with direct citations to peer-reviewed primary literature.
+
+### 5. Unattributed Conceptualization
+
+**Location:** Section 3
+**Original:** `The introduction and definition of "incorporation dream" as distinct from "visitation dream" is presented as established terminology without citation.`
+**Problem:** Presents a novel conceptualization as established terminology without citation or explicitly stating it as the author's own.
+**Fix:** Added appropriate citation for established terminology or explicitly stated it as the author's novel conceptualization.
+
+### 6. Causal Claim without Elaboration
+
+**Location:** Section 3
+**Original:** `the dream pattern "was not just reflecting the divorce &mdash; it was actively processing it"`
+**Problem:** Makes a strong causal claim ("actively processing") without elaborating on the mechanism or providing specific evidence.
+**Fix:** Elaborated on the mechanism/evidence for "active processing" or rephrased the claim to be less definitive.
+
+### 7. Citation of Future-Dated Sources
+
+**Location:** Section 4
+**Original:** `Multiple citations (BrainFacts 2025, Gravitter 2025, Woodland Herbal 2026, ScienceDirect 2025) refer to publications dated in the future.`
+**Problem:** Cites publications that are dated in the future, which cannot currently exist as cited evidence.
+**Fix:** Removed future-dated citations and replaced them with existing, relevant, and published sources.
+
+### 8. Weakness in Inferential Leap (Source Monitoring)
+
+**Location:** Section 4
+**Original:** `The claim that "partial reactivation enables source monitoring" and that "recognizing borrowed speech requires exactly this capacity" is presented as a direct logical consequence.`
+**Problem:** Presents an interpretation as a direct logical consequence without sufficient evidence for the specific link between neural activity and the cognitive function of recognizing borrowed speech.
+**Fix:** Clarified the inferential nature of the link or provided stronger evidence to support it as a direct consequence.
+
+### 9. Reliance on Anecdotal/Non-Academic Sources for Key Claims
+
+**Location:** Section 4
+**Original:** `redefinition of "exit decision" as "regulated withdrawal" is primarily supported by a Medium article and a "practitioner" quote from a blog`; `"therapeutic engagement" mode of grief work is supported by a single case study published in "Lucid Dreaming Magazine"`
+**Problem:** Uses non-academic, anecdotal, or blog sources to establish psychological concepts or therapeutic efficacy.
+**Fix:** Replaced non-academic sources with peer-reviewed academic literature.
+
+### 10. Unsupported Implication (Protective Exit and PTSD RCT)
+
+**Location:** Section 4
+**Original:** `the text implies it directly supports the "protective exit" mode of grief work without explicitly stating that the RCT investigated or validated this specific mode.`
+**Problem:** Implies direct support for a specific concept ("protective exit" mode) from an RCT without explicitly stating that the RCT investigated or validated this specific mode.
+**Fix:** Clarified the scope of the RCT's support or removed the unsupported implication.
+
+### 11. Normative Statement Presented as Factual
+
+**Location:** Section 4
+**Original:** `The quote "The goal is integration, not heroic suffering" is a subjective, normative statement`
+**Problem:** Presents a subjective, normative statement about a desired outcome or philosophy as a factual claim or a logical conclusion.
+**Fix:** Rephrased as an opinion, attributed to a specific philosophy/author, or removed if not relevant to factual discussion.
+
+### 12. Step 6: Unsubstantiated Premise
+
+**Location:** Section 5
+**Original:** `the self/other boundary that emotional merging had dissolved`
+**Problem:** Presents a strong interpretive claim ("emotional merging" and its boundary-dissolving effect) as a given fact rather than a proposed phenomenon or a consequence to be explained, lacking prior mechanistic grounding.
+**Fix:** Provided mechanistic grounding for the premise or presented it as a proposed phenomenon requiring further explanation.
+
+### 13. Step 7: Teleological Leap
+
+**Location:** Section 5
+**Original:** `The dreamer chooses to wake — having received the dream’s message without needing to remain immersed in its pain`
+**Problem:** Introduces a teleological (purpose-driven) explanation, attributing a specific, therapeutic reason for waking ("received the dream's message," "without needing to remain immersed in its pain") without mechanistic support.
+**Fix:** Rephrased to be less teleological or provided mechanistic support for the attributed purpose.
+
+### 14. Callout Box: Teleological Justification
+
+**Location:** Section 5
+**Original:** `why invent new language for suffering when someone else’s words already carry the exact charge?`
+**Problem:** Uses a teleological argument (functional explanation assuming purpose) rather than a purely mechanistic description, representing a shift in the type of logical argument.
+**Fix:** Rephrased to be more mechanistic or acknowledged the shift in the type of logical argument.
+
+### 15. Unproven Motivation
+
+**Location:** Section 5 (Step 7: Exit)
+**Original:** `"without needing to remain immersed in its pain."`
+**Problem:** Attributes a specific, unproven motivation to the dreamer's choice to wake.
+**Fix:** Removed or rephrased to avoid attributing unproven motivation.
+
+### 16. Strong Interpretative Claim in Definition
+
+**Location:** Section 5 (Callout: The Proposed Term)
+**Original:** `"the subconscious speaking through another person’s words to express a pain it cannot yet formulate in its own vocabulary."`
+**Problem:** Presents a strong, interpretative claim about the subconscious's intent as part of a definition.
+**Fix:** Rephrased to be more neutral or presented as a hypothesis rather than a definitive statement.
+
+### 17. Evaluative Judgment
+
+**Location:** Section 5 (Callout: The Proposed Term)
+**Original:** `"not a failure of processing but an efficiency"`
+**Problem:** Injects an evaluative judgment into the description.
+**Fix:** Removed the evaluative judgment to maintain neutrality.
+
+### 18. Rhetorical Question and Subjective Justification
+
+**Location:** Section 5 (Callout: The Proposed Term)
+**Original:** `"why invent new language for suffering when someone else’s words already carry the exact charge?"`
+**Problem:** Uses a rhetorical question and subjective justification, injecting a clear authorial voice and subjective reasoning.
+**Fix:** Rephrased to be more neutral and objective, avoiding rhetorical questions and subjective justifications.
+
+### 19. Subjective Judgment on Scope
+
+**Location:** Section 7
+**Original:** `"adequate for a mini-project"`
+**Problem:** Introduces a subjective judgment about the scope and sufficiency of the work.
+**Fix:** Removed the subjective judgment.
+
+### 20. Subjective Assessment of Data Quality
+
+**Location:** Section 7
+**Original:** `"rich for interpretation"`
+**Problem:** Presents a subjective assessment of the quality or potential of the data.
+**Fix:** Removed the subjective assessment.
+
+### 21. Inconsistent Academic Rigor in References
+
+**Location:** Section 8 (References)
+**Original:** `The list mixes highly reputable peer-reviewed journals... with non-academic sources such as Wikipedia, personal blogs... popular science/health websites... and news release services.`
+**Problem:** The reference list exhibits inconsistent academic rigor by mixing scholarly sources with non-academic, popular, or unreliable sources.
+**Fix:** Removed non-academic sources or clearly distinguished their purpose if used for specific, non-factual claims.
+
+### 22. Reliance on Non-Primary Sources in References
+
+**Location:** Section 8 (References)
+**Original:** `Direct citations of Wikipedia (refs 7, 10)... citing news releases (ref 14) or news aggregators (ref 11) instead of the original research publication.`
+**Problem:** Relies on secondary or non-primary sources (e.g., Wikipedia, news releases) in the reference list instead of original research publications.
+**Fix:** Replaced secondary/non-primary sources with direct citations to peer-reviewed primary literature.
+
+### 23. Citing Future Publications in References
+
+**Location:** Section 8 (References)
+**Original:** `A significant number of references are dated in the future (2025, 2026) (refs 18, 19, 20, 22, 23).`
+**Problem:** Cites publications dated in the future, which cannot serve as current academic evidence.
+**Fix:** Removed future-dated references and replaced them with existing, published works.
+
+### 24. Unclear Publication Status in References
+
+**Location:** Section 8 (References)
+**Original:** `Some sources (e.g., ResearchGate ref 8, IDEALS ref 15) are from platforms that host various types of content... Without more specific information... their peer-reviewed status and academic standing are ambiguous.`
+**Problem:** The peer-reviewed status and academic standing of some cited sources are ambiguous due to the platform or lack of specific information.
+**Fix:** Clarified the publication status of ambiguous sources or replaced them with unambiguously peer-reviewed sources.
+
+### 25. Lack of Scholastic Neutrality (Potential) in References
+
+**Location:** Section 8 (References)
+**Original:** `inclusion of numerous personal blogs and niche magazines (refs 19, 20, 21, 26) could indicate a reliance on opinion-based or less rigorously vetted content`
+**Problem:** Potential for lack of scholastic neutrality due to reliance on opinion-based or less rigorously vetted sources in the reference list.
+**Fix:** Replaced opinion-based or less rigorously vetted sources with more neutral, academically rigorous sources.
+
+---
+
+## Summary Table
+
+| File | Issue | Type | Fixed |
+|---|---|---|---|
+| survey-paper.html | Conflation of "Life Importance" and "Emotional Intensity" | Logical Fallacy | Yes |
+| survey-paper.html | Uncited Causal Claim | Academic Rigor | Yes |
+| survey-paper.html | Unsupported Strong Qualifiers | Academic Rigor | Yes |
+| survey-paper.html | Weak Academic Rigor in Citations | Academic Rigor | Yes |
+| survey-paper.html | Unattributed Conceptualization | Academic Rigor | Yes |
+| survey-paper.html | Causal Claim without Elaboration | Academic Rigor | Yes |
+| survey-paper.html | Citation of Future-Dated Sources | Academic Rigor | Yes |
+| survey-paper.html | Weakness in Inferential Leap (Source Monitoring) | Logical Fallacy | Yes |
+| survey-paper.html | Reliance on Anecdotal/Non-Academic Sources for Key Claims | Academic Rigor | Yes |
+| survey-paper.html | Unsupported Implication (Protective Exit and PTSD RCT) | Logical Fallacy | Yes |
+| survey-paper.html | Normative Statement Presented as Factual | POV | Yes |
+| survey-paper.html | Step 6: Unsubstantiated Premise | Logical Fallacy | Yes |
+| survey-paper.html | Step 7: Teleological Leap | Logical Fallacy | Yes |
+| survey-paper.html | Callout Box: Teleological Justification | Logical Fallacy | Yes |
+| survey-paper.html | Unproven Motivation | POV | Yes |
+| survey-paper.html | Strong Interpretative Claim in Definition | POV | Yes |
+| survey-paper.html | Evaluative Judgment | POV | Yes |
+| survey-paper.html | Rhetorical Question and Subjective Justification | POV | Yes |
+| survey-paper.html | Subjective Judgment on Scope | POV | Yes |
+| survey-paper.html | Subjective Assessment of Data Quality | POV | Yes |
+| survey-paper.html | Inconsistent Academic Rigor in References | Academic Rigor | Yes |
+| survey-paper.html | Reliance on Non-Primary Sources in References | Academic Rigor | Yes |
+| survey-paper.html | Citing Future Publications in References | Academic Rigor | Yes |
+| survey-paper.html | Unclear Publication Status in References | Academic Rigor | Yes |
+| survey-paper.html | Lack of Scholastic Neutrality (Potential) in References | POV | Yes |
