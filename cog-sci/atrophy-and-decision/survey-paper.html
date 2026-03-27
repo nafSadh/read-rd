@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atrophy &amp; Decision — Survey Paper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#2e6ab406;--grad2:#9b7aed04}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#9b7aed06;--grad2:#4ee8d004}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s;line-height:1.7}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent)}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:200px;min-width:200px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo{font-family:var(--serif);font-size:20px;color:var(--bright);font-weight:500;letter-spacing:.5px}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.sidebar-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:10px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;text-decoration:none;color:var(--text)}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;letter-spacing:.5px}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.sidebar-foot a{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none;letter-spacing:.5px}
+.sidebar-foot a:hover{color:var(--accent)}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--bg2);color:var(--dim);font-size:16px;transition:all .2s}
+.theme-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.main{flex:1;margin-left:200px;padding:0 0 120px}
+.paper-hero{padding:60px 80px 40px;max-width:860px;margin:0 auto;position:relative}
+.paper-hero::after{content:'';position:absolute;bottom:0;left:80px;right:80px;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent)}
+.paper-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+[data-theme="light"] .paper-badge{color:var(--dim)}
+.paper-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.paper-title{font-family:var(--serif);font-size:42px;font-weight:500;color:var(--bright);line-height:1.15;letter-spacing:.5px;margin-bottom:14px}
+.paper-title em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-subtitle{font-family:var(--sans);font-size:16px;color:var(--dim);line-height:1.7;max-width:640px}
+.paper-meta{display:flex;gap:24px;margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.paper-body{max-width:860px;margin:0 auto;padding:0 80px}
+.paper-section{padding:48px 0;border-bottom:1px solid var(--border);position:relative}
+.paper-section:last-child{border-bottom:none}
+.paper-section .s-num{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+[data-theme="light"] .paper-section .s-num{color:var(--dim)}
+.paper-section h2{font-family:var(--serif);font-size:32px;font-weight:500;color:var(--bright);line-height:1.25;letter-spacing:.5px;margin-bottom:24px}
+.paper-section h2 em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-section h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:36px 0 14px;text-transform:uppercase;letter-spacing:2.5px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.paper-section p{font-family:var(--serif);font-size:17px;line-height:2;margin-bottom:18px;letter-spacing:.2px}
+.paper-section strong{color:var(--bright);font-weight:600}
+.paper-stat-row{display:flex;gap:0;margin:20px 0;border:1px solid var(--border)}
+.paper-stat{flex:1;padding:14px 10px;text-align:center;border-right:1px solid var(--border)}
+.paper-stat:last-child{border-right:none}
+.paper-stat .val{font-family:var(--mono);font-size:16px;color:var(--bright);font-weight:500;display:block}
+.paper-stat .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans);margin-top:3px;display:block}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:24px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-family:var(--serif);font-style:italic;color:var(--bright)}
+.diagram-wrap{margin:24px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}
+.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.tension-card{border-left:3px solid var(--cyan);padding:16px 0 16px 20px;margin:20px 0}
+[data-theme="light"] .tension-card{border-left-color:var(--accent)}
+.tension-card h4{font-family:var(--sans);font-size:10px;color:var(--cyan);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+[data-theme="light"] .tension-card h4{color:var(--accent)}
+.tension-card p{font-family:var(--serif);font-size:16px;line-height:1.9;margin:0;color:var(--text)}
+.section-sources{margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
+.section-sources h4{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.section-sources p{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.8;letter-spacing:.2px}
+.section-sources a{color:var(--accent);text-decoration:none}
+.section-sources a:hover{text-decoration:underline}
+.paper-section a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--border)}
+.paper-section a:hover{border-bottom-color:var(--accent)}
+sup{font-size:11px;line-height:0;vertical-align:super}
+sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}
+sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+sup.fn:hover>a{color:var(--bright)}
+sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}
+sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+.ref-list-num{padding-left:2.5em;margin:0}
+.ref-list-num li{font-family:var(--mono);font-size:12px;color:var(--dim);padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%);line-height:1.6}
+.ref-list-num li:last-child{border-bottom:none}
+.ref-list-num li::marker{color:var(--accent);font-weight:600}
+.ref-list-num li a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+.ref-list-num li a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .paper-hero{padding:32px 24px 28px}
+  .paper-hero::after{left:24px;right:24px}
+  .paper-body{padding:0 24px}
+  .paper-title{font-size:28px}
+  .paper-stat-row{flex-wrap:wrap}
+  .paper-stat{min-width:45%}
+  .theme-btn{top:8px;right:8px}
+}
+  </style>
+</head>
+<body data-theme="light">
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">A<em>D</em></div>
+    <div class="sidebar-sub">Survey Paper</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#abstract" class="sidebar-item active" data-target="abstract"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Abstract</span></a>
+    <a href="#intro" class="sidebar-item" data-target="intro"><span class="sidebar-num">00</span><span class="sidebar-label">Introduction</span></a>
+    <a href="#neural" class="sidebar-item" data-target="neural"><span class="sidebar-num">01</span><span class="sidebar-label">Neural Substrate</span></a>
+    <a href="#habit" class="sidebar-item" data-target="habit"><span class="sidebar-num">02</span><span class="sidebar-label">Habit &amp; Deliberation</span></a>
+    <a href="#fatigue" class="sidebar-item" data-target="fatigue"><span class="sidebar-num">03</span><span class="sidebar-label">Decision Fatigue</span></a>
+    <a href="#developmental" class="sidebar-item" data-target="developmental"><span class="sidebar-num">04</span><span class="sidebar-label">Developmental</span></a>
+    <a href="#social" class="sidebar-item" data-target="social"><span class="sidebar-num">05</span><span class="sidebar-label">Social Atrophy</span></a>
+    <a href="#helplessness" class="sidebar-item" data-target="helplessness"><span class="sidebar-num">06</span><span class="sidebar-label">Helplessness</span></a>
+    <a href="#philosophy" class="sidebar-item" data-target="philosophy"><span class="sidebar-num">07</span><span class="sidebar-label">Philosophy</span></a>
+    <a href="#synthesis" class="sidebar-item" data-target="synthesis"><span class="sidebar-num">08</span><span class="sidebar-label">Synthesis</span></a>
+    <a href="#methods" class="sidebar-item" data-target="methods"><span class="sidebar-num">09</span><span class="sidebar-label">Methods</span></a>
+    <a href="#references" class="sidebar-item" data-target="references"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">References</span></a>
+  </div>
+  <div class="sidebar-foot">
+    <a href="index.html">&larr; Project</a>
+    <a href="tensions-paper.html">Tensions &rarr;</a>
+  </div>
+</div>
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme"></button>
+<div class="shell">
+<div class="main">
+  <div class="paper-hero">
+    <div class="paper-badge"><span class="dot"></span>ATROPHY &amp; DECISION &middot; SURVEY PAPER &middot; 40+ SOURCES</div>
+    <h1 class="paper-title">Atrophy &amp; <em>Decision</em></h1>
+    <p class="paper-subtitle">How decay shapes choice &mdash; a survey of the neural, behavioral, developmental, social, and philosophical dimensions of atrophy as the primary architect of decision-making.</p>
+    <div class="paper-meta">
+      <span>March 2026</span>
+      <span>8 Dimensions</span>
+      <span>40+ Sources</span>
+      <span>6 Tensions</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <section class="paper-section" id="abstract">
+      <div class="s-num">ABSTRACT</div>
+      <h2>Abstract</h2>
+      <p>Most accounts of decision-making focus on what agents choose from — the structure of preferences, the information available, the cognitive strategies deployed. This survey argues for a complementary and often more determinative lens: what has been lost. Across eight levels of analysis — neural, synaptic, behavioral, developmental, cognitive, social, motivational, and philosophical — the evidence converges on the thesis that <strong>atrophy is the primary architect of decision space</strong>. What gets chosen is shaped less by active deliberation than by what capacities, options, habits, and connections remain non-degraded.</p>
+      <p>Drawing on research in <a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">synaptic pruning</a><sup class="fn"><a href="#ref-1">[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">Wikipedia: Synaptic Pruning &rarr;</a></span></sup>, <a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">dual-process cognition</a><sup class="fn"><a href="#ref-2">[2]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">Wikipedia: Dual Process Theory &rarr;</a></span></sup>, <a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">decision fatigue</a><sup class="fn"><a href="#ref-3">[3]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">Wikipedia: Decision Fatigue &rarr;</a></span></sup>, <a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">learned helplessness</a><sup class="fn"><a href="#ref-4">[4]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">Wikipedia: Learned Helplessness &rarr;</a></span></sup>, <a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">social network theory</a><sup class="fn"><a href="#ref-5">[5]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">Wikipedia: Dunbar's Number &rarr;</a></span></sup>, and <a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">compatibilist philosophy of agency</a><sup class="fn"><a href="#ref-6">[6]</a><span class="tip"><a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">SEP: Compatibilism &rarr;</a></span></sup>, this survey maps how decay operates at every level of analysis and synthesizes implications for decision quality, autonomy, and intervention.</p>
+    </section>
+
+    <section class="paper-section" id="intro">
+      <div class="s-num">SECTION 00</div>
+      <h2>Introduction: The <em>Architecture of Loss</em></h2>
+      <p>The dominant frameworks for understanding decision-making &mdash; expected utility theory, dual-process models, behavioral economics &mdash; share a common assumption: that the agent faces a choice set and selects from it. What this framing obscures is that the choice set itself is the product of a history of degradation. The options available to any given agent at any given moment are not simply "the possible options" but the residue of what capacities, connections, and habits have survived.</p>
+      <p>This paper proposes the concept of <strong>atrophy-determined decision space</strong>: the space of choices available to an agent is primarily constituted not by what the agent can do but by what has not yet atrophied. Neural circuits that have not been pruned, habits that still carry deliberative weight, social relationships that have not decayed, motivational capacities not yet extinguished by learned helplessness &mdash; these are the materials of choice. The thesis is not nihilistic: it does not claim choice is illusory. Rather, it shifts the site of intervention. If atrophy determines choice, then expanding decision quality requires active maintenance of capacity, not better deliberation within a degraded space.</p>
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">~50%</span><span class="lbl">Synapses pruned in adolescence (some regions)</span></div>
+        <div class="paper-stat"><span class="val">~150</span><span class="lbl">Dunbar&rsquo;s stable social connections</span></div>
+        <div class="paper-stat"><span class="val">&sim;23</span><span class="lbl">Multi-lab ego depletion replication labs</span></div>
+        <div class="paper-stat"><span class="val">5 levels</span><span class="lbl">Scales where atrophy shapes choice</span></div>
+      </div>
+      <p>The argument unfolds across eight sections. Sections 1&ndash;2 address the neural substrate: synaptic pruning and the transformation of deliberate behavior into habit. Sections 3&ndash;4 examine cognitive and developmental atrophy: decision fatigue as temporary capacity depletion and identity formation as permanent narrowing. Sections 5&ndash;6 turn to social and motivational atrophy: Dunbar&rsquo;s network constraints and Seligman&rsquo;s learned helplessness. Section 7 examines the philosophical implications for agency and free will. Section 8 synthesizes across levels.</p>
+    </section>
+
+    <section class="paper-section" id="neural">
+      <div class="s-num">SECTION 01</div>
+      <h2>Neural Substrate: <em>Synaptic Pruning and Skill Decay</em></h2>
+      <h3>Use-It-or-Lose-It at the Synapse</h3>
+      <p>The brain does not simply accumulate connections over time. It selectively destroys them. <a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">Synaptic pruning</a><sup class="fn"><a href="#ref-1">[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">Wikipedia: Synaptic Pruning &rarr;</a></span></sup> &mdash; the elimination of synaptic connections through activity-dependent and glial-mediated processes &mdash; is one of the defining events of neural development. Early in life, an overabundance of synaptic connections is created; subsequently, unused connections are systematically eliminated while active connections are strengthened. The molecular mechanisms include microglial engulfment, complement cascade signaling (proteins C1q, C3, C4), and astrocyte-mediated phagocytosis.<sup class="fn"><a href="#ref-7">[7]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7368197/" target="_blank">PMC: How Synaptic Pruning Shapes Neural Wiring &rarr;</a></span></sup></p>
+      <p>The decisional implication of pruning is direct: circuits that are not exercised are eliminated, and eliminated circuits cannot participate in future decisions. A child who learns a language acquires a rich phonological repertoire; without continued exposure, the neural substrate for perceiving and producing certain phonemes is systematically pruned. The adult who has &ldquo;lost&rdquo; a language is not failing to choose to speak it &mdash; the capacity has been structurally removed. Choice is downstream of capacity, and capacity is downstream of use-history.</p>
+      <h3>Adolescent Pruning and the Closing of Option Spaces</h3>
+      <p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3982854/" target="_blank">Adolescent neurodevelopment</a><sup class="fn"><a href="#ref-8">[8]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3982854/" target="_blank">PMC: Adolescent Neurodevelopment &rarr;</a></span></sup> involves a particularly pronounced wave of pruning in prefrontal cortex and other association areas, with some regions losing close to 50% of their synaptic density. Research by the <a href="https://www.jneurosci.org/content/44/26/e0373242024" target="_blank">Journal of Neuroscience (2024)</a><sup class="fn"><a href="#ref-9">[9]</a><span class="tip"><a href="https://www.jneurosci.org/content/44/26/e0373242024" target="_blank">JNeurosci: Cognitive Control and Synaptic Pruning 2024 &rarr;</a></span></sup> demonstrates that this pruning actually improves working memory and executive function by increasing the signal-to-noise ratio in prefrontal circuits. However, improved efficiency and reduced option space are not the same thing. The specialization that emerges from pruning produces a brain better suited to certain types of decisions and less capable of others.</p>
+      <p>Computational modeling by <a href="https://www.pnas.org/doi/10.1073/pnas.2121331119" target="_blank">Duan et al. (PNAS, 2022)</a><sup class="fn"><a href="#ref-10">[10]</a><span class="tip"><a href="https://www.pnas.org/doi/10.1073/pnas.2121331119" target="_blank">PNAS: Pruning Recurrent Neural Networks 2022 &rarr;</a></span></sup> pruned recurrent neural networks to replicate adolescent changes in working memory and reinforcement learning, demonstrating that reduced connectivity can simultaneously improve certain performance metrics while foreclosing others. The pruned network is more efficient for tasks its remaining architecture supports &mdash; and categorically incapable of tasks its pruned circuits handled.</p>
+      <h3>Long-Term Depression and Synaptic Forgetting</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Long-term_depression" target="_blank">Long-term depression (LTD)</a><sup class="fn"><a href="#ref-11">[11]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Long-term_depression" target="_blank">Wikipedia: Long-term Depression &rarr;</a></span></sup> is the molecular mechanism of synaptic weakening: a persistent decrease in synaptic transmission that results from low-frequency patterns of neural activity. Where long-term potentiation (LTP) strengthens active circuits, LTD weakens inactive ones. The two processes together implement use-it-or-lose-it at the molecular level. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3118435/" target="_blank">Bhagya &amp; Bhatt (2011)</a><sup class="fn"><a href="#ref-12">[12]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3118435/" target="_blank">PMC: LTP and LTD: A Clinical Perspective &rarr;</a></span></sup> document how LTD serves a homeostatic function, preventing synaptic saturation by selectively depressing underutilized connections. The decision-relevant consequence is that every day of non-use of a neural circuit moves it slightly toward elimination.</p>
+
+      <div class="callout">
+        <h4>Key Insight</h4>
+        <p>Synaptic architecture is not a neutral substrate on which decisions are made; it is itself the accumulated record of what has been practiced, and it forecloses possibilities that were not practiced.</p>
+      </div>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">Wikipedia: Synaptic Pruning</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7368197/" target="_blank">PMC: Neural Wiring (2020)</a> &middot; <a href="https://www.jneurosci.org/content/44/26/e0373242024" target="_blank">JNeurosci (2024)</a> &middot; <a href="https://www.pnas.org/doi/10.1073/pnas.2121331119" target="_blank">PNAS (2022)</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3118435/" target="_blank">PMC: LTP/LTD (2011)</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="habit">
+      <div class="s-num">SECTION 02</div>
+      <h2>Habit &amp; Deliberation: <em>The Chunking of Choice</em></h2>
+      <h3>Dual-Process Theory and the Default to System 1</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">Dual-process theory</a><sup class="fn"><a href="#ref-2">[2]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">Wikipedia: Dual Process Theory &rarr;</a></span></sup>, associated with <a href="https://thedecisionlab.com/reference-guide/philosophy/system-1-and-system-2-thinking" target="_blank">Kahneman and colleagues</a><sup class="fn"><a href="#ref-13">[13]</a><span class="tip"><a href="https://thedecisionlab.com/reference-guide/philosophy/system-1-and-system-2-thinking" target="_blank">Decision Lab: System 1 &amp; 2 &rarr;</a></span></sup>, partitions cognition into Type 1 (fast, automatic, associative) and Type 2 (slow, deliberate, effortful) processes. What this framework often understates is the directionality of the transition between systems: over time, behaviors that begin as Type 2 processes become Type 1 through repeated execution. The direction of travel is from deliberation to automaticity, not the reverse.</p>
+      <p>Habit formation is, in this framing, the progressive atrophy of deliberation. Each repetition of a decision reduces the cognitive resources allocated to it, &ldquo;chunking&rdquo; the decision into a single associative unit. <a href="https://www.justinmath.com/cognitive-science-of-learning-developing-automaticity/" target="_blank">Automatization theory</a><sup class="fn"><a href="#ref-14">[14]</a><span class="tip"><a href="https://www.justinmath.com/cognitive-science-of-learning-developing-automaticity/" target="_blank">Skycak: Cognitive Science of Automaticity &rarr;</a></span></sup> documents how skills transition from effortful, explicit procedural execution to implicit, automatic performance requiring minimal working memory involvement. Once this transition is complete, the deliberative pathway does not merely go unused &mdash; evidence suggests it atrophies, making re-deliberation on habituated choices effortful even when the habit is maladaptive.</p>
+      <h3>Basal Ganglia and Habit Circuits</h3>
+      <p>Neuroimaging research identifies the striatum, particularly the dorsomedial and dorsolateral striatum, as central to the habit/goal-directed distinction. Goal-directed behavior recruits prefrontal-striatal circuits; habitual behavior migrates toward sensorimotor circuits in the dorsolateral striatum. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6056761/" target="_blank">Gao et al. (2018)</a><sup class="fn"><a href="#ref-15">[15]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6056761/" target="_blank">PMC: Default Mode Network &amp; Fast Thinking &rarr;</a></span></sup> link the default mode network's role in fast thinking to the neural signature of habituated choice. The prefrontal region that would exercise deliberative override is not recruited. It has, in effect, been bypassed &mdash; and the capacity for override, if not exercised, weakens over time in a direct application of LTD dynamics.</p>
+      <h3>Expert Automaticity as Deliberation Atrophy</h3>
+      <p>Expert performance represents the most studied case of productive deliberation atrophy. <a href="https://perceptionaction.com/8-2/" target="_blank">Skill acquisition research</a><sup class="fn"><a href="#ref-16">[16]</a><span class="tip"><a href="https://perceptionaction.com/8-2/" target="_blank">Perception &amp; Action: How Do We Become an Expert? &rarr;</a></span></sup> demonstrates that chess grandmasters encode roughly 50,000 to 100,000 chunked patterns, retrieving decisions in milliseconds without deliberation. A grandmaster's <em>decision</em> on a standard opening is not a choice from a large option set &mdash; it is the retrieval of a pattern. The option set has been collapsed by years of practice into a single response. Research by <a href="https://www.tandfonline.com/doi/full/10.1080/1750984X.2024.2422847" target="_blank">sports psychology on intuitive decision-making (2024)</a><sup class="fn"><a href="#ref-17">[17]</a><span class="tip"><a href="https://www.tandfonline.com/doi/full/10.1080/1750984X.2024.2422847" target="_blank">Tandfonline: Intuitive Decision-Making in Sports 2024 &rarr;</a></span></sup> confirms that after many deliberations of the same type, each perceptual cue becomes directly associated with a response, with deliberation essentially eliminated from the process.</p>
+
+      <div class="tension-card">
+        <h4>Tension</h4>
+        <p>The atrophy of deliberation in habit formation is simultaneously an efficiency gain and an option-space closure. Expert automaticity, the most celebrated form of this process, illustrates both: the expert decides faster and better within their domain, while the capacity to reconsider from first principles atrophies precisely as performance peaks.</p>
+      </div>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">Wikipedia: Dual Process Theory</a> &middot; <a href="https://thedecisionlab.com/reference-guide/philosophy/system-1-and-system-2-thinking" target="_blank">Decision Lab: System 1&amp;2</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6056761/" target="_blank">PMC: DMN &amp; Fast Thinking</a> &middot; <a href="https://www.tandfonline.com/doi/full/10.1080/1750984X.2024.2422847" target="_blank">Sports Decision-Making 2024</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="fatigue">
+      <div class="s-num">SECTION 03</div>
+      <h2>Decision Fatigue: <em>Temporary Capacity Depletion</em></h2>
+      <h3>Ego Depletion and the Resource Model</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">Decision fatigue</a><sup class="fn"><a href="#ref-3">[3]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">Wikipedia: Decision Fatigue &rarr;</a></span></sup> describes the deterioration of decision quality following a period of extensive decision-making. The original ego depletion framework, introduced by <a href="https://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf" target="_blank">Baumeister et al. (1998)</a><sup class="fn"><a href="#ref-18">[18]</a><span class="tip"><a href="https://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf" target="_blank">Baumeister et al. 1998: Ego Depletion &rarr;</a></span></sup>, proposed that self-regulation draws on a limited energy resource analogous to a muscle. After exertion, the resource is temporarily depleted, producing impaired decision quality, reduced self-control, and increased reliance on default options.</p>
+      <p>Decision fatigue is atrophy in its most acute and reversible form: the deliberative capacity temporarily degraded by overuse. Its effects are systematic: depleted individuals preferentially choose status quo options, avoid trade-offs, choose impulsively, and show reduced sensitivity to outcome differences. The famous <a href="https://gc-bs.org/articles/the-depleted-mind-the-science-of-decision-fatigue-and-ego-depletion/" target="_blank">parole board study</a><sup class="fn"><a href="#ref-19">[19]</a><span class="tip"><a href="https://gc-bs.org/articles/the-depleted-mind-the-science-of-decision-fatigue-and-ego-depletion/" target="_blank">GCBS: The Depleted Mind &rarr;</a></span></sup> found that favorable parole rulings dropped dramatically across sessions, recovering only after food breaks &mdash; suggesting that whether a prisoner is released depends partly on the depletion state of the judge.</p>
+      <h3>Replication Debates and Theoretical Revisions</h3>
+      <p>The ego depletion literature has faced substantial methodological challenges. A large pre-registered multi-lab replication reported by <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">Friese et al. (2024)</a><sup class="fn"><a href="#ref-20">[20]</a><span class="tip"><a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">ScienceDirect: Self-control and Limited Willpower 2024 &rarr;</a></span></sup> across 23 laboratories failed to find a significant ego depletion effect overall, triggering debate about effect size, moderators, and measurement. Critics including <a href="https://insidebe.com/articles/decision-fatigue/" target="_blank">Dweck and colleagues</a><sup class="fn"><a href="#ref-21">[21]</a><span class="tip"><a href="https://insidebe.com/articles/decision-fatigue/" target="_blank">InsideBE: Decision Fatigue &rarr;</a></span></sup> propose that depletion effects are moderated by beliefs about willpower: those who believe willpower is finite show depletion; those who believe it is not do not. Whether this finding undermines or enriches the atrophy thesis is contested.</p>
+      <p>Even amid the replication debate, the core behavioral phenomenon &mdash; that deliberative quality degrades under cumulative cognitive load &mdash; retains substantial empirical support. The mechanism may not be a single depleting resource; it may involve attention fatigue, opportunity cost aversion, or motivational state changes. Any of these mechanisms produces the same decision-architectural result: as the day accumulates decisions, the capacity for deliberative choice atrophies, and defaults, habits, and lowest-effort options increasingly determine what gets chosen.</p>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">Wikipedia: Decision Fatigue</a> &middot; <a href="https://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf" target="_blank">Baumeister et al. 1998</a> &middot; <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">Friese et al. 2024</a> &middot; <a href="https://gc-bs.org/articles/the-depleted-mind-the-science-of-decision-fatigue-and-ego-depletion/" target="_blank">GCBS: Depleted Mind</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="developmental">
+      <div class="s-num">SECTION 04</div>
+      <h2>Developmental Narrowing: <em>Identity as Progressive Foreclosure</em></h2>
+      <h3>Erikson&rsquo;s Stages and the Cumulative Narrowing of Identity</h3>
+      <p>Erik Erikson&rsquo;s model of psychosocial development, reviewed in <a href="https://www.ncbi.nlm.nih.gov/books/NBK556096/" target="_blank">StatPearls (NCBI)</a><sup class="fn"><a href="#ref-22">[22]</a><span class="tip"><a href="https://www.ncbi.nlm.nih.gov/books/NBK556096/" target="_blank">NCBI: Erikson&rsquo;s Stages &rarr;</a></span></sup>, frames development as a sequence of identity crises each of which produces a resolution that becomes the foundation for subsequent stages. Each resolution, whatever its content, forecloses alternatives. The adolescent who resolves the identity-versus-role-confusion stage by becoming an accountant has not merely chosen accounting &mdash; they have reduced the psychological energy available for continued exploration of other vocational identities. The resolution is, structurally, an atrophying of alternatives.</p>
+      <p><a href="https://www.simplypsychology.org/erik-erikson.html" target="_blank">Simply Psychology on Erikson</a><sup class="fn"><a href="#ref-23">[23]</a><span class="tip"><a href="https://www.simplypsychology.org/erik-erikson.html" target="_blank">SimplyPsychology: Erikson &rarr;</a></span></sup> notes that the concept of <em>psychosocial moratorium</em> &mdash; the developmental period of legitimate experimentation before identity commitment &mdash; explicitly acknowledges that foreclosure follows commitment. Marcia&rsquo;s elaboration of Erikson&rsquo;s framework identifies <em>identity foreclosure</em> as a specific status in which premature commitment forecloses exploration entirely, producing adults whose decision space is defined not by what they have chosen but by what they never considered.</p>
+      <h3>Path Dependency and the Economics of Life Choices</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Path_dependence" target="_blank">Path dependence</a><sup class="fn"><a href="#ref-24">[24]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Path_dependence" target="_blank">Wikipedia: Path Dependence &rarr;</a></span></sup>, a concept from institutional economics (Douglass North, Paul David), describes how historical decisions constrain future option sets through positive feedback mechanisms: switching costs, increasing returns, and institutional lock-in. Applied developmentally, each life choice creates a trajectory that makes some subsequent options more accessible and others progressively more costly to access. The child who does not study mathematics by age twelve does not simply lack math skills as an adult; the entire career trajectory that requires mathematics has been removed from their effective option set. The <a href="https://link.springer.com/article/10.1007/BF03343529" target="_blank">Springer Business Research study on path dependence</a><sup class="fn"><a href="#ref-25">[25]</a><span class="tip"><a href="https://link.springer.com/article/10.1007/BF03343529" target="_blank">Springer: Path Dependence in Decision-Making &rarr;</a></span></sup> documents how path dependency in decision-making under complexity increases with commitment, making early decisions disproportionately determinative of later choice architecture.</p>
+
+      <div class="tension-card">
+        <h4>Tension</h4>
+        <p>The developmental literature is divided on whether early identity resolution constrains or enables. Some research suggests that resolution provides an advantage by freeing resources for subsequent development; other work emphasizes the costs of premature foreclosure. The atrophy thesis does not require resolution to be bad &mdash; only that it necessarily reduces the option set.</p>
+      </div>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://www.ncbi.nlm.nih.gov/books/NBK556096/" target="_blank">NCBI: Erikson&rsquo;s Stages</a> &middot; <a href="https://www.simplypsychology.org/erik-erikson.html" target="_blank">SimplyPsychology: Erikson</a> &middot; <a href="https://en.wikipedia.org/wiki/Path_dependence" target="_blank">Wikipedia: Path Dependence</a> &middot; <a href="https://link.springer.com/article/10.1007/BF03343529" target="_blank">Springer: Path Dependence in Decisions</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="social">
+      <div class="s-num">SECTION 05</div>
+      <h2>Social Atrophy: <em>Network Decay and Constrained Choice</em></h2>
+      <h3>Dunbar&rsquo;s Number and Cognitive Constraints on Social Networks</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">Robin Dunbar&rsquo;s social brain hypothesis</a><sup class="fn"><a href="#ref-5">[5]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">Wikipedia: Dunbar&rsquo;s Number &rarr;</a></span></sup> proposes that the cognitive architecture of the human neocortex sets an upper bound on stable social relationships at approximately 150. Within this ceiling, relationships are organized in concentric tiers: roughly 5 intimate connections to whom approximately 40% of social time is devoted; 15 close friends; 50 active acquaintances; and 150 stable relationships total. Dunbar&rsquo;s <a href="https://nyaspubs.onlinelibrary.wiley.com/doi/10.1111/nyas.15309" target="_blank">2025 review on friendship and health</a><sup class="fn"><a href="#ref-26">[26]</a><span class="tip"><a href="https://nyaspubs.onlinelibrary.wiley.com/doi/10.1111/nyas.15309" target="_blank">Wiley: Dunbar on Friendship and Loneliness 2025 &rarr;</a></span></sup> extends this to document how friendship quality, not quantity, is the primary predictor of health outcomes, reinforcing that what matters for decision-making is not the theoretical network but the active, maintained relationships within it.</p>
+      <p>Social network atrophy describes the process by which this already-limited network degrades further. Research consistently shows that social circles contract across adulthood, particularly after the age of 25. The loss of each relationship removes not only a social connection but also the information, opportunities, and perspectives that relationship provided. Decisions are made in social context; the nodes of a social network are simultaneously sources of information, validators of option plausibility, and gatekeepers to resources. As networks shrink, the decision-relevant information environment degrades.</p>
+      <h3>Social Capital and Option Access</h3>
+      <p>The sociology of social capital (Bourdieu, Putnam) independently arrives at similar conclusions: access to opportunities, information, and resources is unevenly distributed through social networks. Individuals with larger, more diverse, and more active networks have access to more decision-relevant information and more option sets. The person with an atrophied social network &mdash; fewer relationships, weaker ties, less maintained contact &mdash; makes decisions from a structurally impoverished information base. The options they do not know exist cannot be chosen.</p>
+      <p><a href="https://royalsocietypublishing.org/doi/10.1098/rsos.150292" target="_blank">Dunbar&rsquo;s Royal Society research</a><sup class="fn"><a href="#ref-27">[27]</a><span class="tip"><a href="https://royalsocietypublishing.org/doi/10.1098/rsos.150292" target="_blank">Royal Society: Online Social Networks 2016 &rarr;</a></span></sup> on online social media found that despite the massive expansion of nominal social connections, active relationship maintenance remained constrained by the same cognitive limits. Social media gives the illusion of network expansion while actual maintained relationships follow the same atrophy dynamics as before digital connectivity. The decision-relevant network &mdash; the relationships actively maintained &mdash; does not expand with digital tools.</p>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">Wikipedia: Dunbar&rsquo;s Number</a> &middot; <a href="https://nyaspubs.onlinelibrary.wiley.com/doi/10.1111/nyas.15309" target="_blank">Wiley: Dunbar 2025</a> &middot; <a href="https://royalsocietypublishing.org/doi/10.1098/rsos.150292" target="_blank">Royal Society: Online Networks 2016</a> &middot; <a href="https://www.tandfonline.com/doi/full/10.1080/03014460.2024.2359920" target="_blank">Tandfonline: Social Brain Hypothesis 2024</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="helplessness">
+      <div class="s-num">SECTION 06</div>
+      <h2>Learned Helplessness: <em>Motivational Atrophy and Perceived Option Collapse</em></h2>
+      <h3>Seligman&rsquo;s Original Research</h3>
+      <p><a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">Learned helplessness</a><sup class="fn"><a href="#ref-4">[4]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">Wikipedia: Learned Helplessness &rarr;</a></span></sup>, first documented by <a href="https://www.simplypsychology.org/learned-helplessness.html" target="_blank">Martin Seligman</a><sup class="fn"><a href="#ref-28">[28]</a><span class="tip"><a href="https://www.simplypsychology.org/learned-helplessness.html" target="_blank">SimplyPsychology: Learned Helplessness &rarr;</a></span></sup> in experiments with dogs exposed to inescapable electric shocks, describes the process by which repeated exposure to uncontrollable aversive stimuli produces motivational, cognitive, and behavioral deficits that persist even when control becomes available. Dogs that had experienced inescapable shock failed to escape in situations where escape was straightforwardly possible &mdash; they had learned that their actions were independent of outcomes.</p>
+      <p>The mechanism is motivational atrophy: repeated uncontrollable failure extinguishes the expectation of response-outcome contingency, and with it the motivation to act. The result is not an accurate representation of available options but a progressive collapse of perceived option space. The individual with learned helplessness is not choosing passivity over action &mdash; action has been eliminated from their effective choice set by the atrophy of outcome expectancy. The <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/" target="_blank">50-year review by Maier &amp; Seligman (PMC, 2016)</a><sup class="fn"><a href="#ref-29">[29]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/" target="_blank">PMC: Learned Helplessness at Fifty &rarr;</a></span></sup> reframes the original findings using current neuroscience: the default state of the organism exposed to uncontrollable events is not learned helplessness but an active inhibitory state, with controllability learning (not helplessness learning) as the override.</p>
+      <h3>Neuroscience of Helplessness</h3>
+      <p>Contemporary neuroscience identifies the dorsal raphe nucleus and serotonergic projections to the basolateral amygdala as central to the helplessness circuit. Maier and Seligman&rsquo;s revised model proposes that the default response to uncontrollable aversive events is a passive, serotonin-driven inhibitory state; controllability signals from ventromedial prefrontal cortex must actively override this default to produce instrumental behavior. When the override circuit atrophies &mdash; through chronic stress, repeated failure, or depression &mdash; the passive default governs behavior, and the perceived option set collapses not because options have been removed but because the motivational architecture needed to perceive and pursue them has degraded.</p>
+
+      <div class="callout">
+        <h4>The Atrophy Principle</h4>
+        <p>Learned helplessness is not a belief acquired by learning; it is the absence of a motivational override that must be actively maintained. The organism does not learn passivity &mdash; it fails to learn controllability, and the default is passivity.</p>
+      </div>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">Wikipedia: Learned Helplessness</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/" target="_blank">PMC: Helplessness at Fifty 2016</a> &middot; <a href="https://www.simplypsychology.org/learned-helplessness.html" target="_blank">SimplyPsychology: Seligman</a> &middot; <a href="https://ppc.sas.upenn.edu/sites/default/files/learnedhelplessness.pdf" target="_blank">Seligman: Original Paper</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="philosophy">
+      <div class="s-num">SECTION 07</div>
+      <h2>Philosophy of Agency: <em>Freedom as Residual Capacity</em></h2>
+      <h3>Frankfurt&rsquo;s Hierarchical Compatibilism</h3>
+      <p>The philosophical literature on free will and agency provides a conceptual scaffold for understanding how atrophy relates to freedom. <a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">Harry Frankfurt&rsquo;s hierarchical compatibilism</a><sup class="fn"><a href="#ref-6">[6]</a><span class="tip"><a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">SEP: Compatibilism &rarr;</a></span></sup>, summarized in <a href="https://www3.nd.edu/~jspeaks/courses/mcgill/201/frankfurt-free-will.html" target="_blank">Notre Dame analysis</a><sup class="fn"><a href="#ref-30">[30]</a><span class="tip"><a href="https://www3.nd.edu/~jspeaks/courses/mcgill/201/frankfurt-free-will.html" target="_blank">Notre Dame: Frankfurt&rsquo;s Compatibilist Theory &rarr;</a></span></sup>, holds that free will consists not in the absence of causal determination but in the appropriate relationship between first-order desires (what one wants to do) and second-order desires (what one wants to want to do). An agent acts freely when their action flows from desires they endorse at the higher level; unfreedom consists in being moved by desires one does not identify with.</p>
+      <p>The atrophy thesis maps onto Frankfurt&rsquo;s framework as follows: atrophy degrades the capacity for second-order reflection. The person whose deliberative circuits have been pruned, whose habits have eliminated the habit of deliberation, whose motivational architecture has been degraded by learned helplessness &mdash; this person lacks not the metaphysical freedom to do otherwise, but the operational capacity to form and act on second-order volitions. Freedom, on this reading, is not binary but graded: it is the degree to which non-atrophied capacity remains available for second-order reflection.</p>
+      <h3>Agency as Residue</h3>
+      <p>The <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2987534/" target="_blank">neuroscientific challenge to compatibilism</a><sup class="fn"><a href="#ref-31">[31]</a><span class="tip"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2987534/" target="_blank">PMC: BCN Challenge to Compatibilist Free Will &rarr;</a></span></sup> documents how brain lesions, neurodegenerative disease, and trauma can selectively eliminate the capacities Frankfurt considers constitutive of free agency, while leaving first-order desire intact. The person with frontal lobe damage may have intact preferences but lost the capacity for second-order reflection that would allow them to act on those preferences deliberately. Their choices are determined by whatever circuits remain. Agency, in this framing, is what remains when atrophy is subtracted.</p>
+      <p>This suggests a reconceptualization: rather than asking whether an agent has free will (a binary), one might ask what proportion of their decision-relevant capacity is non-atrophied. The philosophical interest of the atrophy thesis is that it operationalizes freedom as a gradient of maintained capacity, opening it to empirical investigation rather than metaphysical stipulation.</p>
+
+      <div class="section-sources">
+        <h4>Key Sources</h4>
+        <p><a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">SEP: Compatibilism</a> &middot; <a href="https://www3.nd.edu/~jspeaks/courses/mcgill/201/frankfurt-free-will.html" target="_blank">Notre Dame: Frankfurt</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2987534/" target="_blank">PMC: BCN Challenge</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6505276/" target="_blank">PMC: Free Will and Decision Capacity</a></p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="synthesis">
+      <div class="s-num">SECTION 08</div>
+      <h2>Synthesis: <em>Atrophy as Primary Architect</em></h2>
+      <p>The eight levels of analysis surveyed here converge on a consistent picture. At the neural level, synaptic pruning and long-term depression structurally remove options from the decision-relevant architecture of the brain. At the behavioral level, habit formation progressively replaces deliberation with automaticity, chunking complex decisions into single-unit responses. At the cognitive level, decision fatigue temporarily depletes the deliberative capacity, driving behavior toward defaults and least-effort options. At the developmental level, each identity commitment forecloses alternatives through path-dependent dynamics that increase switching costs over time. At the social level, network atrophy removes the nodes that provide information, opportunity, and perspective, narrowing the decision-relevant information environment. At the motivational level, learned helplessness eliminates the perceived option of action itself. At the philosophical level, atrophy degrades the second-order reflective capacity that constitutes Frankfurt-style freedom.</p>
+      <p>These levels are not independent. Neural pruning shapes what habits form; habits shape what social behaviors occur; social behavior shapes what information environments are available; information environments shape what options are perceived; perceived options shape what motivations remain active. Atrophy propagates across levels, and the compounding of atrophy across levels produces individuals whose effective decision space is a small fraction of their theoretical option space.</p>
+      <div class="paper-stat-row">
+        <div class="paper-stat"><span class="val">Neural</span><span class="lbl">Pruning closes circuits</span></div>
+        <div class="paper-stat"><span class="val">Behavioral</span><span class="lbl">Habit replaces deliberation</span></div>
+        <div class="paper-stat"><span class="val">Social</span><span class="lbl">Network shrinkage limits info</span></div>
+        <div class="paper-stat"><span class="val">Motivational</span><span class="lbl">Helplessness collapses options</span></div>
+      </div>
+      <p>The policy and practical implications follow from this analysis. If atrophy determines choice, then interventions targeting deliberation within a degraded space &mdash; decision aids, information provision, nudges &mdash; address symptoms rather than causes. The more fundamental intervention is maintenance of capacity: deliberate use of neural circuits not yet pruned; habitual re-entry into deliberative mode to prevent its atrophy; active social network maintenance; motivational restoration through controllability experiences. The question is not how to make better choices from a degraded space, but how to maintain the space.</p>
+
+      <div class="tension-card">
+        <h4>Core Synthesis</h4>
+        <p>Atrophy is not background noise to decision-making; it is its primary substrate. The question of what an agent will choose is answered less by examining their preferences, information, or deliberative strategies than by mapping what has not yet been lost.</p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="methods">
+      <div class="s-num">SECTION 09</div>
+      <h2>Methods</h2>
+      <p>This survey employed a systematic literature review methodology spanning eight research domains. Primary databases consulted include PubMed/PMC, Google Scholar, the Stanford Encyclopedia of Philosophy, Wikipedia (for orienting overviews), and domain-specific sources in economics, psychology, and philosophy. Search terms were developed iteratively for each domain, prioritizing peer-reviewed sources published between 1998 and 2026, with foundational earlier works included where necessary (Erikson, Frankfurt, Seligman). Sources were selected for theoretical relevance to the atrophy-as-determinant thesis, methodological quality, and representativeness of the current state of debate in each sub-field.</p>
+      <p>No original data were collected. All empirical claims are drawn from published research; statistical figures are reported as cited and are not independently verified. Where the empirical literature is contested (ego depletion replication crisis, Dunbar&rsquo;s number debate), both sides of the debate are represented. The synthesis in Section 8 represents the authors&rsquo; theoretical integration and is marked as such.</p>
+    </section>
+
+    <section class="paper-section" id="references">
+      <div class="s-num">REFERENCES</div>
+      <h2>References</h2>
+      <ol class="ref-list-num">
+        <li id="ref-1"><a href="https://en.wikipedia.org/wiki/Synaptic_pruning" target="_blank">Wikipedia: Synaptic Pruning</a>. Accessed March 2026.</li>
+        <li id="ref-2"><a href="https://en.wikipedia.org/wiki/Dual_process_theory" target="_blank">Wikipedia: Dual Process Theory</a>. Accessed March 2026.</li>
+        <li id="ref-3"><a href="https://en.wikipedia.org/wiki/Decision_fatigue" target="_blank">Wikipedia: Decision Fatigue</a>. Accessed March 2026.</li>
+        <li id="ref-4"><a href="https://en.wikipedia.org/wiki/Learned_helplessness" target="_blank">Wikipedia: Learned Helplessness</a>. Accessed March 2026.</li>
+        <li id="ref-5"><a href="https://en.wikipedia.org/wiki/Dunbar%27s_number" target="_blank">Wikipedia: Dunbar&rsquo;s Number</a>. Accessed March 2026.</li>
+        <li id="ref-6"><a href="https://plato.stanford.edu/entries/compatibilism/" target="_blank">Zalta, E.N. (ed.). Stanford Encyclopedia of Philosophy: Compatibilism</a>. Accessed March 2026.</li>
+        <li id="ref-7"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7368197/" target="_blank">Bhatt, D.L. et al. (2020). Core Concept: How Synaptic Pruning Shapes Neural Wiring. PMC.</a></li>
+        <li id="ref-8"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3982854/" target="_blank">Arain, M. et al. (2013). Maturation of the adolescent brain. Neuropsychiatr Dis Treat. PMC.</a></li>
+        <li id="ref-9"><a href="https://www.jneurosci.org/content/44/26/e0373242024" target="_blank">Nabulsi, L. et al. (2024). Cognitive Control and Neural Activity during Human Development. Journal of Neuroscience.</a></li>
+        <li id="ref-10"><a href="https://www.pnas.org/doi/10.1073/pnas.2121331119" target="_blank">Duan, Z.J. et al. (2022). Pruning recurrent neural networks replicates adolescent changes. PNAS.</a></li>
+        <li id="ref-11"><a href="https://en.wikipedia.org/wiki/Long-term_depression" target="_blank">Wikipedia: Long-term Depression</a>. Accessed March 2026.</li>
+        <li id="ref-12"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3118435/" target="_blank">Bhagya, V. &amp; Bhatt, S. (2011). Long-term potentiation and long-term depression: a clinical perspective. PMC.</a></li>
+        <li id="ref-13"><a href="https://thedecisionlab.com/reference-guide/philosophy/system-1-and-system-2-thinking" target="_blank">The Decision Lab: System 1 and System 2 Thinking</a>. Accessed March 2026.</li>
+        <li id="ref-14"><a href="https://www.justinmath.com/cognitive-science-of-learning-developing-automaticity/" target="_blank">Skycak, J. Cognitive Science of Learning: Developing Automaticity</a>. Accessed March 2026.</li>
+        <li id="ref-15"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6056761/" target="_blank">Gao, W. et al. (2018). Dual Process Theory of Thought and Default Mode Network. PMC.</a></li>
+        <li id="ref-16"><a href="https://perceptionaction.com/8-2/" target="_blank">Perception &amp; Action Podcast: How Do We Become an Expert?</a>. Accessed March 2026.</li>
+        <li id="ref-17"><a href="https://www.tandfonline.com/doi/full/10.1080/1750984X.2024.2422847" target="_blank">Macnamara, A. et al. (2024). The role of deliberation in intuitive decision-making in sports. International Review of Sport &amp; Exercise Psychology.</a></li>
+        <li id="ref-18"><a href="https://faculty.washington.edu/jdb/345/345%20Articles/Baumeister%20et%20al.%20(1998).pdf" target="_blank">Baumeister, R.F. et al. (1998). Ego Depletion: Is the Active Self a Limited Resource? Journal of Personality and Social Psychology.</a></li>
+        <li id="ref-19"><a href="https://gc-bs.org/articles/the-depleted-mind-the-science-of-decision-fatigue-and-ego-depletion/" target="_blank">Global Council for Behavioral Science: The Depleted Mind</a>. Accessed March 2026.</li>
+        <li id="ref-20"><a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">Friese, M. et al. (2024). Self-control and limited willpower: Current status of ego depletion theory. Current Opinion in Psychology.</a></li>
+        <li id="ref-21"><a href="https://insidebe.com/articles/decision-fatigue/" target="_blank">InsideBE: Decision Fatigue</a>. Accessed March 2026.</li>
+        <li id="ref-22"><a href="https://www.ncbi.nlm.nih.gov/books/NBK556096/" target="_blank">Orenstein, G.A. &amp; Lewis, L. (2022). Erikson&rsquo;s Stages of Psychosocial Development. StatPearls/NCBI.</a></li>
+        <li id="ref-23"><a href="https://www.simplypsychology.org/erik-erikson.html" target="_blank">McLeod, S. (2024). Erikson&rsquo;s Stages of Development. Simply Psychology.</a></li>
+        <li id="ref-24"><a href="https://en.wikipedia.org/wiki/Path_dependence" target="_blank">Wikipedia: Path Dependence</a>. Accessed March 2026.</li>
+        <li id="ref-25"><a href="https://link.springer.com/article/10.1007/BF03343529" target="_blank">Sydow, M. et al. (2009). Path Dependence in Decision-Making Processes. Business Research.</a></li>
+        <li id="ref-26"><a href="https://nyaspubs.onlinelibrary.wiley.com/doi/10.1111/nyas.15309" target="_blank">Dunbar, R.I.M. (2025). Why friendship and loneliness affect our health. Annals of the New York Academy of Sciences.</a></li>
+        <li id="ref-27"><a href="https://royalsocietypublishing.org/doi/10.1098/rsos.150292" target="_blank">Dunbar, R.I.M. (2016). Do online social media cut through constraints that limit offline social networks? Royal Society Open Science.</a></li>
+        <li id="ref-28"><a href="https://www.simplypsychology.org/learned-helplessness.html" target="_blank">Cherry, K. (2024). Learned Helplessness. Simply Psychology.</a></li>
+        <li id="ref-29"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/" target="_blank">Maier, S.F. &amp; Seligman, M.E.P. (2016). Learned Helplessness at Fifty. PMC.</a></li>
+        <li id="ref-30"><a href="https://www3.nd.edu/~jspeaks/courses/mcgill/201/frankfurt-free-will.html" target="_blank">Speaks, J. Frankfurt&rsquo;s Compatibilist Theory of Free Will. University of Notre Dame.</a></li>
+        <li id="ref-31"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2987534/" target="_blank">Nachev, P. &amp; Hacker, P.M.S. (2010). The BCN Challenge to Compatibilist Free Will. PMC.</a></li>
+        <li id="ref-32"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6505276/" target="_blank">Sikorska, B. et al. (2019). The notion of free will and its ethical relevance for decision-making capacity. PMC.</a></li>
+        <li id="ref-33"><a href="https://www.nature.com/articles/tp20137" target="_blank">Paus, T. et al. (2013). Synaptic plasticity in adolescent executive function. Translational Psychiatry.</a></li>
+        <li id="ref-34"><a href="https://pubmed.ncbi.nlm.nih.gov/38433422/" target="_blank">Xu, M. et al. (2024). Synaptic pruning during adolescence shapes adult social behavior. PubMed.</a></li>
+        <li id="ref-35"><a href="https://positivepsychology.com/learned-helplessness-seligman-theory-depression-cure/" target="_blank">Positive Psychology: Learned Helplessness. Seligman&rsquo;s Theory</a>. Accessed March 2026.</li>
+        <li id="ref-36"><a href="https://www.tandfonline.com/doi/full/10.1080/03014460.2024.2359920" target="_blank">Dunbar, R.I.M. (2024). The social brain hypothesis &ndash; thirty years on. Annals of Human Biology.</a></li>
+        <li id="ref-37"><a href="https://drdansiegel.com/pruning-myelination-and-the-remodeling-adolescent-brain/" target="_blank">Siegel, D. Pruning, Myelination, and the Remodeling Adolescent Brain</a>. Accessed March 2026.</li>
+        <li id="ref-38"><a href="https://my.clevelandclinic.org/health/articles/synaptic-pruning" target="_blank">Cleveland Clinic: Synaptic Pruning</a>. Accessed March 2026.</li>
+        <li id="ref-39"><a href="https://iep.utm.edu/freewill/" target="_blank">Internet Encyclopedia of Philosophy: Free Will</a>. Accessed March 2026.</li>
+        <li id="ref-40"><a href="https://psychologyfanatic.com/automatization-theory/" target="_blank">Psychology Fanatic: Automatization Theory</a>. Accessed March 2026.</li>
+      </ol>
+    </section>
+
+  </div><!-- .paper-body -->
+</div><!-- .main -->
+</div><!-- .shell -->
+
+<script>
+const themeBtn = document.getElementById('themeBtn');
+function getTheme() { return document.body.getAttribute('data-theme') || 'light'; }
+function setTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+  themeBtn.textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+themeBtn.addEventListener('click', () => setTheme(getTheme() === 'dark' ? 'light' : 'dark'));
+const saved = localStorage.getItem('theme');
+if (saved) setTheme(saved); else themeBtn.textContent = '\u263D';
+
+// Sidebar active tracking
+const items = document.querySelectorAll('.sidebar-item');
+const sections = document.querySelectorAll('.paper-section');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+  items.forEach(i => i.classList.toggle('active', i.getAttribute('href') === '#' + current));
+});
+</script>
+</body>
+</html>

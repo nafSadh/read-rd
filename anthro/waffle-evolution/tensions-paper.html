@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Six Tensions — Waffle Evolution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#2e6ab406;--grad2:#9b7aed04;--t1:#2e6ab4;--t2:#9b7aed;--t3:#c0392b;--t4:#27ae60;--t5:#e67e22;--t6:#2980b9}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--grad1:#9b7aed06;--grad2:#4ee8d004;--t1:#6fa8dc;--t2:#b598ff;--t3:#e87090;--t4:#4ee8a8;--t5:#e8c870;--t6:#4ee8d0}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s;line-height:1.7}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent)}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:200px;min-width:200px;position:fixed;top:0;left:0;height:100vh;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;z-index:10}
+.sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-logo{font-family:var(--serif);font-size:20px;color:var(--bright);font-weight:500;letter-spacing:.5px}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.sidebar-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:10px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;text-decoration:none;color:var(--text)}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;letter-spacing:.5px}
+.sidebar-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.sidebar-foot a{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none;letter-spacing:.5px}
+.sidebar-foot a:hover{color:var(--accent)}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--bg2);color:var(--dim);font-size:16px;transition:all .2s}
+.theme-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.main{flex:1;margin-left:200px;padding:0 0 120px}
+.paper-hero{padding:60px 80px 40px;max-width:860px;margin:0 auto;position:relative}
+.paper-hero::after{content:'';position:absolute;bottom:0;left:80px;right:80px;height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent)}
+.paper-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+[data-theme="light"] .paper-badge{color:var(--dim)}
+.paper-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.paper-title{font-family:var(--serif);font-size:42px;font-weight:500;color:var(--bright);line-height:1.15;letter-spacing:.5px;margin-bottom:14px}
+.paper-title em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-subtitle{font-family:var(--sans);font-size:16px;color:var(--dim);line-height:1.7;max-width:640px}
+.paper-meta{display:flex;gap:24px;margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.paper-body{max-width:860px;margin:0 auto;padding:0 80px}
+.paper-section{padding:48px 0;border-bottom:1px solid var(--border);position:relative}
+.paper-section:last-child{border-bottom:none}
+.paper-section .s-num{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+[data-theme="light"] .paper-section .s-num{color:var(--dim)}
+.paper-section h2{font-family:var(--serif);font-size:32px;font-weight:500;color:var(--bright);line-height:1.25;letter-spacing:.5px;margin-bottom:24px}
+.paper-section h2 em{font-style:italic;color:var(--accent);font-weight:400}
+.paper-section h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:36px 0 14px;text-transform:uppercase;letter-spacing:2.5px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.paper-section p{font-family:var(--serif);font-size:17px;line-height:2;margin-bottom:18px;letter-spacing:.2px}
+.paper-section strong{color:var(--bright);font-weight:600}
+.tension-block{margin:32px 0;padding:28px 24px;border:1px solid var(--border);position:relative;background:var(--bg2)}
+.tension-block::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.tension-block.t1::before{background:var(--t1)}.tension-block.t2::before{background:var(--t2)}.tension-block.t3::before{background:var(--t3)}.tension-block.t4::before{background:var(--t4)}.tension-block.t5::before{background:var(--t5)}.tension-block.t6::before{background:var(--t6)}
+.tension-label{font-family:var(--sans);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
+.t1 .tension-label{color:var(--t1)}.t2 .tension-label{color:var(--t2)}.t3 .tension-label{color:var(--t3)}.t4 .tension-label{color:var(--t4)}.t5 .tension-label{color:var(--t5)}.t6 .tension-label{color:var(--t6)}
+.tension-title{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--bright);margin-bottom:16px;letter-spacing:.3px}
+.tension-title em{font-style:italic;font-weight:400}
+.tension-block p{font-family:var(--serif);font-size:16px;line-height:1.95;margin-bottom:14px;color:var(--text)}
+.tension-block p:last-child{margin-bottom:0}
+.tension-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin:18px 0;align-items:stretch}
+.tension-side{padding:16px;border:1px solid var(--border)}
+.tension-side h4{font-family:var(--sans);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.tension-side.left h4{color:var(--green)}
+.tension-side.right h4{color:var(--red)}
+.tension-side p{font-size:14px!important;line-height:1.7!important;margin:0!important;font-family:var(--sans)!important;color:var(--dim)!important}
+.tension-vs-mid{display:flex;align-items:center;justify-content:center;padding:0 12px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:1px}
+.paper-stat-row{display:flex;gap:0;margin:20px 0;border:1px solid var(--border)}
+.paper-stat{flex:1;padding:14px 10px;text-align:center;border-right:1px solid var(--border)}
+.paper-stat:last-child{border-right:none}
+.paper-stat .val{font-family:var(--mono);font-size:16px;color:var(--bright);font-weight:500;display:block}
+.paper-stat .lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans);margin-top:3px;display:block}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:24px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:17px;margin:0;line-height:1.9;font-family:var(--serif);font-style:italic;color:var(--bright)}
+sup{font-size:11px;line-height:0;vertical-align:super}
+sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}
+sup.fn>a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:none}
+sup.fn:hover>a{color:var(--bright)}
+sup.fn .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+sup.fn .tip a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+sup.fn:hover .tip,sup.fn .tip:hover{display:block}
+.ref-list-num{padding-left:2.5em;margin:0}
+.ref-list-num li{font-family:var(--mono);font-size:12px;color:var(--dim);padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%);line-height:1.6}
+.ref-list-num li:last-child{border-bottom:none}
+.ref-list-num li::marker{color:var(--accent);font-weight:600}
+.ref-list-num li a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+.ref-list-num li a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .paper-hero{padding:32px 24px 28px}
+  .paper-hero::after{left:24px;right:24px}
+  .paper-body{padding:0 24px}
+  .tension-vs{grid-template-columns:1fr}
+  .tension-vs-mid{padding:8px 0;text-align:center}
+}
+  </style>
+</head>
+<body data-theme="dark">
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">Waffle <em>Tensions</em></div>
+      <div class="sidebar-sub">Six Debates</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#intro" class="sidebar-item active"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Overview</span></a>
+      <a href="#t1" class="sidebar-item"><span class="sidebar-num">T1</span><span class="sidebar-label">Belgian or Not?</span></a>
+      <a href="#t2" class="sidebar-item"><span class="sidebar-num">T2</span><span class="sidebar-label">Artisan vs. Eggo</span></a>
+      <a href="#t3" class="sidebar-item"><span class="sidebar-num">T3</span><span class="sidebar-label">Appropriation</span></a>
+      <a href="#t4" class="sidebar-item"><span class="sidebar-num">T4</span><span class="sidebar-label">Waffle House Index</span></a>
+      <a href="#t5" class="sidebar-item"><span class="sidebar-num">T5</span><span class="sidebar-label">Street vs. Table</span></a>
+      <a href="#t6" class="sidebar-item"><span class="sidebar-num">T6</span><span class="sidebar-label">Global Convergence</span></a>
+      <a href="#coda" class="sidebar-item"><span class="sidebar-num">&mdash;</span><span class="sidebar-label">Coda</span></a>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="index.html">← Index</a>
+      <a href="survey-paper.html">Survey →</a>
+      <a href="position-paper.html">Position →</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="paper-hero">
+      <div class="paper-badge"><span class="dot"></span> Anthropology &middot; Food History &middot; Tensions Paper</div>
+      <div class="paper-title">Six <em>Tensions</em></div>
+      <div class="paper-subtitle">Where the waffle's history generates genuine contradictions — six debates that reveal how food, identity, authenticity, and myth-making actually work</div>
+      <div class="paper-meta">
+        <span>March 2026</span>
+        <span>6 Tensions</span>
+        <span>Waffle Evolution Series</span>
+      </div>
+    </div>
+
+    <div class="paper-body">
+
+      <!-- INTRO -->
+      <section class="paper-section" id="intro">
+        <div class="s-num">Overview</div>
+        <h2><em>Introduction</em></h2>
+        <p>The most analytically productive moments in food history are not the settled facts but the genuine contradictions — places where credible sources, looking at the same evidence, reach incompatible conclusions, or where historical reality and cultural narrative diverge sharply enough to be worth examining. The waffle generates an unusually rich set of such contradictions.</p>
+        <p>Six tensions are identified here. Each represents a genuine debate rather than a simple error to be corrected: the question of whether the "Belgian waffle" is Belgian; the conflict between artisan craft and industrial production; the fraught politics of cultural appropriation around chicken and waffles; the dual nature of the Waffle House Index as both practical tool and corporate advertisement; the question of what kind of food the waffle fundamentally "is"; and whether global waffle cultures are converging toward a single form or generating ever-greater divergence.</p>
+        <p>These tensions are not resolved here. The goal is to map the structure of each disagreement with enough precision to make the stakes clear.</p>
+
+        <div class="paper-stat-row">
+          <div class="paper-stat"><span class="val">T1</span><span class="lbl">Belgian or American?</span></div>
+          <div class="paper-stat"><span class="val">T2</span><span class="lbl">Artisan vs. Eggo</span></div>
+          <div class="paper-stat"><span class="val">T3</span><span class="lbl">Appropriation</span></div>
+          <div class="paper-stat"><span class="val">T4</span><span class="lbl">Index: Tool or PR?</span></div>
+          <div class="paper-stat"><span class="val">T5</span><span class="lbl">Street vs. Table</span></div>
+          <div class="paper-stat"><span class="val">T6</span><span class="lbl">Convergence</span></div>
+        </div>
+      </section>
+
+      <!-- T1 -->
+      <section class="paper-section" id="t1">
+        <div class="s-num">T1</div>
+        <h2>Is the Waffle <em>Belgian</em> — or Is "Belgian Waffle" an American Invention?</h2>
+
+        <div class="tension-block t1">
+          <div class="tension-label">Tension 1</div>
+          <div class="tension-title">The Name That Obscures the Thing</div>
+          <p>The "Belgian waffle" is one of the most successful food-marketing inventions of the twentieth century. It is also, arguably, a category that does not correspond to any single Belgian food tradition.</p>
+        </div>
+
+        <h3>The Historical Record</h3>
+        <p>Belgium possesses two distinct and unrelated waffle traditions. The <strong>Brussels waffle</strong> (gaufre de Bruxelles) is a light, yeast-leavened product served warm with toppings. The <strong>Liège waffle</strong> (gaufre de Liège) is a dense, brioche-dough product with caramelized pearl sugar, served plain, eaten as a portable snack.<sup class="fn"><a>[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Belgian_waffle" target="_blank">Wikipedia — Belgian waffle</a></span></sup> These two products are not minor regional variants of the same food: they differ in dough composition, texture, temperature of service, accompaniments, eating context, and social meaning. Belgian culinary culture treats them as distinct categories, not as the same waffle prepared differently.</p>
+        <p>The "Belgian waffle" that became an American institution after the 1964 New York World's Fair was specifically based on the Brussels style, prepared by <strong>Maurice Vermersch</strong> and renamed the "Bel-Gem Waffle" because, as Vermersch observed, American visitors frequently could not locate Brussels on a map.<sup class="fn"><a>[2]</a><span class="tip"><a href="https://timetravelkitchen.substack.com/p/a-worlds-fair-and-the-waffles-everyone" target="_blank">Time Travel Kitchen — "A World's Fair and the Waffles Everyone Remembers"</a></span></sup> The whipped cream and fresh strawberry service style that became definitional to the American "Belgian waffle" experience was reportedly the contribution of Vermersch's wife, <strong>Rose</strong> — an adaptation to American taste preferences rather than a replication of Belgian practice.</p>
+
+        <div class="tension-vs">
+          <div class="tension-side left">
+            <h4>Position A: The Waffle Is Belgian</h4>
+            <p>Belgium has documented waffle traditions dating to the 13th century in Flemish sources. Both the Brussels and Liège traditions are genuinely Belgian. The 1964 export was based on an authentic Belgian product; American adaptation does not negate the origin.</p>
+          </div>
+          <div class="tension-vs-mid">vs</div>
+          <div class="tension-side right">
+            <h4>Position B: "Belgian Waffle" Is an American Category</h4>
+            <p>The specific product Americans call a "Belgian waffle" — large, light, served with whipped cream and strawberries — is an American construction. Belgians do not recognize it as representative. The Liège waffle, which is what most Belgians eat, is nearly unknown in this American category.</p>
+          </div>
+        </div>
+
+        <h3>What the Tension Reveals</h3>
+        <p>This is not simply a question of whether Vermersch falsified his product's origins. It is a question of how national food identities form and travel. The "Belgian waffle" that two generations of Americans recognize was shaped more by American commercial culture, the economics of a World's Fair concession, and the taste preferences of American consumers than by Belgian culinary tradition. At the same time, the product's Belgian DNA is genuine: Brussels-style waffles exist independently of their American appropriation.</p>
+        <p>The deeper issue is that the national label attached to a food in export contexts rarely corresponds to the heterogeneity of that food's home tradition. "Belgian waffle" flattens two centuries of regional variation, class distinction, and culinary specificity into a single commercial category defined by its American reception context. Belgian parliamentary debate in the 2010s addressed this phenomenon directly, with discussion of whether and how Belgian waffle heritage could be protected under food identity frameworks.<sup class="fn"><a>[3]</a><span class="tip"><a href="https://www.wafflesnbeer.be/news/belgian-waffle-history/" target="_blank">Waffles 'n Beer — "Belgian Waffle History: A Tasty Tale Through Time"</a></span></sup></p>
+      </section>
+
+      <!-- T2 -->
+      <section class="paper-section" id="t2">
+        <div class="s-num">T2</div>
+        <h2>Democratization vs. <em>Commodification</em></h2>
+
+        <div class="tension-block t2">
+          <div class="tension-label">Tension 2</div>
+          <div class="tension-title">The Eggo Problem: Did Industrialization Save the Waffle or Destroy It?</div>
+          <p>Frank Dorsa's 1953 invention made the waffle accessible to everyone. It also made the artisan waffle irrelevant to most Americans. These are not separate stories.</p>
+        </div>
+
+        <h3>The Case for Industrialization as Democratization</h3>
+        <p>For most of American history, waffles were expensive to make. The iron was a significant capital investment; fresh leavened batter required skill and time; the cooking process required attention and experience. In the colonial period, waffles were explicitly an upper-class food associated with imported European equipment and domestic servants to operate it.<sup class="fn"><a>[4]</a><span class="tip"><a href="https://gardenandgun.com/articles/a-pressing-mystery-thomas-jefferson-and-the-waffle/" target="_blank">Garden &amp; Gun — "A Pressing Mystery: Thomas Jefferson and the Waffle"</a></span></sup> The democratization argument for Eggo is straightforward: Frank Dorsa's carousel waffle iron and frozen distribution system made the waffle available to any American household for the first time, at a price and a skill level that had previously excluded most of the population. Kellogg's national distribution after 1968 completed this process, making Eggo waffles a routine breakfast item across all income levels.<sup class="fn"><a>[5]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Eggo" target="_blank">Wikipedia — Eggo</a></span></sup></p>
+
+        <h3>The Case for Industrialization as Impoverishment</h3>
+        <p>The counter-argument is not sentimental nostalgia for aristocratic waffles. It is a claim about what is lost when a food is industrialized. The Eggo waffle is a shelf-stable, frozen product designed to be reheated in a toaster: it is optimized for the frozen supply chain and the speed of American morning routines, not for the textural complexity that fresh waffles achieve. The artisan tradition — fresh-made, eaten immediately, cooked to order by someone who understands the batter — produces a categorically different eating experience. When Eggo achieves near-total market dominance, the artisan tradition does not merely decline; it becomes unfamiliar. Subsequent generations have no reference for what a "real" waffle tastes like because the industrial product has defined the category.<sup class="fn"><a>[6]</a><span class="tip"><a href="https://melmagazine.com/en-us/story/leggo-my-eggo-history" target="_blank">MEL Magazine — "A Toasty History of Eggos, the Waffle We'll Never L'Eggo"</a></span></sup></p>
+
+        <div class="tension-vs">
+          <div class="tension-side left">
+            <h4>Democratization</h4>
+            <p>Industrial production broke class barriers. The waffle went from aristocratic novelty to universal breakfast food. Access increased for everyone. Cost and skill barriers were eliminated.</p>
+          </div>
+          <div class="tension-vs-mid">vs</div>
+          <div class="tension-side right">
+            <h4>Commodification</h4>
+            <p>Industrial optimization produces a different, lesser product. Market dominance by the industrial form suppresses consumer knowledge of alternatives. Democratizing access to a diminished product is not the same as democratizing access to the original.</p>
+          </div>
+        </div>
+
+        <h3>Why the Tension Cannot Be Resolved Simply</h3>
+        <p>The tension between democratization and commodification cannot be resolved by choosing one horn of the dilemma. Both claims are accurate. The artisan waffle was inaccessible to most Americans, and that was a real inequality. The Eggo waffle is accessible to everyone, and it is also a different — arguably lesser — product. These facts coexist without canceling each other. The interesting question is not which effect is "real" but what the conditions are under which industrial democratization preserves rather than displaces the quality of the original.</p>
+      </section>
+
+      <!-- T3 -->
+      <section class="paper-section" id="t3">
+        <div class="s-num">T3</div>
+        <h2>Regional Authenticity vs. <em>Cultural Fusion</em></h2>
+
+        <div class="tension-block t3">
+          <div class="tension-label">Tension 3</div>
+          <div class="tension-title">Chicken and Waffles: Heritage, Appropriation, and What Belongs to Whom</div>
+          <p>The chicken and waffles combination has two documented origins, a national dissemination story, and a set of ongoing debates about who can claim it, transform it, and profit from it.</p>
+        </div>
+
+        <h3>The Two Lineages</h3>
+        <p>The Pennsylvania Dutch tradition of waffles with stewed chicken and gravy has no meaningful cultural continuity with the Harlem soul food tradition of fried chicken with sweet waffles. They are separate foods that happen to share two ingredients. The Harlem tradition, rooted in Wells' Supper Club and the late-night economics of the jazz era, carries a specific cultural provenance: it emerged from the constraints and creativity of African-American culinary culture in a particular time and place.<sup class="fn"><a>[7]</a><span class="tip"><a href="https://www.harlemworldmagazine.com/wells-restaurant-in-harlem-the-best-chicken-and-waffles-in-the-world-1938-1982/" target="_blank">Harlem World Magazine — "Well's Restaurant In Harlem, The Best Chicken And Waffles In The World 1938-1982"</a></span></sup></p>
+        <p>Herb Hudson's 1975 opening of Roscoe's House of Chicken and Waffles in Los Angeles nationalized this Harlem tradition and made it legible to a broader American audience. In doing so, it also began the process by which the dish became detached from its origin context and available for commercial appropriation by any restaurant operator willing to put the words "chicken and waffles" on a menu.</p>
+
+        <h3>The Appropriation Debate</h3>
+        <p>Contemporary discourse around chicken and waffles involves genuine disagreement about what appropriation means in this context. One position holds that the dish belongs to a specific African-American cultural tradition and that its commercialization by chains and operators with no connection to that tradition erases the history from the product while capturing the economic value. A counter-position holds that the nationalization of any food is inevitable once it escapes its origin context, and that the appropriate response is to ensure the original tradition receives recognition rather than to restrict the dish's spread.<sup class="fn"><a>[8]</a><span class="tip"><a href="https://www.pbs.org/food/stories/history-chicken-and-waffles" target="_blank">PBS Food — "Discover the History of Chicken and Waffles"</a></span></sup></p>
+
+        <div class="callout">
+          <h4>The Core Question</h4>
+          <p>When a food rooted in a specific cultural and economic history becomes a national commodity, who bears the cost of the history being erased from the product, and who captures the benefit?</p>
+        </div>
+
+        <p>The tension here is not unique to chicken and waffles — it appears in the histories of jazz, blues, and many other American cultural forms with African-American origins. But the waffle's position in this story is interesting: the waffle itself is not an African-American invention, but the combination that became iconic, and the restaurant culture that carried it nationally, are rooted specifically in the Harlem tradition. The food's cross-cultural career depends on recognizing which of those contributions it owes its current form to.</p>
+      </section>
+
+      <!-- T4 -->
+      <section class="paper-section" id="t4">
+        <div class="s-num">T4</div>
+        <h2>The Waffle House Index: Disaster Tool or <em>Corporate PR</em>?</h2>
+
+        <div class="tension-block t4">
+          <div class="tension-label">Tension 4</div>
+          <div class="tension-title">When a Business Continuity Plan Becomes Public Infrastructure</div>
+          <p>The Waffle House Index is both genuinely useful and strikingly good for Waffle House. These two facts are not mutually exclusive, but they are also not comfortable together.</p>
+        </div>
+
+        <h3>The Case for Genuine Utility</h3>
+        <p><strong>Craig Fugate</strong>'s identification of the Waffle House Index after Hurricane Charley (2004) was not a public relations move: it was an operational observation by an emergency management professional about a reliable signal in a noisy environment. Waffle House's disaster preparedness investments — generator capacity, stripped-down emergency menus, employee disaster training, and the sheer density of locations across disaster-prone Southern states — produce a genuinely meaningful indicator of infrastructure conditions.<sup class="fn"><a>[9]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Waffle_House_Index" target="_blank">Wikipedia — Waffle House Index</a></span></sup></p>
+        <p>The Index has been used in practice. FEMA staff cited it publicly during Hurricane Harvey (2017) and subsequent major weather events. The three-level system (green/yellow/red) corresponds to measurable infrastructure states — full grid power, partial power or supply chain disruption, total closure — and has predictive validity. It is, by any reasonable measure, a useful heuristic for emergency managers operating under information scarcity in the immediate aftermath of a disaster.<sup class="fn"><a>[10]</a><span class="tip"><a href="https://daily.jstor.org/waffle-houses-mean-way-more-than-waffles-in-disasters/" target="_blank">JSTOR Daily — "Waffle Houses Mean Way More Than Waffles in Disasters"</a></span></sup></p>
+
+        <h3>The Case for Skepticism</h3>
+        <p>The practical utility of the Index and its marketing value are inseparable. Every news story that mentions the Waffle House Index during a disaster is a story in which the phrase "Waffle House" appears multiple times in a context that associates the company with community resilience, reliability, and civic responsibility. This effect is so substantial that critics have noted the Index may be better understood as the most effective low-cost branding operation in American corporate history than as a genuine contribution to emergency management science.<sup class="fn"><a>[11]</a><span class="tip"><a href="https://www.marketplace.org/story/2015/03/04/when-disaster-strikes-fema-turns-waffle-house" target="_blank">Marketplace — "When disaster strikes, FEMA turns to Waffle House"</a></span></sup></p>
+        <p>Furthermore, FEMA has never formally adopted the Index as an official methodology. Its status as an "informal" tool — perpetually cited by agency staff as useful but never institutionalized — maintains the company's brand association with disaster response without creating the accountability that formal adoption would require. If the Index were wrong in a specific case, no government agency would be responsible for having relied on it.</p>
+
+        <div class="tension-vs">
+          <div class="tension-side left">
+            <h4>Genuine Public Utility</h4>
+            <p>Private infrastructure resilience creates real public benefit. The Index works because the investment is real. First responders use it because it is useful. Dismissing it as PR ignores actual emergency management value.</p>
+          </div>
+          <div class="tension-vs-mid">vs</div>
+          <div class="tension-side right">
+            <h4>Reputational Infrastructure</h4>
+            <p>The Index's primary beneficiary is Waffle House's brand. The public information value is real but incidental. No other private company receives comparable emergency-preparedness coverage at zero cost simply for staying open.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- T5 -->
+      <section class="paper-section" id="t5">
+        <div class="s-num">T5</div>
+        <h2>Street Food vs. Restaurant Food: What <em>Waffles Are</em></h2>
+
+        <div class="tension-block t5">
+          <div class="tension-label">Tension 5</div>
+          <div class="tension-title">The Form Problem: Is the Waffle a Street Food, a Sit-Down Food, or Both?</div>
+          <p>The waffle's social history reveals a persistent ambiguity about where it belongs — in the street, at the table, in the diner, or in the toaster.</p>
+        </div>
+
+        <h3>The Street Food Lineage</h3>
+        <p>The original social form of the waffle was the street. Medieval <em>oublieurs</em> sold from positions outside churches; the vendors were regulated not as restaurant operators but as mobile street traders. Hong Kong egg waffles emerged from street carts in the 1950s and retain their identity as a street food even after achieving global food-tourism status. The Liège waffle is designed structurally for street eating — it is portable, does not require plates, and retains its character at room temperature.<sup class="fn"><a>[12]</a><span class="tip"><a href="https://gofrex.com/en/history-of-waffles-from-the-middle-ages-to-the-present-day/" target="_blank">Gofrex — "History of waffles from the Middle Ages to the present day"</a></span></sup> In Brussels, waffle stands operate as tourist and local street food rather than as sit-down dining experiences.</p>
+
+        <h3>The Table and the Diner</h3>
+        <p>The American waffle tradition is primarily a table food. The colonial waffle frolic organized a social gathering around a fire, with waffles served on plates with silver utensils. The Waffle House model — counter service in a diner setting — preserves the table context while democratizing it. Norwegian vafler are almost always consumed at home, at a table, as a sit-down snack or light meal. The Belgian Brussels waffle, as served at the 1964 World's Fair and in subsequent American adaptations, requires a plate for the whipped cream and strawberry service.<sup class="fn"><a>[13]</a><span class="tip"><a href="https://www.sofn.com/norwegian_culture/recipe_box/baked_goods_breads_and_desserts/vafler_waffles/" target="_blank">Sons of Norway — "Vafler (Waffles)"</a></span></sup></p>
+
+        <h3>Why the Ambiguity Matters</h3>
+        <p>The waffle's oscillation between street food and table food tracks a deeper ambiguity about its social register. Street foods tend to be democratic, cheap, eaten standing up, and associated with plebeian or working-class consumption. Table foods tend to be associated with domestic or institutional settings, seated service, and some degree of formality or leisure. The waffle has inhabited both registers across its history, sometimes simultaneously: the Liège waffle is a street food in Belgium while the Brussels waffle is a semi-formal restaurant offering; the Eggo occupies the domestic table while Wells' was a diner counter; Hong Kong egg waffles are street food that has become a luxury artisan product in American food markets.</p>
+        <p>This ambiguity is not a problem to be resolved but a structural feature of the food's cross-cultural mobility. A food that can be eaten standing on a street corner and served at a presidential table has an unusual range, and that range is part of what makes its cultural history interesting.</p>
+      </section>
+
+      <!-- T6 -->
+      <section class="paper-section" id="t6">
+        <div class="s-num">T6</div>
+        <h2>Global Variants: Convergence or <em>Divergence</em>?</h2>
+
+        <div class="tension-block t6">
+          <div class="tension-label">Tension 6</div>
+          <div class="tension-title">Is Global Waffle Culture Moving Toward a Single Form or Generating Greater Variety?</div>
+          <p>Globalization in food can work in two directions simultaneously: it can spread dominant forms (convergence) and stimulate local differentiation in reaction (divergence). The waffle exhibits both tendencies.</p>
+        </div>
+
+        <h3>The Convergence Evidence</h3>
+        <p>Belgian-style waffles — or products marketed as such — are now available in supermarkets and chain restaurants across Europe, North America, East Asia, and Australasia. The Kellogg Eggo model has inspired analogous frozen waffle products in multiple national markets. American diner culture has influenced waffle-breakfast traditions in countries that had no indigenous waffle history. International food media has created a global vocabulary for waffle discourse in which "Belgian," "Liège," and "Hong Kong egg waffle" operate as recognizable categories regardless of local tradition.<sup class="fn"><a>[14]</a><span class="tip"><a href="https://www.cnn.com/travel/article/hong-kong-bubble-waffles" target="_blank">CNN Travel — "Bubble waffles: The uniquely Hong Kong snack that's popping up around the world"</a></span></sup></p>
+
+        <h3>The Divergence Evidence</h3>
+        <p>At the same time, local waffle traditions are not disappearing under the pressure of global standardization. Norwegian vafler remain stubbornly local, home-produced, and resistant to commercial penetration. The Dutch stroopwafel has become a global export product while retaining its Gouda identity and its specific form — it has not been absorbed into the "Belgian waffle" category. Hong Kong egg waffles, after their globalization moment in the 2014–2019 period, continue to be produced by heritage shops in Hong Kong using the same iron technology developed in the 1950s. New hybrid forms — Korean cheese waffles, Scandinavian savory vafler, Japanese taiyaki-adjacent waffle preparations — continue to emerge independently of the dominant global category.<sup class="fn"><a>[15]</a><span class="tip"><a href="https://matadornetwork.com/read/egg-waffle-hong-kong-speciality-became-global-phenomenon/" target="_blank">Matador Network — "How the Egg Waffle, a Hong Kong Speciality, Became a Global Phenomenon"</a></span></sup></p>
+
+        <div class="callout">
+          <h4>The Structural Pattern</h4>
+          <p>Global food culture appears to generate both homogenization at the mass-market level and intensified differentiation at the artisanal, heritage, and experimental levels simultaneously. The waffle exemplifies this pattern: Eggo dominates the mass market while egg waffle shops, Liège street vendors, and Norwegian home bakers each maintain distinct traditions that resist absorption into the dominant commercial form.</p>
+        </div>
+
+        <p>The tension between convergence and divergence cannot be settled empirically without specifying which level of the market is being examined and which time horizon is relevant. At the level of mass-market commercial products, convergence toward a small number of recognizable global forms is genuine. At the level of heritage production and local practice, the variety of waffle cultures appears, if anything, to be increasing as global food media gives smaller traditions new visibility and new markets.</p>
+      </section>
+
+      <!-- CODA -->
+      <section class="paper-section" id="coda">
+        <div class="s-num">Coda</div>
+        <h2><em>Coda</em>: What the Tensions Share</h2>
+        <p>These six tensions share a structural feature: each involves a food whose identity has been constructed at the intersection of two different forces or claims that cannot be reconciled without remainder. The "Belgian waffle" is simultaneously Belgian and American. Eggo democratized and diminished. Chicken and waffles honors and exploits. The Waffle House Index is useful and self-serving. The waffle belongs on the street and at the table. Global waffle culture converges and diverges.</p>
+        <p>The appropriate response to these tensions is not to choose a side but to recognize that the tension itself is what makes the waffle historically interesting. A food with no contradictions has no history worth telling. The waffle's contradictions are its history.</p>
+
+        <div class="paper-stat-row">
+          <div class="paper-stat"><span class="val">~900 CE</span><span class="lbl">Sacred origin</span></div>
+          <div class="paper-stat"><span class="val">1964</span><span class="lbl">Invented Belgian</span></div>
+          <div class="paper-stat"><span class="val">1953</span><span class="lbl">Industrialized</span></div>
+          <div class="paper-stat"><span class="val">2004</span><span class="lbl">Disaster index</span></div>
+          <div class="paper-stat"><span class="val">2014</span><span class="lbl">HK global moment</span></div>
+        </div>
+      </section>
+
+      <!-- REFERENCES -->
+      <section class="paper-section" id="references">
+        <div class="s-num">Ref — References</div>
+        <h2><em>References</em></h2>
+        <ol class="ref-list-num">
+          <li><a href="https://en.wikipedia.org/wiki/Belgian_waffle" target="_blank">Wikipedia — "Belgian waffle"</a>. Wikimedia Foundation. Accessed March 2026.</li>
+          <li><a href="https://timetravelkitchen.substack.com/p/a-worlds-fair-and-the-waffles-everyone" target="_blank">Time Travel Kitchen — "A World's Fair and the Waffles Everyone Remembers"</a>. Substack. Accessed March 2026.</li>
+          <li><a href="https://www.wafflesnbeer.be/news/belgian-waffle-history/" target="_blank">Waffles 'n Beer — "Belgian Waffle History: A Tasty Tale Through Time"</a>. Accessed March 2026.</li>
+          <li><a href="https://gardenandgun.com/articles/a-pressing-mystery-thomas-jefferson-and-the-waffle/" target="_blank">Garden &amp; Gun — "A Pressing Mystery: Thomas Jefferson and the Waffle"</a>. Garden &amp; Gun. Accessed March 2026.</li>
+          <li><a href="https://en.wikipedia.org/wiki/Eggo" target="_blank">Wikipedia — "Eggo"</a>. Wikimedia Foundation. Accessed March 2026.</li>
+          <li><a href="https://melmagazine.com/en-us/story/leggo-my-eggo-history" target="_blank">MEL Magazine — "A Toasty History of Eggos, the Waffle We'll Never L'Eggo"</a>. MEL Magazine. Accessed March 2026.</li>
+          <li><a href="https://www.harlemworldmagazine.com/wells-restaurant-in-harlem-the-best-chicken-and-waffles-in-the-world-1938-1982/" target="_blank">Harlem World Magazine — "Well's Restaurant In Harlem, The Best Chicken And Waffles In The World 1938-1982"</a>. Accessed March 2026.</li>
+          <li><a href="https://www.pbs.org/food/stories/history-chicken-and-waffles" target="_blank">PBS Food — "Discover the History of Chicken and Waffles"</a>. PBS. Accessed March 2026.</li>
+          <li><a href="https://en.wikipedia.org/wiki/Waffle_House_Index" target="_blank">Wikipedia — "Waffle House Index"</a>. Wikimedia Foundation. Accessed March 2026.</li>
+          <li><a href="https://daily.jstor.org/waffle-houses-mean-way-more-than-waffles-in-disasters/" target="_blank">JSTOR Daily — "Waffle Houses Mean Way More Than Waffles in Disasters"</a>. JSTOR Daily. Accessed March 2026.</li>
+          <li><a href="https://www.marketplace.org/story/2015/03/04/when-disaster-strikes-fema-turns-waffle-house" target="_blank">Marketplace — "When disaster strikes, FEMA turns to Waffle House"</a>. Marketplace. March 4, 2015.</li>
+          <li><a href="https://gofrex.com/en/history-of-waffles-from-the-middle-ages-to-the-present-day/" target="_blank">Gofrex — "History of waffles from the Middle Ages to the present day"</a>. Gofrex. Accessed March 2026.</li>
+          <li><a href="https://www.sofn.com/norwegian_culture/recipe_box/baked_goods_breads_and_desserts/vafler_waffles/" target="_blank">Sons of Norway — "Vafler (Waffles)"</a>. Sons of Norway. Accessed March 2026.</li>
+          <li><a href="https://www.cnn.com/travel/article/hong-kong-bubble-waffles" target="_blank">CNN Travel — "Bubble waffles: The uniquely Hong Kong snack that's popping up around the world"</a>. CNN. Accessed March 2026.</li>
+          <li><a href="https://matadornetwork.com/read/egg-waffle-hong-kong-speciality-became-global-phenomenon/" target="_blank">Matador Network — "How the Egg Waffle, a Hong Kong Speciality, Became a Global Phenomenon"</a>. Matador Network. Accessed March 2026.</li>
+        </ol>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<button class="theme-btn" id="theme-toggle" title="Toggle theme">&#9684;</button>
+<script>
+(function(){
+  var btn = document.getElementById('theme-toggle');
+  var root = document.documentElement;
+  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  var state = 'dark';
+  root.setAttribute('data-theme', 'dark');
+  btn.textContent = '\u2600';
+  function apply() {
+    if (state === 'system') {
+      root.setAttribute('data-theme', sys);
+      btn.textContent = '\u25D0';
+    } else {
+      root.setAttribute('data-theme', state);
+      btn.textContent = state === 'dark' ? '\u2600' : '\u263D';
+    }
+  }
+  btn.addEventListener('click', function() {
+    if (state === 'dark') state = 'light';
+    else if (state === 'light') state = 'system';
+    else state = 'dark';
+    apply();
+  });
+  var items = document.querySelectorAll('.sidebar-item');
+  var sections = document.querySelectorAll('.paper-section');
+  function onScroll() {
+    var top = window.scrollY + 100;
+    var current = null;
+    sections.forEach(function(s) {
+      if (s.offsetTop <= top) current = s.id;
+    });
+    items.forEach(function(a) {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive: true});
+})();
+</script>
+</body>
+</html>
