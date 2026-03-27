@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S3: Social Network Atrophy &mdash; Atrophy &amp; Decisions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{--bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--border:#d6d0c4;--border-hi:#bfb8a8;--text:#363b48;--dim:#65707a;--bright:#141a1e;--accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;--cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#2e6ab406;--grad2:#9b7aed04;--sidebar-bg:var(--bg2);--right-bg:var(--bg2);--grain-opacity:0.015;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--chip-ls:.5px;--chip-size:11px;--topbar-glow:#2e6ab415;}
+[data-theme="dark"]{--bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--border:#1c2440;--border-hi:#283558;--text:#8490aa;--dim:#546080;--bright:#dce0ec;--accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;--cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;--serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;--body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;--heading-ls:.5px;--label-ls:2.5px;--grad1:#9b7aed06;--grad2:#4ee8d004;--sidebar-bg:var(--bg);--right-bg:var(--bg2);--grain-opacity:0.02;--callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);--hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;--chip-ls:.5px;--chip-size:11px;--topbar-glow:#9b7aed10;}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 60% 50% at 85% 75%,var(--grad2),transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0;transition:color .2s,background .2s}
+.ctrl-btn:last-child{border-right:none}.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{right:auto;left:50%;transform:translateX(-50%)}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;overflow:hidden;transition:all .4s ease}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,var(--grad1),transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:600;max-height:20px;overflow:hidden;transition:max-height .35s,opacity .25s}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);transition:font-size .35s}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;max-height:30px;overflow:hidden;transition:max-height .35s,padding .35s}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px}
+.section-block .s-stat{display:flex;margin:14px 0;border:1px solid var(--border)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border)}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1)}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+.right::-webkit-scrollbar{width:4px}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar .sticky-title{font-family:var(--sans);font-size:12px;color:var(--bright);font-weight:500;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:600;color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:2.5px;display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}
+.diagram-wrap svg .lbl{fill:var(--dim)}.diagram-wrap svg .lbl-hi{fill:var(--accent)}
+.callout{border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:2.5px;font-weight:600}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color)}
+.timeline{margin:18px 0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:600;letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.detail a:hover{color:var(--accent)}.section-block a{color:var(--text)}
+@media(max-width:1000px){.sidebar{display:none}.ctrl-group{top:10px;right:10px}.shell{display:block}.main{height:100vh;width:100%}.main-head{padding:20px 20px 0}.hero-title{font-size:28px!important}.main-head.compact{padding:0 20px;height:44px}.main-head.compact .hero-title{font-size:18px!important}.main-scroll{padding:0 20px 80px}.section-block{padding:28px 8px}.right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s}.right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}.right:not(.closed){transform:translateX(0)}.right-inner{padding:0 20px 80px}.feat-grid{grid-template-columns:1fr}.feat{border-left:none!important;padding-left:0!important}.feat:nth-child(2n){padding-left:0}}
+  </style>
+</head>
+<body>
+<script>
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);else document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')})();
+
+const sections=[
+  {num:'01',short:'SST',title:'<em>Socioemotional</em> Selectivity Theory'},
+  {num:'02',short:'Shrinkage',title:'Network Size Across the <em>Lifespan</em>'},
+  {num:'03',short:'Decay',title:'How Relationships <em>Decay</em>'},
+  {num:'04',short:'Health',title:'Social Isolation &amp; <em>Health</em>'},
+  {num:'05',short:'Decisions',title:'Social Options as <em>Decision</em> Constraint'},
+  {num:'06',short:'Primates',title:'<em>Evolutionary</em> Roots of Selectivity'},
+  {num:'07',short:'Tensions',title:'What Sources <em>Disagree</em> On'}
+];
+
+const summaries=[
+  `<p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8599276/" target="_blank">Socioemotional selectivity theory</a>, developed by Stanford psychologist Laura Carstensen, proposes that the perception of future time horizon fundamentally shapes social goals. When future time feels open-ended (as in youth), people prioritize knowledge-acquisition goals: expanding networks, gathering information, building new relationships. When time horizons shrink (with age, illness, or perceived endings), people shift to emotional-regulation goals: deepening existing relationships, maximizing emotional meaning, pruning peripheral ties.</p>
+  <p>The theory&rsquo;s core prediction is that social network contraction in aging is not merely involuntary loss &mdash; it is adaptive reconfiguration. Older adults select for quality over quantity. But whether a given narrowing is adaptive (strategic pruning) or maladaptive (involuntary loss) is not always distinguishable from the outside &mdash; or from the inside.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">Peak</div><div class="sl">Network size: young adult</div></div>
+    <div class="st"><div class="sv">↓ Steady</div><div class="sl">Decline through midlife</div></div>
+    <div class="st"><div class="sv">Smallest</div><div class="sl">Network: oldest adults</div></div>
+    <div class="st"><div class="sv">Quality</div><div class="sl">Prioritized over quantity</div></div>
+  </div>`,
+
+  `<p>The empirical evidence for age-related network shrinkage is robust. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7122684/" target="_blank">Research on age differences in reported social networks</a> consistently finds that network size peaks in young adulthood and declines steadily across the lifespan, with older adults having the smallest networks. This is not primarily a function of bereavement &mdash; though loss of peers accelerates the process &mdash; but of active selection and maintenance effort reduction.</p>
+  <p>Crucially, network size and subjective loneliness do not track together. Smaller networks do not always produce more loneliness, because the remaining relationships are typically higher-quality and more emotionally satisfying. The social decision space narrows, but the remaining options are curated for value.</p>`,
+
+  `<p>Relationships decay through non-maintenance in exactly the structural way that skills decay through non-use. The mechanisms are parallel: initial investment (formation effort) creates a connection; continued investment (contact, disclosure, reciprocity) maintains it; cessation of investment produces decay toward eventual dissolution.</p>
+  <p>Unlike skill decay, relationship decay is bidirectional — both parties must invest for the relationship to persist. A relationship can decay even when one party would prefer to maintain it, because the other party has reduced their investment. This makes social atrophy less controllable than skill atrophy: you can practice a skill unilaterally, but you cannot unilaterally maintain a relationship.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Active Maintenance</h4><p>Contact frequency, mutual disclosure, shared activity. All must continue for the relationship to survive.</p></div>
+    <div class="feat"><h4>Context Anchors</h4><p>Many relationships are anchored in shared contexts (school, work, neighborhood). When the context ends, the relationship typically follows.</p></div>
+    <div class="feat"><h4>Asymmetric Decay</h4><p>If one party reduces investment, the other may not immediately notice the decay. Relationships degrade quietly before they break.</p></div>
+    <div class="feat"><h4>Network Holes</h4><p>Lost connections are rarely replaced. The holes in the network accumulate, and the surviving network becomes increasingly homogeneous.</p></div>
+  </div>`,
+
+  `<p>The health consequences of social network atrophy are among the most replicated findings in epidemiology. The <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7437541/" target="_blank">National Academies review</a> documents: social isolation is associated with a 50% increased risk of developing dementia, a 30% increased risk of coronary artery disease or stroke, and a 26% increased risk of all-cause mortality.</p>
+  <p>These are not merely statistical associations. Loneliness activates stress response systems, elevates cortisol and inflammatory markers, disrupts sleep, and impairs immune function. The health effects of social atrophy are mediated through the same biological pathways as other forms of chronic stress.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">+50%</div><div class="sl">Dementia risk</div></div>
+    <div class="st"><div class="sv">+30%</div><div class="sl">Coronary/stroke risk</div></div>
+    <div class="st"><div class="sv">+26%</div><div class="sl">All-cause mortality</div></div>
+    <div class="st"><div class="sv">↑</div><div class="sl">Inflammatory markers</div></div>
+  </div>`,
+
+  `<p>The decision-making implications of social network atrophy follow from a basic fact about how adult decisions are made: they are almost never made alone. People consult friends, partners, colleagues, and mentors when facing significant choices. The social network is the deliberative infrastructure for major life decisions.</p>
+  <p>When the network atrophies, this infrastructure degrades. The available deliberative partners become fewer, less diverse, and more homogeneous. Decisions that would once have been made with input from 15 distinct relationships are now made with input from 4. The option space reflected back through the social network &mdash; what is normal, what is possible, what others have done &mdash; narrows with the network.</p>`,
+
+  `<p>The <a href="https://theconversation.com/macaque-monkeys-shrink-their-social-networks-as-they-age-research-suggests-evolutionary-roots-of-a-pattern-seen-in-elderly-people-too-196862" target="_blank">finding that macaque monkeys show the same social network shrinkage with age</a> as humans provides important evolutionary context. SST is not just a theory about human culture or modern aging &mdash; it describes a social behavioral trajectory that appears across primate evolution.</p>
+  <p>The adaptive interpretation: as reproductive and knowledge-acquisition imperatives decline with age, the cost-benefit calculus of maintaining peripheral social relationships shifts. Energy devoted to maintaining a large network returns less. Quality over quantity becomes the rational strategy. The atrophy of the social network is, in evolutionary terms, not pathology &mdash; it is optimization.</p>`,
+
+  `<p>Three tensions in the social atrophy literature bear directly on the project&rsquo;s central argument.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Adaptive vs. Involuntary</h4><p>SST predicts adaptive selectivity. But bereavement, mobility decline, and cognitive changes also reduce networks involuntarily. The same outcome can arise from very different processes.</p></div>
+    <div class="feat"><h4>Quality vs. Quantity</h4><p>Smaller networks are associated with better emotional outcomes in old age. But small networks also mean less exposure to diverse perspectives, information, and opportunities &mdash; potentially constraining decisions in ways the agent does not experience as constraining.</p></div>
+    <div class="feat"><h4>Loneliness Paradox</h4><p>Network size and loneliness diverge: people with tiny networks can be satisfied; people with large networks can be lonely. This complicates the atrophy-as-decision-constraint argument if the agent is not aware of constraint.</p></div>
+    <div class="feat"><h4>Structural vs. Individual</h4><p>Social atrophy in some populations (poor, geographically isolated, disabled) reflects structural conditions more than personal history. The individual atrophy lens may obscure systemic causes.</p></div>
+  </div>`
+];
+
+const details=[
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div><h2><em>Socioemotional</em> Selectivity Theory</h2></div>
+  <p>Socioemotional selectivity theory is one of the most empirically tested life-span theories in social psychology. <a href="https://pubmed.ncbi.nlm.nih.gov/10199217/" target="_blank">Carstensen&rsquo;s original 1999 paper</a> in <em>American Psychologist</em> proposed that the perception of future time &mdash; not chronological age per se &mdash; drives shifts in social goal priorities. This distinction is crucial: it predicts that young people facing terminal illness should show the same goal shifts as older adults, and they do.</p>
+  <p>The mechanism works through two classes of social motive. Knowledge-acquisition motives drive behavior when time horizons are open: expand your network, gather information, learn from new people, prepare for a future that stretches ahead. Emotional-regulation motives come to the fore as time horizons close: invest in relationships that provide emotional meaning, prune connections that are emotionally costly or merely instrumental, prioritize depth over breadth.</p>
+  <h3>The Goal Shift and Decision Change</h3>
+  <p>The goal shift from knowledge-acquisition to emotional regulation has direct consequences for decision-making. When knowledge-acquisition goals dominate, decisions are made in a frame of expansion: what can I learn from this, how does it position me for the future, what new options does it open? When emotional-regulation goals dominate, decisions are made in a frame of consolidation: does this feel meaningful, does it deepen existing connections, does it require investment that won&rsquo;t be returned in the time available?</p>
+  <p>The result is that older adults&rsquo; decisions are systematically more conservative, more focused on existing commitments, and less oriented toward novel options &mdash; not because of cognitive decline (SST effects are distinct from cognitive aging effects), but because the goal structure that generates decisions has changed. The atrophy of future-time horizon reshapes the entire decision-making architecture.</p>
+  <div class="callout"><h4>The Time Horizon Effect</h4><p>What changes in aging is not just who you know but what you want from knowing them. The shift from information-seeking to meaning-seeking fundamentally narrows the range of social options that feel relevant.</p></div>
+  <h3>Extensions and Evidence</h3>
+  <p>The <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8599276/" target="_blank">2021 Annual Review paper</a> by Carstensen reviews 30 years of SST research. The evidence base is extensive: cross-cultural studies (SST effects replicate in diverse national contexts), studies of young people with HIV or other life-limiting conditions (show old-age-like social selectivity), and longitudinal studies (track the shift in social goals over the lifespan). One robust finding: when older adults are asked to imagine their time horizon as open-ended, they revert to young-adult social preferences. Time perception, not age, is the causal variable.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="210" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="18" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" letter-spacing="1.5">SST: GOAL SHIFT ACROSS PERCEIVED TIME HORIZON</text>
+    <line x1="30" y1="26" x2="370" y2="26" stroke="currentColor" stroke-width="0.5" class="lbl"/>
+    <rect x="40" y="40" width="145" height="55" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1"/>
+    <text x="112" y="62" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi">Open time horizon</text>
+    <text x="112" y="76" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Knowledge-acquisition</text>
+    <text x="112" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">goals dominate</text>
+    <rect x="215" y="40" width="145" height="55" rx="3" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+    <text x="287" y="62" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi">Limited time horizon</text>
+    <text x="287" y="76" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Emotional-regulation</text>
+    <text x="287" y="88" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">goals dominate</text>
+    <line x1="185" y1="67" x2="215" y2="67" stroke="#5b5bd6" stroke-width="1.5" marker-end="url(#arr3)"/>
+    <defs><marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#5b5bd6"/></marker></defs>
+    <rect x="50" y="115" width="130" height="55" rx="3" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="1"/>
+    <text x="115" y="136" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Expand network</text>
+    <text x="115" y="149" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Novel info + people</text>
+    <text x="115" y="162" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Future orientation</text>
+    <rect x="220" y="115" width="130" height="55" rx="3" fill="rgba(20,150,110,0.04)" stroke="#14966e" stroke-width="1"/>
+    <text x="285" y="136" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Deepen existing ties</text>
+    <text x="285" y="149" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Prune peripheral ties</text>
+    <text x="285" y="162" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Present orientation</text>
+    <rect x="60" y="184" width="280" height="18" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="196" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Causal variable: perceived time horizon, not chronological age</text>
+  </svg></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div><h2>Network Size Across the <em>Lifespan</em></h2></div>
+  <p>The empirical trajectory of social network size across the lifespan is well-established. Peak network size occurs in young adulthood — roughly the late 20s — when people are completing education, entering careers, forming romantic partnerships, and maximally motivated by knowledge-acquisition goals. From this peak, network size declines gradually through midlife and more steeply in late adulthood.</p>
+  <p>The PMC review of <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7122684/" target="_blank">age differences in social networks and well-being</a> documents this trajectory consistently across datasets and countries. What is less consistent is the relationship between network size and subjective well-being. Small networks are not necessarily worse networks, and large networks are not necessarily better. The quality, emotional valence, and functional support provided by relationships are more predictive of well-being than network size per se.</p>
+  <h3>The Homogenization Problem</h3>
+  <p>As networks shrink, they also tend to become less diverse. The peripheral ties that are pruned first are typically the weak ties &mdash; distant acquaintances, professional contacts, relationships from former life stages. These weak ties are often the source of novel information, alternative perspectives, and non-redundant social resources. Their loss leaves the surviving network richer in emotional meaning but narrower in informational scope.</p>
+  <p>The consequence for decision-making: the social infrastructure for making decisions shifts from one that provides access to diverse information and perspectives to one that provides emotional validation and reinforcement of existing choices. The shrinking network does not just reduce the number of advisors available &mdash; it systematically changes the kind of advice available.</p>
+  <div class="callout"><h4>Weak Ties Are Decision Infrastructure</h4><p>The weak ties that are pruned first in social atrophy are precisely the connections most likely to introduce novel information, diverse viewpoints, and unexpected options. Their loss leaves the agent better supported emotionally but more constrained informationally.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div><h2>How Relationships <em>Decay</em></h2></div>
+  <p>The structural mechanics of relationship decay parallel the mechanics of skill decay with two important differences: relationships are bidirectional (both parties must invest), and relationship decay is often contextually triggered rather than purely time-based.</p>
+  <p>The most common mechanism of relationship decay is context dissolution. Many adult friendships are anchored in shared contexts &mdash; school, university, workplace, neighborhood, parenthood cohort. When the shared context ends (graduation, job change, move, children leaving home), the relationship loses its structural maintenance mechanism. Without active effort to maintain contact outside the original context, the relationship begins to decay. Studies of friendship post-relocation find that most friendships fail to survive major geographical moves, not because affection disappears but because maintenance effort cannot sustain what context previously provided for free.</p>
+  <h3>The Decay Timeline</h3>
+  <p>Research on friendship maintenance suggests that the critical period for relationship survival post-context-change is roughly the first six months. Relationships that survive this period with active maintenance effort tend to stabilize. Those that do not tend to decay to acquaintanceship within two years and functional dissolution within five. The implication: the window for preventing social atrophy is narrow, and most people miss it because the cost of maintaining relationships across contexts is not felt until after the connection has already substantially degraded.</p>
+  <div class="callout"><h4>The Maintenance Illusion</h4><p>People believe they are maintaining relationships that are already substantially decayed. The subjective sense of connection persists long after the functional relationship has atrophied. The decision to rely on a connection that no longer exists at its former strength is a decision made from a false map.</p></div>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div><h2>Social Isolation &amp; <em>Health</em></h2></div>
+  <p>The health consequence literature for social isolation is among the largest in epidemiology. The <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7437541/" target="_blank">National Academies review</a> synthesizes findings across hundreds of studies. The effect sizes are substantial: social isolation is associated with dementia risk increases comparable to smoking, physical inactivity, and heavy alcohol use. The mechanisms include HPA axis dysregulation (chronic cortisol elevation), inflammatory pathway activation (elevated IL-6, CRP), sleep disruption, and behavioral risk factors (reduced exercise, worse diet, higher substance use) that accumulate in isolated individuals.</p>
+  <p>These health effects matter for the decision-making story because they represent biological atrophy caused by social atrophy. Social network contraction triggers a cascade that eventually reaches the biological substrate of decision-making: the brain. The chapter connections run from social isolation in S3 through motivational atrophy in <a href="s4-motivational-atrophy.dd.html">S4</a> to the biological substrate changes in <a href="s6-biological-substrate.dd.html">S6</a>. Social atrophy is not merely one form of atrophy &mdash; it is a precipitant of others.</p>
+  <h3>The Surgeon General&rsquo;s Framing</h3>
+  <p>The 2023 US Surgeon General&rsquo;s advisory on loneliness placed social connection as a public health priority comparable to the tobacco campaigns of the 1960s. The framing matters: loneliness and isolation are not personal failures or individual misfortunes. They are structural conditions shaped by urban design, workplace culture, institutional design, and economic precarity. Whether the individual or structural lens is more appropriate for the atrophy thesis is discussed in the tensions section.</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div><h2>Social Options as <em>Decision</em> Constraint</h2></div>
+  <p>The most direct connection between social atrophy and decision-making is through what might be called the social option set: the range of decisions that are available because of who you know. Career decisions depend on who can vouch for you, introduce you to opportunities, or model a path you might take. Residential decisions depend on who you have relationships with in different locations. Relationship decisions depend on who remains accessible in your social circle. Health decisions depend on who you can consult, who will support recovery, who will provide information.</p>
+  <p>As the network atrophies, the social option set contracts. This is not metaphorical &mdash; it is structural. A person with a network of 5 people in their city genuinely has fewer job options available than one with a network of 50, regardless of their individual qualifications. The atrophy of social capital directly reduces the quality and quantity of decisions available.</p>
+  <h3>The Echo Chamber Effect</h3>
+  <p>Beyond the quantitative reduction in options, social atrophy produces qualitative homogenization. The surviving network in late adulthood tends to be age-homogeneous, geographically concentrated, and value-convergent. This means the social infrastructure that informs decisions reflects a narrower range of experience, knowledge, and possibility than the original, diverse network would have. The agent is not merely choosing from fewer options &mdash; they are choosing from a mentally modeled option space that has been shaped by a homogeneous, atrophied social environment.</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div><h2><em>Evolutionary</em> Roots of Selectivity</h2></div>
+  <p>The macaque finding reported in <a href="https://theconversation.com/macaque-monkeys-shrink-their-social-networks-as-they-age-research-suggests-evolutionary-roots-of-a-pattern-seen-in-elderly-people-too-196862" target="_blank">The Conversation</a> is significant because it removes the cultural interpretation of SST as a uniquely human response to modern aging. Macaque monkeys, who share approximately 93% of human DNA, show the same pattern: as they age, they invest less in peripheral social bonds and more in high-value, established relationships. They become more selective, more protective of existing ties, and less exploratory in their social behavior.</p>
+  <p>The evolutionary logic is clear. Older animals have established their reproductive contributions; the cost-benefit of maintaining large, diverse networks shifts as reproductive imperatives decline and physical energy becomes more constrained. Quality relationships with kin and long-established allies provide better return on social investment than the exploratory networking that made sense when future time was long.</p>
+  <h3>What Evolutionary Framing Does and Does Not Imply</h3>
+  <p>The evolutionary argument for adaptive social selectivity does not imply that all forms of social atrophy are adaptive, or that intervention is unwarranted. It establishes that the basic trajectory &mdash; from broad to selective social engagement across the lifespan &mdash; has deep evolutionary roots. But evolutionary adaptations can be maladaptive in modern contexts (the stress response is the classic example), and the question of whether a given instance of social atrophy is helping or harming a specific individual remains an empirical one.</p>`,
+
+  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div><h2>What Sources <em>Disagree</em> On</h2></div>
+  <p>The social atrophy literature contains more genuine disagreement than the skill decay literature, and the disagreements are theoretically important.</p>
+  <h3>Adaptive Selection vs. Involuntary Loss</h3>
+  <p>SST predicts strategic pruning of peripheral ties. Bereavement research documents involuntary loss of important ties. Both processes occur, and from the outside they look identical. The same 70-year-old with a network of 5 may be a strategic selector or a bereaved, mobility-limited person who has lost friends without replacement. The atrophy thesis applies more cleanly to the latter; the adaptive version of social selectivity complicates the argument that atrophy is governing agency rather than expressing it.</p>
+  <h3>The Weak Tie Question</h3>
+  <p>The literature is divided on how much the loss of weak ties matters. Granovetter&rsquo;s classic work on the strength of weak ties argues that weak ties are the source of novel information and bridging social capital &mdash; and their loss should be significant. But some SST research suggests that what people lose in weak ties they gain in the depth and quality of strong ties. Whether the trade-off is net positive depends heavily on what kinds of decisions the person faces.</p>
+  <h3>Individual vs. Structural</h3>
+  <p>Perhaps the most important tension: social isolation and network atrophy are heavily structured by income, geography, disability, and institutional design. The individual atrophy lens &mdash; describing what happens to a person&rsquo;s social network across their lifespan &mdash; can obscure the extent to which the trajectory is determined by structural conditions outside the person&rsquo;s control. A person in precarious employment, without stable housing, or with chronic illness does not face the same social atrophy trajectory as a comfortably resourced person who makes deliberate choices about their social investments.</p>`
+];
+
+const HERO_BADGE='ATROPHY &amp; DECISIONS &middot; S3 &middot; 7 SOURCES';
+const HERO_TITLE='<em>Social</em> Network Atrophy';
+const HERO_SUB_LEFT='Socioemotional selectivity, relationship decay, and social option loss';
+const HERO_SUB_RIGHT='Carstensen &middot; SST &middot; National Academies';
+const SIDEBAR_LOGO='A<em>D</em>';
+
+const shell=document.createElement('div');shell.className='shell';
+shell.innerHTML=`<div class="ctrl-group" id="ctrl-group"><button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button><button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()"><span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span><span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span></button></div><nav class="sidebar" id="sidebar"><div class="sidebar-head"><div class="sidebar-logo">${SIDEBAR_LOGO}</div></div><div class="sidebar-nav" id="sidebar-nav"></div></nav><div class="main" id="main"><div class="main-head"><div class="main-head-inner"><div class="hero-badge"><span class="dot"></span> ${HERO_BADGE}</div><div class="hero-title">${HERO_TITLE}</div><div class="masthead-rule"></div><div class="masthead-sub"><span>${HERO_SUB_LEFT}</span><span>${HERO_SUB_RIGHT}</span></div></div></div><div class="main-scroll" id="main-scroll"></div></div><div class="right closed" id="right"><div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div><div class="right-inner" id="right-inner"></div></div>`;
+document.body.appendChild(shell);
+const sidebarNav=document.getElementById('sidebar-nav');
+sections.forEach((sec,idx)=>{const item=document.createElement('div');item.className='sidebar-item'+(idx===0?' active':'');item.setAttribute('data-label',sec.short);item.innerHTML=`<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;item.onclick=()=>scrollToSection(idx);sidebarNav.appendChild(item);});
+const sidebarTip=document.createElement('div');sidebarTip.className='sidebar-tooltip';document.body.appendChild(sidebarTip);
+const sidebarEl=document.querySelector('.sidebar');let tipActive=false;
+sidebarNav.addEventListener('mouseleave',()=>{tipActive=false;sidebarTip.classList.remove('visible');});
+sidebarNav.addEventListener('mousemove',(e)=>{if(!document.body.classList.contains('detail-open')){if(tipActive){tipActive=false;sidebarTip.classList.remove('visible');}return;}const item=e.target.closest('.sidebar-item');if(!item){if(tipActive){tipActive=false;sidebarTip.classList.remove('visible');}return;}const rect=item.getBoundingClientRect();const sRight=sidebarEl.getBoundingClientRect().right;sidebarTip.textContent=item.getAttribute('data-label');sidebarTip.style.left=(sRight-1)+'px';sidebarTip.style.top=rect.top+'px';sidebarTip.style.height=rect.height+'px';if(!tipActive){tipActive=true;sidebarTip.classList.add('visible');}});
+const mainScroll=document.getElementById('main-scroll');const mainInner=document.createElement('div');mainInner.className='main-scroll-inner';mainScroll.appendChild(mainInner);
+sections.forEach((sec,idx)=>{const block=document.createElement('div');block.className='section-block';block.innerHTML=`<div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div><h2>${sec.title}</h2>${summaries[idx]}`;mainInner.appendChild(block);});
+const rightInner=document.getElementById('right-inner');
+sections.forEach((sec,idx)=>{const d=document.createElement('div');d.className='detail';d.id=`detail-${idx}`;d.innerHTML=details[idx];rightInner.appendChild(d);});
+let lastDetailIdx=0;
+function scrollToSection(idx){const blocks=document.querySelectorAll('.section-block');if(blocks[idx])blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});}
+function openDetail(idx){lastDetailIdx=idx;document.querySelectorAll('.detail').forEach(d=>d.style.display='none');document.getElementById(`detail-${idx}`).style.display='block';document.getElementById('right').classList.remove('closed');document.body.classList.add('detail-open');document.getElementById('right').scrollTop=0;document.getElementById('right-sticky-title').classList.remove('visible');}
+function closeRight(){document.getElementById('right').classList.add('closed');document.body.classList.remove('detail-open');}
+function toggleDetail(){if(document.body.classList.contains('detail-open')){closeRight();}else{openDetail(lastDetailIdx);}}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);}
+mainScroll.addEventListener('scroll',()=>{document.querySelector('.main-head').classList.toggle('compact',mainScroll.scrollTop>40);const blocks=mainScroll.querySelectorAll('.section-block');const items=document.querySelectorAll('.sidebar-item');let ai=0;blocks.forEach((b,i)=>{if(b.getBoundingClientRect().top<mainScroll.getBoundingClientRect().top+120)ai=i;});items.forEach((item,i)=>item.classList.toggle('active',i===ai));});
+const rightPanelOuter=document.getElementById('right');const stickyTitle=document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll',()=>{const ad=rightPanelOuter.querySelector('.detail[style*="display: block"],.detail[style*="display:block"]');if(!ad)return;const h2=ad.querySelector('.detail-header h2')||ad.querySelector('h2');if(!h2)return;const rect=h2.getBoundingClientRect();const panelRect=rightPanelOuter.getBoundingClientRect();const topbar=document.querySelector('.right-topbar');if(rect.bottom<panelRect.top+56){stickyTitle.textContent=h2.textContent;stickyTitle.classList.add('visible');topbar.classList.add('scrolled');}else{stickyTitle.classList.remove('visible');topbar.classList.remove('scrolled');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRight();});
+</script>
+</body>
+</html>

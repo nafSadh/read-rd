@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S1: Cognitive Defaults &mdash; Atrophy &amp; Decisions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;--grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);--right-bg:var(--bg2);--grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;--dash-speed:1s;--close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;--sans:'Jost',-apple-system,sans-serif;--mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;--heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;--grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);--right-bg:var(--bg2);--grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;--callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;--node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;--dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;--feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;--code-weight:400;--medium-weight:400;--topbar-glow:#9b7aed10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .lbl{fill:var(--dim)}.diagram-wrap svg .lbl-hi{fill:var(--accent)}
+.diagram-wrap svg .border{stroke:var(--border)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:1000px){
+  .sidebar{display:none}.ctrl-group{top:10px;right:10px}.ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}.main{height:100vh;width:100%}.main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}.masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}.main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}.section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}.right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}.detail-header h2{font-size:26px!important}
+  .feat-grid{grid-template-columns:1fr}.feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}.detail p{font-size:16px}
+}
+  </style>
+</head>
+<body>
+<script>
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);else document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')})();
+
+const sections = [
+  { num: '01', short: 'Two Systems', title: 'The <em>Dual-System</em> Foundation' },
+  { num: '02', short: 'Habit Loop', title: 'Habit as <em>Degraded</em> Deliberation' },
+  { num: '03', short: 'Ego Depletion', title: '<em>Decision</em> Fatigue' },
+  { num: '04', short: 'Cognitive Load', title: 'Working Memory <em>Limits</em>' },
+  { num: '05', short: 'Defaults', title: 'The Rise of <em>Default</em> Options' },
+  { num: '06', short: 'Chronic', title: 'Chronic <em>Depletion</em> &amp; Burnout' },
+  { num: '07', short: 'Tensions', title: 'What Sources <em>Disagree</em> On' }
+];
+
+const summaries = [
+  `<p>Cognitive science describes two modes of decision-making: a fast, automatic System 1 that runs on patterns, associations, and habit, and a slow, effortful System 2 that deliberates, weighs options, and reasons from principles. <a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow" target="_blank">Kahneman&rsquo;s</a> framework, built on decades of research, shows that System 1 is the default. System 2 is expensive.</p>
+  <p>The relationship between these systems is not static. It changes with age, fatigue, complexity, and practice history. The core insight for this project: when System 2 capacity degrades &mdash; through habit formation, exhaustion, or overload &mdash; System 1 expands to fill the space. Decisions are not made differently; they default to what remains.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">~95%</div><div class="sl">Decisions automated</div></div>
+    <div class="st"><div class="sv">4–7</div><div class="sl">WM chunk limit</div></div>
+    <div class="st"><div class="sv">20s</div><div class="sl">WM duration</div></div>
+    <div class="st"><div class="sv">~66</div><div class="sl">Days to habit (avg)</div></div>
+  </div>`,
+
+  `<p>Habits are not simply repeated behaviors. They are the behavioral residue of degraded deliberation. <a href="https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(24)00266-3" target="_blank">Wood and Rünger&rsquo;s 2024 review</a> in <em>Trends in Cognitive Sciences</em> describes how the brain shifts control from the prefrontal cortex (goal-directed, flexible) to the striatum (stimulus-response, automatic) as behaviors are repeated in consistent contexts.</p>
+  <p>The striatum executes learned responses efficiently, without consulting the prefrontal cortex for permission. This is adaptive when the habit is good and the context is stable. It becomes a constraint on decision-making when the context changes but the habit does not. People continue behaviors they would not choose if they deliberated &mdash; not from weakness, but from the very efficiency that made habits useful in the first place.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Goal-Directed System</h4><p>Prefrontal cortex. Flexible, prospective, expensive. Weighs outcomes, considers alternatives, plans ahead.</p></div>
+    <div class="feat"><h4>Habit System</h4><p>Striatum. Fast, automatic, cheap. Executes trained responses without deliberation. Context-triggered.</p></div>
+    <div class="feat"><h4>The Shift</h4><p>Repetition in consistent context transfers control from PFC to striatum. The shift is not a choice &mdash; it happens gradually.</p></div>
+    <div class="feat"><h4>The Problem</h4><p>Habits persist when contexts change. You choose from the habit repertoire, not from the full option space.</p></div>
+  </div>`,
+
+  `<p>Decision fatigue is the finding that the quality of decisions degrades over time as a function of the number and difficulty of prior decisions. <a href="https://pubmed.ncbi.nlm.nih.gov/37294047/" target="_blank">Baumeister and Schweitzer (2023)</a> place this within the broader ego depletion framework: self-regulatory resources are limited, and depleted people shift toward defaults, inaction, and low-effort options.</p>
+  <p>The most striking empirical demonstration comes from Israeli parole board data: prisoners appearing early in the day were granted parole about 65% of the time; by late morning that dropped to near zero before spiking again after lunch. The judges were not choosing differently &mdash; they defaulted to the safer (deny) option as cognitive resources drained.</p>
+  <div class="s-stat">
+    <div class="st"><div class="sv">65%</div><div class="sl">Parole early AM</div></div>
+    <div class="st"><div class="sv">~0%</div><div class="sl">Before lunch break</div></div>
+    <div class="st"><div class="sv">65%</div><div class="sl">Post-break reset</div></div>
+    <div class="st"><div class="sv">25yr</div><div class="sl">Ego depletion research</div></div>
+  </div>`,
+
+  `<p><a href="https://www.instructionaldesign.org/theories/cognitive-load/" target="_blank">Sweller&rsquo;s cognitive load theory</a> shows that working memory &mdash; the mental workspace where deliberation occurs &mdash; has severe architectural limits: roughly 4&ndash;7 chunks, for about 20 seconds. When cognitive load is high (complex task, multiple competing demands, time pressure), deliberation is squeezed out.</p>
+  <p>The practical implication: people under cognitive load do not deliberate worse &mdash; they stop deliberating and switch to heuristics. The switch is not consciously noticed. Decisions under high load look identical to decisions under low load from the outside. But from the inside, the former are pattern-matched, not reasoned.</p>
+  <div class="s-chips">
+    <span class="s-chip">Intrinsic load</span>
+    <span class="s-chip">Extraneous load</span>
+    <span class="s-chip">Germane load</span>
+    <span class="s-chip">Working memory cap</span>
+    <span class="s-chip">Heuristic shift</span>
+    <span class="s-chip">Expertise reversal</span>
+  </div>`,
+
+  `<p>When deliberation is unavailable &mdash; from habit lock-in, fatigue, or overload &mdash; decisions default to whatever option requires least cognitive effort. This is often the status quo, the most familiar option, or whatever was chosen last time. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6119549/" target="_blank">Pignatiello et al.&rsquo;s conceptual analysis</a> of decision fatigue identifies default drift as the primary coping mechanism: depleted decision-makers choose pre-set defaults, accept recommendations without evaluation, and avoid decisions entirely.</p>
+  <p>Default options are not neutral. They are embedded choices made by whoever designed the context. When deliberation degrades, the designer&rsquo;s choice becomes the chooser&rsquo;s choice. Atrophy of deliberative capacity hands the decision to the environment.</p>`,
+
+  `<p>The <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">2024 review by Baumeister et al.</a> in <em>Current Opinion in Psychology</em> extends ego depletion theory to chronic states: burnout as sustained ego depletion, with decision quality persistently degraded rather than episodically fatigued. People in chronic depletion develop stable default patterns &mdash; not because they are incapable of deliberation but because deliberation has become reliably too costly to initiate.</p>
+  <p>Chronic depletion creates a second-order problem. Depleted people are less able to notice that they are depleted, and less able to take recovery actions. The atrophy of decision capacity is self-concealing in the same way that many cognitive deficits are &mdash; the capacity to assess the deficit is itself affected.</p>`,
+
+  `<p>Three core tensions run through the cognitive defaults literature, each carrying direct implications for the atrophy thesis.</p>
+  <div class="feat-grid">
+    <div class="feat"><h4>Replication Controversy</h4><p>Some ego depletion replications have failed. The field now argues that effect sizes are real but smaller than originally claimed; strong manipulations are required. The parole data remains robust.</p></div>
+    <div class="feat"><h4>Resource vs. Motivation</h4><p>An alternative to the resource-depletion model: depleted people are less motivated to deliberate, not truly unable. This matters for the atrophy thesis &mdash; motivational vs. structural constraint.</p></div>
+    <div class="feat"><h4>Adaptive vs. Maladaptive</h4><p>Habit automaticity is adaptive in stable environments. Decision defaults save cognitive capacity for more important decisions. The problem only arises when the environment changes or the defaults are bad.</p></div>
+    <div class="feat"><h4>Individual Differences</h4><p>People with higher working memory capacity are more resistant to cognitive load effects. Atrophy is not uniform &mdash; baseline capacity shapes how quickly defaults take over.</p></div>
+  </div>`
+];
+
+const details = [
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div>
+    <h2>The <em>Dual-System</em> Foundation</h2>
+  </div>
+  <p>The distinction between fast and slow thinking is one of the most empirically grounded frameworks in cognitive psychology, built on decades of work by Kahneman, Tversky, and others. But its importance for the atrophy thesis lies not in the architecture itself but in the dynamics of how the balance between systems shifts over time, context, and life history.</p>
+  <p>System 1 — automatic, associative, fast — is always running. It produces continuous background assessments of situation: safe/dangerous, familiar/novel, approach/avoid. Most of the time, System 1&rsquo;s output is what guides behavior. System 2 — deliberate, effortful, rule-following — is recruited only when System 1 encounters something it cannot resolve: a novel problem, a logical inconsistency, a situation where fast pattern-matching would be obviously inadequate.</p>
+  <h3>The Atrophy Dynamic</h3>
+  <p>The critical insight for this project is what happens when System 2 capacity degrades. This happens in at least four ways: through habit formation (deliberation is progressively replaced by automatic response), through fatigue and ego depletion (the resource pool for System 2 is temporarily exhausted), through cognitive load (working memory is occupied by other tasks, leaving no space for deliberation), and through aging (prefrontal cortex changes reduce System 2 efficiency over the lifespan). In each case, the outcome is the same: System 1 expands to fill the space that System 2 vacates.</p>
+  <p>The practical effect is that decisions increasingly resemble the output of pattern-matching against stored history rather than evaluation of current options. You are not choosing from what is available — you are choosing from what was available last time a similar situation arose, filtered through whatever habits formed in the interim.</p>
+  <div class="callout">
+    <h4>The Core Mechanism</h4>
+    <p>Atrophy of deliberative capacity does not create a vacuum. System 1 fills the space immediately and invisibly. The person continues to experience their behavior as chosen.</p>
+  </div>
+  <h3>Empirical Grounding</h3>
+  <p>Kahneman&rsquo;s framework synthesizes research from multiple traditions: dual-process theory (Stanovich and West), the heuristics-and-biases literature, and neuroimaging work distinguishing prefrontal (deliberative) from subcortical (automatic) processing. The 95% figure — estimates that roughly 95% of decisions are automated — comes from consumer behavior research and is contested in its precision but directionally supported. What matters is the asymmetry: deliberation is the exception, not the rule, even in populations with high cognitive capacity.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="18" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" letter-spacing="1.5">SYSTEM 1 EXPANSION WITH ATROPHY</text>
+    <line x1="30" y1="26" x2="370" y2="26" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <rect x="30" y="40" width="340" height="30" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="1"/>
+    <text x="200" y="60" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">Baseline: S1 large, S2 moderate</text>
+    <rect x="30" y="80" width="310" height="30" rx="3" fill="rgba(91,91,214,0.09)" stroke="#5b5bd6" stroke-width="1"/>
+    <rect x="340" y="80" width="30" height="30" rx="3" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="1"/>
+    <text x="180" y="100" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">Habit formation: S1 grows, S2 shrinks</text>
+    <rect x="30" y="120" width="340" height="30" rx="3" fill="rgba(91,91,214,0.13)" stroke="#5b5bd6" stroke-width="1.5"/>
+    <rect x="370" y="120" width="0" height="30" rx="3" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="1"/>
+    <text x="200" y="140" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl-hi">High atrophy: S1 dominates, S2 vestigial</text>
+    <rect x="50" y="163" width="160" height="14" rx="2" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+    <text x="130" y="173" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi">System 1 (automatic)</text>
+    <rect x="220" y="163" width="80" height="14" rx="2" fill="rgba(14,143,208,0.06)" stroke="#0e8fd0" stroke-width="0.5"/>
+    <text x="260" y="173" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">System 2</text>
+    <rect x="310" y="163" width="70" height="14" rx="2" fill="rgba(0,0,0,0.03)" stroke="#888" stroke-width="0.5"/>
+    <text x="345" y="173" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Default zone</text>
+  </svg></div>
+  <h3>Implications for Agency</h3>
+  <p>The standard model of rational choice assumes that agents evaluate available options and select the utility-maximizing option. The dual-system framework shows this is almost never what happens. Agency — in the sense of deliberate selection from an evaluated option space — is a metabolically expensive mode that the brain deploys sparingly. The question is not whether people choose deliberately, but under what conditions deliberation is even initiated. Atrophy is what determines those conditions.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div>
+    <h2>Habit as <em>Degraded</em> Deliberation</h2>
+  </div>
+  <p>The <a href="https://www.cell.com/trends/cognitive-sciences/fulltext/S1364-6613(24)00266-3" target="_blank">2024 Trends in Cognitive Sciences paper</a> by Wood and Rünger on habit formation is among the most comprehensive recent treatments of the neuroscience. Their key finding: habit formation is not just the acquisition of a new behavior. It is the progressive transfer of behavioral control from prefrontal to striatal circuits — a transfer that, once made, is not easily reversed.</p>
+  <p>The prefrontal cortex is the seat of goal-directed behavior: it evaluates outcomes, considers alternatives, and maintains abstract representations of goals across time. The striatum — particularly the dorsal striatum — stores associations between contexts, actions, and outcomes. When an action is repeated consistently in a consistent context, striatal circuits strengthen, and the prefrontal consultation is bypassed. The behavior is executed because the context was encountered, not because a goal required it.</p>
+  <h3>The Automaticity Gradient</h3>
+  <p>Habit strength exists on a continuum. Early in habit formation, prefrontal involvement is high — the behavior is still deliberate. As repetitions accumulate and context-action associations strengthen, prefrontal involvement decreases. At high habit strength, the behavior occurs before prefrontal circuits can even register the situation as one requiring evaluation. This is why people arrive at their old workplace by force of habit after moving, or reach for a phone they no longer carry: the habit fires before the goal-directed system can correct it.</p>
+  <p>The implications for decision-making are stark. If you have spent 15 years in a particular job, neighborhood, or relationship pattern, the decision of how to spend a morning is not made deliberatively — it is executed from the habit repertoire. What looks like a free choice is the output of strongly established striatal associations. You are not choosing; you are following.</p>
+  <div class="callout">
+    <h4>The Invisible Transfer</h4>
+    <p>The shift from goal-directed to habitual control is not noticed by the agent. From the inside, habitual behavior feels chosen. This is the phenomenological core of the atrophy thesis: degraded deliberation is subjectively indistinguishable from deliberation.</p>
+  </div>
+  <h3>Computational Evidence</h3>
+  <p>The <a href="https://www.biorxiv.org/content/10.1101/2024.10.12.618033v1.full.pdf" target="_blank">Lakshminarasimhan et al. (2024) computational model</a> formalizes this: it shows mathematically how the cost-benefit structure of deliberation leads to progressive atrophy of goal-directed computation as habit value increases. Once a habit is sufficiently strong, the expected value of deliberating (potential improvement in outcome) does not exceed the cost (cognitive effort), so deliberation is not initiated. This is rational habit formation — but its outcome is decisions constrained by the history of past decisions, not the landscape of current options.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="220" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="18" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" letter-spacing="1.5">HABIT FORMATION: CONTROL TRANSFER</text>
+    <line x1="30" y1="26" x2="370" y2="26" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <text x="50" y="50" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">PFC involvement</text>
+    <text x="50" y="120" font-family="'IBM Plex Mono',monospace" font-size="8" class="lbl">Striatal control</text>
+    <polyline points="100,60 160,70 220,90 280,110 340,135" stroke="#5b5bd6" stroke-width="2" fill="none"/>
+    <polyline points="100,130 160,118 220,100 280,82 340,65" stroke="#14966e" stroke-width="2" fill="none"/>
+    <text x="355" y="138" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">↓PFC</text>
+    <text x="345" y="62" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi">↑Str</text>
+    <line x1="100" y1="155" x2="340" y2="155" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <text x="100" y="168" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Early</text>
+    <text x="195" y="168" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Practice</text>
+    <text x="320" y="168" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Habit</text>
+    <rect x="40" y="185" width="320" height="22" fill="rgba(0,0,0,0.03)" rx="3"/>
+    <text x="200" y="200" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Striatum takes over from PFC; deliberation is bypassed, not suppressed</text>
+  </svg></div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div>
+    <h2><em>Decision</em> Fatigue</h2>
+  </div>
+  <p>Decision fatigue is one of the most practically consequential findings in behavioral science. The effect is robust: people who make many decisions in sequence show degraded decision quality, increased preference for status quo options, and reduced willingness to make complex trade-offs. The Israeli parole board study by Danziger, Levav, and Avnaim-Pesso remains the canonical demonstration, though its interpretation has been contested.</p>
+  <p>Roy Baumeister, who developed the ego depletion framework, has spent over two decades refining the model. <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">The 2024 Current Opinion in Psychology review</a> acknowledges early replication failures but argues these reflect insufficient manipulation strength rather than a null effect. With sufficiently strong depletion inductions — longer tasks, more demanding, with genuine stakes — the effects are consistent.</p>
+  <h3>The Mechanism: Conservation, Not Exhaustion</h3>
+  <p>The updated ego depletion model shifts from a pure resource model (willpower as fuel that runs out) to a conservation model (willpower as a resource that people become increasingly reluctant to spend as it depletes). This distinction matters. Pure exhaustion predicts inability to deliberate; conservation predicts unwillingness. In the conservation model, depleted people can deliberate if sufficiently motivated — but without motivation, they default. This maps more closely onto the atrophy thesis: the capacity for deliberation remains, but the threshold for initiating it rises as resources thin.</p>
+  <div class="callout">
+    <h4>The Parole Finding</h4>
+    <p>Judges who had been deciding all morning defaulted to the safe option &mdash; deny parole &mdash; not because they were irrational, but because exhausted deliberation defaults to the lower-risk, lower-effort choice. The prison sentence was the status quo; maintaining it required the least cognitive work.</p>
+  </div>
+  <h3>Extending to Healthcare and Burnout</h3>
+  <p>The <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/imj.16121" target="_blank">Schweitzer, Baumeister et al. 2023 paper</a> in <em>Internal Medicine Journal</em> applies decision fatigue to clinical settings. Physicians who see many patients in sequence show degraded prescription quality: more unnecessary antibiotic prescriptions (low-effort default) and fewer cancer screening referrals (high-effort, high-deliberation decision) later in the day. The implications for healthcare equity are serious — patients seen last in a session receive lower-quality deliberation than those seen first. This is not physician failure; it is the systematic effect of decision atrophy on an entire professional population.</p>
+  <div class="diagram-wrap"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="200" fill="rgba(0,0,0,0.025)" rx="6"/>
+    <text x="200" y="18" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" class="lbl-hi" letter-spacing="1.5">DECISION QUALITY OVER SESSION</text>
+    <line x1="30" y1="26" x2="370" y2="26" stroke="currentColor" class="border" stroke-width="0.5"/>
+    <polyline points="60,50 110,60 160,80 210,100 240,130 260,158" stroke="#5b5bd6" stroke-width="2" fill="none"/>
+    <line x1="260" y1="100" x2="260" y2="158" stroke="#14966e" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="268" y="130" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi">break</text>
+    <polyline points="260,100 300,85 340,75" stroke="#5b5bd6" stroke-width="2" fill="none"/>
+    <text x="42" y="50" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl-hi">High</text>
+    <text x="42" y="160" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Low</text>
+    <text x="200" y="178" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">← Decision quality declines; break partially restores →</text>
+  </svg></div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div>
+    <h2>Working Memory <em>Limits</em></h2>
+  </div>
+  <p>John Sweller&rsquo;s cognitive load theory, developed through the 1980s and 1990s, provides the architectural account of why deliberation is constrained. Working memory — the cognitive workspace where deliberation happens — is radically limited: approximately 4–7 chunks of information for about 20 seconds. This is not a pathology or a failure. It is a design feature of the human cognitive architecture.</p>
+  <p>The practical consequence is that any situation with intrinsic complexity exceeding this limit — which describes a large fraction of adult decisions — cannot be fully deliberated. Simplifications, heuristics, and defaults are not signs of laziness or cognitive impairment; they are the inevitable output of a system with finite capacity operating in an environment of unlimited complexity.</p>
+  <h3>Three Types of Load</h3>
+  <p>Cognitive load theory distinguishes three types: intrinsic load (the inherent complexity of the problem), extraneous load (unnecessary cognitive demands introduced by the environment), and germane load (the effort of building and consolidating schemas). For decision-making under atrophy, intrinsic and extraneous load are most relevant. As schemas degrade (skills and knowledge decay with disuse), more intrinsic load is incurred by problems that were once routine. Simultaneously, aging-related changes in processing speed and working memory capacity mean that the same objective load is experienced as heavier.</p>
+  <div class="callout">
+    <h4>The Schema Effect</h4>
+    <p>Expertise reduces cognitive load by chunking: an expert sees a chess position as a pattern, not 32 individual pieces. When expertise atrophies, chunking fails. The expert who has stopped practicing is not the same as a novice &mdash; but they carry the same load as one.</p>
+  </div>
+  <h3>Implications for the Lifespan</h3>
+  <p>Working memory capacity peaks in early adulthood and declines with age. The decline is gradual and individual differences are substantial, but the direction is consistent. Older adults with reduced working memory capacity cannot hold as many options in mind simultaneously, cannot maintain deliberation over as long a time horizon, and cannot resist the pull of established habits and defaults as effectively. The decisions of aging are therefore structurally more constrained by atrophy &mdash; not because older adults are less rational, but because the cognitive workspace that rationality requires has a smaller footprint.</p>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div>
+    <h2>The Rise of <em>Default</em> Options</h2>
+  </div>
+  <p>Defaults are the options that are selected when no active choice is made. They are set by designers, institutions, and contexts — organ donation opt-out systems, default investment funds, pre-ticked consent boxes. Behavioral economists have documented their power: in most cases, the majority of people end up with the default option regardless of whether it is the option they would actively choose.</p>
+  <p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6119549/" target="_blank">Pignatiello, Martin, and Hickey&rsquo;s conceptual analysis</a> of decision fatigue identifies three mechanisms by which fatigued decision-makers converge on defaults: (1) they choose the pre-set default because evaluating alternatives is too costly; (2) they defer decisions, effectively accepting whatever happens in the absence of choice; (3) they delegate decisions to others, ceding control over outcomes. All three are forms of decision atrophy expressing itself as default convergence.</p>
+  <h3>Defaults as Environmental Atrophy Capture</h3>
+  <p>There is a profound political economy to defaults. When a person&rsquo;s deliberative capacity is degraded, they do not choose randomly from the option space. They choose whoever designed the context&rsquo;s preferred option. This means the distribution of cognitive atrophy across a population determines who benefits from the environment&rsquo;s default structures. Populations with high decision load (poverty, precarious employment, caregiving) are systematically more exposed to default capture than those with cognitive slack.</p>
+  <div class="callout">
+    <h4>The Nudge Problem</h4>
+    <p>Nudge policy deliberately designs defaults to benefit the nudged. The atrophy problem is that nudges only work &mdash; for good or ill &mdash; because deliberation has been bypassed. Every effective nudge is also evidence of atrophy.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div>
+    <h2>Chronic <em>Depletion</em> &amp; Burnout</h2>
+  </div>
+  <p>Acute decision fatigue resolves with rest. But <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">Baumeister et al.&rsquo;s 2024 review</a> introduces the concept of chronic ego depletion: a sustained state in which the depletion is not episodic but persistent, not resolving with normal rest cycles. This corresponds clinically to burnout — a condition characterized by exhaustion, cynicism, and reduced professional efficacy.</p>
+  <p>In chronic depletion, the pattern of default-seeking and deliberation avoidance becomes habituated. People not only fail to deliberate in depleted states — they stop expecting to deliberate, stop building deliberation into their planning, and develop stable behavioral patterns organized around avoiding deliberative demand. The cognitive atrophy is no longer just functional; it begins to consolidate into the identity and habit structures described in <a href="s5-identity-atrophy.dd.html">S5</a> and <a href="s4-motivational-atrophy.dd.html">S4</a>.</p>
+  <h3>The Self-Concealing Nature of Cognitive Atrophy</h3>
+  <p>A consistent finding across decision fatigue, cognitive load, and chronic depletion research is that people in degraded deliberative states are not aware of the degradation. Judges gave fewer favorable rulings without noticing they were doing so. Physicians prescribed more antibiotics without registering that their practice had changed. The capacity to assess one&rsquo;s own deliberative state is itself a deliberative capacity — and it is among the first to degrade. This creates a second-order trap: the more you need to recognize that you are defaulting, the less able you are to recognize it.</p>
+  <div class="callout">
+    <h4>The Burnout Paradox</h4>
+    <p>Burnout reduces the capacity for the deliberation that would be required to recognize burnout and take recovery action. The atrophy of decision capacity is self-concealing and self-maintaining.</p>
+  </div>`,
+
+  `<div class="detail-header">
+    <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div>
+    <h2>What Sources <em>Disagree</em> On</h2>
+  </div>
+  <p>The cognitive defaults literature is one of the more contested areas in psychology, with significant ongoing debate about both mechanisms and magnitude of effects. Three fault lines are most relevant to the atrophy thesis.</p>
+  <h3>The Replication Crisis and Its Aftermath</h3>
+  <p>Several high-profile replications of ego depletion effects failed in the mid-2010s, generating a period of significant skepticism. The current consensus, represented in the <a href="https://www.sciencedirect.com/science/article/pii/S2352250X24000952" target="_blank">2024 Baumeister review</a>, is nuanced: the original effect sizes were overstated, and many early studies used manipulations too weak to detect real effects. With adequate manipulation strength (longer, more demanding tasks), effects are consistent. The parole data — a naturalistic, high-stakes observation — remains the most compelling evidence because it does not rely on laboratory induction.</p>
+  <h3>Resource vs. Motivation Account</h3>
+  <p>Michael Inzlicht and colleagues argue that ego depletion is better explained by motivational shifts than resource exhaustion. Depleted people are not unable to deliberate; they are less motivated to. The distinction carries implications: a resource account predicts that deliberation is structurally impossible under depletion; a motivational account predicts that it is costly but possible with sufficient incentive. Both accounts agree that defaults become more likely as resources or motivation decline — they disagree about the ceiling of the effect.</p>
+  <h3>Individual Differences</h3>
+  <p>Working memory capacity, trait self-control, and need for cognition all moderate the relationship between depletion and decision quality. This means atrophy of deliberation is not uniform. High-capacity individuals show less default convergence under equivalent depletion. But the moderating variables are themselves subject to atrophy — working memory declines with age, trait self-control erodes with chronic stress — so the individual-difference buffer is not permanent.</p>`
+];
+
+const HERO_BADGE = 'ATROPHY &amp; DECISIONS &middot; S1 &middot; 8 SOURCES';
+const HERO_TITLE = '<em>Cognitive</em> Atrophy &amp; Decision Defaults';
+const HERO_SUB_LEFT = 'Habit, fatigue, and cognitive load as governors of choice';
+const HERO_SUB_RIGHT = 'Kahneman &middot; Baumeister &middot; Sweller';
+const SIDEBAR_LOGO = 'A<em>D</em>';
+
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head"><div class="sidebar-logo">${SIDEBAR_LOGO}</div></div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> ${HERO_BADGE}</div>
+        <div class="hero-title">${HERO_TITLE}</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>${HERO_SUB_LEFT}</span><span>${HERO_SUB_RIGHT}</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `<div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div><h2>${sec.title}</h2>${summaries[idx]}`;
+  mainInner.appendChild(block);
+});
+
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+let lastDetailIdx = 0;
+function scrollToSection(idx) { const blocks = document.querySelectorAll('.section-block'); if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'}); }
+function openDetail(idx) { lastDetailIdx = idx; document.querySelectorAll('.detail').forEach(d => d.style.display = 'none'); document.getElementById(`detail-${idx}`).style.display = 'block'; document.getElementById('right').classList.remove('closed'); document.body.classList.add('detail-open'); document.getElementById('right').scrollTop = 0; document.getElementById('right-sticky-title').classList.remove('visible'); }
+function closeRight() { document.getElementById('right').classList.add('closed'); document.body.classList.remove('detail-open'); }
+function toggleDetail() { if (document.body.classList.contains('detail-open')) { closeRight(); } else { openDetail(lastDetailIdx); } }
+function toggleTheme() { const current = document.documentElement.getAttribute('data-theme'); const next = current === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('theme', next); }
+
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => { if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i; });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) { stickyTitle.textContent = h2.textContent; stickyTitle.classList.add('visible'); topbar.classList.add('scrolled'); } else { stickyTitle.classList.remove('visible'); topbar.classList.remove('scrolled'); }
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+</script>
+</body>
+</html>
