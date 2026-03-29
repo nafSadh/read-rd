@@ -4,7 +4,7 @@
 
 - [x] Literature collection (34 sources)
 - [x] Unified deep-dive (8 sections, 2 SVGs)
-- [ ] Survey paper (Wikipedia-style citations, consolidated references)
+- [x] Survey paper (Wikipedia-style citations, consolidated references)
 - [ ] Survey slides
 
 ## Source Adequacy
