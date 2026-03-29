@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Democratic Backsliding &mdash; Slide Deck</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  /* SVG fills — light */
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Only prevent selection on nav controls, not slide content */
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+/* ---- SLIDE CONTAINER ---- */
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- SLIDE LAYOUT ---- */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+/* Subtle divider between text and SVG columns */
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+/* ---- TEXT ELEMENTS ---- */
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+/* Constrain content width on ultrawide screens — skip title & divider slides */
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- TITLE SLIDE ---- */
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+/* ---- TOC ---- */
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION DIVIDER ---- */
+/* Light mode: warm accent background */
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+/* Dark mode: deeper accent-tinted background */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+/* ---- NAVIGATION (overlay at viewport bottom) ---- */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* SVG Styling */
+.fig { overflow: visible; } /* prevent viewBox clipping on edges */
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+/* Center text vertically in boxes when text-anchor is middle */
+.fig .box-label { dominant-baseline: central; }
+
+/* Dark mode SVG overrides — remap hardcoded fills/strokes */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  /* accent colors shift slightly brighter in dark */
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+/* Animations for SVG */
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Democratic <em>Backsliding</em></h1>
+  <div class="ref">How democracies die &mdash; slowly, legally, and in plain sight</div>
+  <div class="ref">V-Dem 2026 &middot; Carnegie Endowment &middot; International IDEA &middot; Levitsky &amp; Ziblatt</div>
+  <div class="meta">Arrow keys / click / swipe &middot; &#9680; for dark mode</div>
+</div>
+
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">OVERVIEW</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>What We&rsquo;ll Cover</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <ol class="toc-list">
+        <li><span class="toc-num">I</span> What Is Democratic Backsliding?</li>
+        <li><span class="toc-num">II</span> The Global Picture</li>
+        <li><span class="toc-num">III</span> How It Works</li>
+        <li><span class="toc-num">IV</span> Case Studies</li>
+        <li><span class="toc-num">V</span> Resistance &amp; Recovery</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">DEFINITION</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>What Is Democratic<br>Backsliding?</h1>
+  <div class="subtitle">Not a coup. Not a revolution. Something quieter.</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;1 &middot; Definition</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>The Slow Erosion</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Democratic backsliding is the <strong>gradual weakening of democratic institutions</strong> by leaders who were democratically elected.</p>
+      <p class="point">It doesn&rsquo;t look like a military coup. It looks like <strong>legal actions</strong> &mdash; executive orders, judicial appointments, media regulations &mdash; that individually seem routine but cumulatively concentrate power.</p>
+      <p class="point">Nancy Bermeo (2016) identifies the dominant modern pattern: <strong>executive aggrandizement</strong> &mdash; elected leaders weakening checks on their power one by one, through institutional changes that hamper opposition.</p>
+      <div class="key-idea">
+        <div class="kicker">The key insight</div>
+        <p>Democracies rarely die overnight. They are dismantled in daylight, one norm at a time, by people who won elections.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="18" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">HOW DEMOCRACIES USED TO DIE vs NOW</text>
+        <line x1="20" y1="28" x2="320" y2="28" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="20" y="45" width="140" height="120" rx="4" fill="rgba(0,0,0,0.03)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="90" y="65" text-anchor="middle" font-size="9" fill="#6e6b64" font-weight="600">20th Century</text>
+        <text x="90" y="85" text-anchor="middle" font-size="8" fill="#6e6b64">Military coups</text>
+        <text x="90" y="100" text-anchor="middle" font-size="8" fill="#6e6b64">Election fraud</text>
+        <text x="90" y="115" text-anchor="middle" font-size="8" fill="#6e6b64">Sudden &amp; visible</text>
+        <text x="90" y="135" text-anchor="middle" font-size="8" fill="#6e6b64">Tanks in the square</text>
+        <text x="90" y="155" text-anchor="middle" font-size="7" fill="#b0ada5">DECLINING</text>
+        <rect x="180" y="45" width="140" height="120" rx="4" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="250" y="65" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">21st Century</text>
+        <text x="250" y="85" text-anchor="middle" font-size="8" fill="#6e6b64">Executive aggrandizement</text>
+        <text x="250" y="100" text-anchor="middle" font-size="8" fill="#6e6b64">Norm erosion</text>
+        <text x="250" y="115" text-anchor="middle" font-size="8" fill="#6e6b64">Gradual &amp; legal</text>
+        <text x="250" y="135" text-anchor="middle" font-size="8" fill="#6e6b64">Laws on the books</text>
+        <text x="250" y="155" text-anchor="middle" font-size="7" fill="#5b5bd6">RISING</text>
+        <rect x="40" y="185" width="260" height="50" rx="4" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="205" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Two Essential Norms (Levitsky &amp; Ziblatt)</text>
+        <text x="110" y="225" text-anchor="middle" font-size="7.5" fill="#5b5bd6">Mutual Toleration</text>
+        <text x="240" y="225" text-anchor="middle" font-size="7.5" fill="#5b5bd6">Institutional Forbearance</text>
+        <text x="40" y="265" font-size="7" fill="#6e6b64">Treat opponents</text>
+        <text x="40" y="277" font-size="7" fill="#6e6b64">as legitimate</text>
+        <text x="185" y="265" font-size="7" fill="#6e6b64">Don&rsquo;t use all the power</text>
+        <text x="185" y="277" font-size="7" fill="#6e6b64">you technically have</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">V-DEM 2026</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h1>The Global<br>Picture</h1>
+  <div class="subtitle">Democracy for the average person has fallen back to 1978 levels.</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;2 &middot; V-Dem 2026 Report</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>The State of Democracy in 2025</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The V-Dem Institute (Univ. of Gothenburg) produces the world&rsquo;s largest democracy dataset: <strong>202 countries, data from 1789, 4,200+ scholars</strong>.</p>
+      <p class="point">Their 2026 report &mdash; titled <em>&ldquo;Unraveling the Democratic Era?&rdquo;</em> &mdash; finds that the gains of the third wave of democratization since the mid-1970s are <strong>almost entirely erased</strong>.</p>
+      <p class="point"><strong>44 countries</strong> are currently autocratizing (home to 41% of world population &mdash; a record). Only <strong>18 countries</strong> are democratizing (just 5% of population).</p>
+      <p class="point">For the second year running, <strong>autocracies outnumber democracies</strong> globally: 92 to 87.</p>
+      <div class="key-idea">
+        <div class="kicker">Nine straight years</div>
+        <p>International IDEA confirms: 2024 was the ninth consecutive year where more countries declined than improved.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">GLOBAL SNAPSHOT &mdash; 2025</text>
+        <line x1="20" y1="26" x2="320" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- Autocratizing bar -->
+        <rect x="30" y="45" width="220" height="40" rx="3" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="40" y="60" font-size="8" fill="#5b5bd6" font-weight="600">44 countries autocratizing</text>
+        <text x="40" y="75" font-size="7" fill="#6e6b64">41% of world population (record high)</text>
+        <!-- Democratizing bar -->
+        <rect x="30" y="95" width="90" height="40" rx="3" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="0.8"/>
+        <text x="40" y="110" font-size="8" fill="#0d9488" font-weight="600">18 democratizing</text>
+        <text x="40" y="125" font-size="7" fill="#6e6b64">5% of population</text>
+        <!-- Top targets -->
+        <text x="170" y="160" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">TOP TARGETS OF EROSION</text>
+        <line x1="60" y1="168" x2="280" y2="168" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="30" y="180" width="280" height="24" rx="3" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="170" y="196" text-anchor="middle" font-size="8" fill="#7c3aed">#1: Freedom of Expression</text>
+        <rect x="30" y="212" width="240" height="24" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="150" y="228" text-anchor="middle" font-size="8" fill="#5b5bd6">#2: Rule of Law &amp; Checks on Power</text>
+        <rect x="30" y="244" width="200" height="24" rx="3" fill="rgba(14,165,233,0.06)" stroke="#0ea5e9" stroke-width="0.5"/>
+        <text x="130" y="260" text-anchor="middle" font-size="8" fill="#0ea5e9">#3: Electoral Integrity</text>
+        <!-- New autocratizers -->
+        <text x="170" y="295" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">NEW AUTOCRATIZERS IN 2025</text>
+        <line x1="60" y1="303" x2="280" y2="303" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="322" text-anchor="middle" font-size="7.5" fill="#6e6b64">Cambodia &middot; Croatia &middot; Italy &middot; Kuwait</text>
+        <text x="170" y="338" text-anchor="middle" font-size="7.5" fill="#6e6b64">Madagascar &middot; Slovakia &middot; Slovenia &middot; Togo</text>
+        <text x="170" y="354" text-anchor="middle" font-size="7.5" fill="#5b5bd6" font-weight="500">United Kingdom &middot; United States</text>
+        <text x="170" y="372" text-anchor="middle" font-size="7" fill="#b0ada5">6 of 10 are in Europe and North America</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;2 &middot; The American Case</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>The U.S.: &ldquo;Unprecedented&rdquo; Speed</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">For the first time in over 50 years, the U.S. has been <strong>downgraded from &ldquo;liberal democracy&rdquo; to &ldquo;electoral democracy&rdquo;</strong> by V-Dem.</p>
+      <p class="point">The Carnegie Endowment finds the pace of executive dominance &ldquo;striking&rdquo; compared to other backsliding cases. Trump&rsquo;s team works to weaken checks <strong>across multiple levels simultaneously</strong>.</p>
+      <p class="point">The Freedom in the World index (2026) gave the U.S. its <strong>lowest score (81/100)</strong> since the 100-point system began in 2002.</p>
+      <p class="point">The Polity data series now labels the United States an <strong>anocracy</strong> &mdash; a regime between democracy and autocracy.</p>
+      <div class="key-idea">
+        <div class="kicker">V-Dem&rsquo;s Director</div>
+        <p>&ldquo;The U.S. democracy is currently in a much faster deterioration process than any other democracy in modern times.&rdquo; &mdash; Staffan I. Lindberg</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">U.S. DEMOCRACY INDICES</text>
+        <line x1="20" y1="26" x2="320" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- V-Dem -->
+        <rect x="30" y="45" width="130" height="60" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="95" y="62" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">V-DEM 2026</text>
+        <text x="95" y="80" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="500">Electoral Democracy</text>
+        <text x="95" y="95" text-anchor="middle" font-size="7" fill="#6e6b64">(was: Liberal Democracy)</text>
+        <!-- Freedom House -->
+        <rect x="180" y="45" width="130" height="60" rx="3" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.8"/>
+        <text x="245" y="62" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="600">FREEDOM HOUSE</text>
+        <text x="245" y="80" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="500">81 / 100</text>
+        <text x="245" y="95" text-anchor="middle" font-size="7" fill="#6e6b64">(lowest since 2002)</text>
+        <!-- Polity -->
+        <rect x="30" y="120" width="130" height="60" rx="3" fill="rgba(14,165,233,0.06)" stroke="#0ea5e9" stroke-width="0.8"/>
+        <text x="95" y="137" text-anchor="middle" font-size="7" fill="#0ea5e9" font-weight="600">POLITY DATA</text>
+        <text x="95" y="155" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="500">Anocracy</text>
+        <text x="95" y="170" text-anchor="middle" font-size="7" fill="#6e6b64">(between demo &amp; autocracy)</text>
+        <!-- IDEA -->
+        <rect x="180" y="120" width="130" height="60" rx="3" fill="rgba(13,148,136,0.06)" stroke="#0d9488" stroke-width="0.8"/>
+        <text x="245" y="137" text-anchor="middle" font-size="7" fill="#0d9488" font-weight="600">INTL IDEA</text>
+        <text x="245" y="155" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="500">Backsliding</text>
+        <text x="245" y="170" text-anchor="middle" font-size="7" fill="#6e6b64">(since 2021 classification)</text>
+        <!-- Timeline -->
+        <text x="170" y="210" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">DECLINE TIMELINE</text>
+        <line x1="50" y1="230" x2="290" y2="230" stroke="#5b5bd6" stroke-width="1"/>
+        <circle cx="50" cy="230" r="3" fill="#5b5bd6"/>
+        <text x="50" y="250" text-anchor="middle" font-size="7" fill="#6e6b64">2016</text>
+        <text x="50" y="262" text-anchor="middle" font-size="6" fill="#b0ada5">IDEA scores</text>
+        <text x="50" y="272" text-anchor="middle" font-size="6" fill="#b0ada5">begin sliding</text>
+        <circle cx="120" cy="230" r="3" fill="#5b5bd6"/>
+        <text x="120" y="250" text-anchor="middle" font-size="7" fill="#6e6b64">2021</text>
+        <text x="120" y="262" text-anchor="middle" font-size="6" fill="#b0ada5">Jan 6</text>
+        <text x="120" y="272" text-anchor="middle" font-size="6" fill="#b0ada5">backsliding label</text>
+        <circle cx="210" cy="230" r="3" fill="#5b5bd6"/>
+        <text x="210" y="250" text-anchor="middle" font-size="7" fill="#6e6b64">2025</text>
+        <text x="210" y="262" text-anchor="middle" font-size="6" fill="#b0ada5">~200 exec orders</text>
+        <text x="210" y="272" text-anchor="middle" font-size="6" fill="#b0ada5">anocracy label</text>
+        <circle cx="290" cy="230" r="4" fill="#7c3aed"/>
+        <text x="290" y="250" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">2026</text>
+        <text x="290" y="262" text-anchor="middle" font-size="6" fill="#7c3aed">liberal democracy</text>
+        <text x="290" y="272" text-anchor="middle" font-size="6" fill="#7c3aed">status lost</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">MECHANISM</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h1>How It<br>Works</h1>
+  <div class="subtitle">The playbook is public. The autocrats compare notes.</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;3 &middot; The Playbook</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>Five Steps to Hollow a Democracy</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>1. Discredit the press.</strong> Label unfavorable coverage &ldquo;fake news.&rdquo; Create state-friendly alternatives. Defund public media.</p>
+      <p class="point"><strong>2. Gut the judiciary.</strong> Pack courts with loyalists. Transfer independent judges. Ignore rulings you don&rsquo;t like.</p>
+      <p class="point"><strong>3. Weaponize prosecution.</strong> Investigate opponents. Pardon allies. Politicize law enforcement.</p>
+      <p class="point"><strong>4. Erode electoral integrity.</strong> Gerrymander. Restrict voting access. Challenge results preemptively.</p>
+      <p class="point"><strong>5. Normalize it.</strong> Do it openly. Do it fast. Make the outrageous routine. Exhaust the capacity for outrage.</p>
+      <p class="note">Every step is individually defensible. &ldquo;We&rsquo;re just holding the media accountable.&rdquo; &ldquo;We&rsquo;re just appointing qualified judges.&rdquo; The pattern only emerges in aggregate.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">THE BACKSLIDING SEQUENCE</text>
+        <line x1="40" y1="26" x2="300" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <defs><marker id="arr2" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#5b5bd6"/></marker></defs>
+        <!-- Step boxes connected by arrows -->
+        <rect x="70" y="40" width="200" height="34" rx="3" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.8"/>
+        <text x="170" y="61" text-anchor="middle" font-size="8.5" fill="#7c3aed" font-weight="500">1. Discredit the Press</text>
+        <line x1="170" y1="74" x2="170" y2="88" stroke="#5b5bd6" stroke-width="1" marker-end="url(#arr2)"/>
+        <rect x="70" y="90" width="200" height="34" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="170" y="111" text-anchor="middle" font-size="8.5" fill="#5b5bd6" font-weight="500">2. Capture the Courts</text>
+        <line x1="170" y1="124" x2="170" y2="138" stroke="#5b5bd6" stroke-width="1" marker-end="url(#arr2)"/>
+        <rect x="70" y="140" width="200" height="34" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="170" y="161" text-anchor="middle" font-size="8.5" fill="#5b5bd6" font-weight="500">3. Weaponize Prosecution</text>
+        <line x1="170" y1="174" x2="170" y2="188" stroke="#5b5bd6" stroke-width="1" marker-end="url(#arr2)"/>
+        <rect x="70" y="190" width="200" height="34" rx="3" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.8"/>
+        <text x="170" y="211" text-anchor="middle" font-size="8.5" fill="#5b5bd6" font-weight="500">4. Erode Elections</text>
+        <line x1="170" y1="224" x2="170" y2="238" stroke="#5b5bd6" stroke-width="1" marker-end="url(#arr2)"/>
+        <rect x="70" y="240" width="200" height="34" rx="3" fill="rgba(0,0,0,0.04)" stroke="#1a1a1a" stroke-width="1"/>
+        <text x="170" y="261" text-anchor="middle" font-size="8.5" fill="#1a1a1a" font-weight="600">5. Normalize Everything</text>
+        <!-- Side annotation -->
+        <rect x="40" y="300" width="260" height="40" rx="4" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="316" text-anchor="middle" font-size="7.5" fill="#6e6b64">Each step looks routine in isolation.</text>
+        <text x="170" y="330" text-anchor="middle" font-size="7.5" fill="#5b5bd6" font-weight="500">The pattern only emerges in aggregate.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;3 &middot; Target #1</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Freedom of Expression: The First Casualty</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">V-Dem finds that <strong>freedom of expression shows the most drastic global decline</strong> and is the most common target among autocratizing leaders over the past 25 years.</p>
+      <p class="point">The RSF World Press Freedom Index (2025) classified the global situation as <strong>&ldquo;difficult&rdquo; for the first time</strong> in its history.</p>
+      <p class="point">The pattern is consistent: <strong>first you attack the press</strong>, because controlling information is prerequisite to everything else. If citizens don&rsquo;t know what&rsquo;s happening, they can&rsquo;t resist it.</p>
+      <p class="point">In 2025, the AP was banned from the White House briefing room. The administration launched a &ldquo;Media Bias Portal&rdquo; with an &ldquo;Offender Hall of Shame.&rdquo; ICE agents physically attacked journalists.</p>
+      <div class="key-idea">
+        <div class="kicker">Why expression first?</div>
+        <p>You can&rsquo;t erode institutions in secret if someone is watching. Silencing the watchers comes first.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">PRESS FREEDOM STATUS (RSF 2025)</text>
+        <line x1="20" y1="26" x2="320" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- Global status indicator -->
+        <rect x="60" y="45" width="220" height="50" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+        <text x="170" y="68" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="600">DIFFICULT</text>
+        <text x="170" y="85" text-anchor="middle" font-size="7" fill="#6e6b64">First time in index history</text>
+        <!-- Key drivers -->
+        <text x="170" y="120" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">KEY DRIVERS</text>
+        <line x1="80" y1="128" x2="260" y2="128" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="40" y="140" width="260" height="26" rx="3" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="157" text-anchor="middle" font-size="8" fill="#5b5bd6">Political repression &amp; intimidation</text>
+        <rect x="40" y="174" width="260" height="26" rx="3" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="191" text-anchor="middle" font-size="8" fill="#5b5bd6">Ownership concentration</text>
+        <rect x="40" y="208" width="260" height="26" rx="3" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="225" text-anchor="middle" font-size="8" fill="#5b5bd6">Collapse of media business models</text>
+        <rect x="40" y="242" width="260" height="26" rx="3" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="259" text-anchor="middle" font-size="8" fill="#5b5bd6">Disinformation &amp; polarization</text>
+        <rect x="60" y="290" width="220" height="24" rx="3" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="306" text-anchor="middle" font-size="7" fill="#6e6b64">Economic pressure now rivals political repression &mdash; RSF</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">CASE STUDIES</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h1>Case<br>Studies</h1>
+  <div class="subtitle">Hungary, Turkey, India, and the United States share a playbook.</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;4 &middot; Hungary</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>Hungary: The Template</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">Viktor Orb&aacute;n, elected in 2010, rewrote Hungary&rsquo;s constitution with his two-thirds parliamentary majority. He packed courts, captured media, redirected state advertising to allied outlets, and built what he openly calls an <strong>&ldquo;illiberal democracy.&rdquo;</strong></p>
+      <p class="point">During COVID-19, Orb&aacute;n adopted emergency laws allowing <strong>government by decree indefinitely</strong>. He used the crisis to consolidate power further, drawing accusations of democratic backsliding on rule of law, corruption, and civil rights.</p>
+      <p class="point">Hungary remains in the EU, holds elections, and maintains all the <strong>formal structures of democracy</strong>. The buildings are still there. The titles are still on the doors. But the substance has been hollowed out. V-Dem now classifies Hungary as an <strong>electoral autocracy</strong>.</p>
+      <div class="key-idea">
+        <div class="kicker">Why Hungary matters</div>
+        <p>It proved that a European democracy with EU membership could be dismantled from within, legally, by a democratically elected leader &mdash; and that the international community would watch it happen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;4 &middot; Comparative</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h2>Same Playbook, Different Accents</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Turkey:</strong> Erdo&#287;an used a failed coup attempt (2016) to purge 150,000+ civil servants, judges, teachers. Independent media virtually eliminated.</p>
+      <p class="point"><strong>India:</strong> Under Modi, India lost its V-Dem &ldquo;democracy&rdquo; classification. Press harassment, NGO restrictions, and religious polarization accelerated since 2014.</p>
+      <p class="point"><strong>Brazil (Bolsonaro era):</strong> Attacked courts, mimicked Trump&rsquo;s rhetoric, questioned election integrity. Supporters stormed government buildings in Jan 2023.</p>
+      <p class="point">What connects them: all were <strong>democratically elected</strong>. All used <strong>legal mechanisms</strong>. All targeted the <strong>same institutions</strong> in roughly the <strong>same order</strong>.</p>
+      <p class="note">Carnegie: &ldquo;Common tactics include weakening the independent judiciary, politicizing prosecutorial power, undermining electoral fairness, censoring media, and co-opting private businesses.&rdquo;</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.12em">SHARED TACTICS ACROSS CASES</text>
+        <line x1="40" y1="26" x2="300" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- Matrix: countries x tactics -->
+        <text x="95" y="52" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">HUN</text>
+        <text x="150" y="52" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">TUR</text>
+        <text x="205" y="52" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">IND</text>
+        <text x="260" y="52" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="600">USA</text>
+        <!-- Press attacks -->
+        <text x="40" y="78" font-size="7" fill="#6e6b64">Press</text>
+        <circle cx="95" cy="75" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="150" cy="75" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="205" cy="75" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="260" cy="75" r="6" fill="rgba(91,91,214,0.4)"/>
+        <!-- Courts -->
+        <text x="40" y="108" font-size="7" fill="#6e6b64">Courts</text>
+        <circle cx="95" cy="105" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="150" cy="105" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="205" cy="105" r="6" fill="rgba(91,91,214,0.3)"/><circle cx="260" cy="105" r="6" fill="rgba(91,91,214,0.4)"/>
+        <!-- Civil soc -->
+        <text x="40" y="138" font-size="7" fill="#6e6b64">NGOs</text>
+        <circle cx="95" cy="135" r="6" fill="rgba(91,91,214,0.5)"/><circle cx="150" cy="135" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="205" cy="135" r="6" fill="rgba(91,91,214,0.6)"/><circle cx="260" cy="135" r="6" fill="rgba(91,91,214,0.3)"/>
+        <!-- Elections -->
+        <text x="40" y="168" font-size="7" fill="#6e6b64">Elections</text>
+        <circle cx="95" cy="165" r="6" fill="rgba(91,91,214,0.5)"/><circle cx="150" cy="165" r="6" fill="rgba(91,91,214,0.5)"/><circle cx="205" cy="165" r="6" fill="rgba(91,91,214,0.3)"/><circle cx="260" cy="165" r="6" fill="rgba(91,91,214,0.2)"/>
+        <!-- Legend -->
+        <text x="170" y="200" text-anchor="middle" font-size="7" fill="#b0ada5">opacity = severity of erosion</text>
+        <!-- Bottom note -->
+        <rect x="30" y="220" width="280" height="50" rx="4" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="240" text-anchor="middle" font-size="7.5" fill="#6e6b64">All four leaders were democratically elected.</text>
+        <text x="170" y="256" text-anchor="middle" font-size="7.5" fill="#6e6b64">All used legal mechanisms. None needed tanks.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">RESISTANCE</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h1>Resistance &amp;<br>Recovery</h1>
+  <div class="subtitle">The story is not unidirectional. It never has been.</div>
+  <div class="section-num-big">V</div>
+</div>
+
+<div class="slide" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;5 &middot; Democratizers</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h2>18 Countries Going the Other Way</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Brazil</strong> is democratizing after Bolsonaro. Lula&rsquo;s government is rebuilding institutions, though the process is fragile.</p>
+      <p class="point"><strong>Poland</strong> reversed years of PiS-led backsliding after the 2023 election. Media independence and judicial reforms are being restored.</p>
+      <p class="point"><strong>Botswana, Guatemala, and Mauritius</strong> are the three new democratizers identified in the 2025 V-Dem data.</p>
+      <p class="point">In most democratizing countries, <strong>media freedom is improving</strong> &mdash; the inverse of the backsliding pattern, confirming that press freedom is the canary in the mine.</p>
+      <div class="key-idea">
+        <div class="kicker">Pattern recognition</div>
+        <p>In 1975, Spain, Portugal, and Greece were all dictatorships. Within five years, all three were democracies. The Berlin Wall fell in a single night. Things that seem permanent aren&rsquo;t.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#0d9488" letter-spacing="0.12em">DEMOCRATIZING COUNTRIES (2025)</text>
+        <line x1="40" y1="26" x2="300" y2="26" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="40" y="40" width="260" height="40" rx="4" fill="rgba(13,148,136,0.06)" stroke="#0d9488" stroke-width="0.8"/>
+        <text x="170" y="57" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">18 countries democratizing</text>
+        <text x="170" y="72" text-anchor="middle" font-size="7" fill="#6e6b64">5% of world population (~452 million)</text>
+        <!-- Key countries -->
+        <rect x="40" y="95" width="120" height="35" rx="3" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="100" y="112" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">Brazil</text>
+        <text x="100" y="124" text-anchor="middle" font-size="6.5" fill="#6e6b64">Post-Bolsonaro rebuilding</text>
+        <rect x="180" y="95" width="120" height="35" rx="3" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="240" y="112" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">Poland</text>
+        <text x="240" y="124" text-anchor="middle" font-size="6.5" fill="#6e6b64">Reversing PiS backsliding</text>
+        <rect x="40" y="140" width="80" height="35" rx="3" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="80" y="162" text-anchor="middle" font-size="7" fill="#0d9488">Botswana</text>
+        <rect x="130" y="140" width="90" height="35" rx="3" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="175" y="162" text-anchor="middle" font-size="7" fill="#0d9488">Guatemala</text>
+        <rect x="230" y="140" width="70" height="35" rx="3" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="265" y="162" text-anchor="middle" font-size="7" fill="#0d9488">Mauritius</text>
+        <!-- Asymmetry note -->
+        <rect x="40" y="200" width="260" height="55" rx="4" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="218" text-anchor="middle" font-size="7.5" fill="#1a1a1a" font-weight="500">THE ASYMMETRY</text>
+        <text x="170" y="236" text-anchor="middle" font-size="7.5" fill="#6e6b64">44 backsliding = 41% of population</text>
+        <text x="170" y="250" text-anchor="middle" font-size="7.5" fill="#6e6b64">18 democratizing = 5% of population</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;5 &middot; What Works</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>What Resists Backsliding?</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>Strong institutions</strong> that can&rsquo;t be captured by a single leader. Independent courts with tenure protections. Distributed power across levels of government.</p>
+      <p class="point"><strong>Social trust</strong> &mdash; citizens who believe their neighbors are acting in good faith, even when they disagree. Stokes (Chicago) finds this is the hardest factor to rebuild once lost.</p>
+      <p class="point"><strong>Political elites committed to norms.</strong> When politicians restrain themselves not because they must but because they understand the system depends on it.</p>
+      <p class="point"><strong>Voter engagement.</strong> Research shows that when candidates violate democratic norms, significant numbers of voters switch away &mdash; but only if turnout is high enough for this to matter.</p>
+      <p class="point"><strong>Press freedom.</strong> In every democratizing country in the V-Dem data, media freedom is improving. It is both an indicator and a cause.</p>
+      <div class="key-idea">
+        <div class="kicker">Stokes&rsquo;s formula</div>
+        <p>Effective resistance to democratic erosion requires three things simultaneously: strong institutions, social trust, and political elites committed to democratic norms.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">CLOSING</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h2>The Temperature Keeps Climbing</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">Democratic backsliding is not a single event. It is a <strong>process</strong> &mdash; gradual, legal, and designed to look routine until it isn&rsquo;t.</p>
+      <p class="point">The hardest part is not the fixing. The hardest part is the <strong>noticing</strong> &mdash; recognizing the pattern while the individual steps still seem defensible.</p>
+      <p class="point">The data is unambiguous: <strong>nine consecutive years</strong> of net democratic decline. The third wave of democratization nearly erased. Autocracies outnumbering democracies for the second year running.</p>
+      <p class="point">But the data also shows recovery is possible. <strong>Poland reversed.</strong> Brazil is rebuilding. Botswana just started. The story has never been unidirectional.</p>
+      <div class="key-idea">
+        <div class="kicker">The question</div>
+        <p>Democracy doesn&rsquo;t die when someone takes it. It dies when not enough people notice it leaving.</p>
+      </div>
+      <p class="note">Sources: V-Dem Democracy Report 2026 &middot; Carnegie Endowment (2025) &middot; International IDEA (2025) &middot; RSF Press Freedom Index (2025) &middot; Levitsky &amp; Ziblatt, <em>How Democracies Die</em></p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&larr;</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 17</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&rarr;</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">&#9680;</button>
+</div>
+
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>
