@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operation Epic Misfire — read·rd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --red: #8b2020; --green: #2e6e3e; --amber: #8a6e1e;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+        --red: #e87090; --green: #4ee8a8; --amber: #e8c870;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      --red: #e87090; --green: #4ee8a8; --amber: #e8c870;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --red: #8b2020; --green: #2e6e3e; --amber: #8a6e1e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased; min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .accent-rule { height: 1px; background: linear-gradient(90deg, var(--accent), var(--accent2), transparent); width: 40%; opacity: .5; margin: 12px 0 32px; }
+    .meta {
+      font-family: var(--serif); font-size: 17px; color: var(--text);
+      line-height: 2; margin-bottom: 32px;
+    }
+    .meta strong { color: var(--bright); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    .source-line {
+      font-family: var(--mono); font-size: 11px; color: var(--dim);
+      letter-spacing: 0.5px; margin-top: 16px; line-height: 1.8;
+    }
+    .source-line a { color: var(--dim); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .source-line a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 24px;
+      transition: all 0.2s; text-decoration: none; display: block;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .card-title {
+      font-size: 18px; font-weight: 500; color: var(--bright);
+      margin-bottom: 8px; letter-spacing: 0.3px;
+    }
+    .card-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .card-fmt {
+      display: inline-block; font-family: var(--mono); font-size: 9px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid var(--accent); color: var(--accent); margin-bottom: 10px;
+    }
+    .card-desc { font-size: 14px; color: var(--dim); line-height: 1.6; margin-bottom: 12px; }
+    .card-link {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--accent); text-decoration: none;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 18px 24px;
+      margin-bottom: 8px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 24px; padding-top: 2px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 16px; font-weight: 500; color: var(--bright);
+      margin-bottom: 3px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 13px; color: var(--dim); line-height: 1.5; }
+    .stat-row {
+      display: flex; gap: 0; margin: 24px 0; border: 1px solid var(--border);
+    }
+    .stat-cell {
+      flex: 1; padding: 14px 8px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-val {
+      font-family: var(--mono); font-size: 15px; color: var(--bright);
+      font-weight: 500;
+    }
+    .stat-label {
+      font-size: 9px; color: var(--dim); margin-top: 3px;
+      text-transform: uppercase; letter-spacing: 0.8px; font-family: var(--sans);
+    }
+    .position-box {
+      border-left: 3px solid var(--accent); padding: 20px 0 20px 24px;
+      margin: 24px 0;
+    }
+    .position-box h4 {
+      font-family: var(--sans); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent); font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .position-box p {
+      font-family: var(--serif); font-size: 17px; font-style: italic;
+      color: var(--bright); line-height: 1.9; margin-bottom: 8px;
+    }
+    .position-box p:last-child { margin-bottom: 0; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-btn {
+      position: fixed; top: 16px; right: 16px;
+      width: 36px; height: 36px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--dim); background: var(--bg2);
+      border: 1px solid var(--border); transition: color .2s, background .2s;
+      z-index: 100;
+    }
+    .theme-btn:hover { color: var(--accent); background: var(--accent-soft); }
+    @media(max-width:600px) {
+      .container { padding: 32px 16px 80px; }
+      h1 { font-size: 30px; }
+      .stat-row { flex-wrap: wrap; }
+      .stat-cell { min-width: 50%; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Position Paper &middot; 20+ Sources &middot; March 2026</div>
+    <h1>Operation Epic <em>Misfire</em></h1>
+    <div class="subtitle">Defending the Chokepoint &mdash; How the Iran War Strengthens America&rsquo;s Adversaries</div>
+    <div class="accent-rule"></div>
+
+    <div class="meta">
+      <p>One month into the largest U.S. military campaign since Afghanistan, the strategic ledger does not read the way its architects promised. <strong>Russia</strong> is banking a $45&ndash;151 billion oil windfall that funds the Ukraine war. <strong>China</strong> is gaining real-time intelligence on U.S. naval operations while the <strong>petroyuan</strong> emerges at the Strait of Hormuz. <strong>Iran</strong> itself has discovered that a $10 billion defense budget can hold the $100 trillion global economy hostage.</p>
+      <p>This is not a pacifist argument. It is a strategic one. Sun Tzu taught that the supreme art of war is to subdue the enemy without fighting &mdash; not because fighting is immoral, but because it is expensive and uncertain. Churchill championed radar, blockades, and Bletchley Park as weapons that multiplied power without squandering it. The question is never whether a threat is real. It is whether the response leaves you stronger or weaker.</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-val">$200B</div><div class="stat-label">Pentagon Ask</div></div>
+      <div class="stat-cell"><div class="stat-val">$45&ndash;151B</div><div class="stat-label">Russia Windfall</div></div>
+      <div class="stat-cell"><div class="stat-val">106:1</div><div class="stat-label">Interceptor Ratio</div></div>
+      <div class="stat-cell"><div class="stat-val">60%+</div><div class="stat-label">Disapproval</div></div>
+    </div>
+
+    <div class="position-box">
+      <h4>Position</h4>
+      <p>Iran&rsquo;s nuclear ambitions and regional destabilization are genuine threats. The war is the wrong weapon &mdash; enriching adversaries, eroding petrodollar architecture, and deepening the structural energy vulnerability it purports to address. Half the war&rsquo;s cost in renewable energy would accomplish what military force cannot: making the chokepoint irrelevant.</p>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Deliverables</h2>
+    <div class="deliverable-grid">
+      <a class="deliverable-card" href="epic-misfire.dd.html">
+        <div class="card-fmt">Deep Dive</div>
+        <div class="card-title">Interactive <em>Analysis</em></div>
+        <div class="card-desc">Six-section deep-dive with expandable detail panels. The Concession, Beneficiaries Scoreboard, Petroyuan Toll Booth, Who Pays, Structural Trap, and Deterrence Through Obsolescence.</div>
+        <span class="card-link">Open deep dive &rarr;</span>
+      </a>
+      <a class="deliverable-card" href="defending-the-chokepoint.md">
+        <div class="card-fmt">Op-Ed</div>
+        <div class="card-title">Defending the <em>Chokepoint</em></div>
+        <div class="card-desc">2,344-word position paper. Foreign Affairs register. The kill shot: American munitions over Tehran are financing Russian artillery at Kharkiv.</div>
+        <span class="card-link">Read op-ed &rarr;</span>
+      </a>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Deep-Dive Sections</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">01</div>
+        <div class="section-body">
+          <div class="section-title">Iran Is <em>Real</em></div>
+          <div class="section-desc">The concession. Grant the hawks their premise, then show the treatment is wrong. Sun Tzu, Churchill, Clausewitz on when force serves and when it doesn&rsquo;t.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">02</div>
+        <div class="section-body">
+          <div class="section-title">The <em>Beneficiaries</em> Scoreboard</div>
+          <div class="section-desc">Russia: $45&ndash;151B windfall (KSE Institute). China: Taiwan planning intel + petroyuan leverage. Iran: Hormuz as cheapest weapon ever discovered. PIIE, CER, Carnegie analysis.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">03</div>
+        <div class="section-body">
+          <div class="section-title">The <em>Petroyuan</em> Toll Booth</div>
+          <div class="section-desc">Deutsche Bank&rsquo;s warning. Lloyd&rsquo;s List confirms yuan-settled transits. IRGC vetting system. Iran&rsquo;s parliament drafting toll legislation. The petrodollar under assault &mdash; by the war itself.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">04</div>
+        <div class="section-body">
+          <div class="section-title">Who <em>Pays</em></div>
+          <div class="section-desc">$200B ask, health care cuts, Europe&rsquo;s second energy crisis, helium/pharma supply chains, Global South fuel emergencies. The compounding failure of cutting health funding while the war degrades health infrastructure.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">05</div>
+        <div class="section-body">
+          <div class="section-title">The <em>Structural</em> Trap</div>
+          <div class="section-desc">106:1 asymmetry. $10B defense budget vs. $100T global economy. Even total victory doesn&rsquo;t fix chokepoint geometry. The lesson is permanent. Hawk counterargument and rebuttal.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">06</div>
+        <div class="section-body">
+          <div class="section-title">Deterrence Through <em>Obsolescence</em></div>
+          <div class="section-desc">$100B buys 100+ GW solar, 575K jobs, 25&ndash;30 year returns. Ember: existing renewables already saving $40B since war began. Make the chokepoint irrelevant. The security argument, not the climate argument.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Key Sources</h2>
+    <div class="source-line">
+      <a href="https://www.piie.com/blogs/realtime-economics/2026/how-russia-and-china-are-winning-war-iran">PIIE</a> &middot;
+      <a href="https://www.cer.eu/insights/war-iran-who-wins-and-who-loses">Centre for European Reform</a> &middot;
+      <a href="https://fortune.com/2026/03/28/dollar-dominance-dedollarization-global-oil-trade-iran-war-petroyuan-us-security-shield/">Deutsche Bank / Fortune</a> &middot;
+      <a href="https://www.aljazeera.com/news/2026/3/26/tehranstollbooth-how-iran-picks-who-to-let-through-strait-of-hormuz">Al Jazeera (Lloyd&rsquo;s List)</a> &middot;
+      <a href="https://ember-energy.org/latest-updates/world-adds-a-record-breaking-814-gw-of-solar-and-wind-in-2025/">Ember</a> &middot;
+      <a href="https://www.atlanticcouncil.org/dispatches/twenty-questions-and-expert-answers-about-the-iran-war/">Atlantic Council</a> &middot;
+      <a href="https://www.rand.org/pubs/commentary/2026/03/war-in-iran-qa-with-rand-experts.html">RAND</a> &middot;
+      <a href="https://carnegieendowment.org/russia-eurasia/events/2026/03/winners-and-losers-russia-china-and-europe-respond-to-the-iran-war">Carnegie</a> &middot;
+      <a href="https://toda.org/global-outlook/2026/iran-war-unravels-us-strategy-and-strengthens-russia-china-axis.html">Toda Peace Institute</a> &middot;
+      <a href="https://asiatimes.com/2026/03/irans-hormuz-yuan-play-a-direct-hit-on-the-petrodollar/">Asia Times</a> &middot;
+      <a href="https://www.axios.com/2026/03/30/gop-health-care-pay-iran-war">Axios</a> &middot;
+      <a href="https://www.rollingstone.com/politics/politics-news/republicans-health-care-cuts-fund-iran-war-1235538768/">Rolling Stone</a> &middot;
+      <a href="https://www.washingtoninstitute.org/policy-analysis/great-power-spillover-iran-war-implications-china-russia-turkey-and-europe">Washington Institute</a> &middot;
+      <a href="https://www.cnbc.com/2026/03/28/oil-gas-prices-iran-war-hormuz.html">CNBC</a> &middot;
+      <a href="https://en.wikipedia.org/wiki/Economic_impact_of_the_2026_Iran_war">Wikipedia (Economic Impact)</a> &middot;
+      <a href="https://www.justsecurity.org/134290/us-article-51-letter-united-nations/">Just Security</a> &middot;
+      <a href="https://cleanpower.org/america-builds-power/">American Clean Power</a> &middot;
+      <a href="https://www.iea.org/reports/world-energy-investment-2025/executive-summary">IEA</a>
+    </div>
+
+    <div class="footer">
+      <a href="https://read.sadh.app">read&middot;rd</a> &middot; <a href="https://github.com/nafSadh/read-rd">GitHub</a> &middot; March 30, 2026
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      var t = document.documentElement.getAttribute('data-theme');
+      var n = t === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', n);
+      document.getElementById('theme-btn').textContent = n === 'dark' ? '\u2600' : '\u263D';
+    }
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    document.getElementById('theme-btn').textContent = prefersDark ? '\u2600' : '\u263D';
+  </script>
+</body>
+</html>
