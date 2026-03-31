@@ -6,6 +6,8 @@
 - [x] Unified deep-dive (8 sections, 2 SVGs)
 - [x] Survey paper (Wikipedia-style citations, consolidated references)
 - [ ] Survey slides
+- [x] Fiction: lgrotg.md (revised with friction)
+- [x] Fiction: folding-chair.md (rewritten as fiction — 🪑→💺→👑 thesis)
 
 ## Source Adequacy
 
@@ -17,6 +19,6 @@
 | Media/Press | 7 | ✅ | None |
 
 ## Next Session
-- Build survey paper with Wikipedia-style `[N]` hover citations
-- Build accompanying slides
-- Update index page with new entries
+- Build survey slides
+- Consider whether lgrotg + folding-chair warrant their own index entry or stay bundled under west-wing
+- Update index page with fiction entries

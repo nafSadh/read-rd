@@ -12,3 +12,7 @@
 - **Survey paper:** Built with 18 inline citations, 20 references, 84 hyperlinks
 - **Structure:** Abstract → Sorkin Consensus → Idealism/Realism → Executive Power → Bipartisanship → Media/Press → Synthesis → Methods → References
 - **Index updated:** Survey paper added to root index
+
+## Session 2 — 2026-03-30
+- **lgrotg.md revised:** Added real friction across all three LGROTG cases. Buen Retiro: Ramiro as named antagonist, Diego's arrest, Quispe-Mamani land dispute nearly kills the cabildo. Reykjavík: Nordvik bot attack on Þing, kennitala verification costs 40% users. Kerala: treasurer corruption caught via tea budget. Carmen's closer now earns its weight: "we almost failed twice."
+- **folding-chair.md rewritten:** Replaced essay with fiction. Two parallel stories — Kostas (Thessaloniki, chair that eventually folds after heart attack) and Aminata (Dakar, chair that never folds, bank account as quiet veto). Three stages shown through character before named as theory. Dimitra's closer: "the whole point is that it folds."
