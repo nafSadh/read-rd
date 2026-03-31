@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waffle Evolution — Slides</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck { position: absolute; inset: 0; }
+
+.slide {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  border-radius: 0; box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none; flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active { display: flex; animation: slideIn 0.35s ease; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem); flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem; color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700; line-height: 1.15; color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem); flex-shrink: 0;
+}
+
+.slide h1 em { font-weight: 400; color: var(--accent); }
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600; color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem); flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic; color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem); flex-shrink: 0;
+}
+
+.slide-body { flex: 1; display: flex; gap: clamp(1.5rem, 3vw, 3.5rem); min-height: 0; }
+.slide-body.col-1 { flex-direction: column; justify-content: center; }
+.slide-body.col-2 { flex-direction: row; align-items: stretch; }
+
+.text-col {
+  flex: 1.15; display: flex; flex-direction: column;
+  justify-content: center; gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0; padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border); margin-right: 0;
+}
+
+.svg-col {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  min-width: 0; padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg { width: 100%; height: auto; max-height: 100%; }
+.slide-body.col-1 .svg-col { flex: 1; }
+
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6; color: var(--dim);
+}
+
+.point strong { color: var(--fg); font-weight: 600; }
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em; background: var(--code-bg);
+  padding: 0.12em 0.4em; border-radius: 3px; color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg); line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--accent);
+  display: block; margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic; color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg); line-height: 1.55;
+}
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px; width: 100%; margin-left: auto; margin-right: auto;
+}
+
+.title-slide {
+  justify-content: center; align-items: center; text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 800px;
+}
+
+.title-slide h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0.6rem; }
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--dim); margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic; color: var(--mute); margin-top: 0.4rem;
+}
+
+.toc-list {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 0.6rem; align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem; color: var(--accent);
+  min-width: 2rem; flex-shrink: 0;
+}
+
+.section-divider {
+  justify-content: center; align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle { color: var(--dim); font-size: clamp(0.9rem, 1.3vw, 1.2rem); }
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem); font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem); bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto; z-index: 10; opacity: 0;
+  transition: opacity 0.3s ease; pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible { opacity: 1; }
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; transition: all 0.2s;
+  flex-shrink: 0; padding: 0; line-height: 1;
+}
+
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--nav-hover-bg); }
+
+.progress-track {
+  flex: 1; height: 2px; background: var(--border);
+  border-radius: 1px; position: relative; overflow: hidden; min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: var(--accent); border-radius: 1px; transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem; color: var(--mute); white-space: nowrap; min-width: 0;
+}
+
+.theme-btn {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; transition: all 0.2s;
+  flex-shrink: 0; padding: 0; line-height: 1;
+}
+.theme-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+.fig .box-label { dominant-baseline: central; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+@media (max-width: 600px) {
+  .slide { padding: 1rem 1.2rem; padding-bottom: 2.2rem; }
+  .slide .subtitle { margin-bottom: 0.5rem; }
+  .slide-body.col-2 { flex-direction: column; gap: 0.8rem; }
+  .slide-body.col-2 .text-col {
+    border-right: none; padding-right: 0;
+    border-bottom: 1px solid var(--border); padding-bottom: 0.6rem;
+  }
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+  .toc-list { grid-template-columns: 1fr; }
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+@keyframes dashFlow { to { stroke-dashoffset: -16; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse2 { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+@keyframes attGlow { 0%, 100% { r: 3; opacity: 0.3; } 50% { r: 5; opacity: 0.9; } }
+
+.dash-flow { stroke-dasharray: 6 4; animation: dashFlow 0.8s linear infinite; }
+.pulse-anim { animation: pulse2 2s ease-in-out infinite; }
+
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+
+<!-- ===================== SLIDE 0: TITLE ===================== -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Waffle <em>Evolution</em></h1>
+  <div class="ref">An anthropological survey of the waffle across time and society</div>
+  <div class="ref">7 dimensions &middot; 72 sources &middot; 6 tensions &middot; March 2026</div>
+  <div class="meta">Arrow keys / click / swipe &middot; &#9684; for dark mode</div>
+</div>
+
+
+<!-- ===================== SLIDE 1: TOC ===================== -->
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">OVERVIEW</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>Seven Dimensions, Six Tensions</h2>
+  <div class="subtitle">From 9th-century communion wafers to the FEMA disaster index</div>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <ul class="toc-list">
+        <li><span class="toc-num">S1</span> Medieval Origins</li>
+        <li><span class="toc-num">S2</span> Belgian Identity</li>
+        <li><span class="toc-num">S3</span> American Adoption</li>
+        <li><span class="toc-num">S4</span> Waffle House as Institution</li>
+        <li><span class="toc-num">S5</span> Chicken &amp; Waffles</li>
+        <li><span class="toc-num">S6</span> Industrialization &amp; Eggo</li>
+        <li><span class="toc-num">S7</span> Global Variations</li>
+        <li><span class="toc-num">T</span> Six Tensions</li>
+      </ul>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 360" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">1,100 YEARS OF WAFFLE HISTORY</text>
+        <!-- Timeline -->
+        <line x1="40" y1="40" x2="40" y2="340" stroke="#b0ada5" stroke-width="1"/>
+        <g font-size="8" class="label-text">
+          <circle cx="40" cy="55" r="4" fill="#5b5bd6"/>
+          <text x="54" y="52" fill="#1a1a1a" font-weight="600">9th c.</text>
+          <text x="54" y="64" fill="#6e6b64">Communion wafer irons</text>
+          <circle cx="40" cy="100" r="4" fill="#5b5bd6"/>
+          <text x="54" y="97" fill="#1a1a1a" font-weight="600">1270</text>
+          <text x="54" y="109" fill="#6e6b64">Oublieurs guild, Paris</text>
+          <circle cx="40" cy="145" r="4" fill="#0ea5e9"/>
+          <text x="54" y="142" fill="#1a1a1a" font-weight="600">1789</text>
+          <text x="54" y="154" fill="#6e6b64">Jefferson brings irons</text>
+          <circle cx="40" cy="185" r="4" fill="#0ea5e9"/>
+          <text x="54" y="182" fill="#1a1a1a" font-weight="600">1906</text>
+          <text x="54" y="194" fill="#6e6b64">First electric iron</text>
+          <circle cx="40" cy="225" r="4" fill="#7c3aed"/>
+          <text x="54" y="222" fill="#1a1a1a" font-weight="600">1953</text>
+          <text x="54" y="234" fill="#6e6b64">Dorsa invents frozen waffle</text>
+          <circle cx="40" cy="265" r="4" fill="#7c3aed"/>
+          <text x="54" y="262" fill="#1a1a1a" font-weight="600">1964</text>
+          <text x="54" y="274" fill="#6e6b64">World&#39;s Fair &quot;Belgian waffle&quot;</text>
+          <circle cx="40" cy="305" r="4" fill="#0d9488"/>
+          <text x="54" y="302" fill="#1a1a1a" font-weight="600">2004</text>
+          <text x="54" y="314" fill="#6e6b64">Waffle House Index coined</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 2: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">S1 &middot; MEDIEVAL ORIGINS</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>From Sacred Wafer<br>to Street Food</h1>
+  <div class="subtitle">The waffle begins as an instrument of the church, not a food</div>
+  <div class="section-num-big">I</div>
+</div>
+
+
+<!-- ===================== SLIDE 3: IRON TECHNOLOGY ===================== -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">S1 &middot; The Iron</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>The Iron Came First</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">In the 9th century, two nearly identical hinged iron implements emerged in northwestern Europe: the <strong>fer &agrave; hosties</strong> (communion wafer iron) and the <strong>moule &agrave; oublies</strong> (secular wafer iron).</p>
+      <p class="point">Both were two hinged iron plates on long wooden handles, heated over open fire. One produced the Eucharistic host; the other produced street food. The technology named the food: Frankish <em>wafla</em> means &ldquo;honeycomb.&rdquo;</p>
+      <p class="point">The <strong>oublieurs guild</strong> was constituted in Paris in <strong>1270</strong>, formalizing waffle production as organized labor with churchyard vending rights.</p>
+      <div class="key-idea">
+        <div class="kicker">Core insight</div>
+        <p>The waffle is best understood not as a food with a history but as an iron technology that has generated different foods across eleven centuries.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 350" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">SACRED vs. SECULAR IRON</text>
+        <!-- Sacred side -->
+        <rect x="20" y="30" width="140" height="130" rx="8" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="90" y="50" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">FER A HOSTIES</text>
+        <text x="90" y="68" text-anchor="middle" font-size="7" fill="#6e6b64">Communion wafer iron</text>
+        <rect x="45" y="80" width="90" height="30" rx="4" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="90" y="99" text-anchor="middle" font-size="8" fill="#1a1a1a">Eucharistic host</text>
+        <text x="90" y="130" text-anchor="middle" font-size="7" fill="#6e6b64">Church production</text>
+        <text x="90" y="150" text-anchor="middle" font-size="7" fill="#6e6b64">Sacred context</text>
+        <!-- Secular side -->
+        <rect x="180" y="30" width="140" height="130" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+        <text x="250" y="50" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="600">MOULE A OUBLIES</text>
+        <text x="250" y="68" text-anchor="middle" font-size="7" fill="#6e6b64">Secular wafer iron</text>
+        <rect x="205" y="80" width="90" height="30" rx="4" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="250" y="99" text-anchor="middle" font-size="8" fill="#1a1a1a">Oublie street food</text>
+        <text x="250" y="130" text-anchor="middle" font-size="7" fill="#6e6b64">Market production</text>
+        <text x="250" y="150" text-anchor="middle" font-size="7" fill="#6e6b64">Commercial context</text>
+        <!-- Arrow connecting -->
+        <text x="170" y="185" text-anchor="middle" font-size="8" fill="#b0ada5">Same instrument, different worlds</text>
+        <!-- Etymology -->
+        <rect x="60" y="210" width="220" height="55" rx="6" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+        <text x="170" y="230" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">ETYMOLOGY</text>
+        <text x="170" y="248" text-anchor="middle" font-size="8" fill="#1a1a1a">Frankish wafla (honeycomb) &rarr; Old French walfre (1185)</text>
+        <!-- Guild -->
+        <rect x="60" y="280" width="220" height="55" rx="6" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+        <text x="170" y="300" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">OUBLIEURS GUILD &middot; PARIS &middot; 1270</text>
+        <text x="170" y="318" text-anchor="middle" font-size="7" fill="#0d9488">Churchyard vending rights &middot; organized labor</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 4: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">S2 &middot; BELGIAN IDENTITY</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h1>Two Waffles,<br>One Name</h1>
+  <div class="subtitle">How a 1964 World&rsquo;s Fair concession invented the &ldquo;Belgian waffle&rdquo;</div>
+  <div class="section-num-big">II</div>
+</div>
+
+
+<!-- ===================== SLIDE 5: BRUSSELS vs LIEGE ===================== -->
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">S2 &middot; Two Traditions</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>Brussels vs. Li&egrave;ge</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Belgium has <strong>two distinct waffle traditions</strong> that are genuinely different foods. Neither, in Belgium, is called a &ldquo;Belgian waffle.&rdquo;</p>
+      <p class="point"><strong>Brussels waffle:</strong> rectangular, light, crisp, yeast-leavened, served warm with cream and fruit. Requires a plate.</p>
+      <p class="point"><strong>Li&egrave;ge waffle:</strong> oval, dense, brioche dough with pearl sugar caramelized during cooking. Eaten plain, portable. The one Belgians actually eat daily.</p>
+      <p class="point">In <strong>1964</strong>, Maurice Vermersch renamed his Brussels waffles &ldquo;Bel-Gem&rdquo; at the New York World&rsquo;s Fair because Americans couldn&rsquo;t locate Brussels on a map. His wife Rose added whipped cream and strawberries &mdash; not a Belgian tradition. They sold <strong>2,500 waffles per day</strong>.</p>
+      <p class="note">In 2011, Brussels MP Jo&euml;l Riguelle raised parliamentary concern about tourist-driven hybrids displacing both authentic traditions.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 380" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">TWO FOODS, ONE LABEL</text>
+        <!-- Brussels -->
+        <rect x="15" y="30" width="150" height="160" rx="8" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="90" y="50" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">BRUSSELS</text>
+        <text x="90" y="68" text-anchor="middle" font-size="7" fill="#6e6b64">Gaufre de Bruxelles</text>
+        <text x="90" y="88" text-anchor="middle" font-size="7" fill="#1a1a1a">Rectangular, light</text>
+        <text x="90" y="103" text-anchor="middle" font-size="7" fill="#1a1a1a">Yeast-leavened, crisp</text>
+        <text x="90" y="118" text-anchor="middle" font-size="7" fill="#1a1a1a">Served warm + toppings</text>
+        <text x="90" y="133" text-anchor="middle" font-size="7" fill="#1a1a1a">Requires a plate</text>
+        <rect x="35" y="148" width="110" height="24" rx="4" fill="rgba(91,91,214,0.06)"/>
+        <text x="90" y="164" text-anchor="middle" font-size="7" fill="#5b5bd6">Basis of American</text>
+        <text x="90" y="176" text-anchor="middle" font-size="7" fill="#5b5bd6">&quot;Belgian waffle&quot;</text>
+        <!-- Liege -->
+        <rect x="175" y="30" width="150" height="160" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+        <text x="250" y="50" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="600">LIEGE</text>
+        <text x="250" y="68" text-anchor="middle" font-size="7" fill="#6e6b64">Gaufre de Li&egrave;ge</text>
+        <text x="250" y="88" text-anchor="middle" font-size="7" fill="#1a1a1a">Oval, dense</text>
+        <text x="250" y="103" text-anchor="middle" font-size="7" fill="#1a1a1a">Brioche + pearl sugar</text>
+        <text x="250" y="118" text-anchor="middle" font-size="7" fill="#1a1a1a">Eaten plain, portable</text>
+        <text x="250" y="133" text-anchor="middle" font-size="7" fill="#1a1a1a">Street food form</text>
+        <rect x="195" y="148" width="110" height="24" rx="4" fill="rgba(14,165,233,0.06)"/>
+        <text x="250" y="164" text-anchor="middle" font-size="7" fill="#0ea5e9">What Belgians</text>
+        <text x="250" y="176" text-anchor="middle" font-size="7" fill="#0ea5e9">actually eat</text>
+        <!-- Arrow to American construction -->
+        <path d="M90 195 L170 220" stroke="#5b5bd6" stroke-width="1" fill="none" stroke-dasharray="4 2"/>
+        <rect x="70" y="225" width="200" height="55" rx="6" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="170" y="243" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">AMERICAN &quot;BELGIAN WAFFLE&quot;</text>
+        <text x="170" y="258" text-anchor="middle" font-size="7" fill="#6e6b64">Brussels base + Rose Vermersch&rsquo;s cream &amp; strawberries</text>
+        <text x="170" y="272" text-anchor="middle" font-size="7" fill="#6e6b64">A 1964 commercial construction</text>
+        <!-- Key stat -->
+        <rect x="70" y="295" width="200" height="40" rx="6" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+        <text x="170" y="312" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">2,500 waffles/day at the Fair</text>
+        <text x="170" y="327" text-anchor="middle" font-size="7" fill="#0d9488">The moment the category was invented</text>
+        <!-- Tension flag -->
+        <rect x="95" y="350" width="150" height="22" rx="4" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="365" text-anchor="middle" font-size="7" fill="#7c3aed">T1: Is the waffle Belgian?</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 6: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">S3 &middot; AMERICAN ADOPTION</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h1>Jefferson, the Frolic,<br>and the Enslaved Cook</h1>
+  <div class="subtitle">Dutch colonists brought the waffle; America built a social institution around it</div>
+  <div class="section-num-big">III</div>
+</div>
+
+
+<!-- ===================== SLIDE 7: AMERICAN ADOPTION ===================== -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">S3 &middot; Colonial Waffles</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>The Waffle Frolic</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Waffles arrived through <strong>Dutch colonial settlers</strong> in the 17th century &mdash; well before Thomas Jefferson&rsquo;s mythologized 1789 Amsterdam irons.</p>
+      <p class="point">The <strong>waffle frolic</strong> was an 18th&ndash;19th century social institution: a host made waffles continuously for guests over an extended evening. The iron&rsquo;s demands (one waffle at a time, 10 minutes over open fire) created natural conditions for <strong>sustained social gathering</strong>.</p>
+      <p class="point">At plantation households including Monticello, the labor was performed by <strong>enslaved cooks</strong> managing a 10&ndash;12 pound iron while the food was consumed as leisure. This dimension is systematically absent from popular narratives.</p>
+      <div class="key-idea">
+        <div class="kicker">Hidden labor</div>
+        <p>The waffle frolic&rsquo;s social warmth depended on invisible labor &mdash; a pattern that recurs throughout food history.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">THE WAFFLE FROLIC</text>
+        <!-- Social gathering circle -->
+        <circle cx="170" cy="140" r="80" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="100" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">SOCIAL GATHERING</text>
+        <text x="170" y="118" text-anchor="middle" font-size="7" fill="#6e6b64">Extended evening</text>
+        <text x="170" y="133" text-anchor="middle" font-size="7" fill="#6e6b64">Continuous production</text>
+        <text x="170" y="148" text-anchor="middle" font-size="7" fill="#6e6b64">One waffle at a time</text>
+        <text x="170" y="163" text-anchor="middle" font-size="7" fill="#6e6b64">10 min per waffle</text>
+        <text x="170" y="178" text-anchor="middle" font-size="7" fill="#6e6b64">10-12 lb iron</text>
+        <!-- Visible -->
+        <rect x="30" y="250" width="130" height="40" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="95" y="267" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">VISIBLE</text>
+        <text x="95" y="282" text-anchor="middle" font-size="7" fill="#6e6b64">Leisure, warmth, status</text>
+        <!-- Invisible -->
+        <rect x="180" y="250" width="130" height="40" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="245" y="267" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">INVISIBLE</text>
+        <text x="245" y="282" text-anchor="middle" font-size="7" fill="#6e6b64">Enslaved labor, heavy iron</text>
+        <!-- Connecting lines -->
+        <line x1="130" y1="210" x2="95" y2="250" stroke="#5b5bd6" stroke-width="0.5" stroke-dasharray="3 2"/>
+        <line x1="210" y1="210" x2="245" y2="250" stroke="#7c3aed" stroke-width="0.5" stroke-dasharray="3 2"/>
+        <!-- Bottom note -->
+        <rect x="50" y="305" width="240" height="26" rx="4" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="322" text-anchor="middle" font-size="7" fill="#6e6b64">Jefferson: myth &gt; documentation (Garden &amp; Gun investigation)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 8: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">S4 &middot; WAFFLE HOUSE</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h1>24/7 Resilience<br>as Cultural Symbol</h1>
+  <div class="subtitle">1,900+ locations, no locks on the doors, and a FEMA disaster metric</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+
+<!-- ===================== SLIDE 9: WAFFLE HOUSE INDEX ===================== -->
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">S4 &middot; The Index</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>The Waffle House Index</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Founded <strong>Labor Day 1955</strong> in Avondale Estates, Georgia by Joe Rogers Sr. and Tom Forkner. Rogers insisted on <strong>24-hour operations</strong> &mdash; the decision that defines everything after.</p>
+      <p class="point">The <strong>Waffle House Index</strong> was coined by <strong>Craig Fugate</strong> in August 2004 after Hurricane Charley. It uses operational status as a proxy for local disaster severity:</p>
+      <div class="eq-box">
+        <span class="label">Three levels</span>
+        GREEN = full menu (infrastructure intact)<br/>
+        YELLOW = limited menu (partial disruption)<br/>
+        RED = closed (severe disaster)
+      </div>
+      <p class="point">FEMA has <strong>never formally adopted</strong> the Index. Its informal status means the brand gets civic-resilience coverage at zero cost &mdash; and zero accountability.</p>
+      <p class="note">T4: The Index is both genuinely useful and the most effective low-cost branding operation in American corporate history.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 360" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">WAFFLE HOUSE INDEX</text>
+        <!-- Green -->
+        <rect x="30" y="35" width="280" height="65" rx="8" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="1"/>
+        <circle cx="60" cy="67" r="14" fill="#0d9488" opacity="0.8"/>
+        <text x="60" y="72" text-anchor="middle" font-size="11" fill="white" font-weight="600">G</text>
+        <text x="90" y="57" font-size="10" fill="#0d9488" font-weight="600">GREEN</text>
+        <text x="90" y="72" font-size="8" fill="#6e6b64">Full menu served</text>
+        <text x="90" y="87" font-size="7" fill="#b0ada5">Infrastructure intact &middot; Power grid operational</text>
+        <!-- Yellow -->
+        <rect x="30" y="115" width="280" height="65" rx="8" fill="rgba(202,160,30,0.08)" stroke="#ca9f1e" stroke-width="1"/>
+        <circle cx="60" cy="147" r="14" fill="#ca9f1e" opacity="0.8"/>
+        <text x="60" y="152" text-anchor="middle" font-size="11" fill="white" font-weight="600">Y</text>
+        <text x="90" y="137" font-size="10" fill="#ca9f1e" font-weight="600">YELLOW</text>
+        <text x="90" y="152" font-size="8" fill="#6e6b64">Limited menu</text>
+        <text x="90" y="167" font-size="7" fill="#b0ada5">Partial disruption &middot; Generator power likely</text>
+        <!-- Red -->
+        <rect x="30" y="195" width="280" height="65" rx="8" fill="rgba(220,60,60,0.08)" stroke="#dc3c3c" stroke-width="1"/>
+        <circle cx="60" cy="227" r="14" fill="#dc3c3c" opacity="0.8"/>
+        <text x="60" y="232" text-anchor="middle" font-size="11" fill="white" font-weight="600">R</text>
+        <text x="90" y="217" font-size="10" fill="#dc3c3c" font-weight="600">RED</text>
+        <text x="90" y="232" font-size="8" fill="#6e6b64">Closed</text>
+        <text x="90" y="247" font-size="7" fill="#b0ada5">Severe disaster &middot; Maximum response required</text>
+        <!-- Stats -->
+        <g transform="translate(30, 285)">
+          <rect width="130" height="55" rx="6" fill="rgba(0,0,0,0.025)"/>
+          <text x="65" y="22" text-anchor="middle" font-size="16" fill="#5b5bd6" font-weight="600">1,900+</text>
+          <text x="65" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">locations, 25 states</text>
+        </g>
+        <g transform="translate(180, 285)">
+          <rect width="130" height="55" rx="6" fill="rgba(0,0,0,0.025)"/>
+          <text x="65" y="22" text-anchor="middle" font-size="16" fill="#0d9488" font-weight="600">24/7</text>
+          <text x="65" y="40" text-anchor="middle" font-size="7" fill="#6e6b64">no locks on the doors</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 10: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">S5 &middot; CHICKEN &amp; WAFFLES</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h1>Two Lineages,<br>One Name</h1>
+  <div class="subtitle">From Pennsylvania Dutch church dinners to Harlem jazz clubs</div>
+  <div class="section-num-big">V</div>
+</div>
+
+
+<!-- ===================== SLIDE 11: TWO LINEAGES ===================== -->
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">S5 &middot; Lineages</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>Two Unrelated Origins</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Pennsylvania Dutch (17th c.):</strong> Shredded or roasted chicken atop a waffle with white cream gravy. German-immigrant church dinners. A savory tradition with no cultural connection to what came later.</p>
+      <p class="point"><strong>Harlem soul food (1930s&ndash;40s):</strong> Fried chicken alongside a sweet waffle. Born from the late-night jazz economy &mdash; musicians at <strong>Wells Supper Club (1938)</strong> needed a meal between dinner and breakfast.</p>
+      <p class="point"><strong>Roscoe&rsquo;s (1975)</strong> in Long Beach, founded by Harlem native Herb Hudson, nationalized the dish. Celebrity patronage (Stevie Wonder, Natalie Cole) drove cultural visibility. The LA Times later called it &ldquo;such an L.A. institution.&rdquo;</p>
+      <div class="key-idea">
+        <div class="kicker">T3: Appropriation</div>
+        <p>When a culturally specific food becomes a mass-market category, who captures value and who loses history?</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 350" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">TWO LINEAGES &rarr; ONE DISH</text>
+        <!-- PA Dutch -->
+        <rect x="20" y="35" width="140" height="100" rx="8" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="90" y="55" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">PA DUTCH</text>
+        <text x="90" y="72" text-anchor="middle" font-size="7" fill="#6e6b64">17th century</text>
+        <text x="90" y="87" text-anchor="middle" font-size="7" fill="#1a1a1a">Shredded chicken</text>
+        <text x="90" y="100" text-anchor="middle" font-size="7" fill="#1a1a1a">White cream gravy</text>
+        <text x="90" y="113" text-anchor="middle" font-size="7" fill="#1a1a1a">Church dinners</text>
+        <!-- Harlem -->
+        <rect x="180" y="35" width="140" height="100" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+        <text x="250" y="55" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="600">HARLEM</text>
+        <text x="250" y="72" text-anchor="middle" font-size="7" fill="#6e6b64">1930s&ndash;40s</text>
+        <text x="250" y="87" text-anchor="middle" font-size="7" fill="#1a1a1a">Fried chicken</text>
+        <text x="250" y="100" text-anchor="middle" font-size="7" fill="#1a1a1a">Sweet waffle</text>
+        <text x="250" y="113" text-anchor="middle" font-size="7" fill="#1a1a1a">Jazz late-night economy</text>
+        <!-- No connection -->
+        <text x="170" y="155" text-anchor="middle" font-size="8" fill="#b0ada5">No cultural connection</text>
+        <line x1="90" y1="140" x2="90" y2="195" stroke="#5b5bd6" stroke-width="0.5" stroke-dasharray="3 2"/>
+        <line x1="250" y1="140" x2="250" y2="195" stroke="#0ea5e9" stroke-width="0.5" stroke-dasharray="3 2"/>
+        <!-- Roscoe's -->
+        <rect x="60" y="195" width="220" height="60" rx="8" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="170" y="215" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">ROSCOE&#39;S &middot; 1975</text>
+        <text x="170" y="232" text-anchor="middle" font-size="7" fill="#6e6b64">Herb Hudson (Harlem native) &rarr; Long Beach, CA</text>
+        <text x="170" y="244" text-anchor="middle" font-size="7" fill="#6e6b64">National dissemination vector</text>
+        <!-- Mass market -->
+        <path d="M170 260 L170 280" stroke="#7c3aed" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="60" y="285" width="220" height="45" rx="6" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="302" text-anchor="middle" font-size="8" fill="#1a1a1a">Mass-market category (2000s&ndash;2010s)</text>
+        <text x="170" y="318" text-anchor="middle" font-size="7" fill="#7c3aed">T3: Heritage detached from product</text>
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#7c3aed"/></marker></defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 12: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">S6 &middot; INDUSTRIALIZATION</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h1>From Iron to Eggo</h1>
+  <div class="subtitle">Frank Dorsa, a San Jose machinist, industrialized a thousand-year-old food in 1953</div>
+  <div class="section-num-big">VI</div>
+</div>
+
+
+<!-- ===================== SLIDE 13: EGGO ===================== -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">S6 &middot; Dorsa &amp; Eggo</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>The Carousel Revolution</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>1906:</strong> Simplex Electric Heating Co. builds the first electric waffle iron. <strong>1911:</strong> GE prototype. By the 1930s, electric irons are standard middle-class appliances &mdash; ending a millennium of open-hearth cooking in one generation.</p>
+      <p class="point"><strong>1953:</strong> Frank Dorsa invents a large <strong>carousel mechanism</strong> with multiple irons rotating continuously, producing thousands of waffles per hour, immediately flash-frozen.</p>
+      <p class="point"><strong>Froffles &rarr; Eggo &rarr; Kellogg:</strong> renamed in 1955, acquired in 1968. Leo Burnett&rsquo;s &ldquo;L&rsquo;eggo my Eggo&rdquo; campaign (1972) completed the transformation. By 2009, Eggo held <strong>73% of the U.S. frozen waffle market</strong>.</p>
+      <div class="key-idea">
+        <div class="kicker">T2: The Eggo Problem</div>
+        <p>Eggo made the waffle available to everyone. It also made the artisan waffle irrelevant to most Americans. Both claims are true.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 370" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">WAFFLE IRON TECHNOLOGY TIMELINE</text>
+        <!-- Timeline spine -->
+        <line x1="50" y1="35" x2="50" y2="310" stroke="#b0ada5" stroke-width="1"/>
+        <!-- Entries -->
+        <g font-size="8">
+          <circle cx="50" cy="50" r="5" fill="#5b5bd6"/>
+          <text x="66" y="48" fill="#5b5bd6" font-weight="600" font-size="9">9th century</text>
+          <text x="66" y="62" fill="#6e6b64">Open-fire hinged iron</text>
+          <rect x="200" y="40" width="120" height="24" rx="4" fill="rgba(91,91,214,0.06)"/>
+          <text x="260" y="56" text-anchor="middle" font-size="7" fill="#5b5bd6">~1000 years</text>
+
+          <circle cx="50" cy="105" r="5" fill="#0ea5e9"/>
+          <text x="66" y="103" fill="#0ea5e9" font-weight="600" font-size="9">1906</text>
+          <text x="66" y="117" fill="#6e6b64">Simplex electric iron</text>
+
+          <circle cx="50" cy="150" r="5" fill="#0ea5e9"/>
+          <text x="66" y="148" fill="#0ea5e9" font-weight="600" font-size="9">1911</text>
+          <text x="66" y="162" fill="#6e6b64">GE prototype</text>
+
+          <circle cx="50" cy="195" r="5" fill="#7c3aed"/>
+          <text x="66" y="193" fill="#7c3aed" font-weight="600" font-size="9">1953</text>
+          <text x="66" y="207" fill="#6e6b64">Dorsa carousel &rarr; Froffles</text>
+
+          <circle cx="50" cy="240" r="5" fill="#7c3aed"/>
+          <text x="66" y="238" fill="#7c3aed" font-weight="600" font-size="9">1968</text>
+          <text x="66" y="252" fill="#6e6b64">Kellogg acquires Eggo</text>
+
+          <circle cx="50" cy="285" r="5" fill="#0d9488"/>
+          <text x="66" y="283" fill="#0d9488" font-weight="600" font-size="9">2009</text>
+          <text x="66" y="297" fill="#6e6b64">73% frozen waffle market</text>
+        </g>
+        <!-- Market share bar -->
+        <rect x="30" y="325" width="280" height="30" rx="6" fill="rgba(0,0,0,0.025)"/>
+        <rect x="30" y="325" width="204" height="30" rx="6" fill="rgba(20,150,110,0.12)"/>
+        <text x="170" y="345" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">73% &mdash; Eggo dominance</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 14: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">S7 &middot; GLOBAL VARIATIONS</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h1>Independent Invention<br>and Reverse Diffusion</h1>
+  <div class="subtitle">Hong Kong egg waffles, Dutch stroopwafels, Norwegian hearts</div>
+  <div class="section-num-big">VII</div>
+</div>
+
+
+<!-- ===================== SLIDE 15: GLOBAL MAP ===================== -->
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">S7 &middot; World Tour</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>Global Waffle Forms</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Stroopwafel</strong> (Netherlands, c. 1810&ndash;1840): Originated in Gouda as <em>armenkoeken</em> (&ldquo;poor people&rsquo;s cookies&rdquo;) from bakery scraps. Now a global airport staple without losing its Gouda identity.</p>
+      <p class="point"><strong>Hjertevafler</strong> (Norway): Heart-shaped, cardamom-spiced. March 25 is Waffle Day because the Swedish <em>V&aring;rfrudagen</em> (Annunciation) contracted to <em>V&aring;ffeldagen</em>. A religious feast became a secular food holiday through phonetic drift.</p>
+      <p class="point"><strong>Egg waffle</strong> (Hong Kong, 1950s): A grocer used excess eggs, evaporated milk, and a honeycomb mold. Reached the same basic form &mdash; batter in a patterned iron &mdash; through a completely independent path. Its 2010s global spread is <strong>reverse diffusion</strong>: a non-European variant traveling back to Europe.</p>
+      <p class="note">T6: Globalization homogenizes at scale and stimulates differentiation at the artisan level &mdash; simultaneously.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 370" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">GLOBAL WAFFLE FORMS</text>
+        <!-- European diffusion -->
+        <rect x="20" y="30" width="300" height="80" rx="8" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.3"/>
+        <text x="170" y="48" text-anchor="middle" font-size="7" fill="#5b5bd6" font-weight="500">EUROPEAN DIFFUSION</text>
+        <!-- Stroopwafel -->
+        <rect x="30" y="58" width="130" height="40" rx="4" fill="rgba(91,91,214,0.08)"/>
+        <text x="95" y="73" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Stroopwafel</text>
+        <text x="95" y="88" text-anchor="middle" font-size="7" fill="#6e6b64">Gouda, c.1810-1840</text>
+        <!-- Hjertevafler -->
+        <rect x="180" y="58" width="130" height="40" rx="4" fill="rgba(14,165,233,0.08)"/>
+        <text x="245" y="73" text-anchor="middle" font-size="8" fill="#0ea5e9" font-weight="600">Hjertevafler</text>
+        <text x="245" y="88" text-anchor="middle" font-size="7" fill="#6e6b64">Norway, heart-shaped</text>
+        <!-- Independent invention -->
+        <rect x="20" y="130" width="300" height="80" rx="8" fill="rgba(124,58,237,0.04)" stroke="#7c3aed" stroke-width="0.3"/>
+        <text x="170" y="148" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">INDEPENDENT INVENTION</text>
+        <rect x="75" y="158" width="190" height="40" rx="4" fill="rgba(124,58,237,0.08)"/>
+        <text x="170" y="173" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">Hong Kong Egg Waffle</text>
+        <text x="170" y="190" text-anchor="middle" font-size="7" fill="#6e6b64">1950s &middot; Completely different cultural path</text>
+        <!-- Reverse diffusion arrow -->
+        <path d="M170 215 C170 240 170 240 170 260" stroke="#7c3aed" stroke-width="1" fill="none" class="dash-flow"/>
+        <rect x="45" y="265" width="250" height="50" rx="8" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+        <text x="170" y="285" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">REVERSE DIFFUSION (2010s)</text>
+        <text x="170" y="302" text-anchor="middle" font-size="7" fill="#0d9488">Non-European variant travels back to Europe via food tourism</text>
+        <!-- Waffle Day note -->
+        <rect x="45" y="330" width="250" height="28" rx="4" fill="rgba(0,0,0,0.025)"/>
+        <text x="170" y="348" text-anchor="middle" font-size="7" fill="#6e6b64">March 25: Varfrudagen &rarr; Vaffeldagen (phonetic drift)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 16: SECTION DIVIDER ===================== -->
+<div class="slide section-divider" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">TENSIONS</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h1>Six Tensions</h1>
+  <div class="subtitle">Where the waffle&#39;s history reveals something about how food, identity, and culture actually work</div>
+  <div class="section-num-big">T</div>
+</div>
+
+
+<!-- ===================== SLIDE 17: TENSIONS MAP ===================== -->
+<div class="slide" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">TENSIONS &middot; Overview</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h2>The Contradictions Are the Content</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The most analytically productive moments in food history are the genuine contradictions &mdash; places where credible sources reach <strong>incompatible conclusions</strong>.</p>
+      <p class="point"><strong>T1:</strong> Is the waffle Belgian, or is &ldquo;Belgian waffle&rdquo; an American invention?</p>
+      <p class="point"><strong>T2:</strong> Did industrialization democratize the waffle or destroy it?</p>
+      <p class="point"><strong>T3:</strong> Chicken &amp; waffles: heritage or appropriation?</p>
+      <p class="point"><strong>T4:</strong> Waffle House Index: tool or corporate PR?</p>
+      <p class="point"><strong>T5:</strong> Street food vs. table food &mdash; what waffles are</p>
+      <p class="point"><strong>T6:</strong> Convergence vs. divergence in global waffle culture</p>
+      <div class="key-idea">
+        <div class="kicker">Core thesis</div>
+        <p>These tensions are not problems to be solved. They are the substance of the waffle&#39;s cultural meaning.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 370" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">SIX TENSIONS</text>
+        <!-- T1 -->
+        <rect x="20" y="30" width="145" height="48" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="92" y="48" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">T1</text>
+        <text x="92" y="64" text-anchor="middle" font-size="7" fill="#6e6b64">Belgian or American?</text>
+        <!-- T2 -->
+        <rect x="175" y="30" width="145" height="48" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="0.5"/>
+        <text x="247" y="48" text-anchor="middle" font-size="8" fill="#0ea5e9" font-weight="600">T2</text>
+        <text x="247" y="64" text-anchor="middle" font-size="7" fill="#6e6b64">Artisan vs. Eggo</text>
+        <!-- T3 -->
+        <rect x="20" y="90" width="145" height="48" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="92" y="108" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">T3</text>
+        <text x="92" y="124" text-anchor="middle" font-size="7" fill="#6e6b64">Appropriation</text>
+        <!-- T4 -->
+        <rect x="175" y="90" width="145" height="48" rx="6" fill="rgba(20,150,110,0.08)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="247" y="108" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">T4</text>
+        <text x="247" y="124" text-anchor="middle" font-size="7" fill="#6e6b64">Index: tool or PR?</text>
+        <!-- T5 -->
+        <rect x="20" y="150" width="145" height="48" rx="6" fill="rgba(167,139,250,0.08)" stroke="#a78bfa" stroke-width="0.5"/>
+        <text x="92" y="168" text-anchor="middle" font-size="8" fill="#a78bfa" font-weight="600">T5</text>
+        <text x="92" y="184" text-anchor="middle" font-size="7" fill="#6e6b64">Street vs. table</text>
+        <!-- T6 -->
+        <rect x="175" y="150" width="145" height="48" rx="6" fill="rgba(202,160,30,0.08)" stroke="#ca9f1e" stroke-width="0.5"/>
+        <text x="247" y="168" text-anchor="middle" font-size="8" fill="#ca9f1e" font-weight="600">T6</text>
+        <text x="247" y="184" text-anchor="middle" font-size="7" fill="#6e6b64">Convergence</text>
+        <!-- Central thesis -->
+        <rect x="40" y="220" width="260" height="70" rx="8" fill="rgba(91,91,214,0.06)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="245" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">RECURRING PATTERN</text>
+        <text x="170" y="264" text-anchor="middle" font-size="7" fill="#1a1a1a">Sacred origin &rarr; Secularization &rarr; Identity</text>
+        <text x="170" y="279" text-anchor="middle" font-size="7" fill="#1a1a1a">&rarr; Migration &rarr; Industrialization &rarr; Global recombination</text>
+        <!-- Bottom callout -->
+        <rect x="40" y="310" width="260" height="45" rx="6" fill="rgba(20,150,110,0.04)" stroke="rgba(20,150,110,0.1)" stroke-width="0.5"/>
+        <text x="170" y="328" text-anchor="middle" font-size="8" fill="#0d9488">The grid is always there &mdash; eleven centuries,</text>
+        <text x="170" y="344" text-anchor="middle" font-size="8" fill="#0d9488">the iron technology is the formal constant</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== SLIDE 18: SYNTHESIS ===================== -->
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">SYNTHESIS</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>The Origin Myth Problem</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Nearly every major waffle origin story is <strong>contested, apocryphal, or unverifiable</strong>:</p>
+      <p class="point">The Li&egrave;ge waffle&rsquo;s Prince-Bishop. Jefferson&rsquo;s Amsterdam irons. Kamphuisen&rsquo;s Gouda scraps. Wells Supper Club&rsquo;s jazz clientele.</p>
+      <p class="point">This pattern is not accidental. <strong>Origin myths function to anchor foods to places and people that confer legitimacy.</strong> The myth is often more culturally durable than the history because the myth does something history cannot: it provides an identity.</p>
+      <div class="key-idea">
+        <div class="kicker">Final finding</div>
+        <p>The Eggo is not a debased gaufre; it is the gaufre as transformed by industrial capitalism. The &ldquo;Belgian waffle&rdquo; is not a fraud; it is Belgian waffle culture as transformed by export economics. The tensions hold the history together.</p>
+      </div>
+      <p class="note">72 sources &middot; 7 dimensions &middot; 6 tensions &middot; read.sadh.app/anthro/waffle-evolution</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 360" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b5bd6" letter-spacing="0.08em">MYTH vs. HISTORY</text>
+        <!-- Myth column -->
+        <rect x="20" y="35" width="140" height="200" rx="8" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="0.5"/>
+        <text x="90" y="55" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">MYTH</text>
+        <text x="90" y="75" text-anchor="middle" font-size="7" fill="#6e6b64">Prince-Bishop of Li&egrave;ge</text>
+        <text x="90" y="93" text-anchor="middle" font-size="7" fill="#6e6b64">orders a new pastry</text>
+        <line x1="40" y1="105" x2="140" y2="105" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="90" y="120" text-anchor="middle" font-size="7" fill="#6e6b64">Jefferson innovates</text>
+        <text x="90" y="135" text-anchor="middle" font-size="7" fill="#6e6b64">the American waffle</text>
+        <line x1="40" y1="147" x2="140" y2="147" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="90" y="162" text-anchor="middle" font-size="7" fill="#6e6b64">Kamphuisen invents</text>
+        <text x="90" y="177" text-anchor="middle" font-size="7" fill="#6e6b64">the stroopwafel</text>
+        <line x1="40" y1="189" x2="140" y2="189" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="90" y="204" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">Provides identity</text>
+        <text x="90" y="219" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="500">Culturally durable</text>
+        <!-- History column -->
+        <rect x="180" y="35" width="140" height="200" rx="8" fill="rgba(20,150,110,0.06)" stroke="#0d9488" stroke-width="0.5"/>
+        <text x="250" y="55" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">HISTORY</text>
+        <text x="250" y="75" text-anchor="middle" font-size="7" fill="#6e6b64">Probably apocryphal;</text>
+        <text x="250" y="93" text-anchor="middle" font-size="7" fill="#6e6b64">recipe older than story</text>
+        <line x1="200" y1="105" x2="300" y2="105" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="250" y="120" text-anchor="middle" font-size="7" fill="#6e6b64">Dutch colonists brought</text>
+        <text x="250" y="135" text-anchor="middle" font-size="7" fill="#6e6b64">waffles before Jefferson</text>
+        <line x1="200" y1="147" x2="300" y2="147" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="250" y="162" text-anchor="middle" font-size="7" fill="#6e6b64">Bakery scrap origins</text>
+        <text x="250" y="177" text-anchor="middle" font-size="7" fill="#6e6b64">predate any individual</text>
+        <line x1="200" y1="189" x2="300" y2="189" stroke="#b0ada5" stroke-width="0.3"/>
+        <text x="250" y="204" text-anchor="middle" font-size="7" fill="#0d9488" font-weight="500">Provides accuracy</text>
+        <text x="250" y="219" text-anchor="middle" font-size="7" fill="#0d9488" font-weight="500">Culturally fragile</text>
+        <!-- Bottom synthesis -->
+        <rect x="30" y="260" width="280" height="80" rx="8" fill="rgba(91,91,214,0.04)" stroke="#5b5bd6" stroke-width="0.5"/>
+        <text x="170" y="283" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">CORE FINDING</text>
+        <text x="170" y="302" text-anchor="middle" font-size="8" fill="#1a1a1a">The waffle is an iron technology that has</text>
+        <text x="170" y="318" text-anchor="middle" font-size="8" fill="#1a1a1a">generated different foods in different contexts</text>
+        <text x="170" y="334" text-anchor="middle" font-size="7" fill="#6e6b64">Each claims to be the real waffle. Each is correct.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 19</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">&#9684;</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '\u25D0';
+    themeBtn.title = 'Using system theme \u2014 click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '\u2600' : '\u263D';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>
