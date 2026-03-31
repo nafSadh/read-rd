@@ -52,6 +52,15 @@
 | S4-02 | [NRDC — Delivering NCQG](https://www.nrdc.org/bio/joe-thwaites/how-deliver-new-climate-finance-goal) | Bilateral finance = $41B (35%) of $116B in 2022; gap of ~$105B if MDBs hit $120B target; China South-South estimated $3.1B/yr avg | Oct 2025 |
 | S4-03 | [WRI — NCQG Pathways](https://www.wri.org/insights/ncqg-climate-finance-goals-explained) | Bilateral institutions must fill gap depending on MDB performance; public multilateral = $51B (largest share); bilateral = $41B | Nov 2025 |
 | S4-04 | [CRS — US Paris Withdrawal](https://www.congress.gov/crs-product/R48504) | PA obliges Annex I parties (incl. US) to provide financial resources; withdrawal ceases all commitments | 2025 |
+| S4-05 | [OECD — Final 2024 ODA Statistics](https://www.oecd.org/en/data/insights/data-explainers/2025/12/final-oecd-statistics-on-oda-and-other-development-finance-flows-in-2024-key-figures-and-trends.html) | ODA $214.6B in 2024 (grant equiv.), down 6% from 2023; bilateral climate ODA = 35.6% of allocable; mitigation emphasis; philanthropic down 7% | Dec 2025 |
+| S4-06 | [Focus 2030 — Historic ODA Drop 2024](https://focus2030.org/en/historic-drop-in-official-development-assistance-in-2024/) | ODA $212.1B, down 7.1% real; 10 major European donors cutting $18B in 2025 (Germany $9.2B, France $2.6B, UK $2.2B); OECD projects 9-17% further drop 2024→2025 | Jan 2026 |
+| S4-07 | [OECD — Climate & Development Finance Data](https://www.oecd.org/en/topics/development-finance-for-climate-and-the-environment.html) | Rio markers methodology; bilateral climate ODA >1/3 of total; mitigation dominant; Africa gets less share (33%) than Asia (42%), Latin America (43%) | ongoing |
+| S4-08 | [OECD — Climate Finance $100B Goal 2013-2022](https://www.oecd.org/en/publications/2024/05/climate-finance-provided-and-mobilised-by-developed-countries-in-2013-2022_8031029a/full-report/component-3.html) | Official tracking: bilateral, multilateral, mobilized private; 3-4 year reporting lag; four components framework | May 2024 |
+| S4-09 | [WEF — Debt-for-Nature Swaps Explainer](https://www.weforum.org/stories/2024/04/climate-finance-debt-nature-swap/) | 140 swaps total since 1987; Ecuador $1.6B (largest); Barbados $300M water infrastructure; potential $100B (IIED estimate) | Apr 2024 |
+| S4-10 | [ECDPM — EU and Debt-for-Climate Swaps](https://ecdpm.org/work/eu-and-debt-climate-swaps-geopolitical-ambitions-and-development-impacts) | Germany-Egypt bilateral swap (NWFE-EP energy platform); EU shy on commercial swaps vs US leadership; EIB-IDB Barbados collaboration; SLB innovation | 2024 |
+| S4-11 | [CPI — Debt-for-Climate Swaps Primer](https://www.climatepolicyinitiative.org/wp-content/uploads/2025/02/Debt-for-Climate-Swaps-Primer.pdf) | TNC Nature Bonds: 6 programs (Seychelles, Belize, Barbados, Gabon, Bahamas, Ecuador); MDB credit enhancement typically 70%; bilateral DFI/ECA role | Feb 2025 |
+| S4-12 | [ORF America — Debt-for-Nature Swaps](https://orfamerica.org/newresearch/debt-for-nature-swaps) | 60% of LMIEs with climate risk also at financial crisis risk; countries spend 5x more on debt than climate (projected 7x by 2025); Galápagos case study | Mar 2025 |
+| S4-13 | [UNDP — New Wave of Debt Swaps](https://www.undp.org/future-development/signals-spotlight-2023/new-wave-debt-swaps-climate-or-nature) | 58 most climate-vulnerable developing countries: ~$500B debt servicing in 4 years; 20 countries requesting more swaps; Belize reduced debt by 10% GDP | 2023 |
 
 ## S5: Loss & Damage Finance
 
@@ -112,12 +121,12 @@
 | S1: Geopolitics | 12 | E3G, WEF, Penn/PICO, Wellington, ODI, SEI, Heinrich Böll, Brookings, NPR, White & Case |
 | S2: NCQG | 8 | UNFCCC, IISD, UNCTAD, WRI, NRDC, CGDev, CPI, UN News |
 | S3: MDB Reform | 9 | WRI, CGDev, GCF, Big Shift Global, World Bank, MDB Joint Report |
-| S4: Bilateral | 4 | Heinrich Böll, NRDC, WRI, CRS |
+| S4: Bilateral | 13 | Heinrich Böll, NRDC, WRI, CRS, OECD (3), Focus 2030, WEF, ECDPM, CPI, ORF, UNDP |
 | S5: Loss & Damage | 8 | UNFCCC, FRLD, Climate Analytics, Heinrich Böll, Slycan Trust, EDF, Springer, Greenly |
 | S6: Carbon Markets | 9 | FSR/EUI, Carbon Market Watch (3), Columbia CGEP, CATF, IISD, RECOFTC, Nefco |
 | S7: Domestic | 7 | Columbia Sabin/Climate Law, EPA, WRI, WEF, EU Parliament, BDI |
 | S8: Adaptation Gap | 6 | UNEP (3), Carbon Brief, weADAPT, SEI, MDB Joint Report |
-| **Total** | **63** | |
+| **Total** | **72** | |
 
 ## Cross-Cutting Sources
 - Climate Policy Initiative (CPI) Global Landscape — spans all sections
