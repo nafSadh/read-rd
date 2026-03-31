@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The West Wing & Global Politics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 20px 24px; transition: all 0.2s;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Culture &amp; Politics &middot; Research Project</div>
+    <h1>The West Wing &amp; Global <em>Politics</em></h1>
+    <div class="subtitle">Sorkin&rsquo;s idealism, democratic backsliding, and two fictions about what happens when the folding chairs come out.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p><em>The West Wing</em> presented American governance as a workplace drama where smart, exhausted people argued in good faith and the system basically worked. Two decades later, the system is under stress globally &mdash; executive aggrandizement, press erosion, the death of bipartisan reflex. This project surveys the gap between Sorkin&rsquo;s Washington and the real one, then asks: if the old institutions are failing, what grows in the subtracted space?</p>
+      <p>The research covers <strong>4 dimensions</strong> across <strong>34 sources</strong> &mdash; idealism vs. realism, executive power, bipartisanship, and media/press &mdash; with a democratic backsliding slide deck drawing on V-Dem, Freedom House, IDEA, and RSF data. Two companion fictions explore direct democracy from opposite angles: one hopeful, one structural.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href="literature-collection.md">Literature Collection (34 sources)</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status done">done</span></div>
+        <div class="section-desc">Synthesis across all 4 dimensions. 18 inline citations, 20 references. Sidebar nav, theme toggle.</div>
+        <div class="section-links">
+          <a href="survey-paper.html">Paper &rarr;</a>
+        </div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Backsliding <em>Slides</em> <span class="status done">done</span></div>
+        <div class="section-desc">17 slides on democratic backsliding globally. V-Dem 2026, Carnegie, IDEA, RSF data. 8 SVGs.</div>
+        <div class="section-links">
+          <a href="backsliding-slides.html">Slides &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Deep Dive</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">West Wing &amp; Global <em>Politics</em> <span class="status done">done</span></div>
+          <div class="section-desc">Unified 8-section interactive deep dive. Sorkin consensus, idealism/realism, executive power, bipartisanship, media/press. 34 sources, 2 SVG diagrams, 5 callouts.</div>
+          <div class="section-links">
+            <a href="west-wing-politics.dd.html">Deep Dive &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Fiction</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">I</div>
+        <div class="section-body">
+          <div class="section-title"><em>LGROTG</em> <span class="status done">done</span></div>
+          <div class="section-desc">A typo sparks a global movement toward direct democracy. Three cases &mdash; Buen Retiro, Reykjav&iacute;k, Kerala &mdash; each facing real opposition: police arrests, corporate bot attacks, corruption. Hope that&rsquo;s been tested, not assumed.</div>
+          <div class="section-links">
+            <a href="lgrotg.md">Read &rarr;</a>
+          </div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">II</div>
+        <div class="section-body">
+          <div class="section-title">The Folding <em>Chair</em> <span class="status done">done</span></div>
+          <div class="section-desc">The structural critique: every folding chair becomes a throne. Two parallel stories &mdash; Kostas in Thessaloniki (the chair that eventually folds) and Aminata in Dakar (the chair that doesn&rsquo;t). The antidote is not vigilance. The antidote is furniture.</div>
+          <div class="section-links">
+            <a href="folding-chair.md">Read &rarr;</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      <p>Project: <strong>The West Wing &amp; Global Politics</strong> &middot; 34 sources &middot; 4 dimensions &middot; 2 fictions &middot; March 2026</p>
+      <p>Part of <a href="../">culture</a> in <a href="../../">read&middot;rd</a> &middot; <a href="https://read.sadh.app" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a></p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.documentElement;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>
