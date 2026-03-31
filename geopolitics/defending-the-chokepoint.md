@@ -1,6 +1,6 @@
-# Defending the Chokepoint
+# Operation Epic Misfire
 
-### How the Iran War Strengthens America's Adversaries
+### Defending the Chokepoint: How the Iran War Strengthens America's Adversaries
 
 ---
 
@@ -8,7 +8,9 @@ Iran is dangerous. This is not in dispute. A regime that massacred thousands of 
 
 They were wrong about the treatment.
 
-One month into Operation Epic Fury, the largest U.S. military campaign since Afghanistan, the strategic ledger is coming into focus. And it does not read the way its architects promised. The war has not made America safer, has not stabilized the Middle East, and has not weakened the adversarial coalition it was supposed to deter. It has done the opposite on all three counts. The question is no longer whether Iran was a problem. It is whether the United States just solved that problem for Russia, China, and Iran itself — at its own expense.
+This is not a pacifist argument. Military force has its place in statecraft, and there are threats that only force can address. But the greatest strategic thinkers in history have understood that force is one instrument among many — and often not the best one. Sun Tzu warned that the supreme art of war is to subdue the enemy without fighting, not because fighting is immoral, but because it is expensive and uncertain. Churchill, hardly a dove, championed the naval blockade, radar, and code-breaking as weapons that multiplied British power without squandering it in frontal assaults. Clausewitz defined war as the continuation of politics by other means — but he also warned that the political objective must govern the military instrument, not the reverse.
+
+One month into Operation Epic Fury — what history may remember as Operation Epic *Misfire* — the largest U.S. military campaign since Afghanistan, the strategic ledger is coming into focus. And it does not read the way its architects promised. The war has not made America safer, has not stabilized the Middle East, and has not weakened the adversarial coalition it was supposed to deter. It has done the opposite on all three counts. The question is no longer whether Iran was a problem. It is whether the United States just solved that problem for Russia, China, and Iran itself — at its own expense.
 
 ---
 
@@ -66,6 +68,8 @@ The war has also demonstrated a second structural truth: the U.S. military, for 
 
 ## The Alternative
 
+Churchill's greatest strategic insight was not about the application of force. It was about the application of *alternatives* to force. He championed radar because it multiplied the effectiveness of existing aircraft. He invested in code-breaking at Bletchley Park because it turned intelligence into a weapon as powerful as any battleship. He understood that the most durable victories come from changing the terms of the contest — not from winning it on the enemy's terms.
+
 There is a class of investment that addresses every vulnerability this war has exposed: renewable energy. Not as a climate aspiration. As a national security strategy.
 
 Half the war's direct cost — $100 billion — invested in domestic solar, wind, and battery storage would build approximately 100–125 GW of new capacity. That is three times the United States' annual solar installations. It would create over 575,000 jobs, predominantly in Republican-voting states. It would generate electricity for 25 to 30 years. And it would return $3 to $8 for every dollar invested, according to the International Renewable Energy Agency.
@@ -80,7 +84,7 @@ Deutsche Bank's own note, after warning of the petroyuan, concluded with a quiet
 
 ## The Measure of Strategy
 
-The measure of strategy is not whether you can destroy a threat. It is whether your response leaves you stronger or weaker than before.
+Sun Tzu wrote: "The wise warrior avoids the battle." Not because battle is wrong — but because the highest victory preserves your own strength while exhausting the enemy's. The measure of strategy is not whether you can destroy a threat. It is whether your response leaves you stronger or weaker than before.
 
 By that standard, Operation Epic Fury is failing on its own terms. The United States is spending $200 billion it does not have, cutting health care to fund it, depleting strategic reserves, revealing its operational playbook to China, financing Russia's war in Ukraine through oil prices, accelerating the petroyuan, consolidating the very regime it sought to topple, and demonstrating to every future adversary that a narrow waterway and cheap drones are sufficient to hold the global economy hostage.
 
@@ -88,4 +92,4 @@ Iran is a problem. This war is not the solution. It is a $200 billion experiment
 
 ---
 
-*The author holds that Iran's nuclear ambitions and regional destabilization programs represent genuine threats to international security. The argument presented here is not that the threat is imaginary, but that the chosen response is counterproductive — enriching adversaries, eroding American financial architecture, and deepening the structural vulnerability it purports to address. A fraction of the war's cost, redirected toward energy independence, would accomplish what military force cannot: making the chokepoint irrelevant.*
+*The author holds that Iran's nuclear ambitions and regional destabilization programs represent genuine threats to international security, and that military force remains a legitimate instrument of statecraft. The argument presented here is not pacifist — it is strategic. The chosen response is counterproductive: enriching adversaries, eroding American financial architecture, and deepening the structural vulnerability it purports to address. Sun Tzu's supreme art is not the absence of war. It is the wisdom to know when other weapons serve better. A fraction of this war's cost, redirected toward energy independence, would accomplish what military force cannot: making the chokepoint irrelevant.*
