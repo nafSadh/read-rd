@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Mythos — The Leak, The Model, The Fallout</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+.fig .box-label { dominant-baseline: central; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#5b63f5"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig text[fill="#14966e"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#dc2626"] { fill: #f87171; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#dc2626"] { stroke: #f87171; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(220,38,38,0.06)"] { fill: rgba(248,113,113,0.1); }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#5b63f5"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig text[fill="#14966e"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#dc2626"] { fill: #f87171; }
+[data-theme="dark"] .fig rect[stroke="#dc2626"] { stroke: #f87171; }
+[data-theme="dark"] .fig rect[fill="rgba(220,38,38,0.06)"] { fill: rgba(248,113,113,0.1); }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+@media (max-width: 600px) {
+  .slide { padding: 1rem 1.2rem; padding-bottom: 2.2rem; }
+  .slide .subtitle { margin-bottom: 0.5rem; }
+  .slide-body.col-2 { flex-direction: column; gap: 0.8rem; }
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; }
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+  .toc-list { grid-template-columns: 1fr; }
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+@keyframes dashFlow { to { stroke-dashoffset: -16; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse2 { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.dash-flow { stroke-dasharray: 6 4; animation: dashFlow 0.8s linear infinite; }
+.pulse-anim { animation: pulse2 2s ease-in-out infinite; }
+
+.cite { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--mute); }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ===================== SLIDE 0: TITLE ===================== -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Claude <em>Mythos</em></h1>
+  <div class="ref">The Leak, The Model, The Fallout</div>
+  <div class="ref">March 26 – 30, 2026 · Sources: Fortune, Axios, CNBC, Euronews</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<!-- ===================== SLIDE 1: TOC ===================== -->
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">Contents</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>What We'll Cover</h2>
+  <div class="subtitle">Four angles on the biggest AI leak of 2026</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <ul class="toc-list">
+        <li><span class="toc-num">I</span> The Leak — How 3,000 assets hit the open web</li>
+        <li><span class="toc-num">II</span> The Model — Mythos, Capybara, and a new tier</li>
+        <li><span class="toc-num">III</span> Cybersecurity — Why Anthropic is warning governments</li>
+        <li><span class="toc-num">IV</span> Market & Strategy — Stocks, IPOs, and the race</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 2: SECTION I DIVIDER ===================== -->
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">The Leak</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>How It<br>Happened</h1>
+  <div class="subtitle">A CMS misconfiguration exposed Anthropic's most sensitive draft</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<!-- ===================== SLIDE 3: THE CMS ERROR ===================== -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">I · The Leak</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>A Default Set to Public</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Anthropic uses an off-the-shelf CMS for its blog. Assets uploaded to it are <strong>public by default</strong> unless a user explicitly changes the setting.</p>
+      <p class="point">Two security researchers — <strong>Roy Paz</strong> (LayerX Security) and <strong>Alexandre Pauwels</strong> (Cambridge) — discovered a publicly searchable data store linked to the blog.</p>
+      <p class="point">Inside: close to <strong>3,000 unpublished assets</strong> — images, PDFs, audio files, and crucially, a structured draft blog post announcing a new model.</p>
+      <p class="point">Anthropic attributed the exposure to <strong>"human error"</strong> in CMS configuration and pulled public access after Fortune notified them.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">CMS MISCONFIGURATION</text>
+        <!-- CMS box -->
+        <rect x="100" y="35" width="140" height="40" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="170" y="58" text-anchor="middle" font-size="10" fill="#5b5bd6">Anthropic CMS</text>
+        <!-- Arrow down to public store -->
+        <line x1="170" y1="75" x2="170" y2="105" stroke="#6e6b64" stroke-width="1"/>
+        <text x="195" y="93" font-size="7" fill="#b0ada5">default: public</text>
+        <!-- Public data store -->
+        <rect x="70" y="105" width="200" height="45" rx="6" fill="rgba(220,38,38,0.06)" stroke="#dc2626" stroke-width="1"/>
+        <text x="170" y="123" text-anchor="middle" font-size="9" fill="#dc2626">Public Data Store</text>
+        <text x="170" y="140" text-anchor="middle" font-size="7" fill="#b0ada5">~3,000 unpublished assets</text>
+        <!-- Arrows to researchers -->
+        <line x1="120" y1="150" x2="80" y2="190" stroke="#6e6b64" stroke-width="1"/>
+        <line x1="220" y1="150" x2="260" y2="190" stroke="#6e6b64" stroke-width="1"/>
+        <!-- Researcher 1 -->
+        <rect x="20" y="190" width="120" height="35" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="80" y="207" text-anchor="middle" font-size="8" fill="#1a1a1a">Roy Paz</text>
+        <text x="80" y="219" text-anchor="middle" font-size="7" fill="#b0ada5">LayerX Security</text>
+        <!-- Researcher 2 -->
+        <rect x="200" y="190" width="120" height="35" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="260" y="207" text-anchor="middle" font-size="8" fill="#1a1a1a">A. Pauwels</text>
+        <text x="260" y="219" text-anchor="middle" font-size="7" fill="#b0ada5">U. of Cambridge</text>
+        <!-- Fortune -->
+        <line x1="170" y1="225" x2="170" y2="255" stroke="#0d9488" stroke-width="1"/>
+        <rect x="95" y="255" width="150" height="40" rx="6" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="1"/>
+        <text x="170" y="275" text-anchor="middle" font-size="9" fill="#14966e">Fortune exclusive</text>
+        <text x="170" y="288" text-anchor="middle" font-size="7" fill="#b0ada5">Published March 26</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 4: WHAT WAS LEAKED ===================== -->
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">I · The Leak</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>What the Draft Revealed</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The key document was a <strong>structured draft blog post</strong> — complete with headings and a publication date — for a planned product launch.</p>
+      <p class="point">It named the model <strong>Claude Mythos</strong> and described a new tier called <strong>Capybara</strong> — larger and more capable than Opus.</p>
+      <p class="point">The draft described Mythos as Anthropic's <strong>"most powerful AI model ever developed"</strong> and flagged unprecedented cybersecurity risks.</p>
+      <p class="point">Also exposed: details of an <strong>invite-only CEO summit</strong> in an English countryside manor, and other internal materials including an employee's parental leave document.</p>
+      <div class="key-idea">
+        <div class="kicker">Accidental or strategic?</div>
+        <p>Some observers note the leak's timing is suspiciously convenient — free hype ahead of a potential IPO, similar to OpenAI's Q*-era leaks.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">LEAKED ASSETS</text>
+        <!-- Document icons -->
+        <rect x="40" y="35" width="260" height="50" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="170" y="55" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">Draft Blog Post</text>
+        <text x="170" y="72" text-anchor="middle" font-size="7" fill="#6e6b64">Model launch announcement + cyber risk warning</text>
+
+        <rect x="40" y="100" width="120" height="45" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="100" y="118" text-anchor="middle" font-size="8" fill="#1a1a1a">CEO Summit PDF</text>
+        <text x="100" y="133" text-anchor="middle" font-size="7" fill="#b0ada5">UK retreat details</text>
+
+        <rect x="180" y="100" width="120" height="45" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="240" y="118" text-anchor="middle" font-size="8" fill="#1a1a1a">Internal Docs</text>
+        <text x="240" y="133" text-anchor="middle" font-size="7" fill="#b0ada5">Logos, banners, etc.</text>
+
+        <!-- Key names -->
+        <text x="170" y="175" text-anchor="middle" font-size="8" fill="#6e6b64" letter-spacing="0.05em">KEY NAMES IN THE DRAFT</text>
+        <rect x="40" y="190" width="120" height="40" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+        <text x="100" y="208" text-anchor="middle" font-size="10" fill="#7c3aed" font-weight="500">Mythos</text>
+        <text x="100" y="222" text-anchor="middle" font-size="7" fill="#6e6b64">model name</text>
+
+        <rect x="180" y="190" width="120" height="40" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1"/>
+        <text x="240" y="208" text-anchor="middle" font-size="10" fill="#0ea5e9" font-weight="500">Capybara</text>
+        <text x="240" y="222" text-anchor="middle" font-size="7" fill="#6e6b64">tier name</text>
+
+        <!-- Status -->
+        <rect x="60" y="260" width="220" height="55" rx="6" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="1"/>
+        <text x="170" y="282" text-anchor="middle" font-size="8" fill="#14966e">Status: training complete</text>
+        <text x="170" y="300" text-anchor="middle" font-size="8" fill="#14966e">Early access customers testing</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 5: SECTION II DIVIDER ===================== -->
+<div class="slide section-divider" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">The Model</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h1>What Is<br><em>Mythos</em>?</h1>
+  <div class="subtitle">A new tier above Opus — larger, more capable, more expensive</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<!-- ===================== SLIDE 6: TIER SYSTEM ===================== -->
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">II · The Model</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>A Fourth Tier: Capybara</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Until now, Anthropic offered three tiers: <strong>Haiku</strong> (small/fast), <strong>Sonnet</strong> (balanced), and <strong>Opus</strong> (largest/most capable).</p>
+      <p class="point"><strong>Capybara</strong> sits above Opus — the draft describes it as "larger and more intelligent than our Opus models, which were, until now, our most powerful."</p>
+      <p class="point">Mythos is the specific model name within the Capybara tier. Training is reported as <strong>complete</strong>.</p>
+      <p class="point">The model is <strong>extremely compute-intensive and expensive</strong> to run. Anthropic says it's working on efficiency before general release.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 360" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">ANTHROPIC MODEL TIERS</text>
+        <!-- Haiku -->
+        <rect x="90" y="280" width="160" height="35" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="300" text-anchor="middle" font-size="10" fill="#6e6b64">Haiku</text>
+        <text x="280" y="300" font-size="7" fill="#b0ada5">fastest / cheapest</text>
+        <!-- Sonnet -->
+        <rect x="70" y="220" width="200" height="40" rx="6" fill="rgba(0,0,0,0.03)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="243" text-anchor="middle" font-size="10" fill="#6e6b64">Sonnet</text>
+        <text x="300" y="243" font-size="7" fill="#b0ada5">balanced</text>
+        <!-- Opus -->
+        <rect x="50" y="155" width="240" height="45" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="170" y="181" text-anchor="middle" font-size="11" fill="#5b5bd6">Opus 4.6</text>
+        <text x="318" y="181" font-size="7" fill="#5b5bd6">current best</text>
+        <!-- Capybara/Mythos -->
+        <rect x="25" y="65" width="290" height="65" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="170" y="92" text-anchor="middle" font-size="13" fill="#7c3aed" font-weight="600">Capybara: Mythos</text>
+        <text x="170" y="115" text-anchor="middle" font-size="8" fill="#7c3aed">new tier · above Opus</text>
+        <!-- Arrow -->
+        <text x="170" y="48" text-anchor="middle" font-size="9" fill="#7c3aed">&#x25B2; capability &amp; cost</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 7: CAPABILITIES ===================== -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">II · Capabilities</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>Dramatically Higher Scores</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Anthropic's draft said Mythos gets <strong>"dramatically higher scores"</strong> versus Opus 4.6 on coding, academic reasoning, and cybersecurity.</p>
+      <p class="point">The company confirmed it has <strong>"meaningful advances in reasoning, coding, and cybersecurity."</strong></p>
+      <p class="point">The model was described as <strong>"by far the most powerful AI model we've ever developed"</strong> — language Anthropic doesn't typically use publicly.</p>
+      <div class="key-idea">
+        <div class="kicker">Step change, not increment</div>
+        <p>Anthropic's spokesperson called it "a step change" — suggesting a genuine capability jump, not just an iteration on the Opus line.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">CAPABILITY DOMAINS</text>
+        <!-- Coding bar -->
+        <text x="30" y="55" font-size="9" fill="#1a1a1a" font-weight="500">Coding</text>
+        <rect x="30" y="62" width="140" height="14" rx="3" fill="rgba(91,91,214,0.15)"/>
+        <text x="178" y="74" font-size="7" fill="#5b5bd6">Opus 4.6</text>
+        <rect x="30" y="82" width="260" height="14" rx="3" fill="rgba(124,58,237,0.4)"/>
+        <text x="298" y="94" font-size="7" fill="#7c3aed">Mythos</text>
+        <!-- Reasoning bar -->
+        <text x="30" y="125" font-size="9" fill="#1a1a1a" font-weight="500">Reasoning</text>
+        <rect x="30" y="132" width="150" height="14" rx="3" fill="rgba(91,91,214,0.15)"/>
+        <text x="188" y="144" font-size="7" fill="#5b5bd6">Opus 4.6</text>
+        <rect x="30" y="152" width="270" height="14" rx="3" fill="rgba(124,58,237,0.4)"/>
+        <text x="308" y="164" font-size="7" fill="#7c3aed">Mythos</text>
+        <!-- Cyber bar -->
+        <text x="30" y="195" font-size="9" fill="#1a1a1a" font-weight="500">Cybersecurity</text>
+        <rect x="30" y="202" width="110" height="14" rx="3" fill="rgba(91,91,214,0.15)"/>
+        <text x="148" y="214" font-size="7" fill="#5b5bd6">Opus 4.6</text>
+        <rect x="30" y="222" width="280" height="14" rx="3" fill="rgba(220,38,38,0.35)"/>
+        <text x="318" y="234" font-size="7" fill="#dc2626">Mythos</text>
+        <!-- Note -->
+        <rect x="30" y="265" width="280" height="40" rx="6" fill="rgba(0,0,0,0.02)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+        <text x="170" y="282" text-anchor="middle" font-size="7" fill="#6e6b64">Exact benchmark numbers not published.</text>
+        <text x="170" y="296" text-anchor="middle" font-size="7" fill="#6e6b64">Bar widths are illustrative of described gap.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 8: SECTION III DIVIDER ===================== -->
+<div class="slide section-divider" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">Cybersecurity</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h1>The Cyber<br><em>Alarm</em></h1>
+  <div class="subtitle">Why Anthropic is privately briefing government officials</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<!-- ===================== SLIDE 9: CYBER RISK ===================== -->
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">III · Cyber Risk</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Far Ahead in Cyber Capabilities</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The leaked draft warned Mythos is <strong>"currently far ahead of any other AI model in cyber capabilities."</strong></p>
+      <p class="point">It said the model <strong>"presages an upcoming wave of models that can exploit vulnerabilities in ways that far outpace the efforts of defenders."</strong></p>
+      <p class="point">Anthropic is privately briefing <strong>senior government officials</strong> that large-scale AI-assisted cyberattacks become substantially more likely once models at this capability level reach wide distribution. <span class="cite">[Axios]</span></p>
+      <p class="point">A <strong>Dark Reading poll</strong> found that 48% of cybersecurity professionals now rank agentic AI as the #1 attack vector for 2026 — above deepfakes and everything else.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#dc2626" letter-spacing="0.08em">DUAL-USE RISK MODEL</text>
+        <!-- Center: Mythos -->
+        <circle cx="170" cy="150" r="50" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="170" y="147" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="600">Mythos</text>
+        <text x="170" y="163" text-anchor="middle" font-size="7" fill="#6e6b64">cyber capabilities</text>
+        <!-- Defenders -->
+        <line x1="130" y1="110" x2="60" y2="55" stroke="#0d9488" stroke-width="1"/>
+        <rect x="10" y="35" width="105" height="40" rx="6" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="1"/>
+        <text x="62" y="53" text-anchor="middle" font-size="8" fill="#14966e" font-weight="500">Defenders</text>
+        <text x="62" y="67" text-anchor="middle" font-size="7" fill="#6e6b64">find + patch vulns</text>
+        <!-- Attackers -->
+        <line x1="210" y1="110" x2="280" y2="55" stroke="#dc2626" stroke-width="1"/>
+        <rect x="225" y="35" width="105" height="40" rx="6" fill="rgba(220,38,38,0.06)" stroke="#dc2626" stroke-width="1"/>
+        <text x="277" y="53" text-anchor="middle" font-size="8" fill="#dc2626" font-weight="500">Attackers</text>
+        <text x="277" y="67" text-anchor="middle" font-size="7" fill="#6e6b64">exploit at scale</text>
+        <!-- Anthropic strategy -->
+        <line x1="170" y1="200" x2="170" y2="240" stroke="#5b5bd6" stroke-width="1"/>
+        <rect x="55" y="240" width="230" height="55" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="170" y="260" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">Anthropic's Strategy</text>
+        <text x="170" y="276" text-anchor="middle" font-size="7" fill="#6e6b64">Early access to cyber defense orgs</text>
+        <text x="170" y="288" text-anchor="middle" font-size="7" fill="#6e6b64">Head start before general release</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 10: PRECEDENT ===================== -->
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">III · Context</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2>Not the First Warning</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">In February 2026, OpenAI released GPT-5.3-Codex and classified it as <strong>"high capability"</strong> for cybersecurity tasks — the first model to receive that rating under its Preparedness Framework.</p>
+      <p class="point">The same week, Anthropic's <strong>Opus 4.6</strong> demonstrated an ability to surface previously unknown vulnerabilities in production codebases — acknowledged as a dual-use capability.</p>
+      <p class="point">In November 2025, Anthropic reported that a <strong>Chinese state-sponsored group</strong> had been using Claude Code to infiltrate ~30 organizations before detection.</p>
+      <div class="key-idea">
+        <div class="kicker">The pattern</div>
+        <p>Each generation of frontier models has pushed the cyber risk threshold further. Mythos appears to be the biggest single jump yet.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">CYBER RISK ESCALATION</text>
+        <!-- Timeline -->
+        <line x1="50" y1="50" x2="50" y2="300" stroke="#b0ada5" stroke-width="1"/>
+        <!-- Nov 2025 -->
+        <circle cx="50" cy="70" r="4" fill="#5b5bd6"/>
+        <text x="65" y="65" font-size="7" fill="#5b5bd6" font-weight="500">Nov 2025</text>
+        <text x="65" y="78" font-size="7" fill="#6e6b64" class="label-text">Chinese state group uses</text>
+        <text x="65" y="90" font-size="7" fill="#6e6b64" class="label-text">Claude for attacks on ~30 orgs</text>
+        <!-- Feb 2026 -->
+        <circle cx="50" cy="140" r="4" fill="#0ea5e9"/>
+        <text x="65" y="135" font-size="7" fill="#0ea5e9" font-weight="500">Feb 2026</text>
+        <text x="65" y="148" font-size="7" fill="#6e6b64" class="label-text">GPT-5.3-Codex: first "high</text>
+        <text x="65" y="160" font-size="7" fill="#6e6b64" class="label-text">capability" cyber rating</text>
+        <!-- Feb 2026 #2 -->
+        <circle cx="50" cy="200" r="4" fill="#5b5bd6"/>
+        <text x="65" y="195" font-size="7" fill="#5b5bd6" font-weight="500">Feb 2026</text>
+        <text x="65" y="208" font-size="7" fill="#6e6b64" class="label-text">Opus 4.6 finds zero-days</text>
+        <text x="65" y="220" font-size="7" fill="#6e6b64" class="label-text">in production code</text>
+        <!-- Mar 2026 -->
+        <circle cx="50" cy="270" r="6" fill="#7c3aed"/>
+        <text x="65" y="265" font-size="8" fill="#7c3aed" font-weight="600">Mar 2026</text>
+        <text x="65" y="278" font-size="8" fill="#7c3aed" class="label-text">Mythos: "far ahead of any</text>
+        <text x="65" y="291" font-size="8" fill="#7c3aed" class="label-text">other AI in cyber"</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 11: SECTION IV DIVIDER ===================== -->
+<div class="slide section-divider" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">Market &amp; Strategy</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h1>Stocks, IPOs, &<br>the <em>Race</em></h1>
+  <div class="subtitle">How the leak moved markets and fits the competitive landscape</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<!-- ===================== SLIDE 12: MARKET IMPACT ===================== -->
+<div class="slide" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">IV · Market</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h2>Cybersecurity Stocks Slump</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>CrowdStrike dropped 7.5%</strong> before lunch on the day after the leak was published. Other cybersecurity names sold off broadly.</p>
+      <p class="point">The fear: frontier AI models that can find and exploit vulnerabilities at scale could <strong>commoditize</strong> offensive capability, overwhelming defenders.</p>
+      <p class="point">However, stocks bounced sharply the following Monday. <strong>Palo Alto Networks CEO Nikesh Arora</strong> bought $10M in shares — a confidence signal that the defense side of AI also benefits.</p>
+      <div class="key-idea">
+        <div class="kicker">Two-sided trade</div>
+        <p>The bull case: if Mythos-class models make attacks more likely, enterprises must modernize defenses immediately — growing the market for security vendors.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">MARKET REACTION</text>
+        <!-- Simplified stock movement -->
+        <text x="30" y="50" font-size="7" fill="#6e6b64">Mar 26</text>
+        <text x="140" y="50" font-size="7" fill="#6e6b64">Mar 27</text>
+        <text x="250" y="50" font-size="7" fill="#6e6b64">Mar 30</text>
+        <!-- Line chart simplified -->
+        <polyline points="50,70 160,160 270,100" fill="none" stroke="#dc2626" stroke-width="2"/>
+        <circle cx="50" cy="70" r="3" fill="#dc2626"/>
+        <circle cx="160" cy="160" r="4" fill="#dc2626"/>
+        <circle cx="270" cy="100" r="3" fill="#0d9488"/>
+        <text x="170" y="178" text-anchor="middle" font-size="8" fill="#dc2626">CRWD -7.5%</text>
+        <text x="280" y="118" font-size="7" fill="#0d9488">bounce</text>
+        <!-- Context box -->
+        <rect x="30" y="210" width="280" height="70" rx="6" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="170" y="232" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Palo Alto CEO Arora</text>
+        <text x="170" y="248" text-anchor="middle" font-size="8" fill="#0d9488">bought $10M in shares</text>
+        <text x="170" y="268" text-anchor="middle" font-size="7" fill="#6e6b64">Signal: defense moat strengthened, not weakened</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 13: COMPETITIVE LANDSCAPE ===================== -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">IV · Competition</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>The Frontier Race: Q2 2026</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>OpenAI</strong> reportedly finished pre-training its own frontier model, codenamed <strong>"Spud"</strong>, around the same time as the Mythos leak.</p>
+      <p class="point">Both Anthropic and OpenAI are reportedly <strong>positioning for IPOs</strong> later this year — making capability announcements strategically important.</p>
+      <p class="point">Meanwhile, <strong>Z.AI's GLM 5.1</strong> offers 94% of Opus 4.6's coding performance at $10/month — open-source, built on Huawei hardware. The cost floor is dropping fast.</p>
+      <p class="point">OpenAI also updated <strong>Codex</strong> with new plugins for Slack, Figma, GitHub, and Gmail — competing directly with Claude Code's ecosystem.</p>
+      <p class="note">The pattern for the rest of 2026: frontier labs racing to demonstrate capability while managing political and regulatory consequences.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="16" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">COMPETITIVE LANDSCAPE</text>
+        <!-- Anthropic -->
+        <rect x="20" y="40" width="140" height="70" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="90" y="62" text-anchor="middle" font-size="10" fill="#7c3aed" font-weight="600">Anthropic</text>
+        <text x="90" y="78" text-anchor="middle" font-size="7" fill="#6e6b64">Mythos / Capybara</text>
+        <text x="90" y="92" text-anchor="middle" font-size="7" fill="#6e6b64">IPO expected Q3</text>
+        <!-- OpenAI -->
+        <rect x="180" y="40" width="140" height="70" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1.5"/>
+        <text x="250" y="62" text-anchor="middle" font-size="10" fill="#0ea5e9" font-weight="600">OpenAI</text>
+        <text x="250" y="78" text-anchor="middle" font-size="7" fill="#6e6b64">"Spud" pre-training done</text>
+        <text x="250" y="92" text-anchor="middle" font-size="7" fill="#6e6b64">IPO positioning</text>
+        <!-- Z.AI -->
+        <rect x="20" y="140" width="140" height="60" rx="8" fill="rgba(0,0,0,0.025)" stroke="#b0ada5" stroke-width="0.5"/>
+        <text x="90" y="162" text-anchor="middle" font-size="9" fill="#1a1a1a">Z.AI GLM 5.1</text>
+        <text x="90" y="178" text-anchor="middle" font-size="7" fill="#6e6b64">94% of Opus · $10/mo</text>
+        <text x="90" y="190" text-anchor="middle" font-size="7" fill="#6e6b64">Huawei HW · MIT license</text>
+        <!-- Theme arrow -->
+        <rect x="30" y="230" width="280" height="70" rx="8" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="1"/>
+        <text x="170" y="252" text-anchor="middle" font-size="8" fill="#14966e" font-weight="500">2026 Pattern</text>
+        <text x="170" y="270" text-anchor="middle" font-size="7" fill="#6e6b64">Capability race + IPO pressure + regulatory risk</text>
+        <text x="170" y="286" text-anchor="middle" font-size="7" fill="#6e6b64">Cost floor collapsing from below (open-source)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 14: TAKEAWAYS ===================== -->
+<div class="slide" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">Takeaways</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h2>What Matters Here</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>1. Capability jump is real.</strong> This isn't incremental — a new tier above Opus, with Anthropic using language like "step change" and "by far the most powerful."</p>
+      <p class="point"><strong>2. Cyber risk is the headline.</strong> Anthropic is self-reporting that its own model outpaces defenders. Government briefings are happening. This is new territory for responsible disclosure by an AI lab about its own model.</p>
+      <p class="point"><strong>3. Release will be staged.</strong> Cyber defense orgs get early access. General availability depends on efficiency improvements and safety assessments.</p>
+      <p class="point"><strong>4. IPO-adjacent timing.</strong> Whether the leak was accidental or not, Mythos lands in a competitive moment where both Anthropic and OpenAI are racing to demonstrate frontier leadership ahead of potential public offerings.</p>
+      <p class="point"><strong>5. The cost of frontier is rising.</strong> Capybara is described as more expensive than Opus. The gap between frontier and commodity AI is widening even as open-source closes from below.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <!-- Summary visual -->
+        <text x="170" y="20" text-anchor="middle" font-size="8" fill="#5b63f5" letter-spacing="0.08em">KEY TENSIONS</text>
+        <!-- Tension 1 -->
+        <rect x="20" y="40" width="300" height="45" rx="6" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+        <text x="170" y="58" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">Capability vs. Safety</text>
+        <text x="170" y="74" text-anchor="middle" font-size="7" fill="#6e6b64">Most powerful model ever — also most dangerous for cyber</text>
+        <!-- Tension 2 -->
+        <rect x="20" y="100" width="300" height="45" rx="6" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1"/>
+        <text x="170" y="118" text-anchor="middle" font-size="8" fill="#0ea5e9" font-weight="500">Offense vs. Defense</text>
+        <text x="170" y="134" text-anchor="middle" font-size="7" fill="#6e6b64">Same model helps attackers AND defenders</text>
+        <!-- Tension 3 -->
+        <rect x="20" y="160" width="300" height="45" rx="6" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="170" y="178" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">Frontier vs. Commodity</text>
+        <text x="170" y="194" text-anchor="middle" font-size="7" fill="#6e6b64">Capybara tier costs rising; open-source closing from below</text>
+        <!-- Tension 4 -->
+        <rect x="20" y="220" width="300" height="45" rx="6" fill="rgba(20,150,110,0.04)" stroke="#0d9488" stroke-width="1"/>
+        <text x="170" y="238" text-anchor="middle" font-size="8" fill="#14966e" font-weight="500">Transparency vs. Strategy</text>
+        <text x="170" y="254" text-anchor="middle" font-size="7" fill="#6e6b64">Leak as disclosure or as hype? Timing is suspicious.</text>
+        <!-- Footer -->
+        <text x="170" y="300" text-anchor="middle" font-size="7" fill="#b0ada5">Sources: Fortune (Mar 26), Axios (Mar 29),</text>
+        <text x="170" y="314" text-anchor="middle" font-size="7" fill="#b0ada5">CNBC (Mar 27), Euronews (Mar 30)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#x2190;</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 15</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#x2192;</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">&#x25D0;</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '\u25D0';
+    themeBtn.title = 'Using system theme \u2014 click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '\u2600' : '\u263D';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>
