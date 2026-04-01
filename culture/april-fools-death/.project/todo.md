@@ -2,26 +2,26 @@
 
 ## Deliverables
 
-- [x] Literature collection (35+ sources across 8 sections)
-- [ ] Unified deep-dive (8 one-page sections, storytelling-first)
-- [ ] Survey paper (short, Wikipedia-style citations)
-- [ ] Survey slides
+- [x] Literature collection (40+ sources across 8 sections)
+- [x] Unified deep-dive (8 one-page sections, storytelling-first)
+- [x] Survey paper (4 sections, 18 refs, 20 citations)
+- [ ] Survey slides (compact deck)
 - [ ] Position paper (short — "April Fools' Day is dead")
 
-## Source Adequacy
+## Source Adequacy — ALL ADEQUATE
 
-| Section | Current Sources | Adequate? | Gaps |
-|---------|----------------|-----------|------|
-| S1: Licensed Transgression | 7 | ✅ | None |
-| S2: Trust Prerequisite | 4 | ✅ | Could use trust index data (Edelman, Pew) |
-| S3: Corporate Retreat | 5 | ✅ | None |
-| S4: Satire Collapse | 4 | ✅ | Could use Onion editorial voice / interviews |
-| S5: Platform Mechanics | 4 | ⚠️ | Need academic sources on context collapse (Marwick & boyd) |
-| S6: Deepfakes & Synthetic | 4 | ⚠️ | Need deepfake policy sources, specific AF deepfake incidents |
-| S7: Cultural Divergence | 4 | ⚠️ | Need non-Western trust data, Asian/African AF equivalents |
-| S8: Mourning of Play | 6 | ✅ | None |
+| Section | Sources | Status |
+|---------|---------|--------|
+| S1: Licensed Transgression | 7 | ✅ |
+| S2: Trust Prerequisite | 6 | ✅ |
+| S3: Corporate Retreat | 5 | ✅ |
+| S4: Satire Collapse | 4 | ✅ |
+| S5: Platform Mechanics | 8 | ✅ |
+| S6: Deepfakes & Synthetic | 4 | ✅ |
+| S7: Cultural Divergence | 4 | ✅ |
+| S8: Mourning of Play | 6 | ✅ |
 
 ## Next Steps
-- Fill S5–S7 gaps with targeted searches
-- Build unified deep-dive (storytelling-first, one page per section)
-- Then: survey paper → slides → position paper
+- Build survey slides (use backsliding-slides.html as template reference)
+- Write position paper (short essay, "April Fools' Day Is Dead and Misinformation Killed It")
+- Update index with done status for both

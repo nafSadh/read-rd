@@ -1,12 +1,11 @@
 # Changelog — Misinformation Ate April Fools
 
 ## Session 1 — 2026-04-01
-- Project created on April Fools' Day itself (fitting — the idea came from browsing today's pranks)
+- Project created on April Fools' Day itself
 - Defined 8 sections and 4 deliverables (all compact)
 - Created scaffolding: .project/, index.html, literature-collection.md
-- Collected 35+ sources across all 8 sections via web search blitz
-- Assessed source adequacy: S1–S4, S8 adequate; S5–S7 need gap-filling
-- Added storytelling-first voice directive to methodology
-- Key anchor stories identified for each section
-- Created continuation prompt for next session
-- **Next:** Fill S5–S7 gaps, then build deep-dive
+- Collected 40+ sources across all 8 sections
+- Built unified deep-dive (8 storytelling-first sections, three-panel layout)
+- Built survey paper (4 synthesis sections, 18 refs, 20 inline citations)
+- Added Edelman Trust Barometer 2026 and Marwick/boyd context collapse sources
+- **Remaining:** survey slides + position paper
