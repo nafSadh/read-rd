@@ -1,12 +1,12 @@
 # TODO — Misinformation Ate April Fools
 
-## Deliverables
+## Deliverables — ALL COMPLETE
 
 - [x] Literature collection (40+ sources across 8 sections)
 - [x] Unified deep-dive (8 one-page sections, storytelling-first)
 - [x] Survey paper (4 sections, 18 refs, 20 citations)
-- [ ] Survey slides (compact deck)
-- [ ] Position paper (short — "April Fools' Day is dead")
+- [x] Survey slides (13 slides, 4 SVG diagrams)
+- [x] Position paper ("April Fools' Day Is Dead and Misinformation Killed It")
 
 ## Source Adequacy — ALL ADEQUATE
 
@@ -21,7 +21,4 @@
 | S7: Cultural Divergence | 4 | ✅ |
 | S8: Mourning of Play | 6 | ✅ |
 
-## Next Steps
-- Build survey slides (use backsliding-slides.html as template reference)
-- Write position paper (short essay, "April Fools' Day Is Dead and Misinformation Killed It")
-- Update index with done status for both
+## Project Complete ✅

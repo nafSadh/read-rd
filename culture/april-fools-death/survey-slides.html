@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misinformation Ate April Fools — Slides</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  /* SVG fills — light */
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Only prevent selection on nav controls, not slide content */
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+/* ---- SLIDE CONTAINER ---- */
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- SLIDE LAYOUT ---- */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+/* Subtle divider between text and SVG columns */
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+/* ---- TEXT ELEMENTS ---- */
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+/* Constrain content width on ultrawide screens — skip title & divider slides */
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- TITLE SLIDE ---- */
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+/* ---- TOC ---- */
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION DIVIDER ---- */
+/* Light mode: warm accent background */
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+/* Dark mode: deeper accent-tinted background */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+/* ---- NAVIGATION (overlay at viewport bottom) ---- */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* SVG Styling */
+.fig { overflow: visible; } /* prevent viewBox clipping on edges */
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+/* Center text vertically in boxes when text-anchor is middle */
+.fig .box-label { dominant-baseline: central; }
+
+/* Dark mode SVG overrides — remap hardcoded fills/strokes */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  /* accent colors shift slightly brighter in dark */
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+/* Animations for SVG */
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Misinformation Ate<br>April <em>Fools</em></h1>
+  <div class="ref">Trust, play &amp; the death of sanctioned deception</div>
+  <div class="ref">Edelman Trust Barometer &middot; Bakhtin &middot; Marwick &amp; boyd &middot; Huizinga &middot; 40+ sources</div>
+  <div class="meta">Arrow keys / click / swipe &middot; &#9680; for dark mode</div>
+</div>
+
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">OVERVIEW</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>What We&rsquo;ll Cover</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <ol class="toc-list">
+        <li><span class="toc-num">I</span> The Carnival Contract &mdash; licensed transgression &amp; the trust prerequisite</li>
+        <li><span class="toc-num">II</span> The Great Collapse &mdash; corporate retreat &amp; the death of satire</li>
+        <li><span class="toc-num">III</span> The Mechanism &mdash; platform context collapse &amp; synthetic pranks</li>
+        <li><span class="toc-num">IV</span> What Remains &mdash; cultural divergence &amp; the mourning of play</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">THE CONTRACT</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>The Carnival<br><em>Contract</em></h1>
+  <div class="subtitle">Today we agree that lies are play. Tomorrow we go back to normal.</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;1 &middot; Licensed Transgression</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>The Spaghetti Harvest</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>April 1, 1957:</strong> BBC&rsquo;s <em>Panorama</em> airs a segment on Swiss farmers harvesting spaghetti from trees. Hundreds call to ask how to grow their own.</p>
+      <p class="point">Bakhtin called this <strong>carnival</strong> &mdash; a temporary zone where hierarchies invert, the sacred is profaned, and transgression is licensed by shared consent.</p>
+      <p class="point">Three conditions made it work: a <strong>trusted institution</strong> (BBC), an <strong>engaged audience</strong>, and a <strong>bounded frame</strong> (April 1st).</p>
+      <div class="key-idea">
+        <div class="kicker">The principle</div>
+        <p>&ldquo;Wine barrels burst if from time to time we do not open them and let in some air.&rdquo; &mdash; Letter from a school of theology, 1444</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="30" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">THE CARNIVAL CONTRACT</text>
+        <circle cx="170" cy="140" r="80" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 3"/>
+        <text x="170" y="125" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="12" font-weight="600">MAGIC CIRCLE</text>
+        <text x="170" y="145" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Bounded time</text>
+        <text x="170" y="158" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Shared consent</text>
+        <text x="170" y="171" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Licensed deception</text>
+        <text x="50" y="250" class="label-text" fill="var(--mute)" font-size="9">Outside: reality</text>
+        <text x="230" y="250" class="label-text" fill="var(--mute)" font-size="9">Inside: play</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;1 &middot; Trust Prerequisite</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>Shared Reality Is Collapsing</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The <strong>2026 Edelman Trust Barometer</strong> (37,500 people, 28 countries): 70% unwilling to trust someone with different values or information sources.</p>
+      <p class="point">Trust drained from institutions: government leaders <strong>&minus;16 pts</strong>, news organizations <strong>&minus;11 pts</strong> over five years. Flowed to personal circles: neighbors &amp; family <strong>+11 pts</strong>.</p>
+      <p class="point">Only <strong>39%</strong> get news from ideologically different sources weekly &mdash; down 6 pts in a single year.</p>
+      <p class="point"><strong>YouGov 2025:</strong> Only 38% of under-30s view April Fools&rsquo; positively. Down from 52% a decade ago.</p>
+      <div class="key-idea">
+        <div class="kicker">The thesis</div>
+        <p>Pranks are parasitic on trust. When no one agrees on what&rsquo;s real, a deliberate lie isn&rsquo;t mischief &mdash; it&rsquo;s just more noise.</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">EDELMAN TRUST ARC (2020&ndash;2026)</text>
+        <text x="50" y="55" class="label-text" fill="var(--mute)" font-size="9">2020</text>
+        <text x="120" y="55" class="label-text" fill="var(--mute)" font-size="9">2022</text>
+        <text x="190" y="55" class="label-text" fill="var(--mute)" font-size="9">2024</text>
+        <text x="275" y="55" class="label-text" fill="var(--mute)" font-size="9">2026</text>
+        <line x1="40" y1="65" x2="310" y2="65" stroke="var(--border)" stroke-width="1"/>
+        <text x="30" y="95" class="label-text" fill="var(--dim)" font-size="10" text-anchor="end">Fear</text>
+        <rect x="40" y="80" width="55" height="20" rx="3" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="30" y="130" class="label-text" fill="var(--dim)" font-size="10" text-anchor="end">Polar.</text>
+        <rect x="100" y="115" width="70" height="20" rx="3" fill="var(--svg-accent2-fill)" stroke="var(--accent2)" stroke-width="1"/>
+        <text x="30" y="165" class="label-text" fill="var(--dim)" font-size="10" text-anchor="end">Griev.</text>
+        <rect x="175" y="150" width="70" height="20" rx="3" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="1"/>
+        <text x="30" y="200" class="label-text" fill="var(--dim)" font-size="10" text-anchor="end">Insul.</text>
+        <rect x="250" y="185" width="60" height="20" rx="3" fill="var(--svg-accent4-fill)" stroke="var(--accent4)" stroke-width="1"/>
+        <path d="M67 100 L135 125 L210 160 L280 195" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="170" y="240" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">Fear &rarr; Polarization &rarr; Grievance &rarr; Insularity</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">THE COLLAPSE</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h1>The Great<br><em>Withdrawal</em></h1>
+  <div class="subtitle">Google stopped pranking. The Onion can&rsquo;t outpace reality.</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;2 &middot; Corporate Retreat</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>Google&rsquo;s 20-Year Eulogy</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>2000&ndash;2019:</strong> Google runs annual April Fools&rsquo; pranks. MentalPlex, Gmail Paper, Google Gulp, Google Romance.</p>
+      <p class="point"><strong>2004:</strong> Gmail launches on April 1st. <em>The Guardian</em> calls it &ldquo;an elaborate April Fools&rsquo; prank.&rdquo; Today: 1.8B users.</p>
+      <p class="point"><strong>2020:</strong> Google cancels pranks &ldquo;out of respect&rdquo; for COVID. Never comes back.</p>
+      <p class="point"><strong>2026:</strong> Google, Apple, Samsung all opt out. The corporate prank era is over.</p>
+      <div class="key-idea">
+        <div class="kicker">The reversal</div>
+        <p>In 2004, a real product was mistaken for a joke. By 2020, jokes could be mistaken for real threats. The arrow reversed.</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">GOOGLE AF TIMELINE</text>
+        <line x1="40" y1="130" x2="300" y2="130" stroke="var(--border)" stroke-width="1"/>
+        <circle cx="55" cy="130" r="5" fill="var(--accent)"/>
+        <text x="55" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2000</text>
+        <text x="55" y="118" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="8">Start</text>
+        <circle cx="120" cy="130" r="5" fill="var(--yellow)"/>
+        <text x="120" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2004</text>
+        <text x="120" y="118" text-anchor="middle" class="label-text" fill="var(--yellow)" font-size="8">Gmail</text>
+        <circle cx="230" cy="130" r="5" fill="var(--accent3)"/>
+        <text x="230" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2019</text>
+        <text x="230" y="118" text-anchor="middle" class="label-text" fill="var(--accent3)" font-size="8">Last</text>
+        <line x1="260" y1="120" x2="260" y2="140" stroke="#e87090" stroke-width="2"/>
+        <text x="275" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2020</text>
+        <text x="275" y="118" text-anchor="middle" class="label-text" fill="#e87090" font-size="8">Stop</text>
+        <rect x="260" y="170" width="60" height="35" rx="4" fill="none" stroke="#e87090" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="290" y="185" text-anchor="middle" class="label-text" fill="#e87090" font-size="8">Silence</text>
+        <text x="290" y="197" text-anchor="middle" class="label-text" fill="var(--mute)" font-size="8">2020&ndash;2026</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;2 &middot; Satire Collapse</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>Poe&rsquo;s Law Eats Everything</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Poe&rsquo;s Law (2005):</strong> Without explicit intent markers, parodies of extremism are indistinguishable from sincere extremism.</p>
+      <p class="point"><strong>2012:</strong> Iran&rsquo;s Fars News runs an <em>Onion</em> article as real news. North Korea&rsquo;s KCNA cites &ldquo;Sexiest Man Alive.&rdquo; China&rsquo;s <em>People&rsquo;s Daily</em> circulates it.</p>
+      <p class="point">Sean Spicer retweets an Onion video calling himself a provider of &ldquo;robust and clearly articulated misinformation&rdquo; &mdash; apparently in earnest.</p>
+      <div class="key-idea">
+        <div class="kicker">The problem</div>
+        <p>When reality outpaces parody, the designated day of lies becomes redundant. Every day is already April Fools&rsquo;.</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">POE&apos;S LAW</text>
+        <rect x="30" y="50" width="130" height="80" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="95" y="80" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="11" font-weight="600">SATIRE</text>
+        <text x="95" y="100" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Intended as joke</text>
+        <text x="95" y="115" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Context-dependent</text>
+        <rect x="180" y="50" width="130" height="80" rx="6" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="1"/>
+        <text x="245" y="80" text-anchor="middle" class="label-text" fill="var(--accent3)" font-size="11" font-weight="600">SINCERITY</text>
+        <text x="245" y="100" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Genuinely extreme</text>
+        <text x="245" y="115" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Looks like parody</text>
+        <text x="170" y="160" text-anchor="middle" class="label-text" fill="#e87090" font-size="14" font-weight="600">?</text>
+        <text x="170" y="180" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Indistinguishable</text>
+        <rect x="60" y="200" width="220" height="40" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="1"/>
+        <text x="170" y="218" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">When the gap between reality and absurdity closes,</text>
+        <text x="170" y="232" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="9" font-weight="500">satire has nowhere to stand.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">THE MECHANISM</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h1>Context Collapse &amp;<br>Synthetic <em>Media</em></h1>
+  <div class="subtitle">How platforms strip the joke of everything that makes it a joke.</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;3 &middot; Context Collapse</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>The Algorithm Doesn&rsquo;t Know It&rsquo;s April</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Context collapse</strong> (danah boyd, early 2000s; Marwick &amp; boyd, 2011): social media flattens multiple audiences into one, stripping content of date, source, tone, and intent.</p>
+      <p class="point">A joke posted April 1st in a group chat becomes disinfo when screenshot-shared on Twitter in November by a stranger with an agenda.</p>
+      <p class="point"><strong>Dan Evon (Snopes):</strong> AF pranks have &ldquo;staying power&rdquo; &mdash; the elephant/lion cub image circulated for years after its AF origin.</p>
+      <p class="point"><strong>April 1, 2026:</strong> A fake war lockdown message circulates on messaging apps, creating genuine concern before debunking.</p>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">CONTEXT COLLAPSE</text>
+        <rect x="30" y="50" width="120" height="60" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="90" y="72" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">AF JOKE</text>
+        <text x="90" y="88" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="8">Date: Apr 1</text>
+        <text x="90" y="100" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="8">Audience: friends</text>
+        <path d="M150 80 L190 80" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs>
+        <rect x="190" y="45" width="50" height="30" rx="4" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="1"/>
+        <text x="215" y="64" text-anchor="middle" class="label-text" fill="var(--mute)" font-size="8">ALGO</text>
+        <path d="M240 60 L270 60" stroke="var(--mute)" stroke-width="1" marker-end="url(#arrow2)"/>
+        <defs><marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--mute)"/></marker></defs>
+        <rect x="190" y="90" width="120" height="60" rx="6" fill="var(--svg-accent3-fill)" stroke="#e87090" stroke-width="1"/>
+        <text x="250" y="112" text-anchor="middle" class="label-text" fill="#e87090" font-size="10" font-weight="500">DISINFO</text>
+        <text x="250" y="128" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="8">Date: stripped</text>
+        <text x="250" y="140" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="8">Audience: everyone</text>
+        <rect x="60" y="180" width="220" height="55" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="1"/>
+        <text x="170" y="200" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">The algorithm is agnostic to the calendar.</text>
+        <text x="170" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Fear engages better than laughter.</text>
+        <text x="170" y="228" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="9" font-weight="500">A joke, once released, is just content.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;3 &middot; Synthetic Pranks</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2>AI as Prank Co-Author</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">In 2026, Gemini and ChatGPT are standard tools for AF prank production. Published prompts instruct users to generate:</p>
+      <ul class="s-list">
+        <li>Fake celebrity selfies with &ldquo;realistic lighting&rdquo; and &ldquo;slight blur for authenticity&rdquo;</li>
+        <li>Simulated cracked phone screens</li>
+        <li>Fabricated police fine screenshots with &ldquo;official-looking formatting&rdquo; and &ldquo;government logo&rdquo;</li>
+      </ul>
+      <p class="point">Each of these, outside the AF context, would be recognized as <strong>fraud, impersonation, or disinformation</strong>. Inside the AF context, they&rsquo;re &ldquo;fun.&rdquo; The technology doesn&rsquo;t know the difference.</p>
+      <div class="key-idea">
+        <div class="kicker">The intent gap</div>
+        <p>The boundary between prank and fraud now depends entirely on what&rsquo;s in the creator&rsquo;s heart &mdash; which is exactly the thing the internet cannot see.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide section-divider" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">WHAT REMAINS</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h1>The Mourning<br>of <em>Play</em></h1>
+  <div class="subtitle">What we&rsquo;re losing isn&rsquo;t a holiday. It&rsquo;s a capacity.</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<div class="slide" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">&sect;4 &middot; What Survives</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h2>The Magic Circle Dissolves</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Huizinga</strong> (<em>Homo Ludens</em>, 1938): play creates a &ldquo;magic circle&rdquo; &mdash; a temporary world set apart, where special rules obtain and participants agree to step outside reality together.</p>
+      <p class="point">April Fools&rsquo; is a magic circle <strong>bounded by time</strong>. When misinformation makes every day a day of deception, the circle dissolves. There is no &ldquo;inside&rdquo; because there is no &ldquo;outside.&rdquo;</p>
+      <p class="point">The traditions that survive are <strong>embodied and local</strong>: French <em>poisson d&rsquo;avril</em>, Scottish Huntigowk letters, a family freezing the breakfast cereal. They don&rsquo;t need platforms.</p>
+      <div class="key-idea">
+        <div class="kicker">The final insight</div>
+        <p>Individual pranks persist. What&rsquo;s dying is the <strong>collective agreement</strong> to play together &mdash; &ldquo;a small antidote to the horror we witness daily.&rdquo;</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="260" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">THE MAGIC CIRCLE</text>
+        <circle cx="120" cy="130" r="70" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="120" y="110" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">BEFORE</text>
+        <text x="120" y="130" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Clear boundary</text>
+        <text x="120" y="145" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Inside = play</text>
+        <text x="120" y="160" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Outside = real</text>
+        <circle cx="250" cy="130" r="70" fill="none" stroke="#e87090" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="250" y="110" text-anchor="middle" class="label-text" fill="#e87090" font-size="10" font-weight="500">AFTER</text>
+        <text x="250" y="130" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Boundary dissolved</text>
+        <text x="250" y="145" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">No inside/outside</text>
+        <text x="250" y="160" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">Every day = AF</text>
+        <text x="170" y="240" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">&ldquo;Man is only completely a man when he plays.&rdquo; &mdash; Huizinga</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&larr;</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 13</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&rarr;</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">&#9680;</button>
+</div>
+
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>
