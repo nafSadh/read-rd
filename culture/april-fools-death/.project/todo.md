@@ -2,8 +2,8 @@
 
 ## Deliverables
 
-- [ ] Literature collection (target: 30+ sources across 8 sections)
-- [ ] Unified deep-dive (8 one-page sections, 1 SVG each)
+- [x] Literature collection (35+ sources across 8 sections)
+- [ ] Unified deep-dive (8 one-page sections, storytelling-first)
 - [ ] Survey paper (short, Wikipedia-style citations)
 - [ ] Survey slides
 - [ ] Position paper (short — "April Fools' Day is dead")
@@ -12,16 +12,16 @@
 
 | Section | Current Sources | Adequate? | Gaps |
 |---------|----------------|-----------|------|
-| S1: Licensed Transgression | 0 | TBD | Bakhtin, carnival theory, AF history |
-| S2: Trust Prerequisite | 0 | TBD | Trust research, epistemic commons |
-| S3: Corporate Retreat | 0 | TBD | Google AF timeline, brand risk data |
-| S4: Satire Collapse | 0 | TBD | Onion, Poe's Law, satire studies |
-| S5: Platform Mechanics | 0 | TBD | Context collapse, algorithmic feeds |
-| S6: Deepfakes & Synthetic Media | 0 | TBD | Deepfake pranks, synthetic media policy |
-| S7: Cultural Divergence | 0 | TBD | Non-Western AF traditions, trust indices |
-| S8: Mourning of Play | 0 | TBD | Play theory, Huizinga, collective ritual |
+| S1: Licensed Transgression | 7 | ✅ | None |
+| S2: Trust Prerequisite | 4 | ✅ | Could use trust index data (Edelman, Pew) |
+| S3: Corporate Retreat | 5 | ✅ | None |
+| S4: Satire Collapse | 4 | ✅ | Could use Onion editorial voice / interviews |
+| S5: Platform Mechanics | 4 | ⚠️ | Need academic sources on context collapse (Marwick & boyd) |
+| S6: Deepfakes & Synthetic | 4 | ⚠️ | Need deepfake policy sources, specific AF deepfake incidents |
+| S7: Cultural Divergence | 4 | ⚠️ | Need non-Western trust data, Asian/African AF equivalents |
+| S8: Mourning of Play | 6 | ✅ | None |
 
 ## Next Steps
-- Collect sources across all 8 sections (web search blitz)
-- Assess adequacy
-- Build deep-dive once sources are sufficient
+- Fill S5–S7 gaps with targeted searches
+- Build unified deep-dive (storytelling-first, one page per section)
+- Then: survey paper → slides → position paper

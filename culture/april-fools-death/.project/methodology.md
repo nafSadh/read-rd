@@ -24,6 +24,9 @@ Eight axes, each getting a one-page treatment in a unified deep-dive:
 ## Reading & Synthesis Approach
 Discourse survey — synthesizing arguments, not reading individual papers at depth.
 
+## Voice & Style
+**Storytelling first.** Every section opens with a story, anecdote, or vivid scene — the BBC spaghetti harvest, the Google engineer who killed Gmail Paper, the Onion article that Iran ran as news. Theory and analysis follow from narrative, never the other way around. The tone is essayistic, slightly wry, intellectually serious but never dry. Think: a great longform piece in The Atlantic or a well-crafted newsletter essay. No academic hedge-speak.
+
 ## Deliverables Plan
 All compact:
 - [ ] Unified deep-dive (8 one-page sections)
