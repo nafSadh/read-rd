@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misinformation Ate April Fools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 28px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .deliverable-card {
+      border: 1px solid var(--border); padding: 20px 24px; transition: all 0.2s;
+    }
+    .deliverable-card:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Culture &middot; Research Project</div>
+    <h1>Misinformation Ate April <em>Fools</em></h1>
+    <div class="subtitle">When reality became indistinguishable from parody, the one day we agreed to lie together quietly died.</div>
+    <div class="rule"></div>
+
+    <div class="meta" style="line-height:1.7">
+      <p>April Fools&rsquo; Day requires a shared baseline of truth to subvert. Misinformation, algorithmic context collapse, deepfakes, and post-truth politics have eroded that baseline &mdash; and with it, the cultural conditions for sanctioned play. Google stopped its pranks in 2020 and never came back. The Onion can&rsquo;t outpace real headlines. This project surveys the intersection of trust erosion and humor collapse across <strong>8 dimensions</strong>.</p>
+      <p style="margin-top:12px;font-size:14px;color:var(--dim)">
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a>
+      </p>
+    </div>
+
+    <h2>Key Deliverables</h2>
+    <div class="deliverable-grid">
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Paper</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">Short synthesis across all 8 dimensions. Inline citations.</div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Survey <em>Slides</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">Compact slide deck. Key claims, SVG diagrams.</div>
+      </div>
+      <div class="deliverable-card">
+        <div class="section-title">Position <em>Paper</em> <span class="status planned">planned</span></div>
+        <div class="section-desc">&ldquo;April Fools&rsquo; Day is dead and misinformation killed it.&rdquo;</div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+    <h2>Deep Dive</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">&mdash;</div>
+        <div class="section-body">
+          <div class="section-title">Misinformation Ate April <em>Fools</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Unified 8-section deep dive. Licensed transgression, trust prerequisites, corporate retreat, satire collapse, platform mechanics, deepfakes, cultural divergence, mourning of play.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+    <h2>Sections</h2>
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">S1</div>
+        <div class="section-body">
+          <div class="section-title">Licensed <em>Transgression</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Bakhtin&rsquo;s carnival, the social contract of sanctioned deception, AF history from 1563 to the golden age of brand pranks.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S2</div>
+        <div class="section-body">
+          <div class="section-title">The Trust <em>Prerequisite</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Pranks need a baseline of shared reality to subvert. What happens when that baseline dissolves?</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S3</div>
+        <div class="section-body">
+          <div class="section-title">The Corporate <em>Retreat</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Google 2000&ndash;2019, COVID as exit ramp, brand liability math, the silence of Big Tech in 2026.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S4</div>
+        <div class="section-body">
+          <div class="section-title">Satire <em>Collapse</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">The Onion problem, Poe&rsquo;s Law, when real headlines outpace parody and satire loses its structural function.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S5</div>
+        <div class="section-body">
+          <div class="section-title">Platform <em>Mechanics</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Algorithmic context-stripping: feeds remove date, source, and intent. A joke in April becomes disinfo in November.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S6</div>
+        <div class="section-body">
+          <div class="section-title">Deepfakes &amp; Synthetic <em>Media</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">When &ldquo;just a prank bro&rdquo; becomes genuinely dangerous. AI-generated content, the authenticity crisis.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S7</div>
+        <div class="section-body">
+          <div class="section-title">Cultural <em>Divergence</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Is April Fools&rsquo; death a Western/anglophone phenomenon? Poisson d&rsquo;avril, Dia das Mentiras, trust indices globally.</div>
+        </div>
+      </li>
+      <li class="section-item">
+        <div class="section-num">S8</div>
+        <div class="section-body">
+          <div class="section-title">The Mourning of <em>Play</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Huizinga&rsquo;s magic circle, collective ritual, what&rsquo;s lost when a culture can no longer safely pretend together.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="footer">
+      <p>Project: <strong>Misinformation Ate April Fools</strong> &middot; 8 dimensions &middot; April 2026</p>
+      <p>Part of <a href="../">culture</a> in <a href="../../">read&middot;rd</a> &middot; <a href="https://read.sadh.app" style="color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)">read.sadh.app</a></p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.documentElement;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '\u2600' : '\u263D';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>
