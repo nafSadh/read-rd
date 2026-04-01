@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misinformation Ate April Fools — Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#2e6ab4;--accent2:#3d7ed0;--accent-soft:#2e6ab410;--accent-mid:#2e6ab420;
+  --cyan:#9b7aed;--green:#2e6e3e;--red:#8b2020;--amber:#8a6e1e;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#2e6ab406;--grad2:#9b7aed04;
+  --sidebar-bg:var(--bg2);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.015;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--accent-soft);
+  --edge-dim-w:.8;--edge-hi-w:1.5;
+  --dash-speed:1s;
+  --close-text:"✕";
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#2e6ab415;
+}
+[data-theme="dark"]{
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --cyan:#4ee8d0;--green:#4ee8a8;--red:#e87090;--amber:#e8c870;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body-font:var(--sans);--body-weight:400;
+  --heading-weight:500;--label-weight:600;
+  --heading-ls:.5px;--label-ls:2.5px;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-bg:var(--bg);
+  --right-bg:var(--bg2);
+  --grain-opacity:0.02;
+  --callout-p-style:italic;--callout-p-weight:400;
+  --callout-p-size:17px;--callout-p-color:var(--bright);
+  --security-bg:none;
+  --node-fill:var(--bg2);--node-hi-fill:var(--bg3);
+  --edge-dim-w:.5;--edge-hi-w:1;
+  --dash-speed:1.5s;
+  --hero-size:40px;--h2-size:31px;--detail-h2-size:34px;
+  --feat-h4-size:17px;--feat-h4-ls:0px;
+  --stat-sv-font:var(--mono);--stat-sv-size:16px;--stat-sv-weight:500;--stat-sv-ls:0px;
+  --link-size:11px;--link-ls:1px;--link-transform:uppercase;--link-hover-ls:2px;
+  --close-size:17px;--close-ls:1px;--close-weight:300;
+  --tl-date-size:10px;--tl-date-ls:1.5px;--tl-date-transform:uppercase;
+  --price-h4-size:10px;--price-h4-ls:2px;--price-val-size:26px;--price-val-ls:0.5px;
+  --list-ls:.1px;--chip-ls:.5px;--chip-size:11px;
+  --code-weight:400;--medium-weight:400;
+  --topbar-glow:#9b7aed10;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body-font);font-weight:var(--body-weight);-webkit-font-smoothing:antialiased;font-size:16px;transition:background .5s,color .4s}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:var(--grain-opacity);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%, var(--grad1), transparent),radial-gradient(ellipse 60% 50% at 85% 75%, var(--grad2), transparent),radial-gradient(ellipse 40% 40% at 50% 10%, var(--grad1), transparent);transition:background 1s}
+.shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1;transition:all .4s ease}
+.ctrl-group{position:fixed;top:10px;right:16px;z-index:200;display:flex;gap:0;border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 8px #00000010;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.ctrl-btn{width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:color .2s,background .2s;color:var(--dim);background:transparent;border:none;border-right:1px solid var(--border);padding:0}
+.ctrl-btn:last-child{border-right:none}
+.ctrl-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.ctrl-btn svg{display:block}
+[data-theme="light"] .ctrl-btn.theme-btn::after{content:'☽'}
+[data-theme="dark"] .ctrl-btn.theme-btn::after{content:'☀'}
+.ctrl-btn.detail-btn .icon-open,.ctrl-btn.detail-btn .icon-close{display:none}
+.ctrl-btn.detail-btn .icon-open{display:block}
+.detail-open .ctrl-btn.detail-btn .icon-open{display:none}
+.detail-open .ctrl-btn.detail-btn .icon-close{display:block}
+.detail-open .ctrl-group{top:10px;right:auto;left:50%;transform:translateX(-50%);border:1px solid var(--border);background:var(--bg2);box-shadow:0 2px 12px #00000015}
+.sidebar{width:180px;min-width:180px;height:100vh;border-right:1px solid var(--border);background:var(--sidebar-bg);display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.detail-open .sidebar{width:52px;min-width:52px}
+.sidebar-head{padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;height:56px;display:flex;align-items:center}
+.sidebar-logo{font-family:var(--serif);font-size:22px;color:var(--bright);font-weight:var(--heading-weight);white-space:nowrap;overflow:hidden;letter-spacing:var(--heading-ls);transition:all .3s}
+.sidebar-logo em{font-style:italic;color:var(--accent);font-weight:400}
+.detail-open .sidebar-logo{font-size:18px;text-align:center;letter-spacing:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.sidebar-item{display:flex;align-items:baseline;gap:10px;padding:11px 16px;cursor:pointer;transition:all .25s;border-left:2px solid transparent;white-space:nowrap;overflow:hidden}
+[data-theme="dark"] .sidebar-item{border-left-width:1px}
+.sidebar-item:hover{background:var(--bg3)}
+.sidebar-item.active{border-left-color:var(--accent);background:var(--accent-soft)}
+.sidebar-num{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px;flex-shrink:0;letter-spacing:1px}
+.sidebar-item.active .sidebar-num{color:var(--accent)}
+.sidebar-label{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:var(--body-weight);letter-spacing:.5px;transition:opacity .3s}
+.detail-open .sidebar-label{opacity:0;width:0}
+.detail-open .sidebar-item{justify-content:center}
+.sidebar-tooltip{position:fixed;z-index:300;font-family:var(--sans);font-size:12px;color:var(--bright);letter-spacing:.4px;font-weight:var(--body-weight);padding:0 24px 0 12px;white-space:nowrap;background:color-mix(in srgb,var(--sidebar-bg) 70%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-right:1px solid color-mix(in srgb,var(--border) 60%,transparent);border-left:none;pointer-events:none;opacity:0;display:flex;align-items:center;transform:translateX(-8px);transition:opacity .12s,transform .18s cubic-bezier(.2,0,.1,1);box-shadow:4px 0 16px color-mix(in srgb,var(--bg) 40%,transparent)}
+.sidebar-tooltip.visible{opacity:1;transform:translateX(0)}
+.main{flex:1;min-width:0;height:100vh;display:flex;flex-direction:column;transition:all .4s ease;overflow:hidden}
+.main-head{flex-shrink:0;border-bottom:1px solid var(--border);position:relative;overflow:hidden;padding:32px 40px 16px;transition:padding .35s ease}
+.main-head-inner{max-width:860px;margin:0 auto}
+.main-head::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, var(--grad1), transparent 60%);pointer-events:none}
+.hero-badge{font-family:var(--sans);font-size:10px;color:var(--accent);letter-spacing:var(--label-ls);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:10px;font-weight:var(--label-weight);position:relative;max-height:20px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+[data-theme="light"] .hero-badge{color:var(--dim)}
+.hero-badge .dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite}
+[data-theme="dark"] .hero-badge .dot{box-shadow:0 0 8px var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:var(--serif);font-size:var(--hero-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.1;letter-spacing:var(--heading-ls);position:relative;transition:font-size .35s ease}
+.hero-title em{font-style:italic;color:var(--accent);font-weight:400}
+[data-theme="dark"] .hero-title em{text-shadow:0 0 40px #9b7aed20}
+.masthead-rule{height:1px;background:linear-gradient(90deg,var(--accent),var(--cyan),transparent);margin:14px 0 0;position:relative;width:50%;opacity:.6;max-height:15px;overflow:hidden;transition:max-height .35s ease,margin .35s ease,opacity .25s ease}
+.masthead-sub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;padding:6px 0;text-transform:uppercase;position:relative;max-height:30px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
+.main-head.compact{padding:0 40px;height:56px;box-sizing:border-box;display:flex;align-items:center}
+.main-head.compact .main-head-inner{width:100%;max-width:860px;margin:0 auto}
+.main-head.compact .hero-badge,.main-head.compact .masthead-rule,.main-head.compact .masthead-sub{display:none}
+.main-head.compact .hero-title{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-scroll{flex:1;overflow-y:auto;padding:0 40px 80px}
+.main-scroll-inner{max-width:860px;margin:0 auto}
+.main-scroll::-webkit-scrollbar{width:4px}
+.main-scroll::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .main-scroll::-webkit-scrollbar-thumb{background:var(--accent);opacity:.3;border-radius:0}
+.section-block{padding:40px 8px;border-bottom:1px solid var(--border);position:relative}
+.section-block:last-child{border-bottom:none}
+[data-theme="light"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#2e6ab405,transparent);pointer-events:none}
+[data-theme="light"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(odd)::before{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at 100% 50%,#9b7aed04,transparent);pointer-events:none}
+[data-theme="dark"] .section-block:nth-child(even)::before{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:radial-gradient(ellipse at 0% 50%,#4ee8d003,transparent);pointer-events:none}
+.section-block .s-num{font-family:var(--sans);font-size:11px;color:var(--accent);margin-bottom:4px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight);display:flex;align-items:center;justify-content:space-between}
+.s-detail-btn{position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:all .2s;background:none;padding:0}
+.s-detail-btn:hover{color:var(--accent);border-color:var(--border);background:var(--accent-soft)}
+.s-detail-btn svg{display:block}
+.s-detail-btn::before{content:'View details';position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:11px;letter-spacing:.3px;color:var(--bg2);background:var(--bright);padding:4px 10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;text-transform:none;font-weight:400}
+.s-detail-btn:hover::before{opacity:1}
+.section-block h2{font-family:var(--serif);font-size:var(--h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;margin-bottom:18px;letter-spacing:var(--heading-ls)}
+.section-block h2 em{font-style:italic;color:var(--accent)}
+.section-block p{font-size:16px;line-height:1.9;margin-bottom:14px;letter-spacing:.2px}
+.section-block h4{font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:22px 0 8px;text-transform:uppercase;letter-spacing:var(--label-ls);font-family:var(--sans)}
+.section-block .s-list{margin:8px 0;padding:0;list-style:none}
+.section-block .s-list li{font-size:15px;line-height:1.8;padding:5px 0;position:relative;font-weight:var(--body-weight);letter-spacing:var(--list-ls);border-bottom:1px solid color-mix(in srgb,var(--border),transparent 50%)}
+.section-block .s-list li:last-child{border-bottom:none}
+.section-block .s-list.pro li{padding-left:20px}
+.section-block .s-list.pro li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.section-block .s-list.con li{padding-left:20px}
+.section-block .s-list.con li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.section-block .s-stat{display:flex;gap:0;margin:14px 0;border:1px solid var(--border)}
+[data-theme="dark"] .section-block .s-stat .st:first-child{border-left:1px solid var(--accent)}
+.section-block .s-stat .st{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--border)}
+.section-block .s-stat .st:last-child{border-right:none}
+.section-block .s-stat .sv{font-family:var(--stat-sv-font);font-size:var(--stat-sv-size);color:var(--bright);font-weight:var(--stat-sv-weight);letter-spacing:var(--stat-sv-ls)}
+.section-block .s-stat .sl{font-size:9px;color:var(--dim);margin-top:3px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--sans)}
+.section-block .s-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.section-block .s-chip{font-family:var(--mono);font-size:10px;color:var(--dim);display:inline-block;border:1px solid var(--border);padding:3px 10px;letter-spacing:var(--chip-ls);font-weight:var(--body-weight)}
+.section-block code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 5px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.right{width:50%;min-width:0;height:100vh;overflow-y:auto;background:var(--right-bg);border-left:1px solid var(--border);transition:all .45s cubic-bezier(.4,0,.2,1);position:relative}
+.right.closed{width:0;min-width:0;border-left:none;overflow:hidden}
+[data-theme="light"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#2e6ab406,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#9b7aed04,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="light"] .right.closed::before{opacity:0}
+[data-theme="dark"] .right::before{content:'';position:fixed;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse 60% 40% at 80% 20%,#9b7aed06,transparent),radial-gradient(ellipse 50% 50% at 20% 80%,#4ee8d004,transparent);pointer-events:none;z-index:0;transition:opacity .3s}
+[data-theme="dark"] .right.closed::before{opacity:0}
+.right::-webkit-scrollbar{width:4px}
+.right::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+[data-theme="dark"] .right::-webkit-scrollbar-thumb{background:var(--accent);border-radius:0;opacity:.3}
+.right-topbar{position:sticky;top:0;z-index:10;background:var(--right-bg);padding:10px 44px 0;font-family:var(--sans);height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px dotted transparent;transition:border-color .3s ease}
+.right-topbar::after{content:'';position:absolute;top:100%;left:0;width:100%;height:10px;background:radial-gradient(50% 100% at 50% 0%,var(--topbar-glow) 0%,transparent 100%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.right-topbar.scrolled{border-bottom-color:color-mix(in srgb,var(--border) 50%,transparent)}
+.right-topbar.scrolled::after{opacity:1}
+.right-topbar .sticky-title{font-size:12px;color:var(--bright);font-weight:var(--heading-weight);letter-spacing:.3px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.right-topbar .sticky-title.visible{opacity:1;transform:translateY(0)}
+.right-inner{padding:0 44px 80px;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.detail{display:none;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{margin-bottom:32px;display:block}
+.detail-header .num{font-family:var(--sans);font-size:11px;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;letter-spacing:var(--label-ls);text-transform:uppercase;font-weight:var(--label-weight)}
+.detail-header .num svg{display:block}
+.detail-header h2{font-family:var(--serif);font-size:var(--detail-h2-size);font-weight:var(--heading-weight);color:var(--bright);line-height:1.25;padding-bottom:16px;border-bottom:1px solid var(--border);letter-spacing:var(--heading-ls)}
+.detail-header h2 em{font-style:italic;color:var(--accent)}
+.detail p{font-size:16.5px;line-height:2;margin-bottom:18px;font-family:var(--serif);font-weight:400;letter-spacing:.2px}
+.detail h3{font-family:var(--sans);font-size:10px;font-weight:var(--label-weight);color:var(--accent);margin:32px 0 12px;text-transform:uppercase;letter-spacing:var(--label-ls);display:block;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail h3::before{display:none}
+.detail code{font-family:var(--mono);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:1px;color:var(--accent);font-weight:var(--code-weight)}
+.detail pre{background:var(--bg);border:1px solid var(--border);padding:18px 22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;margin:16px 0;color:var(--text);font-weight:var(--body-weight)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.feat{padding:18px 20px 18px 0;border-bottom:1px solid var(--border);background:none}
+.feat:nth-child(2n){padding-left:20px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .feat{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.feat:hover{background:var(--bg)}
+[data-theme="dark"] .feat:hover{background:color-mix(in srgb,var(--accent),transparent 97%)}
+.feat h4{font-family:var(--serif);font-size:var(--feat-h4-size);font-weight:var(--heading-weight);color:var(--bright);margin-bottom:6px;font-style:italic;letter-spacing:var(--feat-h4-ls)}
+.feat p{font-size:13.5px;color:var(--dim);margin:0;line-height:1.7;font-family:var(--sans);font-weight:var(--body-weight)}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-top:1px solid var(--border)}
+.v-col{padding:18px 18px 18px 0;background:none;border:none;border-radius:0}
+.v-col:last-child{padding-left:18px;padding-right:0;border-left:1px solid var(--border)}
+[data-theme="dark"] .v-col:last-child{border-color:color-mix(in srgb,var(--border),transparent 40%)}
+.v-col h4{font-size:10px;font-family:var(--sans);letter-spacing:var(--label-ls);margin-bottom:12px;text-transform:uppercase;font-weight:var(--label-weight)}
+.v-col.pro h4{color:var(--green)}.v-col.con h4{color:var(--red)}
+.v-col ul{list-style:none;padding:0}
+.v-col li{font-size:14px;padding:4px 0;position:relative;line-height:1.7;font-family:var(--serif);padding-left:16px;font-weight:var(--medium-weight)}
+.v-col.pro li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-family:var(--sans)}
+.v-col.con li::before{content:'✗';position:absolute;left:0;color:var(--red);font-size:12px;font-family:var(--sans)}
+.diagram-wrap{margin:20px 0;padding:20px;background:var(--bg);border:1px solid var(--border);overflow-x:auto}
+.diagram-wrap svg{width:100%;height:auto}.diagram-wrap svg text{font-family:'IBM Plex Mono',monospace}
+.diagram-wrap svg .node{fill:var(--node-fill);stroke:var(--border);stroke-width:1}
+.diagram-wrap svg .node-hi{fill:var(--node-hi-fill);stroke:var(--accent);stroke-width:1.5}
+.diagram-wrap svg .edge{stroke:var(--border-hi);stroke-width:var(--edge-dim-w);fill:none}
+.diagram-wrap svg .edge-hi{stroke:var(--accent);stroke-width:var(--edge-hi-w);fill:none;stroke-dasharray:6,3;animation:dash var(--dash-speed) linear infinite}
+@keyframes dash{to{stroke-dashoffset:-9}}
+.diagram-wrap svg .lbl{fill:var(--dim);font-size:11px}.diagram-wrap svg .lbl-hi{fill:var(--accent);font-size:11px}
+.diagram-wrap svg .node-text{fill:var(--bright);font-size:12px;font-weight:500}.diagram-wrap svg .node-sub{fill:var(--dim);font-size:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.chip{font-family:var(--mono);font-size:var(--chip-size);color:var(--dim);display:inline-block;border:1px solid var(--border);padding:4px 12px;font-weight:var(--body-weight);letter-spacing:var(--chip-ls)}
+.timeline{margin:18px 0;padding:0;border-left:1px solid var(--accent)}
+.tl-item{padding:12px 0 12px 24px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.tl-item::before{content:'';position:absolute;left:-3px;top:18px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.tl-item:last-child{border-bottom:none}
+.tl-date{font-family:var(--sans);font-size:var(--tl-date-size);color:var(--accent);font-weight:var(--label-weight);letter-spacing:var(--tl-date-ls);text-transform:var(--tl-date-transform)}
+.tl-text{font-size:15px;line-height:1.7;font-family:var(--serif)}
+.callout{border:none;border-left:3px solid var(--accent);padding:16px 0 16px 20px;margin:20px 0;background:none}
+.callout h4{color:var(--accent);font-size:10px;margin-bottom:8px;font-family:var(--sans);text-transform:uppercase;letter-spacing:var(--label-ls);font-weight:var(--label-weight)}
+.callout p{font-size:var(--callout-p-size);margin:0;line-height:1.9;font-family:var(--serif);font-style:var(--callout-p-style);color:var(--callout-p-color);font-weight:var(--callout-p-weight)}
+.security-box{border:none;border-left:3px solid var(--red);padding:16px 0 16px 20px;margin:20px 0;background:var(--security-bg)}
+.security-box h4{color:var(--red);font-size:10px;font-weight:var(--label-weight);letter-spacing:var(--label-ls);text-transform:uppercase;margin-bottom:10px;font-family:var(--sans)}
+.security-box p{font-size:15.5px;line-height:1.9;margin-bottom:10px;font-family:var(--serif);font-weight:var(--medium-weight)}.security-box p:last-child{margin-bottom:0}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;border:1px solid var(--border)}
+.price-card{border-right:1px solid var(--border);padding:18px 12px;text-align:center;background:none;border-radius:0}
+.price-card:last-child{border-right:none}.price-card.hl{background:var(--accent-soft)}
+.price-card h4{font-size:var(--price-h4-size);font-weight:var(--body-weight);color:var(--dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:var(--price-h4-ls);font-family:var(--sans)}
+.price-card .price{font-family:var(--serif);font-size:var(--price-val-size);color:var(--bright);font-weight:var(--heading-weight);font-style:italic;letter-spacing:var(--price-val-ls)}
+.price-card .pn{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--sans)}
+a{color:var(--dim);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--dim),transparent 50%);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-style:solid}
+.detail a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
+.section-block a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .ctrl-group{top:10px;right:10px}
+  .ctrl-btn{width:32px;height:32px;font-size:14px}
+  .shell{display:block;position:relative}
+  .main{height:100vh;width:100%}
+  .main-head{padding:20px 20px 0}
+  .hero-title{font-size:28px!important;letter-spacing:0!important}
+  .masthead-sub{flex-direction:column;gap:2px}
+  .main-head.compact{padding:0 20px;height:44px}
+  .main-head.compact .hero-title{font-size:18px!important}
+  .main-scroll{padding:0 20px 80px}
+  .section-block{padding:28px 8px}
+  .right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}
+  .right:not(.closed){transform:translateX(0)}
+  .right-inner{padding:0 20px 80px}
+  .right-topbar{padding:10px 20px 0;height:44px}
+  .detail-header h2{font-size:26px!important}
+  .feat-grid,.verdict,.price-grid{grid-template-columns:1fr}
+  .feat{border-left:none!important;padding-left:0!important}
+  .feat:nth-child(2n){padding-left:0}
+  .v-col{padding:16px 0!important}
+  .v-col:last-child{border-left:none!important;padding-left:0!important}
+  .price-card{border-right:none!important;border-bottom:1px solid var(--border)}.price-card:last-child{border-bottom:none}
+  .tl-item{flex-direction:column!important;gap:4px}
+  .tl-date{min-width:unset!important}
+  .detail p{font-size:16px}
+  .detail pre{font-size:12px;padding:14px 16px}
+  .section-block .s-stat{flex-wrap:wrap}
+  .section-block .s-stat .st{min-width:45%}
+}
+  </style>
+</head>
+<body data-theme="light">
+<script>
+const sections = [
+  { num: '01', short: 'Licensed Transgression', title: 'Licensed <em>Transgression</em>' },
+  { num: '02', short: 'Trust Prerequisite', title: 'The Trust <em>Prerequisite</em>' },
+  { num: '03', short: 'Corporate Retreat', title: 'The Corporate <em>Retreat</em>' },
+  { num: '04', short: 'Satire Collapse', title: 'Satire <em>Collapse</em>' },
+  { num: '05', short: 'Platform Mechanics', title: 'Platform <em>Mechanics</em>' },
+  { num: '06', short: 'Synthetic Pranks', title: 'Synthetic <em>Pranks</em>' },
+  { num: '07', short: 'Cultural Divergence', title: 'Cultural <em>Divergence</em>' },
+  { num: '08', short: 'Mourning of Play', title: 'The Mourning of <em>Play</em>' }
+];
+
+const summaries = [
+  // 01 — Licensed Transgression
+  `<p>On April 1, 1957, the BBC\u2019s <em>Panorama</em> \u2014 the most serious current-affairs program in Britain \u2014 aired a three-minute segment showing Swiss farmers plucking fresh spaghetti from trees. The presenter, Richard Dimbleby, narrated with the gravity of a man reporting from a war zone. Hundreds of viewers called the BBC asking how to grow their own spaghetti tree. The corporation\u2019s official response: \u201CPlace a sprig of spaghetti in a tin of tomato sauce and hope for the best.\u201D</p>
+  <p>The spaghetti harvest worked because everyone understood the rules. April 1st was a designated zone of sanctioned deception \u2014 a day when lies were play, not threat. The Russian literary theorist Mikhail Bakhtin had a name for this kind of thing: <em>carnival</em>. In his study of Rabelais and medieval festival culture, Bakhtin described carnival as a temporary suspension of the normal order \u2014 a licensed space where fools become kings, hierarchies invert, and the sacred gets profaned. Not as revolution, but as ritual. The social contract was explicit: <em>today we agree that transgression is play, and tomorrow we go back to normal.</em></p>
+  <p>April Fools\u2019 Day is the last surviving carnival in secular Western culture. Or it was.</p>
+  <div class="callout"><h4>The Wine Barrel Principle</h4><p>A letter from a school of theology in 1444 \u2014 cited by Bakhtin \u2014 put it plainly: \u201CWine barrels burst if from time to time we do not open them and let in some air.\u201D Societies need regulated pressure release. April Fools\u2019 Day was air for the barrel.</p></div>`,
+
+  // 02 — The Trust Prerequisite
+  `<p>In January 2026, Axios ran a headline that could have been written by a novelist: <strong>\u201CGlobal trust data finds our shared reality is collapsing.\u201D</strong> The 2026 Edelman Trust Barometer \u2014 an annual survey of 37,500 people across 28 countries \u2014 found that seven in ten people are now unwilling or hesitant to trust someone with different values, backgrounds, or information sources. Only 39% get news from ideologically different sources on a weekly basis, down six points in a single year. Trust in national government leaders has dropped 16 points; trust in major news organizations, 11. The only thing people still trust is their own circle: neighbors, family, coworkers.</p>
+  <p>This matters for April Fools\u2019 Day because pranks are parasitic on trust. A prank requires a shared baseline of reality to subvert. The spaghetti harvest was funny because everyone agreed that the BBC was reliable \u2014 the joke worked precisely because the source was trustworthy. When trust dissolves, the prank mechanism breaks. You can\u2019t subvert a baseline that doesn\u2019t exist. When no one agrees on what\u2019s real, a deliberate lie isn\u2019t mischief \u2014 it\u2019s just more noise.</p>
+  <p>A 2025 YouGov survey found that only 38% of respondents under 30 view April Fools\u2019 Day positively \u2014 down from 52% a decade earlier. The decline tracks almost perfectly with the erosion of institutional trust. The holiday didn\u2019t die of boredom. It died of exhaustion.</p>
+  <div class="s-stat"><div class="st"><div class="sv">70%</div><div class="sl">unwilling to trust across difference</div></div><div class="st"><div class="sv">\u221216</div><div class="sl">govt leader trust (5yr)</div></div><div class="st"><div class="sv">38%</div><div class="sl">under-30 AF positive</div></div></div>`,
+
+  // 03 — The Corporate Retreat
+  `<p>For twenty years, from 2000 to 2019, Google was the undisputed champion of corporate April Fools\u2019. The tradition started with MentalPlex \u2014 a fake search feature that invited users to project a mental image while staring at a spinning GIF \u2014 and escalated every year. Gmail Paper. Google Gulp, a drink that optimized search through your DNA. Google Romance. Tactile Search. Each one was more elaborate than the last, produced by a company that was still young enough and weird enough to spend engineering hours on jokes.</p>
+  <p>Then came 2020. COVID-19 hit, and Google quietly cancelled its pranks \u201Cout of respect.\u201D The pandemic was the official reason, but it was also the perfect exit ramp from a tradition that had been getting increasingly uncomfortable. In a world of deepfakes, misinformation, and algorithmic outrage, a tech giant deliberately publishing fake information \u2014 even funny fake information \u2014 had become a liability. Google never came back. In 2026, Pocket-lint noted that \u201CGoogle, Apple, Samsung and more have opted out of this year\u2019s annual joke-fest.\u201D</p>
+  <p>The irony is exquisite: Gmail itself launched on April 1, 2004. Offering one gigabyte of free email storage seemed so absurd that <em>The Guardian</em> called it \u201Can elaborate April Fools\u2019 prank.\u201D The product that changed email forever was mistaken for a joke \u2014 because in 2004, the container of trust still held. By 2020, the container had cracked, and the company that once benefited from the ambiguity decided the ambiguity was no longer worth the risk.</p>`,
+
+  // 04 — Satire Collapse
+  `<p>In 2012, Iran\u2019s Fars News Agency found an article from <em>The Onion</em> claiming that a Gallup poll showed rural white Americans preferred Mahmoud Ahmadinejad to Barack Obama. Fars ran it as real news \u2014 nearly word for word. The Onion responded by adding a line to their original piece: \u201CFor more on this story: Please visit our Iranian subsidiary organization, Fars.\u201D That same year, North Korea\u2019s Central News Agency cited <em>The Onion</em>\u2019s article naming Kim Jong Un the sexiest man alive. China\u2019s <em>People\u2019s Daily</em> circulated it as truth.</p>
+  <p>These are textbook demonstrations of Poe\u2019s Law \u2014 the internet adage coined in 2005 by a user named Nathan Poe on a creationist forum: \u201CWithout a winking smiley or other blatant display of humor, it is utterly impossible to parody a Creationist in such a way that someone won\u2019t mistake it for the genuine article.\u201D What started as an observation about religious extremism became the defining law of post-truth communication. Satire requires a gap between what\u2019s real and what\u2019s absurd. When reality closes that gap, satire has nowhere to stand.</p>
+  <p>This is the Onion Problem: the satirical publication has not gotten worse; reality has gotten more unbelievable. When a White House Press Secretary retweets an Onion video calling himself a provider of \u201Crobust and clearly articulated misinformation\u201D \u2014 apparently in earnest \u2014 the satirists aren\u2019t the ones who\u2019ve lost the plot. April Fools\u2019 Day is Poe\u2019s Law applied to the calendar: one day a year, everyone agrees to publish falsehoods. But when falsehoods are the daily default, the designated day of lies becomes redundant.</p>`,
+
+  // 05 — Platform Mechanics
+  `<p>In 2014, someone posted a digitally manipulated image of an elephant carrying a lion cub in its trunk \u2014 heartwarming, obviously fake, and tagged as an April Fools\u2019 Day prank. Years later, the same image was still circulating on Facebook, stripped of its date, its source, and its intent. Snopes debunked it. It kept spreading. As Dan Evon of Snopes told NPR: April Fools\u2019 pranks can have \u201Cstaying power,\u201D resurfacing long after anyone remembers the original context.</p>
+  <p>This is context collapse in action \u2014 a term coined by danah boyd in the early 2000s and developed with Alice Marwick in their landmark 2011 study of Twitter. The concept is simple but devastating: social media technologies flatten multiple audiences into a single context, stripping content of the signals \u2014 date, source, tone, intent \u2014 that make interpretation possible. A joke posted on April 1st in a group chat among friends becomes something entirely different when it\u2019s screenshot-shared on Twitter in November by a stranger with an agenda.</p>
+  <p>Today, in 2026, a fake war lockdown message circulated across messaging apps on April 1st and created genuine concern before it was debunked. The speed of the spread outpaced the speed of the reveal. Ryanair\u2019s April Fools\u2019 prank \u2014 announcing they\u2019d adopt a \u201Ccorporate and professional\u201D tone \u2014 spawned 51 viral memes in a single morning. The algorithm doesn\u2019t care whether something is a joke. It only cares whether it generates engagement. And fear engages better than laughter.</p>`,
+
+  // 06 — Synthetic Pranks
+  `<p>On March 28, 2026 \u2014 three days before April Fools\u2019 Day \u2014 an Indian tech outlet published a guide to using Google\u2019s Gemini AI to generate prank content: fake celebrity selfies, realistic cracked phone screens, and fabricated police fine screenshots \u201Cperfect for WhatsApp, Instagram, or group chats.\u201D The prompts were specific: \u201CEdit this photo to make it look like I\u2019m taking a selfie with a famous celebrity in a casual setting. Keep lighting realistic and match facial expressions. Add slight blur for authenticity.\u201D Another: \u201CCreate a realistic message screenshot showing a traffic fine issued to me with official-looking formatting, government logo, and fine amount.\u201D</p>
+  <p>Read those prompts again. These are instructions for creating deepfakes. The only thing distinguishing them from malicious disinformation is the stated intent: \u201Cfor fun.\u201D As Julia Feerrar, a digital literacy expert at Virginia Tech, told a reporter that same week: \u201CAI is taking advantage of fooling the public with fake content.\u201D The boundary between prank and fraud now depends entirely on what\u2019s in the creator\u2019s heart \u2014 which is exactly the thing the internet cannot see.</p>
+  <p>Meanwhile, ChatGPT and Gemini are being used as \u201Cprank co-authors\u201D \u2014 generating structured, safe, and plausible-sounding hoaxes on demand. The same tools that can draft a phishing email can draft an April Fools\u2019 post. The technology is agnostic. The risk isn\u2019t hypothetical: Storyboard18 described 2026 as the year \u201CAI\u2019s role in shaping not just productivity but also leisure and social behavior\u201D became undeniable.</p>`,
+
+  // 07 — Cultural Divergence
+  `<p>In Scotland, April Fools\u2019 Day was once a two-day affair. Day one was \u201CHuntigowk Day\u201D \u2014 you\u2019d send an unsuspecting person on a fool\u2019s errand carrying a sealed letter that read: \u201CHunt the gowk\u201D (gowk meaning cuckoo, or fool). The recipient would open the letter, realize they\u2019d been had, and be tasked with passing the joke to the next victim. Day two was \u201CTailie Day\u201D \u2014 reserved for pranks involving posteriors, which eventually gave us the \u201Ckick me\u201D sign. In France and Belgium, the tradition is <em>poisson d\u2019avril</em> \u2014 April Fish \u2014 where you tape a paper fish to someone\u2019s back. In Poland, <em>prima Aprilis</em> is so culturally embedded that serious treaties have been backdated to avoid association with the day.</p>
+  <p>These are local traditions with deep roots. But the crisis of trust is not evenly distributed. The 2026 Edelman data shows insularity highest in Japan (90%), Germany (81%), the UK (76%). In developing markets, trust dynamics are different \u2014 not necessarily higher, but differently structured. The question isn\u2019t whether misinformation kills April Fools\u2019 everywhere, but whether the Western version of the holiday \u2014 increasingly dependent on mass media and corporate participation \u2014 was uniquely vulnerable to the forces that eroded it.</p>
+  <p>The traditions that survive tend to be personal and embodied: a paper fish on the back, a sealed letter carried on foot, a family pouring frozen cereal for the kids. They don\u2019t require platforms, algorithms, or brand engagement. They require proximity, trust, and a shared sense of play between people who know each other\u2019s faces.</p>`,
+
+  // 08 — The Mourning of Play
+  `<p>In a Slate essay published this morning \u2014 April 1, 2026 \u2014 a writer describes a high school memory: her friend Greta showed up with a jug of what appeared to be orange juice and offered it to unsuspecting classmates. They\u2019d take a sip and discover the jug was actually filled with Kraft mac-and-cheese flavor packets dissolved in lukewarm water. Each victim spat it out, Greta yelled \u201CApril Fools!\u201D and the gathered onlookers \u2014 all of whom had already been fooled themselves \u2014 burst out laughing. The writer calls the day \u201Ca small antidote to the horror we witness daily\u201D and \u201Chealing and necessary to remember that reality is flexible in whimsical ways too.\u201D</p>
+  <p>The Dutch historian Johan Huizinga, in <em>Homo Ludens</em> (1938), argued that play is fundamental to culture. He described the \u201Cmagic circle\u201D \u2014 a temporary world set apart from the ordinary one, \u201Cdedicated to the performance of an act apart,\u201D where special rules obtain and participants agree to step outside reality together. There is, he wrote, \u201Cno formal difference between play and ritual.\u201D The magic circle of April Fools\u2019 Day \u2014 the agreement that today, lies are play \u2014 is breaking down not because people have lost the desire to play, but because the membrane between the circle and the world outside it has dissolved.</p>
+  <p>When misinformation is ambient, every day is April Fools\u2019. And when every day is April Fools\u2019, the designated day loses its meaning. What we\u2019re mourning is not a holiday. We\u2019re mourning the capacity of a culture to agree, even for 24 hours, on what counts as real \u2014 so that we can enjoy, together, the brief pleasure of pretending otherwise.</p>
+  <div class="callout"><h4>The Slate Writer\u2019s Hope</h4><p>\u201CI need to live in a reality where it\u2019s possible to pick up a call from an unknown number and hear not yet another robo scammer but three little kids stifling giggles on the other end of the line.\u201D</p></div>`
+];
+
+const details = [
+  // 01 — Licensed Transgression
+  `<div class="detail-header"><h2>Licensed <em>Transgression</em></h2></div>
+  <h3>Bakhtin\u2019s Carnival</h3>
+  <p>Mikhail Bakhtin (1895\u20131975) developed his theory of carnival across two major works: <em>Problems of Dostoevsky\u2019s Poetics</em> (1929) and <em>Rabelais and His World</em> (1965). His central argument: carnival is not entertainment but a mode of being. During medieval festivals, the entire social order was temporarily inverted \u2014 fools crowned as kings, the sacred profaned, hierarchies dissolved. This was not rebellion; it was <em>licensed</em> rebellion. The authorities <em>permitted</em> it precisely because the permission made it safe.</p>
+  <p>Bakhtin identified four categories of the carnival sense: familiar interaction across social barriers, eccentric behavior without consequence, carnivalistic m\u00E9salliance (the reunion of things normally kept apart), and profanation of the sacred. All four are present in a well-executed April Fools\u2019 prank: the BBC pretends spaghetti grows on trees, the audience is delighted by the violation, and the next day everyone returns to normal. The transgression is bounded in time and understood by all participants.</p>
+  <h3>The Eagleton Critique</h3>
+  <p>Not everyone buys the emancipatory reading. Terry Eagleton argued that carnival is merely a \u201Clicensed or approved form of transgression\u201D offering \u201Cnothing more than the mirage of change.\u201D If the authorities grant permission to mock them, the mockery reinforces rather than challenges their power. This critique lands differently in 2026: when populist leaders <em>themselves</em> adopt the carnival mode \u2014 the crude humor, the profanity, the deliberate norm-violation \u2014 the distinction between carnival-from-below and carnival-from-above collapses entirely.</p>
+  <h3>The BBC Spaghetti Harvest</h3>
+  <p>The 1957 <em>Panorama</em> segment is often cited as the first television April Fools\u2019 prank. It worked because of three conditions: (1) a trusted institution (the BBC), (2) a naive but engaged audience (postwar Britain), and (3) a bounded frame (April 1st). Remove any one of these and the joke fails. All three have eroded. The institution is distrusted, the audience is fragmented, and the temporal frame is dissolved by algorithmic feeds that serve content without regard to date. The spaghetti harvest could not happen today \u2014 not because we\u2019re more sophisticated, but because we no longer share the conditions that made it possible.</p>`,
+
+  // 02 — The Trust Prerequisite
+  `<div class="detail-header"><h2>The Trust <em>Prerequisite</em></h2></div>
+  <h3>The Edelman Arc: Fear \u2192 Polarization \u2192 Grievance \u2192 Insularity</h3>
+  <p>The Edelman Trust Barometer has tracked institutional trust since 2001. CEO Richard Edelman summarizes the trajectory of the last five years as a descent: from fear (COVID) to polarization to grievance and now to insularity. The 2026 report is built on 37,500 interviews across 28 countries. Its headline finding: 70% of people are unwilling or hesitant to trust someone who differs from them in values, background, or information sources. This isn\u2019t partisan; it cuts across income, gender, age, and geography.</p>
+  <div class="s-stat"><div class="st"><div class="sv">\u221211</div><div class="sl">news org trust (5yr)</div></div><div class="st"><div class="sv">39%</div><div class="sl">read opposing sources weekly</div></div><div class="st"><div class="sv">65%</div><div class="sl">fear foreign disinfo</div></div></div>
+  <h3>The Prank Mechanism</h3>
+  <p>A prank is a micro-betrayal that generates laughter instead of harm. This only works when the prankster and the target share enough trust that the betrayal registers as play rather than threat. In game theory terms, it\u2019s a cooperative game with an asymmetric information structure \u2014 the prankster knows the joke, the target doesn\u2019t \u2014 and the payoff depends on both parties agreeing, after the reveal, that the deception was benign. When background trust is low, the same action reads as hostile. The elephant/lion image that circulated for years after its AF origin is a case study: stripped of the trust context, it became indistinguishable from misinformation.</p>
+  <h3>The YouGov Decline</h3>
+  <p>A 2025 YouGov survey found only 38% of respondents under 30 view April Fools\u2019 Day positively, down from 52% a decade earlier. Dr. Elena Marchetti of the University of Milan told The Brief Post: \u201CThe line between a harmless joke and something that looks like fake news has become dangerously thin.\u201D The under-30 cohort is the first generation to have grown up entirely within the post-truth information environment. For them, the baseline of shared reality that makes pranks legible was never established in the first place.</p>`,
+
+  // 03 — The Corporate Retreat
+  `<div class="detail-header"><h2>The Corporate <em>Retreat</em></h2></div>
+  <h3>Google\u2019s Twenty-Year Run</h3>
+  <p>Google\u2019s April Fools\u2019 tradition began in 2000 with MentalPlex and ended in 2019. Key entries: Gmail Paper (2007, print your emails on \u201C94% post-consumer organic soybean sputum\u201D), Google Gulp (2005, a DNA-optimizing search drink), Google Romance (2006, \u201CDating is a search problem\u201D), and Google Maps Pok\u00E9mon Challenge (2014). The pranks were expensive to produce, required dedicated engineering time, and were understood by the entire internet as a beloved annual tradition. They also served as brand marketing \u2014 proof that Google was still fun, still weird, still the company that launched Gmail on April 1st.</p>
+  <h3>The 2020 Exit</h3>
+  <p>When COVID arrived, Google cancelled its 2020 pranks \u201Cout of respect.\u201D This was the right decision in the moment. But the pandemic also provided cover for a retreat that had been building. Internal incidents \u2014 like a 2016 Gmail prank involving a \u201Cmic drop\u201D GIF that accidentally inserted itself into real work emails \u2014 had already demonstrated the liability of institutional pranking. The calculation shifted: the reputational upside of a funny prank was smaller than the reputational downside of one that misfired. In 2026, Pocket-lint confirmed that Google, Apple, and Samsung all opted out. The corporate prank era is over.</p>
+  <div class="callout"><h4>The Gmail Paradox</h4><p>Gmail launched April 1, 2004, offering 1GB of free email. <em>The Guardian</em> called it an \u201Celaborate April Fools\u2019 prank.\u201D Today, 1.8 billion people use it. In 2004, the trust container was strong enough that a real product could be mistaken for a joke. By 2020, the container had weakened enough that jokes could be mistaken for real threats. The arrow reversed.</p></div>
+  <h3>What Replaced It</h3>
+  <p>Smaller brands moved in: Dyson\u2019s pet grooming Airwrap, Slim Chickens\u2019 bath with a dip-sauce tap, Yahoo\u2019s Scr\u014Dll Stoppr (which was actually real and sold for $4.99). The 2026 landscape is second-tier companies making low-stakes jokes while the tech giants stay silent. Ad Age noted that \u201Cthis year\u2019s gags lean heavily into the blurred line between fake and real\u201D \u2014 which is precisely the line the big companies can no longer afford to blur.</p>`,
+
+  // 04 — Satire Collapse
+  `<div class="detail-header"><h2>Satire <em>Collapse</em></h2></div>
+  <h3>Poe\u2019s Law</h3>
+  <p>Nathan Poe\u2019s original formulation (2005, Christian Forums): \u201CWithout a winking smiley or other blatant display of humor, it is utterly impossible to parody a Creationist in such a way that someone won\u2019t mistake it for the genuine article.\u201D The law has since expanded far beyond creationism. It now applies to any domain where sincere positions have become extreme enough to be indistinguishable from mockery. The corollary \u2014 sometimes called Poe\u2019s Windmill \u2014 states that people who are fooled by satire will cite the fact that they were foolable as evidence that their original beliefs were correct.</p>
+  <h3>The Onion Problem</h3>
+  <p>The Onion\u2019s production values have always rivaled CNN\u2019s \u2014 that was part of the joke. But when state news agencies in Iran, North Korea, and China start running Onion articles as legitimate news, the joke transcends humor and becomes an intelligence test that entire nations are failing. The blog <em>Literally Unbelievable</em> chronicled years of people taking Onion articles at face value on Facebook. As RationalWiki notes, Poe\u2019s Law applies recursively: it\u2019s impossible to tell whether the Facebook commenters were sincere or playing along.</p>
+  <h3>April Fools\u2019 as Daily Default</h3>
+  <p>When <em>The Washington Post</em> published its annual \u201CThe Post Ruins April Fools\u2019 Day\u201D piece in 2023, the framing was telling: \u201CToday is April Fools\u2019 Day, a.k.a. the Day of Lies. Because <em>The Washington Post</em> is a newspaper, and news is the opposite of a lie.\u201D This is the satire collapse thesis in miniature. Serious institutions cannot afford to participate in sanctioned deception because their credibility is already under assault by unsanctioned deception. The joke space has been colonized by bad actors, and there\u2019s no room left for the good-faith pranksters.</p>`,
+
+  // 05 — Platform Mechanics
+  `<div class="detail-header"><h2>Platform <em>Mechanics</em></h2></div>
+  <h3>Context Collapse</h3>
+  <p>The term \u201Ccontext collapse\u201D was developed by danah boyd (early 2000s) and formalized with Alice Marwick in their 2011 paper on Twitter. The core insight: social media technologies \u201Ccollapse multiple audiences into single contexts,\u201D making it impossible to tailor communication for specific groups. On Twitter, a post intended for friends can be retweeted to strangers. On Facebook, an April Fools\u2019 joke posted in a private group can be screenshot-shared into a public timeline. The original signals \u2014 date, group norms, relationship between poster and audience \u2014 are stripped away.</p>
+  <h3>The Persistence Problem</h3>
+  <p>boyd identified four properties of networked publics that create dynamics to be managed: persistence (content stays online), replicability (it can be copied), scalability (it can reach massive audiences), and searchability (it can be found out of context). All four are lethal to April Fools\u2019 pranks, which depend on ephemerality, locality, and bounded audience. The elephant/lion image is the canonical example: created as a bounded prank, it persisted, replicated, scaled, and was searched for years after its AF context evaporated.</p>
+  <h3>The Engagement Machine</h3>
+  <p>Algorithmic feeds optimize for engagement, not truth or context. Fear, outrage, and confusion generate more engagement than amusement. A fake war lockdown message on April 1, 2026 spreads faster than its debunking because the alarm response is instantaneous and the critical thinking response is slow. The algorithm is agnostic to the calendar. It treats an AF joke identically to any other piece of viral content \u2014 which means the joke, once released, is no longer a joke. It\u2019s content. And content lives by engagement rules, not carnival rules.</p>`,
+
+  // 06 — Synthetic Pranks
+  `<div class="detail-header"><h2>Synthetic <em>Pranks</em></h2></div>
+  <h3>AI as Prank Co-Author</h3>
+  <p>2026 is the year AI became a standard tool for April Fools\u2019 prank production. Storyboard18 documented how ChatGPT and Gemini are being used to generate \u201Csafe, structured pranks\u201D \u2014 but the same capabilities that make AI a good joke-writer make it a good disinformation-writer. The boundary between the two applications is entirely a matter of stated intent, and stated intent is exactly what\u2019s invisible online.</p>
+  <h3>The Gemini Prompt Problem</h3>
+  <p>The News24Online guide to \u201CGemini Nano Banana\u201D prompts for April Fools\u2019 is a case study in dual-use technology. The prompts instruct users to create: fake celebrity selfies with \u201Crealistic lighting\u201D and \u201Cslight blur for authenticity,\u201D simulated cracked phone screens, and fabricated government fine notices with \u201Cofficial-looking formatting\u201D and \u201Cgovernment logo.\u201D Each of these, outside the AF context, would be recognized as fraud, impersonation, or disinformation. Inside the AF context, they\u2019re \u201Cfun.\u201D The technology doesn\u2019t know the difference.</p>
+  <div class="security-box"><h4>The Intent Gap</h4><p>Dr. Marchetti (University of Milan): \u201CWhat worked in a world of broadcast media now lands in an ecosystem of deepfakes, conspiracy theories, and algorithm-driven outrage.\u201D The intent gap \u2014 the space between \u201CI meant it as a joke\u201D and \u201Cit caused real harm\u201D \u2014 is widening as synthetic media tools become more accessible and more convincing.</p></div>`,
+
+  // 07 — Cultural Divergence
+  `<div class="detail-header"><h2>Cultural <em>Divergence</em></h2></div>
+  <h3>The Many Traditions</h3>
+  <p>April Fools\u2019 Day is not one tradition but many. The French <em>poisson d\u2019avril</em> (taping a paper fish to someone\u2019s back) dates to at least the 16th century and persists because it requires no technology \u2014 just paper, tape, and proximity. The Scottish Huntigowk Day involved physical letter-carrying and face-to-face interaction. Poland\u2019s <em>prima Aprilis</em> is so entrenched that the calendar itself bends around it. The Flemish poet Eduard de Dene described AF-style pranks in 1561 \u2014 predating the calendar-change theory by three years.</p>
+  <h3>Trust Varies Globally</h3>
+  <p>The 2026 Edelman data shows insularity is highest in developed markets: Japan (90%), Germany (81%), UK (76%), Canada (73%), US (70%). But the trust-income gap varies dramatically: 29 points in the US, 26 in Indonesia and Nigeria, 22 in France, 21 in Saudi Arabia. The misinformation-kills-AF thesis may be most applicable to anglophone, internet-saturated societies where corporate pranks and social media virality were the primary AF mechanisms. In cultures where the tradition is embodied and local \u2014 fish on backs, letters carried on foot \u2014 the holiday may be more resilient.</p>
+  <h3>The Digital vs. Embodied Divide</h3>
+  <p>Bakhtin lamented that the Renaissance\u2019s mechanistic worldview spelled the decline of carnival. The digital revolution may be the second great blow. As the ExPost analysis of the Capitol riot noted, Bakhtin\u2019s carnival was fundamentally corporeal \u2014 bodies in space, faces in proximity, laughter shared in real time. Digital \u201Ccarnival\u201D is disembodied, asynchronous, and mediated by algorithms. The versions of April Fools\u2019 that survive may be precisely the ones that never went online.</p>`,
+
+  // 08 — The Mourning of Play
+  `<div class="detail-header"><h2>The Mourning of <em>Play</em></h2></div>
+  <h3>Huizinga\u2019s Magic Circle</h3>
+  <p>Johan Huizinga\u2019s <em>Homo Ludens</em> (1938) argued that play is not a subset of culture but a precondition for it. His concept of the \u201Cmagic circle\u201D describes a temporary, bounded space where ordinary rules are suspended and special rules obtain. \u201CAll play moves and has its being within a play-ground marked off beforehand,\u201D he wrote. \u201CJust as there is no formal difference between play and ritual, so the \u2018consecrated spot\u2019 cannot be formally distinguished from the play-ground.\u201D The arena, the card table, the temple, the stage, the court of justice \u2014 all are magic circles.</p>
+  <p>April Fools\u2019 Day is a magic circle bounded by time rather than space. For 24 hours (or until noon, in the British tradition), everyone agrees to step into a world where deception is play. The circle requires mutual consent, shared understanding, and a clear boundary between inside and outside. When misinformation makes every day feel like a day of deception, the boundary dissolves. There is no \u201Cinside\u201D because there is no \u201Coutside.\u201D</p>
+  <h3>What\u2019s Lost</h3>
+  <p>The Slate writer who describes the mac-and-cheese-water prank identifies what\u2019s at stake: not a holiday, but a capacity. \u201CHealing and necessary to remember that reality is flexible in whimsical ways too, that changes to our understanding of the world can be silly and collective and easy to recover from.\u201D The loss of April Fools\u2019 is not the loss of pranks \u2014 people still prank each other. It\u2019s the loss of a <em>collective</em> agreement to play together. Individual pranks persist. What\u2019s dying is the shared ritual.</p>
+  <div class="callout"><h4>Huizinga\u2019s Warning</h4><p>Huizinga closed <em>Homo Ludens</em> with a passionate argument against separating play from life. When play becomes impossible \u2014 when the magic circle cannot hold \u2014 culture itself is diminished. \u201CMan is only completely a man when he plays.\u201D The death of April Fools\u2019 Day is a small thing. But the conditions that killed it are not small at all.</p></div>`
+];
+
+// DOM BUILDER
+const shell = document.createElement('div');
+shell.className = 'shell';
+shell.innerHTML = `
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">A<em>F</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+  </nav>
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> DISCOURSE SURVEY \u00b7 40+ SOURCES</div>
+        <div class="hero-title">Misinformation Ate April <em>Fools</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Trust, Play & the Death of Sanctioned Deception \u00b7 2026</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll"></div>
+  </div>
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner"></div>
+  </div>
+`;
+document.body.appendChild(shell);
+
+const sidebarNav = document.getElementById('sidebar-nav');
+sections.forEach((sec, idx) => {
+  const item = document.createElement('div');
+  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
+  item.setAttribute('data-label', sec.short);
+  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
+  item.onclick = () => scrollToSection(idx);
+  sidebarNav.appendChild(item);
+});
+
+const sidebarTip = document.createElement('div');
+sidebarTip.className = 'sidebar-tooltip';
+document.body.appendChild(sidebarTip);
+const sidebarEl = document.querySelector('.sidebar');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+const mainScroll = document.getElementById('main-scroll');
+const mainInner = document.createElement('div');
+mainInner.className = 'main-scroll-inner';
+mainScroll.appendChild(mainInner);
+sections.forEach((sec, idx) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.innerHTML = `
+    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+    <h2>${sec.title}</h2>
+    ${summaries[idx]}
+  `;
+  mainInner.appendChild(block);
+});
+
+const rightInner = document.getElementById('right-inner');
+sections.forEach((sec, idx) => {
+  const detailDiv = document.createElement('div');
+  detailDiv.className = 'detail';
+  detailDiv.id = `detail-${idx}`;
+  detailDiv.innerHTML = details[idx];
+  rightInner.appendChild(detailDiv);
+});
+
+let lastDetailIdx = 0;
+function scrollToSection(idx) {
+  const blocks = document.querySelectorAll('.section-block');
+  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById(`detail-${idx}`).style.display = 'block';
+  document.getElementById('right').classList.remove('closed');
+  document.body.classList.add('detail-open');
+  document.getElementById('right').scrollTop = 0;
+  document.getElementById('right-sticky-title').classList.remove('visible');
+}
+function closeRight() {
+  document.getElementById('right').classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+function toggleDetail() {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+}
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  const blocks = mainScroll.querySelectorAll('.section-block');
+  const items = document.querySelectorAll('.sidebar-item');
+  let activeIdx = 0;
+  blocks.forEach((b, i) => { if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i; });
+  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+const rightPanelOuter = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+rightPanelOuter.addEventListener('scroll', () => {
+  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+</script>
+</body>
+</html>

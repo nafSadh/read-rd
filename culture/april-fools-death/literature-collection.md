@@ -67,3 +67,17 @@
 - [Best Gaming AF 2026 – GameSpot](https://www.gamespot.com/articles/the-best-april-fools-day-gaming-jokes-of-2026/1100-6539127/) — PUBG Prop Hunt, Fortnite big heads, PAYDAY 3 NPC mode
 - [Gaming AF 2026 – GamesHub](https://www.gameshub.com/news/article/best-gaming-april-fools-day-stories-2026-2863454/) — "AF has become a safe testing ground for wild ideas"; Starfield PS5 ambiguity
 - [AprilFoolsDayOnTheWeb.com](https://aprilfoolsdayontheweb.com/) — Master aggregator
+
+## NEW — Session 1b additions
+
+### S2/S7: Trust Data (Edelman)
+- [2026 Edelman Trust Barometer – PR Newswire](https://www.prnewswire.com/news-releases/2026-edelman-trust-barometer-reveals-trust-is-in-peril-as-society-slides-from-grievance-into-insularity-302664064.html) — 70% unwilling to trust someone with different values; insularity as "next crisis of trust"; fear→polarization→grievance→insularity arc
+- [Axios: "Our shared reality is collapsing"](https://www.axios.com/2026/01/16/edelman-trust-barometer-2026-shared-reality) — Only 39% get info from ideologically different sources weekly (down 6pts); trust drained from govt leaders (–16) and news orgs (–11), flowed to personal circles (+11)
+- [2026 Edelman Trust Barometer – Edelman](https://www.edelman.com/trust/2026/trust-barometer) — Just 32% believe next gen will be better off; misinformation (50%) among top 5 trust-shapers
+- [2026 Edelman on insularity – Interfaith America](https://www.interfaithamerica.org/article/2026-edelman-trust-barometer/) — 42% would rather switch departments than report to manager with different values
+
+### S5: Context Collapse (Academic)
+- [Context collapse – Wikipedia](https://en.wikipedia.org/wiki/Context_collapse) — Boyd coined "collapsed contexts" early 2000s; Wesch 2008 lecture; retweeting as collapse mechanism
+- [Marwick & boyd 2011 – SAGE](https://journals.sagepub.com/doi/10.1177/1461444810365313) — "I tweet honestly, I tweet passionately"; imagined audiences; context collapse on Twitter
+- [Context Collapse Literature Review – Cyborgology](https://thesocietypages.org/cyborgology/2013/01/10/context-collapse-a-literature-review/) — Hogan's "lowest common denominator" approach; OGC vs self-generated content; warranting principle
+- [Loh & Walsh 2021 – SAGE](https://journals.sagepub.com/doi/10.1177/20563051211041646) — Context collusion vs context collision; agency in collapse
