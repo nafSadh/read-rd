@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misinformation Ate April Fools — The Talk</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  /* SVG fills — light */
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Only prevent selection on nav controls, not slide content */
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+/* ---- SLIDE CONTAINER ---- */
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- SLIDE LAYOUT ---- */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+/* Subtle divider between text and SVG columns */
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1;
+}
+
+/* ---- TEXT ELEMENTS ---- */
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+/* Constrain content width on ultrawide screens — skip title & divider slides */
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- TITLE SLIDE ---- */
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+/* ---- TOC ---- */
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+/* ---- SECTION DIVIDER ---- */
+/* Light mode: warm accent background */
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+/* Dark mode: deeper accent-tinted background */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+/* ---- NAVIGATION (overlay at viewport bottom) ---- */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* SVG Styling */
+.fig { overflow: visible; } /* prevent viewBox clipping on edges */
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+/* Center text vertically in boxes when text-anchor is middle */
+.fig .box-label { dominant-baseline: central; }
+
+/* Dark mode SVG overrides — remap hardcoded fills/strokes */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  /* accent colors shift slightly brighter in dark */
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+/* ---- RESPONSIVE ---- */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .slide .subtitle { margin-bottom: 0.5rem; }
+
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+
+  .toc-list { grid-template-columns: 1fr; }
+
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+/* Animations for SVG */
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+.cite{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--mute);font-weight:400;letter-spacing:0.3px}
+.big-quote{font-family:"Crimson Pro",serif;font-size:clamp(1.4rem,2.8vw,2.2rem);font-weight:300;font-style:italic;line-height:1.4;color:var(--fg);max-width:680px}
+.big-quote em{font-weight:600;color:var(--accent);font-style:italic}
+.punchline{font-family:"Crimson Pro",serif;font-size:clamp(1.2rem,2.4vw,1.8rem);font-weight:400;line-height:1.5;color:var(--dim);max-width:600px;margin-top:1rem}
+.stat-hero{display:flex;gap:clamp(1rem,3vw,3rem);flex-wrap:wrap;margin:1.5rem 0}
+.stat-hero .stat{text-align:center}
+.stat-hero .val{font-family:"IBM Plex Mono",monospace;font-size:clamp(2rem,5vw,3.5rem);font-weight:600;color:var(--accent);display:block;line-height:1.1}
+.stat-hero .lbl{font-size:0.75rem;color:var(--dim);letter-spacing:0.5px;margin-top:4px;display:block}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="50" height="6" rx="3" fill="#5b63f5"/>
+    <rect x="54" width="30" height="6" rx="3" fill="#0e8fd0"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>Misinformation Ate<br>April <em>Fools</em></h1>
+  <div class="ref">Or: how the internet killed the only holiday that required us to agree on what&rsquo;s real</div>
+  <div class="meta">Arrow keys / click / swipe &middot; &#9680; for dark mode</div>
+</div>
+
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">THE GOLDEN AGE</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>Once Upon a Time, We Could Lie <em>Together</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>1957:</strong> The BBC tells Britain spaghetti grows on trees. Hundreds call in. Everyone laughs. Nobody files a complaint with Ofcom.</p>
+      <p class="point"><strong>2004:</strong> Google launches Gmail on April 1st offering 1 GB of free email. <em>The Guardian</em> calls it a prank. It was real. 1.8 billion people use it today. <span class="cite">[Komando]</span></p>
+      <p class="point"><strong>2007:</strong> Google announces Gmail Paper &mdash; they&rsquo;ll print your emails on &ldquo;94% post-consumer organic soybean sputum.&rdquo; This one was fake. <span class="cite">[Wikipedia]</span></p>
+      <p class="point">The point is: <strong>nobody could tell the real from the fake, and that was the fun.</strong> The trust container held. The ambiguity was delightful, not dangerous.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">THE VIBE SHIFT</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h2>Then the Baseline <em>Collapsed</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <div class="stat-hero">
+        <div class="stat"><span class="val">70%</span><span class="lbl">won&rsquo;t trust someone<br>with different info sources</span></div>
+        <div class="stat"><span class="val">&minus;16</span><span class="lbl">govt leader trust<br>(5-year change)</span></div>
+        <div class="stat"><span class="val">&minus;11</span><span class="lbl">news org trust<br>(5-year change)</span></div>
+        <div class="stat"><span class="val">39%</span><span class="lbl">read opposing sources<br>weekly (down 6pts)</span></div>
+      </div>
+      <p class="punchline">Axios headline, January 2026: <strong>&ldquo;Global trust data finds our shared reality is collapsing.&rdquo;</strong> <span class="cite">[Edelman 2026 / Axios]</span></p>
+      <p class="point">Pranks are parasitic on trust. You can&rsquo;t subvert a baseline that doesn&rsquo;t exist.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">THE EULOGY</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>Google Stopped Pranking and <em>Nobody Noticed</em></h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>2000&ndash;2019:</strong> Twenty years of MentalPlex, Google Gulp, Google Romance, Gmail Paper. Beloved annual tradition.</p>
+      <p class="point"><strong>2020:</strong> &ldquo;Out of respect for COVID.&rdquo; Fair enough.</p>
+      <p class="point"><strong>2021:</strong> Still gone. Hmm.</p>
+      <p class="point"><strong>2022&ndash;2025:</strong> &hellip;</p>
+      <p class="point"><strong>2026:</strong> Google, Apple, Samsung all opt out. <span class="cite">[Pocket-lint]</span></p>
+      <p class="point">COVID was the excuse. The real reason: in a world of deepfakes and algorithmic outrage, a tech giant <em>deliberately publishing fake information</em> is no longer cute. It&rsquo;s a liability.</p>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="240" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="28" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">CORPORATE APRIL FOOLS PARTICIPATION</text>
+        <line x1="40" y1="200" x2="310" y2="200" stroke="var(--border)" stroke-width="1"/>
+        <rect x="50" y="60" width="25" height="140" rx="3" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="62" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2000s</text>
+        <rect x="100" y="50" width="25" height="150" rx="3" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="112" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2010s</text>
+        <rect x="150" y="140" width="25" height="60" rx="3" fill="var(--svg-accent3-fill)" stroke="var(--accent3)" stroke-width="1"/>
+        <text x="162" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2020</text>
+        <rect x="200" y="180" width="25" height="20" rx="3" fill="var(--svg-accent4-fill)" stroke="var(--mute)" stroke-width="1"/>
+        <text x="212" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2023</text>
+        <rect x="250" y="192" width="25" height="8" rx="3" fill="var(--svg-accent4-fill)" stroke="var(--mute)" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="262" y="215" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">2026</text>
+        <text x="290" y="195" class="label-text" fill="var(--mute)" font-size="16">&larr; you are here</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">THE ONION PROBLEM</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>When State Media Runs <em>The Onion</em> as News</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>2012:</strong> Iran&rsquo;s Fars News runs an Onion article claiming rural Americans prefer Ahmadinejad to Obama. <em>Word for word.</em> As real news. <span class="cite">[RationalWiki]</span></p>
+      <p class="point"><strong>Same year:</strong> North Korea&rsquo;s KCNA cites The Onion naming Kim Jong Un &ldquo;Sexiest Man Alive.&rdquo; China&rsquo;s <em>People&rsquo;s Daily</em> picks it up.</p>
+      <p class="point"><strong>2017:</strong> White House Press Secretary Sean Spicer retweets an Onion video calling himself a provider of &ldquo;robust and clearly articulated misinformation.&rdquo; Apparently sincerely.</p>
+      <p class="big-quote">&ldquo;Without a winking smiley, it is utterly impossible to parody a Creationist in such a way that someone won&rsquo;t mistake it for the <em>genuine article.</em>&rdquo;<br><span style="font-size:0.7em;color:var(--dim);font-style:normal">&mdash; Nathan Poe, 2005 <span class="cite">[Poe&rsquo;s Law]</span></span></p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">THE ALGORITHM</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h2>The Algorithm Doesn&rsquo;t Know It&rsquo;s <em>April</em></h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Context collapse</strong> (Marwick &amp; boyd, 2011): social media flattens audiences, strips date, source, tone, and intent. <span class="cite">[SAGE]</span></p>
+      <p class="point">A joke posted April 1st in a group chat &rarr; screenshot-shared on Twitter in November &rarr; now it&rsquo;s misinformation.</p>
+      <p class="point"><strong>Case study:</strong> A digitally altered image of an elephant carrying a lion cub posted as an AF prank in 2014. Still circulating on Facebook in 2024. Snopes debunked it. Didn&rsquo;t matter. <span class="cite">[NPR]</span></p>
+      <p class="point"><strong>Today:</strong> A fake war lockdown message went viral this morning &mdash; April 1, 2026 &mdash; and caused real panic before anyone realized the date.</p>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="220" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">LIFECYCLE OF AN AF JOKE</text>
+        <rect x="20" y="50" width="90" height="50" rx="6" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="65" y="72" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">APR 1</text>
+        <text x="65" y="88" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">joke &middot; friends</text>
+        <text x="130" y="75" class="label-text" fill="var(--mute)" font-size="14">&rarr;</text>
+        <rect x="150" y="50" width="70" height="50" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="1"/>
+        <text x="185" y="72" text-anchor="middle" class="label-text" fill="var(--mute)" font-size="10">screenshot</text>
+        <text x="185" y="88" text-anchor="middle" class="label-text" fill="var(--mute)" font-size="9">context gone</text>
+        <text x="235" y="75" class="label-text" fill="var(--mute)" font-size="14">&rarr;</text>
+        <rect x="250" y="50" width="70" height="50" rx="6" fill="var(--svg-accent3-fill)" stroke="#e87090" stroke-width="1"/>
+        <text x="285" y="72" text-anchor="middle" class="label-text" fill="#e87090" font-size="10" font-weight="500">NOV</text>
+        <text x="285" y="88" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="9">disinfo &middot; viral</text>
+        <rect x="60" y="130" width="220" height="60" rx="6" fill="var(--svg-info-bg)" stroke="var(--svg-info-border)" stroke-width="1"/>
+        <text x="170" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">The algorithm optimizes for engagement.</text>
+        <text x="170" y="175" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">Fear engages better than laughter.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">AI ENTERS THE CHAT</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>Gemini Will Fake Your Police Fine <em>For Fun</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">Published Gemini prompts for April Fools&rsquo; 2026: <span class="cite">[News24Online]</span></p>
+      <p class="point" style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;color:var(--dim);padding:12px;background:var(--code-bg);border-radius:6px;margin:0.5em 0">&ldquo;Create a realistic message screenshot showing a traffic fine issued to me with official-looking formatting, government logo, and fine amount.&rdquo;</p>
+      <p class="point" style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;color:var(--dim);padding:12px;background:var(--code-bg);border-radius:6px;margin:0.5em 0">&ldquo;Edit this photo to make it look like I&rsquo;m taking a selfie with a famous celebrity. Keep lighting realistic. Add slight blur for authenticity.&rdquo;</p>
+      <p class="point">Read those again. On April 2nd, these are instructions for <strong>fraud</strong>. On April 1st, they&rsquo;re &ldquo;fun.&rdquo; The AI doesn&rsquo;t know the difference. Neither does the person who receives the output.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">MEANWHILE IN 2026</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>The Survivors Are <em>Unserious</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">With Big Tech silent, the 2026 AF landscape belongs to second-tier brands making low-stakes jokes:</p>
+      <p class="point">&bull; <strong>Dyson</strong> announced a pet grooming Airwrap for your cat&rsquo;s &ldquo;delicate chest fluff&rdquo;</p>
+      <p class="point">&bull; <strong>Slim Chickens</strong> unveiled a bath with a built-in dip sauce tap</p>
+      <p class="point">&bull; <strong>Yahoo</strong> made a real product &mdash; the Scr&#x14D;ll Stoppr &mdash; a $4.99 finger accessory that blocks your thumb from doom-scrolling. Actually available on TikTok Shop.</p>
+      <p class="point">&bull; <strong>PAYDAY 3</strong> announced a mode where you play as an NPC going about your daily life while your bank gets robbed</p>
+      <p class="point">&bull; <strong>Fortnite</strong> gave everyone giant heads</p>
+      <p class="point">Ad Age&rsquo;s summary: &ldquo;This year&rsquo;s gags lean heavily into the blurred line between fake and real.&rdquo; <span class="cite">[Ad Age]</span></p>
+      <p class="punchline">That&rsquo;s &hellip; that&rsquo;s the problem.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">THE THEORY</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>The Magic Circle <em>Breaks</em></h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Bakhtin</strong> (1965): carnival is a <em>licensed</em> zone of transgression. Everyone agrees the rules are suspended. Everyone agrees when they come back. <span class="cite">[Wikipedia]</span></p>
+      <p class="point"><strong>Huizinga</strong> (1938): play creates a &ldquo;magic circle&rdquo; &mdash; a temporary world set apart from the ordinary one, with its own rules. <span class="cite">[Homo Ludens]</span></p>
+      <p class="point"><strong>April Fools&rsquo;</strong> is a magic circle bounded by time. For 24 hours, lies are play.</p>
+      <p class="point">When misinformation makes <em>every</em> day a day of deception, the circle dissolves. There is no &ldquo;inside&rdquo; because there is no &ldquo;outside.&rdquo;</p>
+    </div>
+    <div class="fig-col">
+      <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="340" height="240" fill="var(--svg-subtle)" rx="8"/>
+        <text x="170" y="25" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10" letter-spacing="2">THE MAGIC CIRCLE</text>
+        <circle cx="110" cy="120" r="65" fill="var(--svg-accent-fill)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="110" y="105" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="11" font-weight="600">1957</text>
+        <text x="110" y="125" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Solid circle</text>
+        <text x="110" y="140" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Play inside</text>
+        <text x="110" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Reality outside</text>
+        <circle cx="250" cy="120" r="65" fill="none" stroke="#e87090" stroke-width="2" stroke-dasharray="5 5" opacity="0.5"/>
+        <text x="250" y="105" text-anchor="middle" class="label-text" fill="#e87090" font-size="11" font-weight="600">2026</text>
+        <text x="250" y="125" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Circle dissolved</text>
+        <text x="250" y="140" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">Play everywhere</text>
+        <text x="250" y="155" text-anchor="middle" class="label-text" fill="var(--dim)" font-size="10">= play nowhere</text>
+        <text x="170" y="215" text-anchor="middle" class="label-text" fill="var(--accent)" font-size="10" font-weight="500">When every day is April Fools&rsquo;, no day is.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">THE PUNCHLINE</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>What Actually <em>Died</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">Not pranks. People still prank each other.</p>
+      <p class="point">Not humor. The internet is funnier than ever.</p>
+      <p class="point">What died is the <strong>collective agreement</strong> to play together &mdash; the one day a year when an entire culture consented to a shared fiction and then laughed about it the next morning.</p>
+      <p class="big-quote">We lost the capacity to agree, even for 24 hours, on what counts as <em>real</em> &mdash; so we could enjoy, together, the brief pleasure of pretending otherwise.</p>
+      <p class="punchline">The traditions that survive &mdash; French paper fish, Scottish sealed letters, a family freezing the breakfast cereal &mdash; are the ones that never went online. They run on eye contact and trust between people who know each other&rsquo;s faces.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">CODA</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2><em>Anyway</em></h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="big-quote">&ldquo;Wine barrels burst if from time to time we do not open them and let in some air.&rdquo;</p>
+      <p style="color:var(--dim);font-size:0.85em;margin-top:0.5rem">&mdash; A school of theology, 1444</p>
+      <p class="punchline">The wine barrel has burst. And nobody&rsquo;s laughing.</p>
+      <p class="punchline" style="margin-top:2rem;font-size:0.8em;color:var(--mute)">&mdash; Written on April 1, 2026, while browsing brand pranks about AI-powered grilling glasses and bath-tub dip sauce taps.</p>
+      <p style="margin-top:2rem;font-size:0.7em;color:var(--mute);font-family:'IBM Plex Mono',monospace">Sources: Edelman 2026 &middot; Axios &middot; Marwick &amp; boyd 2011 &middot; Bakhtin &middot; Huizinga &middot; Poe&rsquo;s Law &middot; The Conversation &middot; Pocket-lint &middot; Ad Age &middot; RationalWiki &middot; NPR &middot; News24Online &middot; Slate &middot; Storyboard18<br><a href="index.html" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)">read.sadh.app/culture/april-fools-death</a></p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&larr;</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 11</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&rarr;</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">&#9680;</button>
+</div>
+
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>
