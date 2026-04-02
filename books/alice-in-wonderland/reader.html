@@ -592,6 +592,29 @@ body {
   pointer-events: auto;
 }
 #back-to-top:hover { background: var(--btn-hover); }
+#back-to-top .ch-stick {
+  position: absolute;
+  right: 48px;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text);
+  background: var(--bar-bg);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+#back-to-top:hover .ch-stick {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
@@ -1590,7 +1613,7 @@ body {
 </div>
 
 <!-- Back to top -->
-<button id="back-to-top" title="Back to top" aria-label="Back to top">&uarr;</button>
+<button id="back-to-top" title="Back to top" aria-label="Back to top"><span class="ch-stick" id="ch-stick"></span>&uarr;</button>
 
 <script>
 // ===== SETTINGS =====
@@ -1769,6 +1792,7 @@ function setupChapterObserver() {
           link.classList.toggle('active', i === idx);
         });
         chapterIndicator.textContent = chapterTitles[idx] || '';
+        document.getElementById('ch-stick').textContent = chapterTitles[idx] || '';
       }
     });
   }, {
