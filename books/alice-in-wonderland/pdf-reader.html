@@ -813,7 +813,7 @@ function init() {
     if (e.key === 'Enter') {
       const n = parseInt(this.value);
       if (n >= 1 && n <= pages.length) goToPage(n - 1);
-      else this.value = currentPage + 1;
+      else renderPage(); // reset display
       this.blur();
     }
   });
@@ -829,8 +829,13 @@ function init() {
     }
   });
 
-  // Scroll on page card
+  // Scroll on page cards
   document.getElementById('pageCard').addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (e.deltaY > 0) nextPage();
+    else if (e.deltaY < 0) prevPage();
+  }, { passive: false });
+  document.getElementById('pageCard2').addEventListener('wheel', function(e) {
     e.preventDefault();
     if (e.deltaY > 0) nextPage();
     else if (e.deltaY < 0) prevPage();
