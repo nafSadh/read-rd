@@ -592,28 +592,76 @@ body {
   pointer-events: auto;
 }
 #back-to-top:hover { background: var(--btn-hover); }
-#back-to-top .ch-stick {
+/* Chapter scrubber — vertical stick that pops up from the button */
+.ch-scrubber {
   position: absolute;
-  right: 48px;
+  bottom: 48px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bar-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 4px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+#back-to-top:hover .ch-scrubber {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.ch-scrubber .ch-node {
+  width: 32px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+.ch-node:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.ch-node.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+/* Tooltip on hover */
+.ch-node::after {
+  content: attr(data-title);
+  position: absolute;
+  right: 40px;
   white-space: nowrap;
   font-family: var(--font-serif);
-  font-size: 13px;
+  font-size: 12px;
   font-style: italic;
   color: var(--text);
   background: var(--bar-bg);
   border: 1px solid var(--border);
-  padding: 6px 14px;
-  border-radius: 6px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 4px;
   opacity: 0;
-  transform: translateX(8px);
   pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.15s;
 }
-#back-to-top:hover .ch-stick {
+.ch-node:hover::after {
   opacity: 1;
-  transform: translateX(0);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -1613,7 +1661,10 @@ body {
 </div>
 
 <!-- Back to top -->
-<button id="back-to-top" title="Back to top" aria-label="Back to top"><span class="ch-stick" id="ch-stick"></span>&uarr;</button>
+<button id="back-to-top" title="Back to top" aria-label="Back to top">
+  <div class="ch-scrubber" id="ch-scrubber"></div>
+  &uarr;
+</button>
 
 <script>
 // ===== SETTINGS =====
@@ -1792,7 +1843,7 @@ function setupChapterObserver() {
           link.classList.toggle('active', i === idx);
         });
         chapterIndicator.textContent = chapterTitles[idx] || '';
-        document.getElementById('ch-stick').textContent = chapterTitles[idx] || '';
+        document.querySelectorAll('.ch-node').forEach((n, i) => n.classList.toggle('active', i === idx));
       }
     });
   }, {
@@ -1804,6 +1855,23 @@ function setupChapterObserver() {
 }
 
 setupChapterObserver();
+
+// ===== CHAPTER SCRUBBER =====
+(function buildScrubber() {
+  const scrubber = document.getElementById('ch-scrubber');
+  const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+  chapterEls.forEach((ch, i) => {
+    const node = document.createElement('button');
+    node.className = 'ch-node';
+    node.textContent = roman[i];
+    node.dataset.title = chapterTitles[i];
+    node.addEventListener('click', (e) => {
+      e.stopPropagation(); // don't trigger back-to-top
+      window.scrollTo({ top: ch.offsetTop - 56, behavior: 'smooth' });
+    });
+    scrubber.appendChild(node);
+  });
+})();
 
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', (e) => {
