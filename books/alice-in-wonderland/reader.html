@@ -210,16 +210,29 @@ body {
 #sidebar-toggle:hover { background: var(--btn-bg); color: var(--text); }
 
 /* ===== PROGRESS BAR ===== */
-#progress-bar {
+#progress-track {
   position: fixed;
   top: 44px;
   left: 0;
-  height: 2px;
-  width: 0%;
-  background: var(--accent);
+  right: 0;
+  height: 6px;
   z-index: 1001;
-  transition: width 0.15s ease-out;
+  background: var(--border);
+  cursor: pointer;
+  display: flex;
 }
+#progress-track:hover { height: 10px; }
+#progress-track { transition: height 0.15s; }
+.progress-seg {
+  height: 100%;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.progress-seg.filled { background: var(--accent); }
+.progress-seg.partial { background: linear-gradient(to right, var(--accent) var(--fill), var(--border) var(--fill)); }
+/* Subtle divider between segments */
+.progress-seg + .progress-seg { border-left: 1px solid var(--bg); }
 
 /* ===== TOP BAR ===== */
 #top-bar {
@@ -366,7 +379,7 @@ body {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  width: 220px;
+  width: 280px;
   display: none;
   font-family: var(--font-sans);
   font-size: 13px;
@@ -595,7 +608,7 @@ body {
 <body data-theme="sepia" data-font="serif" data-size="medium" data-width="medium">
 
 <!-- Progress bar -->
-<div id="progress-bar"></div>
+<div id="progress-track"></div>
 
 <!-- Sidebar overlay -->
 <div id="sidebar-overlay"></div>
@@ -611,21 +624,7 @@ body {
   <button id="sidebar-toggle" title="Chapters" aria-label="Open chapter list">&#9776;</button>
   <span class="book-title">Alice's Adventures in Wonderland</span>
   <span class="chapter-indicator" id="chapter-indicator"></span>
-  <div class="nav-chapters">
-    <button class="nav-dot" data-ch="1" title="Ch I. Down the Rabbit-Hole">1</button>
-<button class="nav-dot" data-ch="2" title="Ch II. The Pool of Tears">2</button>
-<button class="nav-dot" data-ch="3" title="Ch III. A Caucus-Race and a Long Tale">3</button>
-<button class="nav-dot" data-ch="4" title="Ch IV. The Rabbit Sends in a Little Bill">4</button>
-<button class="nav-dot" data-ch="5" title="Ch V. Advice from a Caterpillar">5</button>
-<button class="nav-dot" data-ch="6" title="Ch VI. Pig and Pepper">6</button>
-<button class="nav-dot" data-ch="7" title="Ch VII. A Mad Tea-Party">7</button>
-<button class="nav-dot" data-ch="8" title="Ch VIII. The Queen's Croquet-Ground">8</button>
-<button class="nav-dot" data-ch="9" title="Ch IX. The Mock Turtle's Story">9</button>
-<button class="nav-dot" data-ch="10" title="Ch X. The Lobster Quadrille">10</button>
-<button class="nav-dot" data-ch="11" title="Ch XI. Who Stole the Tarts?">11</button>
-<button class="nav-dot" data-ch="12" title="Ch XII. Alice's Evidence">12</button>
-
-  </div>
+  <span style="flex:1"></span>
   <div class="bar-controls">
     <button class="bar-btn" id="settings-btn" title="Settings" aria-label="Settings">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -1652,17 +1651,7 @@ document.querySelectorAll('.theme-dot').forEach(dot => {
   });
 });
 
-// ===== CHAPTER NAV DOTS =====
-document.querySelectorAll('.nav-dot').forEach(dot => {
-  dot.addEventListener('click', () => {
-    const chNum = dot.dataset.ch;
-    const target = document.getElementById('ch-' + chNum);
-    if (target) {
-      const offset = target.offsetTop - 56;
-      window.scrollTo({ top: offset, behavior: 'smooth' });
-    }
-  });
-});
+// (chapter nav dots removed — progress bar handles chapter navigation)
 
 // ===== SIDEBAR =====
 const sidebarEl = document.getElementById('chapter-sidebar');
@@ -1710,21 +1699,59 @@ overlayEl.addEventListener('click', closeSidebar);
   });
 })();
 
-// ===== SCROLL TRACKING =====
-const progressBar = document.getElementById('progress-bar');
+// ===== SEGMENTED PROGRESS BAR =====
+const progressTrack = document.getElementById('progress-track');
 const backToTop = document.getElementById('back-to-top');
+const chapterEls = document.querySelectorAll('.chapter');
+const sidebarLinks = document.querySelectorAll('.sidebar-chapter');
+const chapterIndicator = document.getElementById('chapter-indicator');
+const chapterTitles = Array.from(chapterEls).map(ch => {
+  const t = ch.querySelector('.ch-title');
+  return t ? t.textContent : '';
+});
+
+// Build segments — one per chapter, width proportional to content length
+(function buildProgressSegments() {
+  const lengths = Array.from(chapterEls).map(ch => ch.textContent.length);
+  const total = lengths.reduce((a, b) => a + b, 0);
+  lengths.forEach((len, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'progress-seg';
+    seg.style.width = (len / total * 100) + '%';
+    seg.title = chapterTitles[i];
+    seg.addEventListener('click', () => {
+      const target = chapterEls[i];
+      window.scrollTo({ top: target.offsetTop - 56, behavior: 'smooth' });
+    });
+    progressTrack.appendChild(seg);
+  });
+})();
+
+const segments = progressTrack.querySelectorAll('.progress-seg');
 
 function updateScroll() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = docHeight > 0 ? Math.min(100, Math.round((scrollTop / docHeight) * 100)) : 0;
-  progressBar.style.width = pct + '%';
 
-  if (scrollTop > 600) {
-    backToTop.classList.add('visible');
-  } else {
-    backToTop.classList.remove('visible');
-  }
+  // Update segment fills based on chapter positions
+  chapterEls.forEach((ch, i) => {
+    const chTop = ch.offsetTop - 56;
+    const chBottom = chTop + ch.offsetHeight;
+    const seg = segments[i];
+    if (scrollTop >= chBottom) {
+      seg.className = 'progress-seg filled';
+      seg.style.removeProperty('--fill');
+    } else if (scrollTop > chTop) {
+      const pct = Math.round((scrollTop - chTop) / (chBottom - chTop) * 100);
+      seg.className = 'progress-seg partial';
+      seg.style.setProperty('--fill', pct + '%');
+    } else {
+      seg.className = 'progress-seg';
+      seg.style.removeProperty('--fill');
+    }
+  });
+
+  backToTop.classList.toggle('visible', scrollTop > 600);
 }
 
 window.addEventListener('scroll', updateScroll, { passive: true });
@@ -1734,23 +1761,10 @@ backToTop.addEventListener('click', () => {
 
 // ===== INTERSECTION OBSERVER =====
 function setupChapterObserver() {
-  const chapters = document.querySelectorAll('.chapter');
-  const navDots = document.querySelectorAll('.nav-dot');
-  const sidebarLinks = document.querySelectorAll('.sidebar-chapter');
-
-  const chapterIndicator = document.getElementById('chapter-indicator');
-  const chapterTitles = Array.from(chapters).map(ch => {
-    const t = ch.querySelector('.ch-title');
-    return t ? t.textContent : '';
-  });
-
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const idx = parseInt(entry.target.dataset.chapterIndex);
-        navDots.forEach((dot, i) => {
-          dot.classList.toggle('active', i === idx);
-        });
         sidebarLinks.forEach((link, i) => {
           link.classList.toggle('active', i === idx);
         });
@@ -1762,7 +1776,7 @@ function setupChapterObserver() {
     threshold: 0
   });
 
-  chapters.forEach(ch => observer.observe(ch));
+  chapterEls.forEach(ch => observer.observe(ch));
 }
 
 setupChapterObserver();
