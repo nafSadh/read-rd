@@ -369,80 +369,60 @@ body {
 /* ===== SETTINGS PANEL ===== */
 #settings-panel {
   position: fixed;
-  top: 48px;
+  top: 52px;
   right: 16px;
   z-index: 999;
   background: var(--bar-bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 10px;
+  padding: 20px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  width: 280px;
+  width: 240px;
   display: none;
   font-family: var(--font-sans);
   font-size: 13px;
 }
 #settings-panel.open { display: block; }
 
-.setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
+.setting-group {
+  margin-bottom: 16px;
 }
-.setting-row + .setting-row { border-top: 1px solid var(--border); }
+.setting-group:last-child { margin-bottom: 0; }
 .setting-label {
   color: var(--text-secondary);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.size-btn {
-  width: 36px;
-  height: 28px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  transition: background 0.15s;
-}
-.size-btn:hover { background: var(--btn-bg); }
-.size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.toggle-btn {
-  padding: 4px 12px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  transition: background 0.15s;
-}
-.toggle-btn:hover { background: var(--btn-bg); }
-.toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.width-btn {
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
-  cursor: pointer;
   font-size: 10px;
-  letter-spacing: -2px;
-  transition: background 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
 }
-.width-btn:hover { background: var(--btn-bg); }
-.width-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.btn-group { display: flex; gap: 4px; }
+.btn-row {
+  display: flex;
+  gap: 0;
+}
+.btn-row .opt {
+  flex: 1;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-row .opt:first-child { border-radius: 5px 0 0 5px; }
+.btn-row .opt:last-child { border-radius: 0 5px 5px 0; }
+.btn-row .opt + .opt { border-left: none; }
+.btn-row .opt:hover { background: var(--btn-bg); }
+.btn-row .opt.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-row .opt.active + .opt { border-left-color: var(--accent); }
 
 /* ===== MAIN CONTENT ===== */
 #content {
@@ -724,29 +704,29 @@ body {
 
 <!-- Settings panel -->
 <div id="settings-panel">
-  <div class="setting-row">
-    <span class="setting-label">Size</span>
-    <div class="btn-group">
-      <button class="size-btn" data-size="small">S</button>
-      <button class="size-btn active" data-size="medium">M</button>
-      <button class="size-btn" data-size="large">L</button>
+  <div class="setting-group">
+    <span class="setting-label">Text Size</span>
+    <div class="btn-row">
+      <button class="opt" data-size="small">Small</button>
+      <button class="opt active" data-size="medium">Medium</button>
+      <button class="opt" data-size="large">Large</button>
     </div>
   </div>
-  <div class="setting-row">
+  <div class="setting-group">
     <span class="setting-label">Font</span>
-    <div class="btn-group">
-      <button class="toggle-btn active" data-font="serif">Serif</button>
-      <button class="toggle-btn" data-font="sans">Sans</button>
-      <button class="toggle-btn" data-font="slab">Slab</button>
-      <button class="toggle-btn" data-font="mono">Mono</button>
+    <div class="btn-row">
+      <button class="opt active" data-font="serif">Serif</button>
+      <button class="opt" data-font="sans">Sans</button>
+      <button class="opt" data-font="slab">Slab</button>
+      <button class="opt" data-font="mono">Mono</button>
     </div>
   </div>
-  <div class="setting-row">
-    <span class="setting-label">Width</span>
-    <div class="btn-group">
-      <button class="width-btn" data-width="narrow">▸</button>
-      <button class="width-btn active" data-width="medium">▸▸</button>
-      <button class="width-btn" data-width="wide">▸▸▸</button>
+  <div class="setting-group">
+    <span class="setting-label">Page Width</span>
+    <div class="btn-row">
+      <button class="opt" data-width="narrow">Narrow</button>
+      <button class="opt active" data-width="medium">Medium</button>
+      <button class="opt" data-width="wide">Wide</button>
     </div>
   </div>
 </div>
@@ -1695,9 +1675,9 @@ document.addEventListener('click', (e) => {
 });
 
 // Font size
-document.querySelectorAll('.size-btn').forEach(btn => {
+document.querySelectorAll('[data-size].opt').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('[data-size].opt').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.body.dataset.size = btn.dataset.size;
     savePrefs();
@@ -1705,9 +1685,9 @@ document.querySelectorAll('.size-btn').forEach(btn => {
 });
 
 // Font family toggle
-document.querySelectorAll('[data-font].toggle-btn').forEach(btn => {
+document.querySelectorAll('[data-font].opt').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-font].toggle-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('[data-font].opt').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.body.dataset.font = btn.dataset.font;
     savePrefs();
@@ -1715,9 +1695,9 @@ document.querySelectorAll('[data-font].toggle-btn').forEach(btn => {
 });
 
 // Width toggle
-document.querySelectorAll('.width-btn').forEach(btn => {
+document.querySelectorAll('[data-width].opt').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.width-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('[data-width].opt').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.body.dataset.width = btn.dataset.width;
     savePrefs();
@@ -1946,19 +1926,19 @@ function loadPrefs() {
     }
     if (prefs.font) {
       document.body.dataset.font = prefs.font;
-      document.querySelectorAll('[data-font].toggle-btn').forEach(b => {
+      document.querySelectorAll('[data-font].opt').forEach(b => {
         b.classList.toggle('active', b.dataset.font === prefs.font);
       });
     }
     if (prefs.size) {
       document.body.dataset.size = prefs.size;
-      document.querySelectorAll('.size-btn').forEach(b => {
+      document.querySelectorAll('[data-size].opt').forEach(b => {
         b.classList.toggle('active', b.dataset.size === prefs.size);
       });
     }
     if (prefs.width) {
       document.body.dataset.width = prefs.width;
-      document.querySelectorAll('.width-btn').forEach(b => {
+      document.querySelectorAll('[data-width].opt').forEach(b => {
         b.classList.toggle('active', b.dataset.width === prefs.width);
       });
     }
