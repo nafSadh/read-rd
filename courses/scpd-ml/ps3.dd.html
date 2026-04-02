@@ -316,42 +316,109 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-// Data
-const sections = [
-  { num: '01', short: 'Overview', title: 'PS3 Overview' },
-  { num: '02', short: 'Poisson Reg', title: 'Poisson Regression' },
-  { num: '03', short: 'Poisson MLE', title: 'Poisson MLE & GLM' },
-  { num: '04', short: 'Kernels', title: 'Kernel Construction' },
-  { num: '05', short: 'Kernel Props', title: 'Kernel Properties' },
-  { num: '06', short: 'Perceptron', title: 'Perceptron Algorithm' },
-  { num: '07', short: 'Convergence', title: 'Perceptron Convergence' },
-  { num: '08', short: 'Takeaways', title: 'Key Takeaways' },
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' },
-];
+<div class="shell">
 
-const summaries = [
-  `<p>Problem Set 3 is a 35-point assessment covering three core topics: Poisson regression as a generalized linear model, kernel methods and positive semi-definite kernels, and the perceptron algorithm with convergence guarantees. These problems span weeks 3–4 and connect distributional assumptions to online learning.</p><p>The assignment builds toward a deeper understanding of how different model families (exponential family distributions, kernel-defined hypothesis spaces, and online learners) each offer unique perspectives on supervised and unsupervised learning.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>Poisson regression models count data by assuming responses follow a Poisson distribution with mean <code>λ = e^(θ^T x)</code>. The exponential family parameterization reveals why the log link is natural: it ensures <code>λ &gt; 0</code> and linearizes the relationship between features and the rate parameter.</p><p>Problem 01 derives the MLE and explores how Poisson assumptions differ from Gaussian regression, with implications for heteroscedasticity and prediction intervals on count-valued outcomes.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Overview"><span class="sidebar-num">01</span><span class="sidebar-label">Overview</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Poisson Reg"><span class="sidebar-num">02</span><span class="sidebar-label">Poisson Reg</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Poisson MLE"><span class="sidebar-num">03</span><span class="sidebar-label">Poisson MLE</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Kernels"><span class="sidebar-num">04</span><span class="sidebar-label">Kernels</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Kernel Props"><span class="sidebar-num">05</span><span class="sidebar-label">Kernel Props</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Perceptron"><span class="sidebar-num">06</span><span class="sidebar-label">Perceptron</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Convergence"><span class="sidebar-num">07</span><span class="sidebar-label">Convergence</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Takeaways"><span class="sidebar-num">08</span><span class="sidebar-label">Takeaways</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>The MLE for Poisson regression follows from the exponential family framework, yielding update rules resembling gradient descent on the Poisson loss. The generalized linear model (GLM) perspective unifies Poisson, logistic, and linear regression under one framework: link function, variance function, and canonical parameter.</p><p>Key insight: the log link is canonical for Poisson; Newton–Raphson updates simplify when working with the natural parameterization, and convergence properties depend on the design matrix and response scale.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · PROBLEM SET 3</div>
+        <div class="hero-title">PS3: Poisson & <em>Kernels</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>35 Points · GLM, Kernel Methods & Perceptron</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>Valid kernels must satisfy Mercer's theorem: they correspond to inner products in a possibly infinite-dimensional feature space. Kernel composition (sums, products, powers of kernels) preserves validity; polynomial and RBF kernels arise from explicit or implicit feature maps, allowing efficient computation in high-dimensional spaces.</p><p>Problem 02 verifies kernel properties through positive semi-definiteness and explores dual representations. The kernel trick enables algorithms (SVM, kernel ridge regression) to avoid explicit feature construction.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>PS3 Overview</h2>
+          <p>Problem Set 3 is a 35-point assessment covering three core topics: Poisson regression as a generalized linear model, kernel methods and positive semi-definite kernels, and the perceptron algorithm with convergence guarantees. These problems span weeks 3–4 and connect distributional assumptions to online learning.</p><p>The assignment builds toward a deeper understanding of how different model families (exponential family distributions, kernel-defined hypothesis spaces, and online learners) each offer unique perspectives on supervised and unsupervised learning.</p>
+        </div>
 
-  `<p>A kernel <code>K(x, x')</code> is valid if and only if its Gram matrix is positive semi-definite for all finite point sets. Polynomial kernels <code>(x^T x' + 1)^d</code> arise from polynomial feature expansions; RBF kernels <code>exp(-γ ||x - x'||^2)</code> are infinite-dimensional and nonlinear. Both satisfy Mercer's conditions when parameters are appropriately chosen.</p><p>Understanding the spectrum and trace of kernel matrices reveals expressive capacity: larger eigenvalues indicate richer feature representations, guiding regularization and hyperparameter selection.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Poisson Regression</h2>
+          <p>Poisson regression models count data by assuming responses follow a Poisson distribution with mean <code>λ = e^(θ^T x)</code>. The exponential family parameterization reveals why the log link is natural: it ensures <code>λ &gt; 0</code> and linearizes the relationship between features and the rate parameter.</p><p>Problem 01 derives the MLE and explores how Poisson assumptions differ from Gaussian regression, with implications for heteroscedasticity and prediction intervals on count-valued outcomes.</p>
+        </div>
 
-  `<p>The perceptron is an online algorithm that iteratively corrects misclassified examples. On linearly separable data with margin γ, it achieves at most <code>R^2 / γ^2</code> mistakes, where R is the data radius. This mistake bound reveals a fundamental trade-off: smaller margins require more corrections.</p><p>The perceptron is not a probabilistic model; it directly optimizes a non-convex loss and lacks natural confidence estimates. Its simplicity and online nature make it suitable for streaming data and theoretical analysis of online learning.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Poisson MLE & GLM</h2>
+          <p>The MLE for Poisson regression follows from the exponential family framework, yielding update rules resembling gradient descent on the Poisson loss. The generalized linear model (GLM) perspective unifies Poisson, logistic, and linear regression under one framework: link function, variance function, and canonical parameter.</p><p>Key insight: the log link is canonical for Poisson; Newton–Raphson updates simplify when working with the natural parameterization, and convergence properties depend on the design matrix and response scale.</p>
+        </div>
 
-  `<p>Convergence proof sketches show that if data is linearly separable with margin γ and radius R, the algorithm terminates in <code>O(R^2 / γ^2)</code> iterations. Each mistake reduces the margin between the weight vector and any separating direction by at least γ; once sufficiently many corrections accumulate, perfect separation emerges.</p><p>The geometric interpretation centers on the angle between the current weight vector and the true separator: mistakes occur when this angle is too large, pushing the weight toward alignment with the separator.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Kernel Construction</h2>
+          <p>Valid kernels must satisfy Mercer's theorem: they correspond to inner products in a possibly infinite-dimensional feature space. Kernel composition (sums, products, powers of kernels) preserves validity; polynomial and RBF kernels arise from explicit or implicit feature maps, allowing efficient computation in high-dimensional spaces.</p><p>Problem 02 verifies kernel properties through positive semi-definiteness and explores dual representations. The kernel trick enables algorithms (SVM, kernel ridge regression) to avoid explicit feature construction.</p>
+        </div>
 
-  `<p>Problem Set 3 connects three perspectives: exponential family distributions (Poisson GLM) model heteroscedastic count responses; kernel methods parameterize hypothesis spaces and enable nonlinear boundaries; online algorithms (perceptron) learn from streaming data with provable efficiency. Together, they form the conceptual bridge from probabilistic models to nonparametric learning to online adaptation.</p><p>Mastery of these topics prepares you for advanced subjects: variational inference, structured prediction, and deep learning—all of which rely on understanding distributional assumptions, representation learning, and optimization dynamics.</p>`,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Kernel Properties</h2>
+          <p>A kernel <code>K(x, x')</code> is valid if and only if its Gram matrix is positive semi-definite for all finite point sets. Polynomial kernels <code>(x^T x' + 1)^d</code> arise from polynomial feature expansions; RBF kernels <code>exp(-γ ||x - x'||^2)</code> are infinite-dimensional and nonlinear. Both satisfy Mercer's conditions when parameters are appropriately chosen.</p><p>Understanding the spectrum and trace of kernel matrices reveals expressive capacity: larger eigenvalues indicate richer feature representations, guiding regularization and hyperparameter selection.</p>
+        </div>
 
-  `<p>Key references for Poisson regression, kernel methods, and the perceptron algorithm. Stanford CS229 lectures cover GLMs including Poisson regression, kernel machines, and online learning. Murphy's textbook provides excellent intuitions on exponential families and kernel methods. Hastie, Tibshirani, and Friedman's ESL is authoritative for both theory and practice. For perceptron convergence proofs, see classic online learning theory papers and texts on statistical learning.</p><p>Wikipedia articles cover Poisson distributions, kernel methods, positive semi-definiteness, and the perceptron. These provide quick refreshers on definitions and properties. Academic papers on kernel theory (Mercer's theorem) and online learning bounds (Novikoff's theorem) are available through Stanford's repository.</p>`
-];
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Perceptron Algorithm</h2>
+          <p>The perceptron is an online algorithm that iteratively corrects misclassified examples. On linearly separable data with margin γ, it achieves at most <code>R^2 / γ^2</code> mistakes, where R is the data radius. This mistake bound reveals a fundamental trade-off: smaller margins require more corrections.</p><p>The perceptron is not a probabilistic model; it directly optimizes a non-convex loss and lacks natural confidence estimates. Its simplicity and online nature make it suitable for streaming data and theoretical analysis of online learning.</p>
+        </div>
 
-const details = [
-  `<div class="detail-header"><div class="num">01 · Overview</div><h2>PS3: Overview & Structure</h2></div>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Perceptron Convergence</h2>
+          <p>Convergence proof sketches show that if data is linearly separable with margin γ and radius R, the algorithm terminates in <code>O(R^2 / γ^2)</code> iterations. Each mistake reduces the margin between the weight vector and any separating direction by at least γ; once sufficiently many corrections accumulate, perfect separation emerges.</p><p>The geometric interpretation centers on the angle between the current weight vector and the true separator: mistakes occur when this angle is too large, pushing the weight toward alignment with the separator.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Key Takeaways</h2>
+          <p>Problem Set 3 connects three perspectives: exponential family distributions (Poisson GLM) model heteroscedastic count responses; kernel methods parameterize hypothesis spaces and enable nonlinear boundaries; online algorithms (perceptron) learn from streaming data with provable efficiency. Together, they form the conceptual bridge from probabilistic models to nonparametric learning to online adaptation.</p><p>Mastery of these topics prepares you for advanced subjects: variational inference, structured prediction, and deep learning—all of which rely on understanding distributional assumptions, representation learning, and optimization dynamics.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>Key references for Poisson regression, kernel methods, and the perceptron algorithm. Stanford CS229 lectures cover GLMs including Poisson regression, kernel machines, and online learning. Murphy's textbook provides excellent intuitions on exponential families and kernel methods. Hastie, Tibshirani, and Friedman's ESL is authoritative for both theory and practice. For perceptron convergence proofs, see classic online learning theory papers and texts on statistical learning.</p><p>Wikipedia articles cover Poisson distributions, kernel methods, positive semi-definiteness, and the perceptron. These provide quick refreshers on definitions and properties. Academic papers on kernel theory (Mercer's theorem) and online learning bounds (Novikoff's theorem) are available through Stanford's repository.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01 · Overview</div><h2>PS3: Overview & Structure</h2></div>
 <p>This problem set comprises three problems worth 35 points total, distributed across weeks 3–4 of the XCS229 curriculum. Each problem targets specific learning objectives and connects core concepts from supervised learning, probabilistic modeling, and online algorithms.</p>
 <h3>Problem Breakdown</h3>
 <p><strong>Problem 01 (Poisson Regression)</strong> — 12 points. Derive MLEs and update rules for count data modeling using Poisson distributions. Verify exponential family properties and compare with Gaussian regression assumptions.</p>
@@ -365,9 +432,11 @@ const details = [
 <li>Connect probabilistic models, nonparametric methods, and algorithmic guarantees</li>
 </ul>
 <h3>Prerequisites &amp; Setup</h3>
-<p>Familiarity with linear algebra, calculus, and probability is essential. Most problems require Python implementations using NumPy and Matplotlib. Some analytical derivations require careful handling of matrix derivatives and Lagrange multipliers.</p>`,
+<p>Familiarity with linear algebra, calculus, and probability is essential. Most problems require Python implementations using NumPy and Matplotlib. Some analytical derivations require careful handling of matrix derivatives and Lagrange multipliers.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">02 · Poisson</div><h2>Poisson Regression &amp; Count Data</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02 · Poisson</div><h2>Poisson Regression &amp; Count Data</h2></div>
 <p>Poisson regression extends linear regression to count-valued responses by assuming the response <code>y</code> follows a Poisson distribution with parameter λ (the mean count). Unlike Gaussian regression, Poisson models naturally enforce non-negativity and heteroscedasticity: variance equals the mean.</p>
 <h3>Exponential Family Formulation</h3>
 <p>The Poisson distribution belongs to the exponential family with natural parameter <code>θ = log(λ)</code>. The canonical form is:</p>
@@ -381,9 +450,11 @@ const details = [
 <li>Introduces nonlinear feature-response relationships, enabling richer model expressivity</li>
 </ul>
 <h3>When to Use Poisson Regression</h3>
-<p>Poisson regression is appropriate when the response is a count (events in a fixed interval), variance is proportional to mean, and the observations are independent conditioned on predictors. Overdispersion (variance exceeding the mean) suggests negative binomial or quasi-Poisson alternatives.</p>`,
+<p>Poisson regression is appropriate when the response is a count (events in a fixed interval), variance is proportional to mean, and the observations are independent conditioned on predictors. Overdispersion (variance exceeding the mean) suggests negative binomial or quasi-Poisson alternatives.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">03 · MLE &amp; GLM</div><h2>Poisson MLE &amp; the GLM Framework</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03 · MLE &amp; GLM</div><h2>Poisson MLE &amp; the GLM Framework</h2></div>
 <p>The maximum likelihood estimator for Poisson regression parameters emerges naturally from the exponential family, and the optimization can be solved via iteratively reweighted least squares (IRLS)—a special case of the generalized linear model (GLM) framework.</p>
 <h3>Likelihood and MLE Derivation</h3>
 <p>Given <code>n</code> i.i.d. samples <code>(x_i, y_i)</code>, the likelihood is:</p>
@@ -400,9 +471,11 @@ const details = [
 </ul>
 <p>Poisson regression fits this framework with log link and variance function <code>V(μ) = μ</code>. The IRLS algorithm applies to all GLMs, making Poisson regression a natural extension of familiar least-squares methods.</p>
 <h3>Convergence &amp; Practical Considerations</h3>
-<p>Newton–Raphson iteration in the natural parameterization converges quickly (often in 3–10 iterations) on well-conditioned problems. The Hessian of the log-likelihood is the Fisher information matrix, which is always positive definite for Poisson regression, guaranteeing convexity and unique MLEs (when they exist).</p>`,
+<p>Newton–Raphson iteration in the natural parameterization converges quickly (often in 3–10 iterations) on well-conditioned problems. The Hessian of the log-likelihood is the Fisher information matrix, which is always positive definite for Poisson regression, guaranteeing convexity and unique MLEs (when they exist).</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">04 · Kernels</div><h2>Kernel Construction &amp; Mercer's Theorem</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04 · Kernels</div><h2>Kernel Construction &amp; Mercer's Theorem</h2></div>
 <p>A kernel <code>K(x, x')</code> defines a similarity measure between inputs and implicitly induces a feature map φ(x) such that <code>K(x, x') = ⟨φ(x), φ(x')⟩</code>. Mercer's theorem characterizes which functions are valid kernels: a symmetric function is a kernel if and only if its Gram matrix is positive semi-definite for all finite point sets.</p>
 <h3>Kernel Composition Rules</h3>
 <p>Valid kernels can be combined to form new valid kernels:</p>
@@ -418,9 +491,11 @@ const details = [
 <p><strong>RBF (Gaussian) kernel:</strong> <code>K(x, x') = exp(-γ ||x - x'||²)</code> is universal—dense in the space of continuous functions—and implicitly maps to an infinite-dimensional space. It is useful for nonlinear boundaries and can fit arbitrary smooth patterns with appropriate regularization.</p>
 <p><strong>Linear kernel:</strong> <code>K(x, x') = ⟨x, x'⟩</code> (or with bias: <code>⟨x, x'⟩ + c</code>) is the simplest and is equivalent to linear regression in the original feature space.</p>
 <h3>Choosing Kernels</h3>
-<p>The choice of kernel encodes domain knowledge about what similarities matter. High-dimensional domains often benefit from RBF kernels due to universality; structured data (sequences, trees) may require custom kernels (string kernels, graph kernels). Cross-validation or held-out tests guide empirical kernel selection.</p>`,
+<p>The choice of kernel encodes domain knowledge about what similarities matter. High-dimensional domains often benefit from RBF kernels due to universality; structured data (sequences, trees) may require custom kernels (string kernels, graph kernels). Cross-validation or held-out tests guide empirical kernel selection.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">05 · Properties</div><h2>Kernel Properties &amp; Positive Semi-Definiteness</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05 · Properties</div><h2>Kernel Properties &amp; Positive Semi-Definiteness</h2></div>
 <p>A kernel is valid if its Gram matrix <code>G[i,j] = K(x_i, x_j)</code> is positive semi-definite (PSD) for all finite sets {x₁, ..., xₙ}. This property ensures the kernel corresponds to an inner product in some Hilbert space, enabling efficient kernel methods without explicit feature computation.</p>
 <h3>Proving PSD for Polynomial Kernels</h3>
 <p>For the polynomial kernel <code>K(x, x') = (⟨x, x'⟩ + 1)^d</code>, expand using the multinomial theorem:</p>
@@ -431,9 +506,11 @@ const details = [
 <pre>K(x, x') = exp(-γ ||x - x'||²) = exp(-γ ||x||²) · exp(2γ ⟨x, x'⟩) · exp(-γ ||x'||²)</pre>
 <p>The middle term, <code>exp(2γ ⟨x, x'⟩)</code>, is a function of the inner product and is thus PSD (it is a power series of the linear kernel with positive coefficients). The outer terms are scalars depending only on individual points, which do not affect positive semi-definiteness when multiplying element-wise (pointwise multiplication preserves PSD).</p>
 <h3>Spectral Perspective</h3>
-<p>The eigenvalues of a kernel's Gram matrix reflect the "richness" of the feature representation. For RBF kernels, the spectrum decays; for polynomial kernels, decay depends on the degree and the data. High eigenvalues correspond to directions of large variance in the feature space, guiding dimensionality reduction and regularization strategies.</p>`,
+<p>The eigenvalues of a kernel's Gram matrix reflect the "richness" of the feature representation. For RBF kernels, the spectrum decays; for polynomial kernels, decay depends on the degree and the data. High eigenvalues correspond to directions of large variance in the feature space, guiding dimensionality reduction and regularization strategies.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">06 · Perceptron</div><h2>The Perceptron Algorithm &amp; Online Learning</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06 · Perceptron</div><h2>The Perceptron Algorithm &amp; Online Learning</h2></div>
 <p>The perceptron is a simple online algorithm for binary linear classification. It maintains a weight vector and iteratively updates it when it makes a mistake on a new example. Despite its simplicity, it has strong theoretical guarantees on linearly separable data.</p>
 <h3>Algorithm Description</h3>
 <pre>Initialize θ = 0
@@ -452,9 +529,11 @@ Return θ</pre>
 <li><strong>Limitations:</strong> Requires linear separability; no probability estimates; oscillates on non-separable data; doesn't minimize a well-defined objective</li>
 </ul>
 <h3>Comparing to Gradient Descent</h3>
-<p>Gradient descent on a smooth convex loss (e.g., hinge loss, logistic regression) converges to a global optimum and works on non-separable data. The perceptron, lacking an explicit loss, is not a gradient method and does not guarantee optimality or convergence on non-separable data. However, its online nature and computational efficiency are unmatched in certain streaming scenarios.</p>`,
+<p>Gradient descent on a smooth convex loss (e.g., hinge loss, logistic regression) converges to a global optimum and works on non-separable data. The perceptron, lacking an explicit loss, is not a gradient method and does not guarantee optimality or convergence on non-separable data. However, its online nature and computational efficiency are unmatched in certain streaming scenarios.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">07 · Convergence</div><h2>Perceptron Convergence Theorem &amp; Margin Bounds</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07 · Convergence</div><h2>Perceptron Convergence Theorem &amp; Margin Bounds</h2></div>
 <p>The perceptron convergence theorem provides a mistake bound: on linearly separable data with margin γ and radius R, the algorithm makes at most <code>R² / γ²</code> mistakes before converging to a separating classifier. This bound reveals fundamental trade-offs in learning: smaller margins require more data or iterations.</p>
 <h3>Formal Statement</h3>
 <p>Assume there exists θ* with ||θ*|| = 1 and margin γ &gt; 0 such that <code>y_i · θ*^T x_i ≥ γ</code> for all i (all points are correctly classified with margin γ). If the data has radius R (i.e., ||x_i|| ≤ R), then the perceptron makes at most <code>R² / γ²</code> mistakes.</p>
@@ -466,9 +545,11 @@ Return θ</pre>
 </ol>
 <p>By Cauchy–Schwarz, ⟨θ_t, θ*⟩ ≤ ||θ_t|| · ||θ*|| = ||θ_t||. Combining bounds: γ · t ≤ √(R² · t), which gives t ≤ R² / γ².</p>
 <h3>Implications for Learning</h3>
-<p>The bound is distribution-free and depends only on the geometry (margin and radius). Large margins lead to fast convergence; tiny margins can require arbitrarily many mistakes. This motivates the margin-maximization principle underlying support vector machines, which explicitly optimize γ to ensure efficient learning.</p>`,
+<p>The bound is distribution-free and depends only on the geometry (margin and radius). Large margins lead to fast convergence; tiny margins can require arbitrarily many mistakes. This motivates the margin-maximization principle underlying support vector machines, which explicitly optimize γ to ensure efficient learning.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">08 · Takeaways</div><h2>Synthesis: Distributions, Kernels, &amp; Online Learning</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08 · Takeaways</div><h2>Synthesis: Distributions, Kernels, &amp; Online Learning</h2></div>
 <p>Problem Set 3 unites three major learning paradigms: probabilistic models (Poisson GLM) for heteroscedastic responses, kernel methods for nonlinear feature representations, and online algorithms (perceptron) for streaming data. Each offers distinct advantages and connects to modern machine learning.</p>
 <h3>Exponential Family Perspective</h3>
 <p>Poisson regression exemplifies the power of exponential family distributions. By choosing the appropriate distribution and link function, we elegantly handle diverse response types (counts, binary outcomes, continuous values, ordinal ranks) within a unified GLM framework. The canonical link simplifies optimization, and the variance function captures heteroscedasticity. This perspective extends beyond regression: it powers graphical models, variational inference, and neural network architectures.</p>
@@ -481,9 +562,11 @@ Return θ</pre>
 <p><strong>Kernels to Online:</strong> Kernel-based online learning algorithms (e.g., kernel perceptron, online SVM) combine kernel representations with online updates, inheriting both nonlinearity and streaming efficiency.</p>
 <p><strong>GLM to Online:</strong> Online gradient descent on GLM losses (e.g., stochastic gradient descent on logistic regression) bridges probabilistic models and online optimization.</p>
 <h3>Looking Ahead</h3>
-<p>Future topics build on these foundations: structured prediction (beyond binary classification), deep learning (implicit feature learning via gradient descent), Bayesian nonparametrics (combining GLMs and kernels), and reinforcement learning (online decision-making under uncertainty). Mastery of exponential families, kernels, and online algorithms provides a toolkit for understanding and developing advanced machine learning systems.</p>`,
+<p>Future topics build on these foundations: structured prediction (beyond binary classification), deep learning (implicit feature learning via gradient descent), Bayesian nonparametrics (combining GLMs and kernels), and reinforcement learning (online decision-making under uncertainty). Mastery of exponential families, kernels, and online algorithms provides a toolkit for understanding and developing advanced machine learning systems.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">09 · References</div><h2>References & <em>Further</em> Reading</h2></div>
+      <div class="detail" id="detail-8">
+        <div class="detail-header"><div class="num">09 · References</div><h2>References & <em>Further</em> Reading</h2></div>
 <h3>Stanford CS229 Course Materials</h3>
 <p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course homepage with lectures covering GLMs, kernel methods, and online learning algorithms. Weeks 3-4 materials directly cover Problem Set 3 topics.</p>
 <p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Detailed notes on Poisson regression and GLMs, kernel methods and Mercer's theorem, and online learning and the perceptron algorithm.</p>
@@ -500,75 +583,47 @@ Return θ</pre>
 <h3>Comprehensive Textbooks</h3>
 <p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Authoritative reference covering GLMs (Chapter 4), kernel methods (Chapter 12), and learning theory. Highly recommended for rigorous treatment of all PS3 topics.</p>
 <p><a href="https://en.wikipedia.org/wiki/Exponential_family" target="_blank">Wikipedia: Exponential Family</a> — Deep mathematical foundation for understanding exponential families, sufficient statistics, log-partition functions, and moment-generating functions essential for GLM theory.</p>
-<div class="callout"><h4>Study Path</h4><p>Start with Stanford CS229 lectures on GLMs and Poisson regression. Review exponential family and link function concepts. For kernels, understand positive semi-definiteness and Mercer's theorem via Wikipedia and ESL Chapter 12. Study the perceptron algorithm and convergence proof through CS229 lectures on online learning. Finally, integrate all three perspectives by examining kernel perceptron and online GLM optimization.</p></div>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>229</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · PROBLEM SET 3</div>
-        <div class="hero-title">PS3: Poisson & <em>Kernels</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>35 Points · GLM, Kernel Methods & Perceptron</span></div>
+<div class="callout"><h4>Study Path</h4><p>Start with Stanford CS229 lectures on GLMs and Poisson regression. Review exponential family and link function concepts. For kernels, understand positive semi-definiteness and Mercer's theorem via Wikipedia and ESL Chapter 12. Study the perceptron algorithm and convergence proof through CS229 lectures on online learning. Finally, integrate all three perspectives by examining kernel perceptron and online GLM optimization.</p></div>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -578,96 +633,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -680,10 +691,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

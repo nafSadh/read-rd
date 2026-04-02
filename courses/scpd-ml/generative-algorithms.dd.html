@@ -316,48 +316,106 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-// Data: Sections metadata
-const sections = [
-  { num: '01', short: 'Discriminative vs Generative', title: '<em>Discriminative</em> vs Generative Models' },
-  { num: '02', short: 'Gaussian Discriminant Analysis', title: '<em>Gaussian</em> Discriminant Analysis' },
-  { num: '03', short: 'GDA Model Fitting', title: '<em>GDA</em> Model Fitting' },
-  { num: '04', short: 'GDA vs Logistic Regression', title: '<em>GDA</em> vs Logistic Regression' },
-  { num: '05', short: 'Naive Bayes Classifier', title: '<em>Naive</em> Bayes Classifier' },
-  { num: '06', short: 'Laplace Smoothing', title: '<em>Laplace</em> Smoothing' },
-  { num: '07', short: 'Event Models for Text', title: '<em>Event</em> Models for Text' },
-  { num: '08', short: 'Practical Applications', title: '<em>Practical</em> Applications' }
-,
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
 
-const summaries = [
-  `<p>Discriminative models directly estimate the posterior class probability p(y|x) given the data x. Generative models instead estimate the class-conditional likelihood p(x|y) and class prior p(y), then use Bayes rule to compute p(y|x). Discriminative models often require fewer assumptions about the distribution of features, while generative models capture the underlying data distribution. The choice between them depends on application requirements, data availability, and computational constraints.</p>
-   <p>When discriminative models are preferred: abundant labeled data, computational efficiency is critical. When generative models are preferred: modeling the data distribution, handling missing data, generation tasks, strong prior knowledge about feature distributions. Both approaches have their merits, and modern machine learning often combines ideas from both paradigms for optimal performance.</p>`,
+<div class="shell">
 
-  `<p>Gaussian Discriminant Analysis assumes that the feature vectors in each class are drawn from a multivariate Gaussian (normal) distribution. The model assumes that p(x|y=0) and p(x|y=1) are both multivariate Gaussians with shared covariance matrix Σ but different means μ₀ and μ₁. This strong assumption allows for closed-form maximum likelihood solutions and interpretable decision boundaries. GDA is particularly effective when this Gaussian assumption is reasonable and samples are limited.</p>
-   <p>The shared covariance assumption leads to a linear decision boundary between classes, making GDA interpretable and efficient. Each feature's contribution is weighted by the inverse covariance, which captures correlations between features. For well-separated, normally distributed data, GDA provides excellent generalization. However, if the Gaussian assumption is violated, model performance may suffer relative to more flexible approaches.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>Fitting the GDA model involves computing maximum likelihood estimates for the class means μ₀ and μ₁, shared covariance Σ, and class prior φ. The prior φ is simply the empirical proportion of positive examples: φ = (1/m) Σ I(y⁽ⁱ⁾=1). The means are computed as the average of feature vectors within each class. The shared covariance is the pooled sample covariance across both classes. These closed-form solutions avoid iterative optimization, making GDA computationally efficient and suitable for real-time applications.</p>
-   <p>Once fitted, the decision boundary is determined by comparing class-conditional densities weighted by the prior. The boundary is the set of points where p(y=1|x) = 0.5, which forms a linear hyperplane in the feature space (or a quadratic boundary if covariances are not shared). This linearity of the decision boundary is a key characteristic of GDA, providing interpretability and stability on test data with similar distributions to the training data.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Discriminative vs Generative"><span class="sidebar-num">01</span><span class="sidebar-label">Discriminative vs Generative</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Gaussian Discriminant Analysis"><span class="sidebar-num">02</span><span class="sidebar-label">Gaussian Discriminant Analysis</span></div>
+      <div class="sidebar-item" data-section="2" data-label="GDA Model Fitting"><span class="sidebar-num">03</span><span class="sidebar-label">GDA Model Fitting</span></div>
+      <div class="sidebar-item" data-section="3" data-label="GDA vs Logistic Regression"><span class="sidebar-num">04</span><span class="sidebar-label">GDA vs Logistic Regression</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Naive Bayes Classifier"><span class="sidebar-num">05</span><span class="sidebar-label">Naive Bayes Classifier</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Laplace Smoothing"><span class="sidebar-num">06</span><span class="sidebar-label">Laplace Smoothing</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Event Models for Text"><span class="sidebar-num">07</span><span class="sidebar-label">Event Models for Text</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Practical Applications"><span class="sidebar-num">08</span><span class="sidebar-label">Practical Applications</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>GDA and logistic regression both produce linear decision boundaries but via different routes. GDA makes stronger distributional assumptions (multivariate Gaussian with shared covariance), while logistic regression makes weaker assumptions and directly optimizes the log-likelihood of the posterior. With sufficient data and correct model assumptions, both approaches asymptotically converge to the same decision boundary. However, with finite data, they can differ significantly in their estimates.</p>
-   <p>GDA excels when the Gaussian assumption holds and data is limited, as it leverages the assumed structure. Logistic regression is more robust to model misspecification and generally performs better when the Gaussian assumption is violated. Logistic regression requires iterative optimization but is more flexible. In practice, logistic regression is often preferred due to its robustness, but GDA remains valuable when strong assumptions are justified by domain knowledge or exploratory data analysis.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Machine Learning</div>
+        <div class="hero-title">Generative <em>Algorithms</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 3–4 · GDA, Naive Bayes & Text Classification</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>Naive Bayes simplifies the feature model by assuming conditional independence: given the class y, all features x₁, x₂, ..., xₙ are independent. This allows the joint likelihood p(x|y) to factor as ∏ᵢ p(xᵢ|y), dramatically reducing the number of parameters from O(n²) to O(n). While the conditional independence assumption is often violated in practice ("naive"), Naive Bayes remains effective due to this efficiency and its natural fit to classification. It is particularly powerful for high-dimensional discrete data like text.</p>
-   <p>Naive Bayes predictions are made by computing the posterior for each class using Bayes rule and selecting the class with maximum posterior probability. For text classification, each feature typically represents word counts or presence, and the conditional probabilities are estimated from training data. The simplicity of Naive Bayes makes it interpretable—feature probabilities directly show which words are indicative of each class. Despite violating its core assumption in most applications, Naive Bayes achieves competitive performance and scales linearly with both training set size and feature count.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Discriminative</em> vs Generative Models</h2>
+          <p>Discriminative models directly estimate the posterior class probability p(y|x) given the data x. Generative models instead estimate the class-conditional likelihood p(x|y) and class prior p(y), then use Bayes rule to compute p(y|x). Discriminative models often require fewer assumptions about the distribution of features, while generative models capture the underlying data distribution. The choice between them depends on application requirements, data availability, and computational constraints.</p>
+   <p>When discriminative models are preferred: abundant labeled data, computational efficiency is critical. When generative models are preferred: modeling the data distribution, handling missing data, generation tasks, strong prior knowledge about feature distributions. Both approaches have their merits, and modern machine learning often combines ideas from both paradigms for optimal performance.</p>
+        </div>
 
-  `<p>The zero-frequency problem arises when a word never appears in the training data for a given class. The naive estimate for p(word|class) would be zero, which causes the entire class probability to become zero even if other features strongly support that class. Laplace smoothing (add-one smoothing) avoids this by adding a count of one to each feature in each class, effectively treating each feature as if it appeared at least once. This simple regularization has a profound impact on Naive Bayes text classification performance.</p>
-   <p>Formally, with smoothing: p(xᵢ|y) = (count(xᵢ,y) + 1) / (count(y) + |V|), where |V| is the vocabulary size. This ensures all probabilities are positive and sums to one. While this biases probability estimates toward uniform distributions, it prevents zero probabilities and improves generalization to unseen words. Laplace smoothing is a practical necessity for Naive Bayes on text, making the difference between models that catastrophically fail on new words and robust classifiers.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Gaussian</em> Discriminant Analysis</h2>
+          <p>Gaussian Discriminant Analysis assumes that the feature vectors in each class are drawn from a multivariate Gaussian (normal) distribution. The model assumes that p(x|y=0) and p(x|y=1) are both multivariate Gaussians with shared covariance matrix Σ but different means μ₀ and μ₁. This strong assumption allows for closed-form maximum likelihood solutions and interpretable decision boundaries. GDA is particularly effective when this Gaussian assumption is reasonable and samples are limited.</p>
+   <p>The shared covariance assumption leads to a linear decision boundary between classes, making GDA interpretable and efficient. Each feature's contribution is weighted by the inverse covariance, which captures correlations between features. For well-separated, normally distributed data, GDA provides excellent generalization. However, if the Gaussian assumption is violated, model performance may suffer relative to more flexible approaches.</p>
+        </div>
 
-  `<p>Two event models describe how text is generated: the multivariate Bernoulli model treats each word as present or absent (1 or 0), while the multinomial model treats text as a sequence of word occurrences (bag-of-words with counts). In the Bernoulli model, φᵢ|ᵧ = P(word i appears | class y). In the multinomial model, word positions are sampled independently from a per-class vocabulary distribution, and φᵢ|ᵧ = P(word i is chosen | class y). The multinomial model typically outperforms Bernoulli because it captures word frequency information, though Bernoulli is computationally simpler and sometimes preferred for sparse text.</p>
-   <p>Both models enable feature selection and dimensionality reduction by pruning low-information words. Information gain or mutual information scores identify discriminative words that differ significantly between classes. Removing uninformative words reduces noise, improves computational efficiency, and sometimes improves generalization. The choice between models, smoothing parameters, and features to include defines the Naive Bayes pipeline and requires careful tuning via cross-validation. Despite these details, the core algorithm remains elegant and interpretable.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>GDA</em> Model Fitting</h2>
+          <p>Fitting the GDA model involves computing maximum likelihood estimates for the class means μ₀ and μ₁, shared covariance Σ, and class prior φ. The prior φ is simply the empirical proportion of positive examples: φ = (1/m) Σ I(y⁽ⁱ⁾=1). The means are computed as the average of feature vectors within each class. The shared covariance is the pooled sample covariance across both classes. These closed-form solutions avoid iterative optimization, making GDA computationally efficient and suitable for real-time applications.</p>
+   <p>Once fitted, the decision boundary is determined by comparing class-conditional densities weighted by the prior. The boundary is the set of points where p(y=1|x) = 0.5, which forms a linear hyperplane in the feature space (or a quadratic boundary if covariances are not shared). This linearity of the decision boundary is a key characteristic of GDA, providing interpretability and stability on test data with similar distributions to the training data.</p>
+        </div>
 
-  `<p>Naive Bayes powers real-world systems across domains. Spam filtering is the canonical application: emails are classified as spam or ham based on word presence/frequency, where strong spam indicators (pharmaceutical keywords, money-related phrases) have high p(word|spam). Sentiment analysis treats reviews or tweets as documents, classifying them as positive or negative based on emotional language. The learned word probabilities reveal sentiment: positive words like "excellent" have high p(word|positive), while "disappointing" has high p(word|negative). Document classification assigns documents to categories (news topics, support tickets) based on their content.</p>
-   <p>Modern production systems often use Naive Bayes as a baseline or combine it with deep learning models for ensemble performance. Its speed makes it suitable for streaming or real-time systems. Interpretability is a key advantage: explaining why a document was classified requires showing which words triggered each class. This transparency is valuable in regulated domains (e.g., credit decisions) and for model debugging. Naive Bayes also handles imbalanced datasets gracefully and naturally extends to multi-class problems, making it a durable foundation for text classification pipelines.</p>`
-,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>GDA</em> vs Logistic Regression</h2>
+          <p>GDA and logistic regression both produce linear decision boundaries but via different routes. GDA makes stronger distributional assumptions (multivariate Gaussian with shared covariance), while logistic regression makes weaker assumptions and directly optimizes the log-likelihood of the posterior. With sufficient data and correct model assumptions, both approaches asymptotically converge to the same decision boundary. However, with finite data, they can differ significantly in their estimates.</p>
+   <p>GDA excels when the Gaussian assumption holds and data is limited, as it leverages the assumed structure. Logistic regression is more robust to model misspecification and generally performs better when the Gaussian assumption is violated. Logistic regression requires iterative optimization but is more flexible. In practice, logistic regression is often preferred due to its robustness, but GDA remains valuable when strong assumptions are justified by domain knowledge or exploratory data analysis.</p>
+        </div>
 
-  // 09 References & Further Reading
-  `<p><strong>Key References:</strong></p>
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Naive</em> Bayes Classifier</h2>
+          <p>Naive Bayes simplifies the feature model by assuming conditional independence: given the class y, all features x₁, x₂, ..., xₙ are independent. This allows the joint likelihood p(x|y) to factor as ∏ᵢ p(xᵢ|y), dramatically reducing the number of parameters from O(n²) to O(n). While the conditional independence assumption is often violated in practice ("naive"), Naive Bayes remains effective due to this efficiency and its natural fit to classification. It is particularly powerful for high-dimensional discrete data like text.</p>
+   <p>Naive Bayes predictions are made by computing the posterior for each class using Bayes rule and selecting the class with maximum posterior probability. For text classification, each feature typically represents word counts or presence, and the conditional probabilities are estimated from training data. The simplicity of Naive Bayes makes it interpretable—feature probabilities directly show which words are indicative of each class. Despite violating its core assumption in most applications, Naive Bayes achieves competitive performance and scales linearly with both training set size and feature count.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Laplace</em> Smoothing</h2>
+          <p>The zero-frequency problem arises when a word never appears in the training data for a given class. The naive estimate for p(word|class) would be zero, which causes the entire class probability to become zero even if other features strongly support that class. Laplace smoothing (add-one smoothing) avoids this by adding a count of one to each feature in each class, effectively treating each feature as if it appeared at least once. This simple regularization has a profound impact on Naive Bayes text classification performance.</p>
+   <p>Formally, with smoothing: p(xᵢ|y) = (count(xᵢ,y) + 1) / (count(y) + |V|), where |V| is the vocabulary size. This ensures all probabilities are positive and sums to one. While this biases probability estimates toward uniform distributions, it prevents zero probabilities and improves generalization to unseen words. Laplace smoothing is a practical necessity for Naive Bayes on text, making the difference between models that catastrophically fail on new words and robust classifiers.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Event</em> Models for Text</h2>
+          <p>Two event models describe how text is generated: the multivariate Bernoulli model treats each word as present or absent (1 or 0), while the multinomial model treats text as a sequence of word occurrences (bag-of-words with counts). In the Bernoulli model, φᵢ|ᵧ = P(word i appears | class y). In the multinomial model, word positions are sampled independently from a per-class vocabulary distribution, and φᵢ|ᵧ = P(word i is chosen | class y). The multinomial model typically outperforms Bernoulli because it captures word frequency information, though Bernoulli is computationally simpler and sometimes preferred for sparse text.</p>
+   <p>Both models enable feature selection and dimensionality reduction by pruning low-information words. Information gain or mutual information scores identify discriminative words that differ significantly between classes. Removing uninformative words reduces noise, improves computational efficiency, and sometimes improves generalization. The choice between models, smoothing parameters, and features to include defines the Naive Bayes pipeline and requires careful tuning via cross-validation. Despite these details, the core algorithm remains elegant and interpretable.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Practical</em> Applications</h2>
+          <p>Naive Bayes powers real-world systems across domains. Spam filtering is the canonical application: emails are classified as spam or ham based on word presence/frequency, where strong spam indicators (pharmaceutical keywords, money-related phrases) have high p(word|spam). Sentiment analysis treats reviews or tweets as documents, classifying them as positive or negative based on emotional language. The learned word probabilities reveal sentiment: positive words like "excellent" have high p(word|positive), while "disappointing" has high p(word|negative). Document classification assigns documents to categories (news topics, support tickets) based on their content.</p>
+   <p>Modern production systems often use Naive Bayes as a baseline or combine it with deep learning models for ensemble performance. Its speed makes it suitable for streaming or real-time systems. Interpretability is a key advantage: explaining why a document was classified requires showing which words triggered each class. This transparency is valuable in regulated domains (e.g., credit decisions) and for model debugging. Naive Bayes also handles imbalanced datasets gracefully and naturally extends to multi-class problems, making it a durable foundation for text classification pipelines.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p><strong>Key References:</strong></p>
 <ul style="font-size: 14px; line-height: 1.8;">
   <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
   <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Generative Models</a></li>
@@ -365,10 +423,19 @@ const summaries = [
   <li><a href="https://en.wikipedia.org/wiki/Gaussian_discriminant_analysis" target="_blank">Gaussian Discriminant Analysis - Wikipedia</a></li>
   <li><a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier" target="_blank">Naive Bayes Classifier - Wikipedia</a></li>
   <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Elements of Statistical Learning</a></li>
-</ul>`];
+</ul>
+        </div>
 
-const details = [
-  `<div class="detail-header"><span class="num">01</span><h2><em>Discriminative</em> vs Generative Models</h2></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><span class="num">01</span><h2><em>Discriminative</em> vs Generative Models</h2></div>
    <p>Discriminative models directly model the posterior class probability p(y|x), making them well-suited for classification tasks. They estimate decision boundaries by learning what separates one class from another, without explicitly modeling how the data in each class is distributed. Logistic regression is the prototypical discriminative model: it learns the parameters θ that maximize the log-likelihood of the observed labels given the features. This direct approach to the task at hand often requires less data and can be more computationally efficient than modeling the full joint distribution.</p>
    <p>Generative models take a different approach by modeling the full joint distribution p(x,y) through the factorization p(x,y) = p(x|y)p(y). They estimate the class-conditional likelihood p(x|y) and class prior p(y), then use Bayes rule to compute the posterior: p(y|x) = p(x|y)p(y) / p(x). This approach captures the underlying data generation process and allows for rich modeling of the features. Generative models can generate new synthetic samples, impute missing values, and perform other tasks beyond classification.</p>
    <p>The key trade-off: discriminative models focus computational resources on the classification boundary, often achieving better performance with limited data. Generative models must model the entire feature distribution, which requires more samples but enables additional applications. Discriminative models make fewer assumptions and are more robust to model misspecification. Generative models leverage strong structural assumptions (e.g., Gaussian distributions) to achieve efficiency and interpretability when those assumptions hold.</p>
@@ -400,9 +467,11 @@ const details = [
      </svg>
    </div>
    <h3>Practical workflow</h3>
-   <p>Start with exploratory data analysis: visualize class distributions, check for Gaussian-like shapes, examine feature correlations. If the data appears well-structured and Gaussian, GDA is a strong candidate. If the relationships are complex or the data is high-dimensional and sparse (like text), Naive Bayes or logistic regression are better choices. In practice, implement both and evaluate via cross-validation. Combine both approaches in an ensemble: use the class probability from a discriminative model as a feature in a generative model, or vice versa. Modern systems often use generative models for feature engineering (embeddings) and discriminative models for final classification.</p>`,
+   <p>Start with exploratory data analysis: visualize class distributions, check for Gaussian-like shapes, examine feature correlations. If the data appears well-structured and Gaussian, GDA is a strong candidate. If the relationships are complex or the data is high-dimensional and sparse (like text), Naive Bayes or logistic regression are better choices. In practice, implement both and evaluate via cross-validation. Combine both approaches in an ensemble: use the class probability from a discriminative model as a feature in a generative model, or vice versa. Modern systems often use generative models for feature engineering (embeddings) and discriminative models for final classification.</p>
+      </div>
 
-  `<div class="detail-header"><span class="num">02</span><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><span class="num">02</span><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
    <p>Gaussian Discriminant Analysis (GDA) is a generative classifier that models each class as a multivariate Gaussian distribution. The model assumes that given the class label y, the feature vector x is drawn from a normal distribution: p(x|y=k) = N(μₖ, Σ), where μₖ is the class-specific mean and Σ is the shared covariance matrix. This assumption is powerful because multivariate Gaussians are well-understood, admit closed-form MLEs, and produce linear decision boundaries—a powerful combination for interpretability and efficiency.</p>
    <p>The multivariate Gaussian PDF is: p(x) = (1/(2π)^(n/2) |Σ|^(1/2)) exp(-1/2 (x-μ)ᵀ Σ⁻¹ (x-μ)). For a two-class problem with shared covariance, the decision boundary (where p(y=1|x) = p(y=0|x)) simplifies to a linear equation: θ₀ + θ₁x₁ + ... + θₙxₙ = 0, where θ = Σ⁻¹(μ₁ - μ₀). This linearity is striking: despite the Gaussian assumption being about the conditional distributions, the resulting boundary is a hyperplane.</p>
    <p>GDA is particularly powerful when the Gaussian assumption is valid. Real-world data such as iris measurements, neural activations, and image features often approximate Gaussians. The shared covariance assumption (homoscedasticity) is restrictive but enables closed-form solutions. When covariances are allowed to differ per class, the boundary becomes quadratic, which can overfit on small datasets but sometimes better reflects reality. The linear boundary in the standard GDA case leads to a natural connection with logistic regression, which we explore later.</p>
@@ -429,9 +498,11 @@ const details = [
      </svg>
    </div>
    <h3>Parameter significance</h3>
-   <p>The prior φ = P(y=1) biases the decision boundary: if one class is much more common, the boundary shifts toward the minority class to account for the base rate. The difference (μ₁ - μ₀) determines the direction of the boundary. The covariance Σ controls its shape and orientation—high-variance directions allow points far from the mean to still have reasonable likelihood, affecting how far the boundary extends. Understanding these components helps diagnose when GDA is appropriate and how to interpret learned models in terms of feature importance and class structure.</p>`,
+   <p>The prior φ = P(y=1) biases the decision boundary: if one class is much more common, the boundary shifts toward the minority class to account for the base rate. The difference (μ₁ - μ₀) determines the direction of the boundary. The covariance Σ controls its shape and orientation—high-variance directions allow points far from the mean to still have reasonable likelihood, affecting how far the boundary extends. Understanding these components helps diagnose when GDA is appropriate and how to interpret learned models in terms of feature importance and class structure.</p>
+      </div>
 
-  `<div class="detail-header"><span class="num">03</span><h2><em>GDA</em> Model Fitting</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><span class="num">03</span><h2><em>GDA</em> Model Fitting</h2></div>
    <p>Fitting GDA means estimating the parameters φ, μ₀, μ₁, and Σ via maximum likelihood estimation. Given m training examples {(x⁽ⁱ⁾, y⁽ⁱ⁾)}, the closed-form MLEs are elegant. The prior is: φ = (1/m) Σᵢ I(y⁽ⁱ⁾=1). The means are computed per-class: μ₁ = (Σᵢ:y⁽ⁱ⁾=1 x⁽ⁱ⁾) / (# examples in class 1), and similarly for μ₀. The shared covariance is: Σ = (1/m) Σᵢ (x⁽ⁱ⁾ - μ_{y⁽ⁱ⁾})(x⁽ⁱ⁾ - μ_{y⁽ⁱ⁾})ᵀ, pooling residuals from both classes.</p>
    <p>These closed-form solutions are major advantages of GDA: no iterative optimization (unlike logistic regression), no hyperparameter tuning, and computational cost O(nm² + m³) dominated by the covariance matrix inversion. Training is fast even on large datasets. Making a prediction on a new point x amounts to: computing p(x|y=1) and p(x|y=0) from the Gaussian PDFs, multiplying by priors φ, and selecting argmax_y p(y|x). This simplicity makes GDA practical for real-time systems and suitable for situations where retraining must be fast.</p>
    <p>The MLE is consistent and asymptotically efficient for data actually drawn from the assumed model. If the Gaussian assumption holds, GDA recovers the true parameters with enough data. However, if the true distribution differs from Gaussian, the estimates may be biased. A key observation: the MLE for Σ is biased (dividing by m instead of m-2), but this bias decreases with sample size and is often acceptable in practice. For small samples, using m-1 or m-2 as the divisor can reduce bias.</p>
@@ -460,9 +531,11 @@ const details = [
        <text x="60" y="258" class="node-sub">Key: Closed-form MLEs → No iterative optimization needed</text>
      </svg>
    </div>
-   <p>Robustness considerations: if Σ is singular or nearly singular, the inversion fails. Solutions: add regularization λI (Σ_reg = Σ + λI), use pseudoinverse, or add a small amount of noise to the data. If classes have very different covariances, the shared-Σ assumption is violated; consider using separate covariances (QDA, Quadratic Discriminant Analysis) at the cost of more parameters. Regularization and robustness are practical concerns that make the difference between working and broken code.</p>`,
+   <p>Robustness considerations: if Σ is singular or nearly singular, the inversion fails. Solutions: add regularization λI (Σ_reg = Σ + λI), use pseudoinverse, or add a small amount of noise to the data. If classes have very different covariances, the shared-Σ assumption is violated; consider using separate covariances (QDA, Quadratic Discriminant Analysis) at the cost of more parameters. Regularization and robustness are practical concerns that make the difference between working and broken code.</p>
+      </div>
 
-  `<div class="detail-header"><span class="num">04</span><h2><em>GDA</em> vs Logistic Regression</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><span class="num">04</span><h2><em>GDA</em> vs Logistic Regression</h2></div>
    <p>Both GDA and logistic regression produce linear decision boundaries, but via different paths. GDA models p(x|y) and p(y), then uses Bayes rule to compute p(y|x). Logistic regression directly models p(y|x) as σ(θᵀx) where σ is the sigmoid function. A remarkable fact: if the class-conditional densities p(x|y=0) and p(x|y=1) are Gaussian with shared covariance Σ, then the posterior p(y=1|x) is logistic. That is, p(y=1|x) can be written as σ(θ₀ + θ₁x₁ + ... + θₙxₙ) for some θ values determined by μ₀, μ₁, Σ, and φ.</p>
    <p>This connection runs deep: the linear logit log(p(y=1|x) / p(y=0|x)) is exactly θᵀx + θ₀ for both models. With infinite data and correct model assumptions, GDA and logistic regression converge to the same decision boundary. However, with finite data, they differ. GDA is a parametric model that makes stronger assumptions about the feature distribution. Logistic regression makes weaker assumptions, only assuming linearity of the decision boundary. This fundamental difference shapes their empirical performance.</p>
    <p>GDA excels when: the Gaussian assumption is accurate and sample size is small (≤ 100 examples per class), because it leverages the structure encoded in the Gaussian model. When the Gaussian assumption is violated, logistic regression typically outperforms GDA because it doesn't waste modeling capacity on incorrect distributional assumptions. GDA also requires estimating O(n²) parameters (the covariance matrix), while logistic regression estimates O(n). For high-dimensional data with limited samples, logistic regression generalizes better.</p>
@@ -491,9 +564,11 @@ const details = [
      </div>
    </div>
    <h3>When to use each</h3>
-   <p>Use GDA: small datasets (< 500 examples), clearly Gaussian-like features, need interpretable probabilistic model, fast training is critical, or you want to model the feature distribution. Use logistic regression: large datasets, high-dimensional features, non-Gaussian distributions expected, robustness to outliers is important, or when parsimony (fewer parameters) is valued. In modern practice, logistic regression is the default for most classification problems due to its robustness and effectiveness. GDA is most valuable in specialized domains (e.g., bioinformatics) where Gaussian assumptions are reasonable and data is limited.</p>`,
+   <p>Use GDA: small datasets (< 500 examples), clearly Gaussian-like features, need interpretable probabilistic model, fast training is critical, or you want to model the feature distribution. Use logistic regression: large datasets, high-dimensional features, non-Gaussian distributions expected, robustness to outliers is important, or when parsimony (fewer parameters) is valued. In modern practice, logistic regression is the default for most classification problems due to its robustness and effectiveness. GDA is most valuable in specialized domains (e.g., bioinformatics) where Gaussian assumptions are reasonable and data is limited.</p>
+      </div>
 
-  `<div class="detail-header"><span class="num">05</span><h2><em>Naive</em> Bayes Classifier</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><span class="num">05</span><h2><em>Naive</em> Bayes Classifier</h2></div>
    <p>Naive Bayes is a probabilistic classifier that applies Bayes rule to compute p(y|x). The key simplifying assumption is conditional independence: given the class y, all features x₁, x₂, ..., xₙ are independent. Formally, p(x₁, x₂, ..., xₙ | y) = ∏ᵢ p(xᵢ | y). While this "naive" assumption is rarely true in real data (words in text are correlated, pixels in images are correlated), it leads to a simple, scalable model that often performs surprisingly well. The independence assumption reduces the parameter count from O(2ⁿ) (one parameter per possible feature combination) to O(n) (one parameter per feature per class).</p>
    <p>The classifier computes the posterior as: p(y|x) ∝ p(y) ∏ᵢ p(xᵢ|y). To classify a new instance, compute this posterior for each class and select argmax_y. The model naturally handles missing features (just omit them from the product) and scales to high-dimensional data. For text classification, each xᵢ might be the count or presence of word i, p(xᵢ|y) is estimated from training data, and the algorithm learns which words are indicative of each class.</p>
    <p>Despite the conditional independence assumption being violated in nearly all applications, Naive Bayes achieves strong empirical performance. Theoretically, this is understood through multiple lenses: the model is a good approximation under certain conditions, the parameters compensate for the independence violation, and the 0/1 loss function is forgiving (only the sign of the log-posterior matters, not its magnitude). Practically, this robustness is one of Naive Bayes' greatest strengths—it works well across diverse domains despite its naive assumptions.</p>
@@ -519,9 +594,11 @@ const details = [
        <text x="400" y="145" class="lbl-hi">Each xᵢ factorizes</text>
        <text x="400" y="165" class="lbl-hi">→ O(n) parameters</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header"><span class="num">06</span><h2><em>Laplace</em> Smoothing</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><span class="num">06</span><h2><em>Laplace</em> Smoothing</h2></div>
    <p>The zero-frequency problem is critical in Naive Bayes. Suppose a word like "discombobulate" never appears in the training data for the "positive" class. The naive empirical estimate is p(word="discombobulate" | y=1) = 0. When predicting on a new document containing this word, the entire posterior p(y=1|x) becomes zero because it contains a factor of zero. This is problematic: the model fails catastrophically on any document with an unseen word, even if other words strongly support a class. In text classification, unseen words are inevitable due to the zipfian distribution of natural language.</p>
    <p>Laplace smoothing (add-one smoothing) fixes this by adding a count of one to every word in every class, as if each word appeared at least once. The smoothed probability is: p(xᵢ|y) = (count(xᵢ, y) + 1) / (count(y) + |V|), where count(y) is the total word count in class y and |V| is the vocabulary size. This ensures all probabilities are positive, prevents zero probabilities, and allows the model to handle unseen words gracefully. The denominator includes |V| to ensure probabilities sum to one: Σᵢ (count(xᵢ,y) + 1) / (count(y) + |V|) = 1.</p>
    <p>While add-one smoothing introduces bias (it biases estimates toward 0.5 for each feature), it dramatically improves generalization. A generalized version, add-α smoothing, uses: p(xᵢ|y) = (count(xᵢ, y) + α) / (count(y) + α|V|). When α=1, this is Laplace smoothing; when α → 0, we approach empirical counts; when α increases, probabilities become more uniform. In practice, α is often tuned via cross-validation. For most text datasets, α=1 (Laplace) works well, though some domains benefit from α < 1 (less smoothing when data is abundant).</p>
@@ -544,9 +621,11 @@ const details = [
        <rect x="50" y="230" width="520" height="35" class="callout" rx="4"/>
        <text x="60" y="255" class="node-sub">Result: Handles new vocabulary, prevents zero probabilities, enables generalization</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header"><span class="num">07</span><h2><em>Event</em> Models for Text</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><span class="num">07</span><h2><em>Event</em> Models for Text</h2></div>
    <p>Two event models formalize how text is generated, each defining p(x|y) differently. The multivariate Bernoulli model treats each position in the vocabulary as a binary random variable: xᵢ ∈ {0, 1} indicates whether word i appears in the document. The likelihood is: p(x|y) = ∏ᵢ (φᵢ|ᵧ)^(xᵢ) (1 - φᵢ|ᵧ)^(1-xᵢ), where φᵢ|ᵧ = P(word i appears | y). This model ignores word frequency: a document with one occurrence of "excellent" and one with ten occurrences look the same. For short documents or when word presence/absence matters more than frequency, Bernoulli Naive Bayes is suitable.</p>
    <p>The multinomial model treats text as a bag of words with counts. The document is generated by drawing words one at a time from a multinomial distribution. Given document length d and class y, the likelihood is: p(x|y) ∝ ∏ᵢ (φᵢ|ᵧ)^(xᵢ), where xᵢ is the count of word i and ∑ᵢ xᵢ = d. The multinomial model captures word frequency: seeing "excellent" ten times versus once is meaningful. For longer documents and tasks where frequency matters (e.g., distinguishing formal vs. casual writing), multinomial Naive Bayes typically outperforms Bernoulli.</p>
    <p>Empirically, multinomial Naive Bayes achieves better performance on standard text classification benchmarks. The frequency information is informative: spam often repeats certain keywords, positive reviews emphasize good words repeatedly, and topic classification benefits from word frequency. However, Bernoulli is simpler (fewer parameters to estimate), sometimes preferred for sparse text, and occasionally competitive when combined with feature engineering. The choice should be guided by data characteristics: use Bernoulli for binary word presence, multinomial for word counts. Both benefit from Laplace smoothing and feature selection.</p>
@@ -561,9 +640,11 @@ const details = [
        <h4>Multinomial Model</h4>
        <p>Word counts, captures frequency, better empirical performance, more parameters, suitable for standard documents.</p>
      </div>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header"><span class="num">08</span><h2><em>Practical</em> Applications</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><span class="num">08</span><h2><em>Practical</em> Applications</h2></div>
    <p>Spam filtering is the canonical application of Naive Bayes. Emails are documents, features are words, and classes are {spam, ham}. The classifier learns that certain keywords (pharmaceutical terms, money-related phrases, urgency language) are strongly indicative of spam: p(word | spam) >> p(word | ham). Similarly, legitimate words (recipient's name, official company domains, common greetings) appear more in ham: p(word | ham) >> p(word | spam). Laplace smoothing is essential: new spam variants use novel keywords, and the model must handle unseen words gracefully. Modern email filters still use Naive Bayes as a core component, often combined with other signals (sender reputation, authentication checks, deep learning features).</p>
    <p>Sentiment analysis classifies text as positive, negative, or neutral. A review corpus is labeled, and Naive Bayes learns sentiment-indicative words. Positive reviews frequently contain "excellent," "love," "wonderful," while negative reviews contain "terrible," "waste," "disappointing." The learned word probabilities p(word | sentiment) directly reveal what the model considers. This interpretability is valuable: stakeholders understand why a review was classified as negative by pointing to specific words. More advanced systems combine Naive Bayes scores with syntactic and semantic features, but Naive Bayes remains a strong baseline for sentiment tasks.</p>
    <p>Document classification assigns documents to predefined categories (news topics, support tickets, legal documents). Naive Bayes learns topic-specific vocabulary: sports documents contain "game," "team," "score," while business documents contain "revenue," "profit," "market." Because Naive Bayes handles multiclass naturally (not just binary), it directly extends to k classes by computing p(y=j | x) for each j and selecting argmax. The model scales linearly in both training set size and vocabulary, making it practical for large document collections.</p>
@@ -595,11 +676,11 @@ const details = [
      <span class="chip">Content moderation</span>
      <span class="chip">Intent classification</span>
      <span class="chip">Information retrieval</span>
-   </div>`
-,
+   </div>
+      </div>
 
-  // 09 References & Further Reading
-  `<div class="detail-header">
+      <div class="detail" id="detail-8">
+        <div class="detail-header">
   <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
   <h2><em>Sources</em> & References</h2>
 </div>
@@ -609,76 +690,47 @@ const details = [
 
 <h3>Textbooks & Papers</h3>
 <p><a href="https://arxiv.org/abs/0810.4521" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Ng & Jordan — On Discriminative vs Generative Classifiers</a> — Theoretical analysis comparing generative and discriminative models with formal asymptotic arguments</p>
-<p><a href="https://www.springer.com/gp/book/9780387310732" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Bishop — Pattern Recognition and Machine Learning</a> — Chapter 8 covers graphical models and generative approaches to modeling data</p>`
-
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>229</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Machine Learning</div>
-        <div class="hero-title">Generative <em>Algorithms</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 3–4 · GDA, Naive Bayes & Text Classification</span></div>
+<p><a href="https://www.springer.com/gp/book/9780387310732" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Bishop — Pattern Recognition and Machine Learning</a> — Chapter 8 covers graphical models and generative approaches to modeling data</p>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -688,96 +740,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -790,11 +798,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
-</head>
-<body data-theme="light">
 </body>
 </html>

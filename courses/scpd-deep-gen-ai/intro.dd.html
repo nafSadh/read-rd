@@ -316,43 +316,119 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-// Data Arrays
-const sections = [
-  { num: '01', short: 'What Are Generative Models', title: 'What Are <em>Generative</em> Models' },
-  { num: '02', short: 'Taxonomy of Approaches', title: '<em>Taxonomy</em> of Approaches' },
-  { num: '03', short: 'Maximum Likelihood', title: '<em>Maximum</em> Likelihood Principle' },
-  { num: '04', short: 'Sampling & Generation', title: '<em>Sampling</em> & Generation' },
-  { num: '05', short: 'Evaluation Metrics', title: '<em>Evaluation</em> Metrics' },
-  { num: '06', short: 'Computational Tradeoffs', title: '<em>Computational</em> Tradeoffs' },
-  { num: '07', short: 'Historical Context', title: '<em>Historical</em> Context' },
-  { num: '08', short: 'Course Roadmap', title: 'Course <em>Roadmap</em>' },
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
-];
 
-const summaries = [
-  `<p>Generative models learn to represent and sample from data distributions. Rather than predicting labels or features, they estimate <code>p(x)</code>—the probability density of observed data. This enables generation of novel samples and provides rich representations useful for downstream tasks.</p>
-   <p>At their core, generative models pursue density estimation through learned parametric distributions. Whether through autoencoders, flow models, or diffusion processes, the goal remains consistent: discover latent structure in high-dimensional data and synthesize realistic continuations.</p>`,
-  `<p>Generative modeling encompasses diverse algorithmic families with distinct tradeoffs. Autoregressive models factor joint distributions as products of conditionals; latent variable models introduce unobserved structure; flow-based models apply invertible transformations; implicit models skip explicit likelihoods entirely.</p>
-   <p>Each approach balances tractability, expressiveness, and sampling efficiency. Understanding this taxonomy clarifies why certain methods suit certain domains—transformers for text, score-based diffusion for images, normalizing flows for molecular design.</p>`,
-  `<p>Maximum likelihood estimation remains the dominant training objective. By maximizing <code>log p_θ(x)</code>, we implicitly minimize KL divergence from data to model, pushing learned distributions toward empirical observations. This principled approach justifies why MLE works across nearly all modern architectures.</p>
-   <p>Alternative divergences exist—Wasserstein, f-divergences, reverse KL in VAEs—each reflecting different geometric assumptions. Yet forward KL via MLE dominates due to computational tractability and its natural alignment with our information-theoretic intuitions about learning.</p>`,
-  `<p>Sampling lies at the heart of generative modeling's utility. Ancestral sampling proceeds autogressively through learned conditional distributions; rejection sampling accepts proposals with likelihood-weighted probability; MCMC explores high-dimensional spaces through iterative refinement.</p>
-   <p>Each technique trades off computational cost, mixing time, and sample quality. Modern diffusion models reframe sampling as reversing a noise schedule; transformer-based models leverage top-k filtering; adversarial approaches rely on implicit sampling through generator networks.</p>`,
-  `<p>Evaluating generative models requires both computational metrics and perceptual quality measures. Log-likelihood gauges model fit; Fréchet Inception Distance captures perceptual similarity; Inception Score rewards confident, diverse predictions; precision-recall balances mode coverage against spurious novel modes.</p>
-   <p>No single metric suffices. Likelihood alone ignores sample quality; FID suits images but not all modalities; human evaluation remains essential. Modern benchmarks combine multiple metrics, acknowledging that generative quality involves multiple dimensions of fidelity.</p>`,
-  `<p>Computing exact log-likelihoods is intractable for most architectures. Autoregressive models achieve tractability through factorization; flow models via Jacobian determinants; VAEs through learned variational bounds. Implicit models abandon likelihood entirely, complicating evaluation but enabling flexible expressiveness.</p>
-   <p>Latent variable models trade approximate inference for expressive posteriors. Recognizing this spectrum—from fully tractable autoregressive to fully implicit GANs—explains architectural choices and guides practitioners toward methods matching their constraints and requirements.</p>`,
-  `<p>Generative modeling's modern renaissance builds on decades of foundational work. Boltzmann machines and RBMs pioneered energy-based approaches; deep belief networks unified supervised and unsupervised learning; VAEs and GANs introduced latent variable models at scale; transformers and diffusion models now dominate.</p>
-   <p>Each era discovered fundamental principles—the variational autoencoder's latent space trade-off, the adversarial game's nonconvergence challenges, diffusion's connection to score matching. These aren't historical footnotes but active principles guiding current research directions.</p>`,
-  `<p>This course spans the generative modeling landscape from foundations through modern applications. Weeks 1-3 establish core concepts: density estimation, MLE, sampling, and evaluation. Weeks 4-6 build toward powerful architectures: autoencoders, flows, and diffusion. Weeks 7-8 synthesize with adversarial training and applications.</p>
-   <p>Each approach's tradeoffs become clear through hands-on implementation. Autoregressive models train quickly but sample slowly; flow models offer exact likelihood but limited expressiveness; diffusion models match state-of-the-art image generation despite iterative sampling. Understanding these tensions prepares you for designing novel architectures.</p>`,
-  `<p>This course draws on seminal papers, textbooks, and pedagogical resources spanning decades of generative modeling research. The references below provide both foundational theory and modern implementations, enabling deeper exploration of each architectural family and their applications.</p>
-   <p>Key resources include Stanford's course materials, classic papers introducing VAEs, GANs, and diffusion models, as well as contemporary blog posts and tutorials that bridge theory and practice. This section guides further learning beyond lecture content.</p>`
-];
+<div class="shell">
 
-const details = [
-  `<div class="detail-header">
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="What Are Generative Models"><span class="sidebar-num">01</span><span class="sidebar-label">What Are Generative Models</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Taxonomy of Approaches"><span class="sidebar-num">02</span><span class="sidebar-label">Taxonomy of Approaches</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Maximum Likelihood"><span class="sidebar-num">03</span><span class="sidebar-label">Maximum Likelihood</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Sampling & Generation"><span class="sidebar-num">04</span><span class="sidebar-label">Sampling & Generation</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Evaluation Metrics"><span class="sidebar-num">05</span><span class="sidebar-label">Evaluation Metrics</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Computational Tradeoffs"><span class="sidebar-num">06</span><span class="sidebar-label">Computational Tradeoffs</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Historical Context"><span class="sidebar-num">07</span><span class="sidebar-label">Historical Context</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Course Roadmap"><span class="sidebar-num">08</span><span class="sidebar-label">Course Roadmap</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
+        <div class="hero-title">Introduction to <em>Generative</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 1 · Foundations, Taxonomy & Evaluation</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>What Are <em>Generative</em> Models</h2>
+          <p>Generative models learn to represent and sample from data distributions. Rather than predicting labels or features, they estimate <code>p(x)</code>—the probability density of observed data. This enables generation of novel samples and provides rich representations useful for downstream tasks.</p>
+   <p>At their core, generative models pursue density estimation through learned parametric distributions. Whether through autoencoders, flow models, or diffusion processes, the goal remains consistent: discover latent structure in high-dimensional data and synthesize realistic continuations.</p>
+        </div>
+
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Taxonomy</em> of Approaches</h2>
+          <p>Generative modeling encompasses diverse algorithmic families with distinct tradeoffs. Autoregressive models factor joint distributions as products of conditionals; latent variable models introduce unobserved structure; flow-based models apply invertible transformations; implicit models skip explicit likelihoods entirely.</p>
+   <p>Each approach balances tractability, expressiveness, and sampling efficiency. Understanding this taxonomy clarifies why certain methods suit certain domains—transformers for text, score-based diffusion for images, normalizing flows for molecular design.</p>
+        </div>
+
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Maximum</em> Likelihood Principle</h2>
+          <p>Maximum likelihood estimation remains the dominant training objective. By maximizing <code>log p_θ(x)</code>, we implicitly minimize KL divergence from data to model, pushing learned distributions toward empirical observations. This principled approach justifies why MLE works across nearly all modern architectures.</p>
+   <p>Alternative divergences exist—Wasserstein, f-divergences, reverse KL in VAEs—each reflecting different geometric assumptions. Yet forward KL via MLE dominates due to computational tractability and its natural alignment with our information-theoretic intuitions about learning.</p>
+        </div>
+
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Sampling</em> & Generation</h2>
+          <p>Sampling lies at the heart of generative modeling's utility. Ancestral sampling proceeds autogressively through learned conditional distributions; rejection sampling accepts proposals with likelihood-weighted probability; MCMC explores high-dimensional spaces through iterative refinement.</p>
+   <p>Each technique trades off computational cost, mixing time, and sample quality. Modern diffusion models reframe sampling as reversing a noise schedule; transformer-based models leverage top-k filtering; adversarial approaches rely on implicit sampling through generator networks.</p>
+        </div>
+
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Evaluation</em> Metrics</h2>
+          <p>Evaluating generative models requires both computational metrics and perceptual quality measures. Log-likelihood gauges model fit; Fréchet Inception Distance captures perceptual similarity; Inception Score rewards confident, diverse predictions; precision-recall balances mode coverage against spurious novel modes.</p>
+   <p>No single metric suffices. Likelihood alone ignores sample quality; FID suits images but not all modalities; human evaluation remains essential. Modern benchmarks combine multiple metrics, acknowledging that generative quality involves multiple dimensions of fidelity.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Computational</em> Tradeoffs</h2>
+          <p>Computing exact log-likelihoods is intractable for most architectures. Autoregressive models achieve tractability through factorization; flow models via Jacobian determinants; VAEs through learned variational bounds. Implicit models abandon likelihood entirely, complicating evaluation but enabling flexible expressiveness.</p>
+   <p>Latent variable models trade approximate inference for expressive posteriors. Recognizing this spectrum—from fully tractable autoregressive to fully implicit GANs—explains architectural choices and guides practitioners toward methods matching their constraints and requirements.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Historical</em> Context</h2>
+          <p>Generative modeling's modern renaissance builds on decades of foundational work. Boltzmann machines and RBMs pioneered energy-based approaches; deep belief networks unified supervised and unsupervised learning; VAEs and GANs introduced latent variable models at scale; transformers and diffusion models now dominate.</p>
+   <p>Each era discovered fundamental principles—the variational autoencoder's latent space trade-off, the adversarial game's nonconvergence challenges, diffusion's connection to score matching. These aren't historical footnotes but active principles guiding current research directions.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Course <em>Roadmap</em></h2>
+          <p>This course spans the generative modeling landscape from foundations through modern applications. Weeks 1-3 establish core concepts: density estimation, MLE, sampling, and evaluation. Weeks 4-6 build toward powerful architectures: autoencoders, flows, and diffusion. Weeks 7-8 synthesize with adversarial training and applications.</p>
+   <p>Each approach's tradeoffs become clear through hands-on implementation. Autoregressive models train quickly but sample slowly; flow models offer exact likelihood but limited expressiveness; diffusion models match state-of-the-art image generation despite iterative sampling. Understanding these tensions prepares you for designing novel architectures.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>This course draws on seminal papers, textbooks, and pedagogical resources spanning decades of generative modeling research. The references below provide both foundational theory and modern implementations, enabling deeper exploration of each architectural family and their applications.</p>
+   <p>Key resources include Stanford's course materials, classic papers introducing VAEs, GANs, and diffusion models, as well as contemporary blog posts and tutorials that bridge theory and practice. This section guides further learning beyond lecture content.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 01</div>
     <h2>What Are <em>Generative</em> Models</h2>
    </div>
@@ -409,8 +485,11 @@ const details = [
     </svg>
    </div>
    <h3>Learning Objectives</h3>
-   <p>Maximum likelihood drives most architectures: minimize <code>-E_x[log p_θ(x)]</code> across training data. Alternative objectives like adversarial losses or divergence-based criteria exist, but MLE's information-theoretic grounding and optimization tractability keep it dominant.</p>`,
-  `<div class="detail-header">
+   <p>Maximum likelihood drives most architectures: minimize <code>-E_x[log p_θ(x)]</code> across training data. Alternative objectives like adversarial losses or divergence-based criteria exist, but MLE's information-theoretic grounding and optimization tractability keep it dominant.</p>
+      </div>
+
+      <div class="detail" id="detail-1">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 02</div>
     <h2><em>Taxonomy</em> of Approaches</h2>
    </div>
@@ -480,8 +559,11 @@ const details = [
       <li>Implementation complexity varies dramatically</li>
      </ul>
     </div>
-   </div>`,
-  `<div class="detail-header">
+   </div>
+      </div>
+
+      <div class="detail" id="detail-2">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 03</div>
     <h2><em>Maximum</em> Likelihood Principle</h2>
    </div>
@@ -520,8 +602,11 @@ const details = [
    </div>
    <h3>Practical Considerations</h3>
    <p>Numerical stability matters in likelihood computation. Computing <code>log p(x)</code> directly for images requires careful handling of mixed discrete-continuous distributions. Log-sum-exp tricks prevent underflow. For high-dimensional problems, likelihoods become extremely small—storing in log-space is essential.</p>
-   <p>Batch size affects optimization. Small batches add gradient noise (sometimes helpful for escaping local minima); large batches yield stable but potentially stale gradients. Learning rates interact with model architecture and data scale, requiring careful tuning.</p>`,
-  `<div class="detail-header">
+   <p>Batch size affects optimization. Small batches add gradient noise (sometimes helpful for escaping local minima); large batches yield stable but potentially stale gradients. Learning rates interact with model architecture and data scale, requiring careful tuning.</p>
+      </div>
+
+      <div class="detail" id="detail-3">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 04</div>
     <h2><em>Sampling</em> & Generation</h2>
    </div>
@@ -580,8 +665,11 @@ const details = [
       <li>Diffusion requires many iterations per sample</li>
      </ul>
     </div>
-   </div>`,
-  `<div class="detail-header">
+   </div>
+      </div>
+
+      <div class="detail" id="detail-4">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 05</div>
     <h2><em>Evaluation</em> Metrics</h2>
    </div>
@@ -640,8 +728,11 @@ const details = [
      <div class="tl-date">2020+</div>
      <div class="tl-text">Diffusion dominance drives return to likelihood metrics. Multiple metrics standard: likelihood + FID + human evaluation for comprehensive assessment.</div>
     </div>
-   </div>`,
-  `<div class="detail-header">
+   </div>
+      </div>
+
+      <div class="detail" id="detail-5">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 06</div>
     <h2><em>Computational</em> Tradeoffs</h2>
    </div>
@@ -703,8 +794,11 @@ const details = [
      <text x="60" y="230" class="lbl" font-size="10">← Slow sampling</text>
      <text x="400" y="230" class="lbl" font-size="10">Fast sampling →</text>
     </svg>
-   </div>`,
-  `<div class="detail-header">
+   </div>
+      </div>
+
+      <div class="detail" id="detail-6">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 07</div>
     <h2><em>Historical</em> Context</h2>
    </div>
@@ -753,8 +847,11 @@ const details = [
    </div>
    <h3>Lasting Principles</h3>
    <p>Throughout this history, certain principles persist. Likelihood-based models face tractability-expressiveness tradeoffs (visible in RBMs→VAEs→Flows). Generative quality improves with model capacity and data, but overfitting requires regularization (seen across all eras). Scalability demands hierarchical approaches—from Hinton's layer-wise pretraining to Latent Diffusion Models' learned autoencoders.</p>
-   <p>Understanding this history contextualizes current debates. Diffusion's recent dominance doesn't invalidate autoregressive or flow principles—each remains valid for specific problems. The field matures not by replacement but accumulation: each architecture's lessons enrich the landscape.</p>`,
-  `<div class="detail-header">
+   <p>Understanding this history contextualizes current debates. Diffusion's recent dominance doesn't invalidate autoregressive or flow principles—each remains valid for specific problems. The field matures not by replacement but accumulation: each architecture's lessons enrich the landscape.</p>
+      </div>
+
+      <div class="detail" id="detail-7">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 08</div>
     <h2>Course <em>Roadmap</em></h2>
    </div>
@@ -795,8 +892,11 @@ const details = [
    </div>
    <h3>Learning Outcomes</h3>
    <p>By course end, you will: (1) understand fundamental principles connecting all generative models; (2) implement multiple major architectures from scratch; (3) recognize architectural tradeoffs and choose methods matching problem constraints; (4) read recent papers and adapt methods to new domains; (5) design novel hybrid approaches combining complementary strengths.</p>
-   <p>Generative modeling is simultaneously mature (decades of foundations) and nascent (major architectural breakthroughs within months). This course positions you at that intersection—understanding established principles while remaining flexible for emerging developments. The goal isn't mastering specific methods but mastering the conceptual landscape enabling rapid adaptation.</p>`,
-  `<div class="detail-header">
+   <p>Generative modeling is simultaneously mature (decades of foundations) and nascent (major architectural breakthroughs within months). This course positions you at that intersection—understanding established principles while remaining flexible for emerging developments. The goal isn't mastering specific methods but mastering the conceptual landscape enabling rapid adaptation.</p>
+      </div>
+
+      <div class="detail" id="detail-8">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
     <h2>References & <em>Further</em> Reading</h2>
    </div>
@@ -850,75 +950,47 @@ const details = [
    <ul>
     <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng's Blog: Comprehensive Deep Learning Tutorials</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Generative_model" target="_blank">Wikipedia: Generative Model (Concepts Overview)</a></li>
-   </ul>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
-        <div class="hero-title">Introduction to <em>Generative</em> Models</div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 1 · Foundations, Taxonomy & Evaluation</span></div>
+   </ul>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -928,96 +1000,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -1030,9 +1058,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
 </body>
 </html>

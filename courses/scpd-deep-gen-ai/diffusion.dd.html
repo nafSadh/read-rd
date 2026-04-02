@@ -317,50 +317,118 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-const sections = [
-  {num:'01',short:'Forward Process',title:'<em>Forward</em> Process — q(x<sub>t</sub>|x<sub>t−1</sub>)'},
-  {num:'02',short:'DDPM',title:'DDPM — Denoising Diffusion Probabilistic Models'},
-  {num:'03',short:'Noise Prediction',title:'Noise Prediction — ε-prediction & U-Net'},
-  {num:'04',short:'Reverse Process',title:'<em>Reverse</em> Process — p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>)'},
-  {num:'05',short:'Training Objective',title:'Training Objective — Variational Bound & MSE Loss'},
-  {num:'06',short:'Sampling Acceleration',title:'Sampling Acceleration — DDIM, DPM-Solver & Distillation'},
-  {num:'07',short:'Conditional Generation',title:'Conditional Generation — Classifier & Classifier-Free Guidance'},
-  {num:'08',short:'State of the Art',title:'State of the Art — Stable Diffusion, DALL-E, Imagen'},
-  {num:'09',short:'References',title:'References & <em>Further</em> Reading'}
-];
+<div class="shell">
 
-const summaries = [
-  `<p>The forward process gradually adds Gaussian noise to data over <em>T</em> timesteps, transforming clean samples into pure noise via a Markov chain. Each step applies a small amount of noise controlled by variance schedule β<sub>t</sub>, which determines signal-to-noise ratio at each timestep.</p>
-   <p>The process is deterministic given x₀ and defines <em>q</em>(x<sub>t</sub>|x<sub>t−1</sub>) = 𝒩(x<sub>t</sub>; √(1−β<sub>t</sub>)x<sub>t−1</sub>, β<sub>t</sub><strong>I</strong>). This tractable marginal q(x<sub>t</sub>|x₀) allows efficient loss computation without iterating the chain, using accumulated product α̅<sub>t</sub> = ∏ᵢ(1−β<sub>i</sub>).</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>DDPM (Ho et al., 2020) frames image generation as learning the reverse of the forward diffusion process. By iteratively denoising a Gaussian sample, the model recovers data without explicit likelihood computation or adversarial training, offering stability and mode coverage.</p>
-   <p>The simplified MSE objective trains the model to predict noise, yielding strong empirical results on image benchmarks. DDPM demonstrated that diffusion could compete with GANs and VAEs, launching the modern era of diffusion-based generative models with applications across image, audio, and video synthesis.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Forward Process"><span class="sidebar-num">01</span><span class="sidebar-label">Forward Process</span></div>
+      <div class="sidebar-item" data-section="1" data-label="DDPM"><span class="sidebar-num">02</span><span class="sidebar-label">DDPM</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Noise Prediction"><span class="sidebar-num">03</span><span class="sidebar-label">Noise Prediction</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Reverse Process"><span class="sidebar-num">04</span><span class="sidebar-label">Reverse Process</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Training Objective"><span class="sidebar-num">05</span><span class="sidebar-label">Training Objective</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Sampling Acceleration"><span class="sidebar-num">06</span><span class="sidebar-label">Sampling Acceleration</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Conditional Generation"><span class="sidebar-num">07</span><span class="sidebar-label">Conditional Generation</span></div>
+      <div class="sidebar-item" data-section="7" data-label="State of the Art"><span class="sidebar-num">08</span><span class="sidebar-label">State of the Art</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>Instead of predicting the mean directly, the model learns to predict the noise ε added at each step. This <em>ε-prediction</em> reparameterization simplifies the loss and improves sample quality compared to predicting variance. U-Net architecture with skip connections and multi-scale feature extraction dominates diffusion model backbones.</p>
-   <p>U-Net designs employ downsampling, self-attention layers, and time embeddings to condition the network on timestep. Residual connections and layer normalization stabilize training. Cross-attention blocks enable conditioning on text prompts (as in Stable Diffusion) or other modalities, making the architecture flexible for guided generation tasks.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
+        <div class="hero-title"><em>Diffusion</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 7–8 · DDPM, Score Matching & Conditional Generation</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>The reverse process learns p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>) to map noise back to data. The posterior mean and variance are derived analytically from the forward process, so the model learns only the mean, predicting it as a function of x<sub>t</sub> and timestep <em>t</em>. Sampling iterates from x<sub>T</sub> ∼ 𝒩(0, <strong>I</strong>) down to x₀.</p>
-   <p>Variance scheduling (e.g., linear, cosine) controls the denoising trajectory. Learned variance with separate heads can improve likelihood, though fixed schedules work well empirically. The Markov structure enables efficient sequential sampling, making generation tractable despite <em>T</em> being large (typically 50–1000 steps).</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Forward</em> Process — q(x<sub>t</sub>|x<sub>t−1</sub>)</h2>
+          <p>The forward process gradually adds Gaussian noise to data over <em>T</em> timesteps, transforming clean samples into pure noise via a Markov chain. Each step applies a small amount of noise controlled by variance schedule β<sub>t</sub>, which determines signal-to-noise ratio at each timestep.</p>
+   <p>The process is deterministic given x₀ and defines <em>q</em>(x<sub>t</sub>|x<sub>t−1</sub>) = 𝒩(x<sub>t</sub>; √(1−β<sub>t</sub>)x<sub>t−1</sub>, β<sub>t</sub><strong>I</strong>). This tractable marginal q(x<sub>t</sub>|x₀) allows efficient loss computation without iterating the chain, using accumulated product α̅<sub>t</sub> = ∏ᵢ(1−β<sub>i</sub>).</p>
+        </div>
 
-  `<p>The training objective is the variational lower bound (ELBO), which decomposes into multiple terms. The dominant term is reconstruction error at different noise levels, capturing how well the model predicts the noise distribution.</p>
-   <p>The simplified MSE loss L_simple ignores coefficient schedules and trains on uniform timesteps, making optimization simpler while maintaining effectiveness. Connection to score matching reveals that the diffusion objective is equivalent to learning the score ∇<sub>x</sub> log p(x) under a noise-perturbed distribution, providing theoretical grounding in statistical physics and unifying with energy-based models.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>DDPM — Denoising Diffusion Probabilistic Models</h2>
+          <p>DDPM (Ho et al., 2020) frames image generation as learning the reverse of the forward diffusion process. By iteratively denoising a Gaussian sample, the model recovers data without explicit likelihood computation or adversarial training, offering stability and mode coverage.</p>
+   <p>The simplified MSE objective trains the model to predict noise, yielding strong empirical results on image benchmarks. DDPM demonstrated that diffusion could compete with GANs and VAEs, launching the modern era of diffusion-based generative models with applications across image, audio, and video synthesis.</p>
+        </div>
 
-  `<p>Sampling <em>T</em> forward diffusion steps is slow. DDIM (Denoising Diffusion Implicit Models) skips steps by using a deterministic reverse process, reducing steps from 1000 to 20–50 while maintaining quality. DPM-Solver and other ODE-based methods use numerical solvers on the probability flow ODE, further accelerating sampling.</p>
-   <p>Knowledge distillation transfers a large teacher model to a compact student, enabling real-time generation. Consistency models learn to map any noise level directly to clean data in a single step, trading accuracy for speed. Progressive acceleration, latent-space diffusion (operating in compressed VAE embeddings), and model caching all reduce computational cost, making diffusion practical for deployment.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Noise Prediction — ε-prediction & U-Net</h2>
+          <p>Instead of predicting the mean directly, the model learns to predict the noise ε added at each step. This <em>ε-prediction</em> reparameterization simplifies the loss and improves sample quality compared to predicting variance. U-Net architecture with skip connections and multi-scale feature extraction dominates diffusion model backbones.</p>
+   <p>U-Net designs employ downsampling, self-attention layers, and time embeddings to condition the network on timestep. Residual connections and layer normalization stabilize training. Cross-attention blocks enable conditioning on text prompts (as in Stable Diffusion) or other modalities, making the architecture flexible for guided generation tasks.</p>
+        </div>
 
-  `<p>Classifier guidance trains a separate model on noisy images to predict class labels, then uses gradients to steer the diffusion trajectory toward high-probability regions. This trade-off between fidelity and diversity is controlled by a scale parameter <em>w</em>. Higher <em>w</em> gives sharper, more class-aligned samples at the cost of reduced variety.</p>
-   <p>Classifier-free guidance eliminates the need for a separate classifier by training the diffusion model conditionally (with and without labels). At inference, the model output is interpolated between unconditional and conditional predictions, achieving similar steering without extra parameters. This approach powers text-to-image models like Stable Diffusion, where text embeddings replace explicit class labels.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Reverse</em> Process — p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>)</h2>
+          <p>The reverse process learns p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>) to map noise back to data. The posterior mean and variance are derived analytically from the forward process, so the model learns only the mean, predicting it as a function of x<sub>t</sub> and timestep <em>t</em>. Sampling iterates from x<sub>T</sub> ∼ 𝒩(0, <strong>I</strong>) down to x₀.</p>
+   <p>Variance scheduling (e.g., linear, cosine) controls the denoising trajectory. Learned variance with separate heads can improve likelihood, though fixed schedules work well empirically. The Markov structure enables efficient sequential sampling, making generation tractable despite <em>T</em> being large (typically 50–1000 steps).</p>
+        </div>
 
-  `<p>Stable Diffusion (Latent Diffusion) operates in VAE latent space, reducing computational cost while maintaining quality. DALL-E 3 and Imagen use diffusion for text-to-image synthesis at scale. Cascaded models first generate low-resolution images, then super-resolve with diffusion, improving efficiency and coherence.</p>
-   <p>Diffusion extends to video (frame-by-frame or frame-interpolation), 3D (point clouds, meshes, NeRFs), and discrete data (text, graphs) via discrete diffusion or multinomial diffusion. Diffusion-based models now achieve state-of-the-art results across modalities, with applications in inpainting, editing, super-resolution, and beyond. The field continues to evolve with advances in speed, control, and multimodal synthesis.</p>`,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Training Objective — Variational Bound & MSE Loss</h2>
+          <p>The training objective is the variational lower bound (ELBO), which decomposes into multiple terms. The dominant term is reconstruction error at different noise levels, capturing how well the model predicts the noise distribution.</p>
+   <p>The simplified MSE loss L_simple ignores coefficient schedules and trains on uniform timesteps, making optimization simpler while maintaining effectiveness. Connection to score matching reveals that the diffusion objective is equivalent to learning the score ∇<sub>x</sub> log p(x) under a noise-perturbed distribution, providing theoretical grounding in statistical physics and unifying with energy-based models.</p>
+        </div>
 
-  `<p>Diffusion models have emerged as the dominant paradigm for generative modeling in the 2020s. This section compiles foundational papers, key methods, and resources for understanding forward and reverse processes, training objectives, and modern applications that have achieved state-of-the-art results across multiple domains.</p>
-   <p>From DDPM to Stable Diffusion and beyond, these materials document the rapid evolution and widespread adoption of diffusion-based generative models.</p>`
-];
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Sampling Acceleration — DDIM, DPM-Solver & Distillation</h2>
+          <p>Sampling <em>T</em> forward diffusion steps is slow. DDIM (Denoising Diffusion Implicit Models) skips steps by using a deterministic reverse process, reducing steps from 1000 to 20–50 while maintaining quality. DPM-Solver and other ODE-based methods use numerical solvers on the probability flow ODE, further accelerating sampling.</p>
+   <p>Knowledge distillation transfers a large teacher model to a compact student, enabling real-time generation. Consistency models learn to map any noise level directly to clean data in a single step, trading accuracy for speed. Progressive acceleration, latent-space diffusion (operating in compressed VAE embeddings), and model caching all reduce computational cost, making diffusion practical for deployment.</p>
+        </div>
 
-const details = [
-  `<div class="detail-header"><div class="num">01</div><h2>Forward Process</h2></div>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Conditional Generation — Classifier & Classifier-Free Guidance</h2>
+          <p>Classifier guidance trains a separate model on noisy images to predict class labels, then uses gradients to steer the diffusion trajectory toward high-probability regions. This trade-off between fidelity and diversity is controlled by a scale parameter <em>w</em>. Higher <em>w</em> gives sharper, more class-aligned samples at the cost of reduced variety.</p>
+   <p>Classifier-free guidance eliminates the need for a separate classifier by training the diffusion model conditionally (with and without labels). At inference, the model output is interpolated between unconditional and conditional predictions, achieving similar steering without extra parameters. This approach powers text-to-image models like Stable Diffusion, where text embeddings replace explicit class labels.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>State of the Art — Stable Diffusion, DALL-E, Imagen</h2>
+          <p>Stable Diffusion (Latent Diffusion) operates in VAE latent space, reducing computational cost while maintaining quality. DALL-E 3 and Imagen use diffusion for text-to-image synthesis at scale. Cascaded models first generate low-resolution images, then super-resolve with diffusion, improving efficiency and coherence.</p>
+   <p>Diffusion extends to video (frame-by-frame or frame-interpolation), 3D (point clouds, meshes, NeRFs), and discrete data (text, graphs) via discrete diffusion or multinomial diffusion. Diffusion-based models now achieve state-of-the-art results across modalities, with applications in inpainting, editing, super-resolution, and beyond. The field continues to evolve with advances in speed, control, and multimodal synthesis.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>Diffusion models have emerged as the dominant paradigm for generative modeling in the 2020s. This section compiles foundational papers, key methods, and resources for understanding forward and reverse processes, training objectives, and modern applications that have achieved state-of-the-art results across multiple domains.</p>
+   <p>From DDPM to Stable Diffusion and beyond, these materials document the rapid evolution and widespread adoption of diffusion-based generative models.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01</div><h2>Forward Process</h2></div>
    <p>The forward diffusion process is the cornerstone of all diffusion models. It progressively corrupts clean data by adding carefully scheduled Gaussian noise. This Markov chain is designed to be mathematically tractable and reversible in principle, providing the foundation for learning a reverse denoising process.</p>
    <p><strong>Variance Schedule.</strong> The process is governed by a noise schedule β₁, β₂, ..., β<sub>T</sub>, where each β<sub>t</sub> ∈ (0, 1) controls the amount of noise added at step <em>t</em>. Common schedules include linear (β<sub>t</sub> = β_min + (β_max − β_min)t/T), cosine (designed to keep signal-to-noise ratio smooth), and learned schedules. The cumulative product α̅<sub>t</sub> = ∏ᵢ₌₁^t (1 − β<sub>i</sub>) determines the signal retention at step <em>t</em>.</p>
    <p><strong>Marginal Distribution.</strong> Given x₀ ∼ p_data, the noisy version at step <em>t</em> satisfies:</p>
@@ -374,9 +442,11 @@ const details = [
      <div class="feat"><h4>Logarithmic Schedule</h4><p>Alternative smooth decay. Used in some models; trade-off between linear and cosine in terms of SNR profile.</p></div>
    </div>
    <h3>Signal-to-Noise Ratio</h3>
-   <p>SNR<sub>t</sub> = α̅<sub>t</sub> / (1 − α̅<sub>t</sub>) measures the relative strength of signal vs. noise. Early steps have high SNR (mostly signal), late steps have low SNR (mostly noise). The schedule's monotonic decay ensures a smooth curriculum from easy (noisy) to hard (clean) denoising tasks during training. Understanding SNR helps tune schedules and interpret model behavior across timesteps.</p>`,
+   <p>SNR<sub>t</sub> = α̅<sub>t</sub> / (1 − α̅<sub>t</sub>) measures the relative strength of signal vs. noise. Early steps have high SNR (mostly signal), late steps have low SNR (mostly noise). The schedule's monotonic decay ensures a smooth curriculum from easy (noisy) to hard (clean) denoising tasks during training. Understanding SNR helps tune schedules and interpret model behavior across timesteps.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">02</div><h2>DDPM — Denoising Diffusion Probabilistic Models</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02</div><h2>DDPM — Denoising Diffusion Probabilistic Models</h2></div>
    <p>DDPM, introduced by Ho, Jain, and Abbeel (2020), established diffusion models as a competitive generative approach. The key insight is that learning to reverse the forward diffusion process recovers a powerful generative model without adversarial training or explicit likelihood computation.</p>
    <p><strong>Model Formulation.</strong> The model learns p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>) as a Gaussian with fixed or learned variance. The posterior mean from the forward process provides the training target. The loss simplifies to predicting the noise ε added during the forward process, making optimization straightforward.</p>
    <p><strong>Simplified Objective.</strong> The original ELBO decomposes into three parts: (1) reconstruction loss at <em>t</em>=1, (2) forward KL divergences, and (3) constant terms. The simplified loss L_simple(θ) = 𝔼<sub>t,x₀,ε</sub>[||ε − ε<sub>θ</sub>(x<sub>t</sub>, t)||²] drops weighting coefficients and samples uniformly over <em>t</em>. This surprising simplification works because the coefficients approximately balance out, and uniform sampling avoids overfitting to early steps.</p>
@@ -387,9 +457,11 @@ const details = [
      <div class="feat"><h4>Computational Cost</h4><p>Requires many sampling steps (typically 1000) during inference, making generation slow compared to GANs. Acceleration techniques are essential for practical deployment.</p></div>
    </div>
    <h3>Empirical Results</h3>
-   <p>DDPM achieved state-of-the-art Inception Scores and FID (Fréchet Inception Distance) on CIFAR-10 and CelebA, matching or exceeding GANs on these benchmarks. The quality-diversity trade-off (sample quality vs. variety) is smooth, controllable through the diffusion variance schedule and number of steps. Subsequent work showed that DDPM's simplicity and stability made it a natural foundation for scaling to high resolution and complex datasets.</p>`,
+   <p>DDPM achieved state-of-the-art Inception Scores and FID (Fréchet Inception Distance) on CIFAR-10 and CelebA, matching or exceeding GANs on these benchmarks. The quality-diversity trade-off (sample quality vs. variety) is smooth, controllable through the diffusion variance schedule and number of steps. Subsequent work showed that DDPM's simplicity and stability made it a natural foundation for scaling to high resolution and complex datasets.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">03</div><h2>Noise Prediction — ε-prediction & U-Net Architecture</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03</div><h2>Noise Prediction — ε-prediction & U-Net Architecture</h2></div>
    <p>The core of most modern diffusion models is learning a neural network that predicts the noise ε added at each timestep. This reparameterization is mathematically equivalent to predicting the mean μ(x<sub>t</sub>, t) but empirically more stable and flexible.</p>
    <p><strong>Parameterization Choices.</strong> Three main options: (1) <em>x-prediction</em> (directly predict x₀ from x<sub>t</sub> and t), (2) <em>ε-prediction</em> (predict noise), (3) <em>v-prediction</em> (predict velocity in a transformed space). Each has trade-offs. ε-prediction is most common because it's numerically stable and works well with different noise schedules. x-prediction can improve early-step quality but may be less stable for high noise levels.</p>
    <div class="diagram-wrap"><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
@@ -408,9 +480,11 @@ const details = [
      <div class="feat"><h4>Cross-Attention</h4><p>Allows conditioning on external signals (text, class labels, images). Keys/values come from condition; queries from features. Essential for text-to-image models.</p></div>
    </div>
    <h3>Design Variations</h3>
-   <p>Modern architectures explore alternatives: Vision Transformers (replacing convolutions with pure attention), DiT (Diffusion Transformer), and hybrid designs. Depth, width, attention resolution, and conditional fusion strategies vary by application. Architectural choices directly impact sample quality, training time, and memory usage. Most models still use convolution-based U-Nets for efficiency, though pure transformer backbones are increasingly competitive.</p>`,
+   <p>Modern architectures explore alternatives: Vision Transformers (replacing convolutions with pure attention), DiT (Diffusion Transformer), and hybrid designs. Depth, width, attention resolution, and conditional fusion strategies vary by application. Architectural choices directly impact sample quality, training time, and memory usage. Most models still use convolution-based U-Nets for efficiency, though pure transformer backbones are increasingly competitive.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">04</div><h2>Reverse Process — p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>)</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04</div><h2>Reverse Process — p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>)</h2></div>
    <p>The reverse diffusion process is the inverse of the forward corruption. Given a sample x<sub>t</sub> (noisy data) and a timestep <em>t</em>, the model predicts the one-step denoising distribution p<sub>θ</sub>(x<sub>t−1</sub>|x<sub>t</sub>). Chaining these steps from noise (t=T) to clean data (t=1) yields the final sample.</p>
    <p><strong>Learned Distribution.</strong> The reverse distribution is a Gaussian with mean μ<sub>θ</sub>(x<sub>t</sub>, t) and covariance Σ<sub>θ</sub>(x<sub>t</sub>, t). The mean is learned via the neural network (using noise prediction or x-prediction). The variance can be fixed (following the forward process schedule) or learned via an additional head. Fixed variance is simpler and empirically sufficient; learned variance adds parameters but rarely improves results significantly.</p>
    <p><strong>Denoising Step.</strong> One sampling step: x<sub>t−1</sub> = μ<sub>θ</sub>(x<sub>t</sub>, t) + √Σ<sub>θ</sub>(x<sub>t</sub>, t) z, where z ∼ 𝒩(0, <strong>I</strong>). At t=1 (the final step), no noise is added, giving deterministic x₀. A typical forward pass samples T steps, each reducing noise according to the learned schedule.</p>
@@ -428,9 +502,11 @@ const details = [
      <rect x="370" y="160" width="120" height="60" class="node-hi"/><text x="430" y="195" class="node-text" text-anchor="middle">x_0 (sample)</text>
    </svg></div>
    <p><strong>Variance Schedule.</strong> The reverse variance is derived from the forward process. A simple choice is Σ<sub>θ</sub> = σ²<sub>t</sub> <strong>I</strong>, where σ²<sub>t</sub> is either fixed (using forward process variance) or learned via a separate network output. Fixed variance (σ²<sub>t</sub> = (1 − α<sub>t</sub>)/(1 − α̅<sub>t</sub>) β<sub>t</sub>) works surprisingly well and avoids overparameterization.</p>
-   <p><strong>Sampling Trade-offs.</strong> More steps (larger T) give higher quality but slower generation. Fewer steps speed up inference but reduce quality (addressed by acceleration techniques like DDIM). The number of steps is a free hyperparameter that can be tuned per application. Early steps (low t) require precision (high SNR); later steps (high t) are more forgiving of errors.</p>`,
+   <p><strong>Sampling Trade-offs.</strong> More steps (larger T) give higher quality but slower generation. Fewer steps speed up inference but reduce quality (addressed by acceleration techniques like DDIM). The number of steps is a free hyperparameter that can be tuned per application. Early steps (low t) require precision (high SNR); later steps (high t) are more forgiving of errors.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">05</div><h2>Training Objective — Variational Bound & MSE Loss</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05</div><h2>Training Objective — Variational Bound & MSE Loss</h2></div>
    <p>Diffusion models are trained to maximize a variational lower bound (ELBO) on the data log-likelihood. The bound decomposes into interpretable terms, each corresponding to a specific learning objective. Understanding this decomposition reveals the connection to score matching and energy-based models.</p>
    <p><strong>ELBO Decomposition.</strong> For a single data point x₀:</p>
    <div class="diagram-wrap"><svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg">
@@ -450,9 +526,11 @@ const details = [
      <div class="feat"><h4>Scalability</h4><p>Simple loss enables efficient training on large datasets and models without careful coefficient tuning or special numerical tricks.</p></div>
    </div>
    <h3>Alternative Objectives</h3>
-   <p>Some variants use weighted losses emphasizing different timesteps (e.g., focusing on SNR schedules), learned noise schedules, or auxiliary losses for likelihood bounds. These refinements rarely improve results significantly over L_simple, underscoring the robustness of the simplified objective. The simplicity of diffusion training is one reason for its widespread adoption over alternatives.</p>`,
+   <p>Some variants use weighted losses emphasizing different timesteps (e.g., focusing on SNR schedules), learned noise schedules, or auxiliary losses for likelihood bounds. These refinements rarely improve results significantly over L_simple, underscoring the robustness of the simplified objective. The simplicity of diffusion training is one reason for its widespread adoption over alternatives.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">06</div><h2>Sampling Acceleration — DDIM, DPM-Solver & Distillation</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06</div><h2>Sampling Acceleration — DDIM, DPM-Solver & Distillation</h2></div>
    <p>Generating samples requires T forward passes (typically 50–1000 steps), making diffusion slow compared to one-shot generation like GANs. Multiple acceleration strategies trade quality for speed, enabling real-time or near-real-time generation.</p>
    <p><strong>DDIM (Denoising Diffusion Implicit Models).</strong> DDIM removes the noise injection from the reverse process, making it deterministic. Instead of the stochastic denoising step, DDIM uses a deterministic update that exactly reconstructs the DDPM trajectory at select timesteps. By skipping steps (sampling every k-th step), DDIM achieves 20–50x speedup with minimal quality loss. The trick is that the trajectory in x-space is nearly deterministic, so stochasticity is less important than solving the ODE accurately.</p>
    <div class="diagram-wrap"><svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
@@ -475,9 +553,11 @@ const details = [
      <div class="feat"><h4>Latent Diffusion</h4><p>Operate in compressed VAE latent space (4x–8x smaller). Reduces computation without explicit step acceleration. Foundation of Stable Diffusion.</p></div>
    </div>
    <h3>Knowledge Distillation</h3>
-   <p>Transfer a large teacher model to a compact student via supervised learning or reinforcement learning. The student learns to generate high-quality samples in fewer steps. Progressive distillation (halving steps per stage) is effective but requires careful tuning. Distillation enables deployment on edge devices, making diffusion practical for mobile and real-time applications.</p>`,
+   <p>Transfer a large teacher model to a compact student via supervised learning or reinforcement learning. The student learns to generate high-quality samples in fewer steps. Progressive distillation (halving steps per stage) is effective but requires careful tuning. Distillation enables deployment on edge devices, making diffusion practical for mobile and real-time applications.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">07</div><h2>Conditional Generation — Classifier & Classifier-Free Guidance</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07</div><h2>Conditional Generation — Classifier & Classifier-Free Guidance</h2></div>
    <p>Controlling the generation process is crucial for practical applications. Guidance techniques steer the diffusion trajectory toward high-probability regions of a desired class or condition, trading diversity for fidelity.</p>
    <p><strong>Classifier Guidance.</strong> A separate classifier p<sub>ψ</sub>(y|x<sub>t</sub>, t) predicts class label y from noisy image x<sub>t</sub>. During sampling, the reverse process is modified to ascend the gradient ∇<sub>x_t</sub> log p<sub>ψ</sub>(y|x<sub>t</sub>, t). This gradient steers x<sub>t</sub> toward regions where the classifier is confident about the target class.</p>
    <div class="diagram-wrap"><svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
@@ -498,9 +578,11 @@ const details = [
      <div class="feat"><h4>Multi-Modal Conditioning</h4><p>Combine text + class label + style embeddings. Multiple guidance scales (one per condition) provide fine-grained control.</p></div>
    </div>
    <h3>Advanced Guidance Strategies</h3>
-   <p>Regional guidance (inpainting, editing): condition on parts of the image, regenerating others. Spatial guidance: steer specific image regions toward classes or attributes. Semantic guidance: using CLIP similarity or other semantic measures to guide generation toward linguistic descriptions. Negation ("avoid red") via negative guidance scales. The flexibility of diffusion's iterative structure enables rich conditioning without retraining.</p>`,
+   <p>Regional guidance (inpainting, editing): condition on parts of the image, regenerating others. Spatial guidance: steer specific image regions toward classes or attributes. Semantic guidance: using CLIP similarity or other semantic measures to guide generation toward linguistic descriptions. Negation ("avoid red") via negative guidance scales. The flexibility of diffusion's iterative structure enables rich conditioning without retraining.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">08</div><h2>State of the Art — Stable Diffusion, DALL-E, Imagen, Video & Discrete Diffusion</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08</div><h2>State of the Art — Stable Diffusion, DALL-E, Imagen, Video & Discrete Diffusion</h2></div>
    <p>Diffusion models have achieved state-of-the-art results across image, video, audio, and discrete data synthesis. Practical systems like Stable Diffusion and DALL-E demonstrate the maturity and scalability of the approach.</p>
    <p><strong>Stable Diffusion.</strong> Operates in the latent space of a pre-trained VAE, reducing computation 4–8x compared to pixel-space diffusion. Uses a U-Net conditioned on text embeddings (from CLIP) via cross-attention. Classifier-free guidance with s ≈ 7.5 balances quality and diversity. Its open-source release enabled widespread adoption, democratizing text-to-image generation. Key: latent space diffusion is crucial for handling 512×512 images efficiently.</p>
    <p><strong>DALL-E 3 & Imagen.</strong> DALL-E 3 combines diffusion with autoregressive decoding and advanced prompting techniques. Imagen (Google) uses a cascaded approach: generate low-resolution image via diffusion, then super-resolve to high resolution with additional diffusion models. Cascading improves efficiency (each stage handles smaller spatial dimensions) and coherence (high-res refinement respects content from low-res).</p>
@@ -515,9 +597,11 @@ const details = [
    <p><strong>Discrete Diffusion.</strong> For text, graphs, or other discrete data, multinomial diffusion or masked language models replace Gaussian noise. The forward process gradually corrupts data by randomly replacing tokens. The reverse process predicts the original token at each position. Discrete diffusion enables generative modeling of non-continuous modalities, extending the paradigm beyond images.</p>
    <h3>Current Capabilities & Limitations</h3>
    <p>Strengths: high-quality image synthesis, flexible conditioning, stable training, diverse output. Weaknesses: slow sampling (mitigated by acceleration), inability to generate very fine details in some cases (e.g., small text), sensitivity to prompt phrasing. Ongoing research addresses these: better schedulers, architectural improvements (transformers), distillation for speed, and hybrid approaches combining diffusion with other generative models (e.g., autoregressive refinement).</p>
-   <p>Diffusion models are now the dominant approach for generative modeling across modalities. Their simplicity, scalability, and quality have made them the de facto standard for text-to-image, image editing, video generation, and beyond. The field continues to evolve rapidly, with advances in speed, control, and multimodal synthesis pushing boundaries toward more capable and efficient generation systems.</p>`,
+   <p>Diffusion models are now the dominant approach for generative modeling across modalities. Their simplicity, scalability, and quality have made them the de facto standard for text-to-image, image editing, video generation, and beyond. The field continues to evolve rapidly, with advances in speed, control, and multimodal synthesis pushing boundaries toward more capable and efficient generation systems.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div><h2>References & <em>Further</em> Reading</h2></div>
+      <div class="detail" id="detail-8">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div><h2>References & <em>Further</em> Reading</h2></div>
    <h3>Foundational Papers</h3>
    <ul>
     <li><a href="https://arxiv.org/abs/2006.11239" target="_blank">Denoising Diffusion Probabilistic Models (Ho et al, 2020)</a> — DDPM, the seminal work on practical diffusion models</li>
@@ -556,75 +640,47 @@ const details = [
    <ul>
     <li><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/" target="_blank">Lilian Weng: What are Diffusion Models?</a></li>
     <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a></li>
-   </ul>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
-        <div class="hero-title"><em>Diffusion</em> Models</div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 7–8 · DDPM, Score Matching & Conditional Generation</span></div>
+   </ul>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -634,96 +690,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -736,10 +748,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

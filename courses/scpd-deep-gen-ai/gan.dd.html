@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -316,51 +317,118 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-// Section data
-const sections = [
-  {num:'01',short:'Adversarial Framework',title:'Adversarial Framework'},
-  {num:'02',short:'GAN Objective',title:'GAN Objective & Loss'},
-  {num:'03',short:'Training Dynamics',title:'Training Dynamics'},
-  {num:'04',short:'Wasserstein GAN',title:'Wasserstein GAN'},
-  {num:'05',short:'Conditional GANs',title:'Conditional GANs'},
-  {num:'06',short:'Progressive & Style',title:'Progressive & Style GANs'},
-  {num:'07',short:'Evaluation Metrics',title:'Evaluation Metrics'},
-  {num:'08',short:'Theory & Limitations',title:'GAN Theory & Limitations'},
-  {num:'09',short:'References',title:'References & Further Reading'}
-];
+<div class="shell">
 
-const summaries = [
-  `<p>Generative Adversarial Networks pit two neural networks in a min-max game: a generator G creates synthetic data from noise, while a discriminator D attempts to distinguish real from fake. This adversarial process drives both networks toward an equilibrium where the generator produces indistinguishable samples.</p>
-   <p>The framework formulates unsupervised learning as a competition. As D improves at detection, G is forced to generate more realistic samples. The Nash equilibrium represents the optimal solution where D cannot improve further.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>The GAN objective function V(G, D) balances two log-likelihood terms: maximizing D's ability to identify real samples and minimizing D's ability to identify fake ones. The generator minimizes the probability of being detected, creating a zero-sum game dynamic.</p>
-   <p>The optimal discriminator D* has a closed form: it outputs the probability that a sample is real given the data. This theoretical insight guides practical training, even though computing D* exactly is intractable. The minimax formulation defines a theoretical global optimum where real and generated distributions align; however, practical optimization with gradient-based methods does not guarantee convergence to this point and often faces challenges such as mode collapse and training instability.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Adversarial Framework"><span class="sidebar-num">01</span><span class="sidebar-label">Adversarial Framework</span></div>
+      <div class="sidebar-item" data-section="1" data-label="GAN Objective"><span class="sidebar-num">02</span><span class="sidebar-label">GAN Objective</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Training Dynamics"><span class="sidebar-num">03</span><span class="sidebar-label">Training Dynamics</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Wasserstein GAN"><span class="sidebar-num">04</span><span class="sidebar-label">Wasserstein GAN</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Conditional GANs"><span class="sidebar-num">05</span><span class="sidebar-label">Conditional GANs</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Progressive & Style"><span class="sidebar-num">06</span><span class="sidebar-label">Progressive & Style</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Evaluation Metrics"><span class="sidebar-num">07</span><span class="sidebar-label">Evaluation Metrics</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Theory & Limitations"><span class="sidebar-num">08</span><span class="sidebar-label">Theory & Limitations</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>Training GANs requires alternating gradient updates: D is updated to maximize classification accuracy, while G is updated to fool D. Instability arises from this sequential optimization—when one network is overparameterized, training can diverge or collapse to trivial solutions.</p>
-   <p>Mode collapse occurs when G learns to generate only a subset of the data distribution's modes, evading D's discrimination while avoiding the complexity of full coverage. Non-convergence is endemic: theoretical guarantees are weak, and practice shows oscillation between network improvements rather than stable equilibrium. Careful hyperparameter tuning, architectural choices, and training protocols are essential.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
+        <div class="hero-title">Generative Adversarial <em>Networks</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 3–4 · Adversarial Training & Wasserstein Distance</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>Wasserstein GANs address training instability by replacing the divergence metric. Instead of KL or JS divergence, WGAN uses Earth Mover's distance, which provides a smoother gradient landscape. Weight clipping constrains the discriminator to be 1-Lipschitz, ensuring the loss is a valid metric on the space of distributions.</p>
-   <p>Spectral normalization and gradient penalty further stabilize training by controlling discriminator gradients. Wasserstein loss provides a meaningful training signal even when distributions are disjoint, enabling mode coverage and more reliable convergence. These techniques have become standard practice in modern GAN training.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Adversarial Framework</h2>
+          <p>Generative Adversarial Networks pit two neural networks in a min-max game: a generator G creates synthetic data from noise, while a discriminator D attempts to distinguish real from fake. This adversarial process drives both networks toward an equilibrium where the generator produces indistinguishable samples.</p>
+   <p>The framework formulates unsupervised learning as a competition. As D improves at detection, G is forced to generate more realistic samples. The Nash equilibrium represents the optimal solution where D cannot improve further.</p>
+        </div>
 
-  `<p>Conditional GANs inject class labels into both generator and discriminator, enabling controlled generation. The class information guides G to generate samples from a specific class, while D learns to discriminate both on authenticity and class consistency. This extends GANs from unsupervised to semi-supervised learning.</p>
-   <p>Pix2pix applies cGANs to image-to-image translation: paired images condition the generator to learn fine-grained transformations like sketch-to-photograph or day-to-night. The discriminator becomes a "patch discriminator," evaluating local realism rather than global authenticity, improving fine detail synthesis.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>GAN Objective & Loss</h2>
+          <p>The GAN objective function V(G, D) balances two log-likelihood terms: maximizing D's ability to identify real samples and minimizing D's ability to identify fake ones. The generator minimizes the probability of being detected, creating a zero-sum game dynamic.</p>
+   <p>The optimal discriminator D* has a closed form: it outputs the probability that a sample is real given the data. This theoretical insight guides practical training, even though computing D* exactly is intractable. The minimax formulation defines a theoretical global optimum where real and generated distributions align; however, practical optimization with gradient-based methods does not guarantee convergence to this point and often faces challenges such as mode collapse and training instability.</p>
+        </div>
 
-  `<p>Progressive GANs grow the network architecture layer-by-layer during training, starting with low resolution and gradually adding detail. This accelerates convergence and improves stability by allowing the generator to first learn coarse structure before refining details. StyleGAN extends this with a mapping network that translates latent codes into style parameters.</p>
-   <p>StyleGAN uses adaptive instance normalization (AdaIN) to inject style information at multiple scales, decoupling content from style. Latent interpolation in the intermediate style space produces smooth, high-quality transitions. These architectural innovations enable stable training of high-resolution image generation, exemplified by face synthesis at 1024×1024.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Training Dynamics</h2>
+          <p>Training GANs requires alternating gradient updates: D is updated to maximize classification accuracy, while G is updated to fool D. Instability arises from this sequential optimization—when one network is overparameterized, training can diverge or collapse to trivial solutions.</p>
+   <p>Mode collapse occurs when G learns to generate only a subset of the data distribution's modes, evading D's discrimination while avoiding the complexity of full coverage. Non-convergence is endemic: theoretical guarantees are weak, and practice shows oscillation between network improvements rather than stable equilibrium. Careful hyperparameter tuning, architectural choices, and training protocols are essential.</p>
+        </div>
 
-  `<p>Evaluating GANs is challenging because they lack explicit likelihood models. Inception Score (IS) measures sample diversity and quality using a pre-trained classifier, but is sensitive to mode collapse. Fréchet Inception Distance (FID) compares feature distributions between real and generated samples, providing more robust evaluation.</p>
-   <p>Precision and recall metrics directly measure mode coverage: precision quantifies the fraction of generated samples within the data manifold, while recall measures the fraction of data modes captured by the generator. Together with FID, these metrics provide comprehensive evaluation of both quality and diversity in generated samples.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Wasserstein GAN</h2>
+          <p>Wasserstein GANs address training instability by replacing the divergence metric. Instead of KL or JS divergence, WGAN uses Earth Mover's distance, which provides a smoother gradient landscape. Weight clipping constrains the discriminator to be 1-Lipschitz, ensuring the loss is a valid metric on the space of distributions.</p>
+   <p>Spectral normalization and gradient penalty further stabilize training by controlling discriminator gradients. Wasserstein loss provides a meaningful training signal even when distributions are disjoint, enabling mode coverage and more reliable convergence. These techniques have become standard practice in modern GAN training.</p>
+        </div>
 
-  `<p>GANs lack a likelihood-based training objective, making theoretical analysis difficult. However, the minimax framework guarantees convergence under restrictive assumptions (continuous distributions, sufficient capacity, infinite optimization). In practice, these assumptions rarely hold, and networks exhibit oscillation rather than convergence.</p>
-   <p>The diversity-quality tradeoff is fundamental: generating highly realistic samples requires fine-tuning to a narrow distribution, while maintaining diversity requires exploring the full data manifold. Truncation tricks trade diversity for quality by sampling latent codes from a restricted region. Understanding these limitations guides proper application: GANs excel at high-quality synthesis but require careful validation of mode coverage and diversity.</p>`,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Conditional GANs</h2>
+          <p>Conditional GANs inject class labels into both generator and discriminator, enabling controlled generation. The class information guides G to generate samples from a specific class, while D learns to discriminate both on authenticity and class consistency. This extends GANs from unsupervised to semi-supervised learning.</p>
+   <p>Pix2pix applies cGANs to image-to-image translation: paired images condition the generator to learn fine-grained transformations like sketch-to-photograph or day-to-night. The discriminator becomes a "patch discriminator," evaluating local realism rather than global authenticity, improving fine detail synthesis.</p>
+        </div>
 
-  `<p>Generative Adversarial Networks introduced a paradigm shift through adversarial training. This section gathers foundational papers, improvements, and resources for understanding the GAN framework from theory to modern applications in image generation and beyond.</p>
-   <p>From the original formulation to conditional variants and architectural innovations, these materials trace the evolution and impact of adversarial training in deep generative modeling.</p>`
-];
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Progressive & Style GANs</h2>
+          <p>Progressive GANs grow the network architecture layer-by-layer during training, starting with low resolution and gradually adding detail. This accelerates convergence and improves stability by allowing the generator to first learn coarse structure before refining details. StyleGAN extends this with a mapping network that translates latent codes into style parameters.</p>
+   <p>StyleGAN uses adaptive instance normalization (AdaIN) to inject style information at multiple scales, decoupling content from style. Latent interpolation in the intermediate style space produces smooth, high-quality transitions. These architectural innovations enable stable training of high-resolution image generation, exemplified by face synthesis at 1024×1024.</p>
+        </div>
 
-const details = [
-  `<div class="detail-header">
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Evaluation Metrics</h2>
+          <p>Evaluating GANs is challenging because they lack explicit likelihood models. Inception Score (IS) measures sample diversity and quality using a pre-trained classifier, but is sensitive to mode collapse. Fréchet Inception Distance (FID) compares feature distributions between real and generated samples, providing more robust evaluation.</p>
+   <p>Precision and recall metrics directly measure mode coverage: precision quantifies the fraction of generated samples within the data manifold, while recall measures the fraction of data modes captured by the generator. Together with FID, these metrics provide comprehensive evaluation of both quality and diversity in generated samples.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>GAN Theory & Limitations</h2>
+          <p>GANs lack a likelihood-based training objective, making theoretical analysis difficult. However, the minimax framework guarantees convergence under restrictive assumptions (continuous distributions, sufficient capacity, infinite optimization). In practice, these assumptions rarely hold, and networks exhibit oscillation rather than convergence.</p>
+   <p>The diversity-quality tradeoff is fundamental: generating highly realistic samples requires fine-tuning to a narrow distribution, while maintaining diversity requires exploring the full data manifold. Truncation tricks trade diversity for quality by sampling latent codes from a restricted region. Understanding these limitations guides proper application: GANs excel at high-quality synthesis but require careful validation of mode coverage and diversity.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & Further Reading</h2>
+          <p>Generative Adversarial Networks introduced a paradigm shift through adversarial training. This section gathers foundational papers, improvements, and resources for understanding the GAN framework from theory to modern applications in image generation and beyond.</p>
+   <p>From the original formulation to conditional variants and architectural innovations, these materials trace the evolution and impact of adversarial training in deep generative modeling.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header">
      <div class="num"><span>01</span></div>
      <h2><em>Adversarial</em> Framework</h2>
    </div>
@@ -397,9 +465,11 @@ const details = [
        <path d="M 320 215 L 200 215" stroke="#8b2020" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
        <text x="250" y="235" class="lbl-hi">feedback</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-1">
+        <div class="detail-header">
      <div class="num"><span>02</span></div>
      <h2><em>GAN</em> Objective & Loss</h2>
    </div>
@@ -427,9 +497,11 @@ const details = [
        <text x="40" y="240" class="lbl" style="font-size: 11px; font-family: monospace;">D*(x) = p_data(x) / (p_data(x) + p_G(x))</text>
        <text x="40" y="260" class="lbl" style="font-size: 11px;">When G = p_data, D*(x) = 0.5 everywhere</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-2">
+        <div class="detail-header">
      <div class="num"><span>03</span></div>
      <h2><em>Training</em> Dynamics</h2>
    </div>
@@ -446,9 +518,11 @@ const details = [
    <p>Early stopping based on validation metrics is standard. Checkpointing throughout training and selecting the best checkpoint (not the final one) often yields better results than waiting for convergence that may never arrive.</p>
    <h3>Hyperparameter Sensitivity</h3>
    <p>GANs exhibit high sensitivity to hyperparameters. Learning rates too high cause oscillation and divergence; too low cause slow, unstable training. The ratio of discriminator to generator learning rates matters significantly. Architecture choices (layer norm vs batch norm, activation functions, capacity ratios) heavily influence stability.</p>
-   <p>Initialization is critical: poor initialization can prevent the generator from even receiving useful gradients from the discriminator early in training. Spectral normalization on the discriminator provides automatic regularization, improving training stability across hyperparameter ranges.</p>`,
+   <p>Initialization is critical: poor initialization can prevent the generator from even receiving useful gradients from the discriminator early in training. Spectral normalization on the discriminator provides automatic regularization, improving training stability across hyperparameter ranges.</p>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-3">
+        <div class="detail-header">
      <div class="num"><span>04</span></div>
      <h2><em>Wasserstein</em> GAN</h2>
    </div>
@@ -474,9 +548,11 @@ const details = [
        <text x="50" y="195" class="lbl" style="font-size: 11px;">• Training loss correlates with sample quality</text>
        <text x="50" y="215" class="lbl" style="font-size: 11px;">• Spectral normalization stabilizes without clipping</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-4">
+        <div class="detail-header">
      <div class="num"><span>05</span></div>
      <h2><em>Conditional</em> GANs</h2>
    </div>
@@ -493,9 +569,11 @@ const details = [
    <p>Class information is typically injected via concatenation with latent vectors, or more sophisticatedly via embedding layers and attention mechanisms. The choice affects how tightly class identity is enforced versus how much freedom z has to modulate style and details.</p>
    <h3>Additional Conditioning Mechanisms</h3>
    <p>Beyond class labels and source images, GANs can be conditioned on text descriptions (text-to-image synthesis), audio (speech-to-video), semantic layouts, depth maps, or any structured input. Each conditioning modality requires appropriate encoding (embeddings for discrete, CNNs for images, etc.).</p>
-   <p>Multi-modal conditioning is also possible: generating high-resolution faces from low-resolution faces and a text description. The generator must learn to reconcile potentially conflicting conditions and produce coherent outputs. This is more challenging but enables richer, more controllable generation.</p>`,
+   <p>Multi-modal conditioning is also possible: generating high-resolution faces from low-resolution faces and a text description. The generator must learn to reconcile potentially conflicting conditions and produce coherent outputs. This is more challenging but enables richer, more controllable generation.</p>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-5">
+        <div class="detail-header">
      <div class="num"><span>06</span></div>
      <h2><em>Progressive</em> & Style GANs</h2>
    </div>
@@ -535,9 +613,11 @@ const details = [
        <path d="M 200 180 L 200 210 L 330 210 L 330 180" stroke="#4ee8d0" stroke-width="1.5" fill="none"/>
        <text x="265" y="225" class="lbl-hi" style="font-size: 11px;">repeat at each layer</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-6">
+        <div class="detail-header">
      <div class="num"><span>07</span></div>
      <h2><em>Evaluation</em> Metrics</h2>
    </div>
@@ -554,9 +634,11 @@ const details = [
    <p>Precision and recall require defining a threshold distance in feature space. Different thresholds give different values, so reporting multiple thresholds is common. These metrics offer a clear conceptual framework but are computationally expensive (requiring nearest neighbor search over large sample sets).</p>
    <h3>Other Evaluation Approaches</h3>
    <p>Human evaluation is considered a gold standard but is expensive and subjective. User studies comparing generated samples to real samples yield ground-truth quality assessments. However, these are expensive to conduct and difficult to standardize across research groups.</p>
-   <p>Task-specific metrics are also employed: for super-resolution, PSNR and SSIM measure pixel-level fidelity; for segmentation-guided generation, IoU measures mask accuracy. For text-to-image synthesis, CLIP score measures alignment with descriptions. While not universally applicable, these metrics provide clear insights within their specific application domains.</p>`,
+   <p>Task-specific metrics are also employed: for super-resolution, PSNR and SSIM measure pixel-level fidelity; for segmentation-guided generation, IoU measures mask accuracy. For text-to-image synthesis, CLIP score measures alignment with descriptions. While not universally applicable, these metrics provide clear insights within their specific application domains.</p>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-7">
+        <div class="detail-header">
      <div class="num"><span>08</span></div>
      <h2><em>GAN</em> Theory & Limitations</h2>
    </div>
@@ -589,9 +671,11 @@ const details = [
        <path d="M 100 180 L 400 120" stroke="#8b2020" stroke-width="1.5" stroke-dasharray="4,2"/>
        <text x="250" y="160" class="lbl-hi" style="font-size: 11px; text-anchor: middle;">Pareto frontier</text>
      </svg>
-   </div>`,
+   </div>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-8">
+        <div class="detail-header">
      <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> 09</div>
      <h2>References & <em>Further</em> Reading</h2>
    </div>
@@ -625,75 +709,47 @@ const details = [
    <ul>
     <li><a href="https://lilianweng.github.io/posts/2017-08-20-gan/" target="_blank">Lilian Weng: From GAN to WGAN</a></li>
     <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a></li>
-   </ul>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
-        <div class="hero-title">Generative Adversarial <em>Networks</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 3–4 · Adversarial Training & Wasserstein Distance</span></div>
+   </ul>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -703,96 +759,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -805,10 +817,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

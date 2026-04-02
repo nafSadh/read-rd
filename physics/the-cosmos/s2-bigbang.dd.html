@@ -15,42 +15,107 @@ sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:v
   </style>
 </head>
 <body data-theme="light">
-<script>
-const sections = [
-  { num: '01', short: 'Hot Big Bang', title: 'The <em>Hot</em> Big Bang' },
-  { num: '02', short: 'Nucleosynthesis', title: 'The <em>First</em> Three Minutes' },
-  { num: '03', short: 'Recombination', title: '<em>Recombination</em> &amp; the CMB' },
-  { num: '04', short: 'CMB Missions', title: '<em>COBE</em>, WMAP, Planck' },
-  { num: '05', short: 'Anisotropies', title: '<em>Seeds</em> of Structure' },
-  { num: '06', short: 'Inflation', title: '<em>Inflation</em>: The First 10<sup>&minus;32</sup> Seconds' },
-  { num: '07', short: 'Evidence', title: '<em>Evidence</em> &amp; Critique' },
-  { num: '08', short: 'Consensus', title: 'What <em>We</em> Know' }
-];
 
-const summaries = [
-  `<p>The universe began <strong>13.8 billion years ago</strong> in a state of extreme density and temperature. Three pillars of evidence support this: the Hubble expansion, the cosmic microwave background, and the primordial element abundances. The Big Bang is not an explosion <em>in</em> space but an expansion <em>of</em> space.<sup class="fn"><a>[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Cosmic_microwave_background" target="_blank">BB-01 Wikipedia: CMB &rarr;</a></span></sup></p>
-   <div class="s-stat"><div class="st"><div class="sv">13.8 Gyr</div><div class="sl">Age</div></div><div class="st"><div class="sv">2.725 K</div><div class="sl">CMB temperature</div></div><div class="st"><div class="sv">75 / 25%</div><div class="sl">H / He ratio</div></div><div class="st"><div class="sv">3</div><div class="sl">pillars of evidence</div></div></div>`,
+<div class="shell">
 
-  `<p>In the first few minutes after the Big Bang, the universe was a nuclear reactor. Protons and neutrons fused into hydrogen, helium, and traces of lithium and deuterium. The predicted abundances match observations with extraordinary precision &mdash; except for lithium, which remains <strong>3&ndash;5&times; lower</strong> than predicted. This &ldquo;lithium problem&rdquo; is one of the few cracks in Big Bang cosmology.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>At <strong>380,000 years</strong> (redshift z &asymp; 1100), the universe cooled to ~3,000 K. Protons captured electrons to form neutral hydrogen. Photons decoupled from matter and streamed freely &mdash; these are the CMB photons we observe today, redshifted from 3,000 K to 2.725 K by cosmic expansion. This is the universe&rsquo;s earliest observable snapshot.</p>
-   <div class="s-stat"><div class="st"><div class="sv">380,000 yr</div><div class="sl">age at recombination</div></div><div class="st"><div class="sv">z &asymp; 1100</div><div class="sl">redshift</div></div><div class="st"><div class="sv">3,000 K</div><div class="sl">temp at decoupling</div></div><div class="st"><div class="sv">2.725 K</div><div class="sl">observed today</div></div></div>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">B<em>B</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Hot Big Bang"><span class="sidebar-num">01</span><span class="sidebar-label">Hot Big Bang</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Nucleosynthesis"><span class="sidebar-num">02</span><span class="sidebar-label">Nucleosynthesis</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Recombination"><span class="sidebar-num">03</span><span class="sidebar-label">Recombination</span></div>
+      <div class="sidebar-item" data-section="3" data-label="CMB Missions"><span class="sidebar-num">04</span><span class="sidebar-label">CMB Missions</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Anisotropies"><span class="sidebar-num">05</span><span class="sidebar-label">Anisotropies</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Inflation"><span class="sidebar-num">06</span><span class="sidebar-label">Inflation</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Evidence"><span class="sidebar-num">07</span><span class="sidebar-label">Evidence</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Consensus"><span class="sidebar-num">08</span><span class="sidebar-label">Consensus</span></div>
+    </div>
+  </nav>
 
-  `<p>Three space missions transformed cosmology. <strong>COBE</strong> (1989) confirmed the CMB&rsquo;s blackbody spectrum and first detected anisotropies. <strong>WMAP</strong> (2001) delivered precision cosmology. <strong>Planck</strong> (2009) produced the finest CMB map ever, fitting the entire universe with just <strong>6 parameters</strong>.<sup class="fn"><a>[3]</a><span class="tip"><a href="https://www.esa.int/Science_Exploration/Space_Science/Planck/Planck_and_the_cosmic_microwave_background" target="_blank">BB-03 ESA: Planck Mission &rarr;</a></span></sup></p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> THE COSMOS &middot; S2 &middot; 7 SOURCES</div>
+        <div class="hero-title">The Big Bang &amp; <em>CMB</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>The first 380,000 years &mdash; from quantum fluctuations to the universe&rsquo;s baby photo</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>The CMB anisotropies &mdash; tiny temperature variations of ~30 microkelvin &mdash; are the seeds from which all cosmic structure grew. The power spectrum encodes acoustic oscillations in the primordial plasma: the first peak confirms flat geometry, peak ratios encode baryon and dark matter densities, and the spectral index is <strong>nearly scale-invariant</strong> (n<sub>s</sub> = 0.965) &mdash; as inflation predicts.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Hot</em> Big Bang</h2>
+          <p>The universe began <strong>13.8 billion years ago</strong> in a state of extreme density and temperature. Three pillars of evidence support this: the Hubble expansion, the cosmic microwave background, and the primordial element abundances. The Big Bang is not an explosion <em>in</em> space but an expansion <em>of</em> space.<sup class="fn"><a>[1]</a><span class="tip"><a href="https://en.wikipedia.org/wiki/Cosmic_microwave_background" target="_blank">BB-01 Wikipedia: CMB &rarr;</a></span></sup></p>
+   <div class="s-stat"><div class="st"><div class="sv">13.8 Gyr</div><div class="sl">Age</div></div><div class="st"><div class="sv">2.725 K</div><div class="sl">CMB temperature</div></div><div class="st"><div class="sv">75 / 25%</div><div class="sl">H / He ratio</div></div><div class="st"><div class="sv">3</div><div class="sl">pillars of evidence</div></div></div>
+        </div>
 
-  `<p>Two problems haunted the standard Big Bang: why is the CMB the same temperature everywhere (<strong>horizon problem</strong>), and why is the universe so precisely flat (<strong>flatness problem</strong>)? Alan Guth&rsquo;s 1980 proposal of <strong>cosmic inflation</strong><sup class="fn"><a>[5]</a><span class="tip"><a href="https://www.symmetrymagazine.org/article/cosmic-inflation" target="_blank">BB-05 Symmetry Mag: Cosmic Inflation &rarr;</a></span></sup> &mdash; exponential expansion from 10<sup>&minus;36</sup> to 10<sup>&minus;32</sup> seconds &mdash; solved both, stretching a sub-proton patch to larger than the observable universe.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>First</em> Three Minutes</h2>
+          <p>In the first few minutes after the Big Bang, the universe was a nuclear reactor. Protons and neutrons fused into hydrogen, helium, and traces of lithium and deuterium. The predicted abundances match observations with extraordinary precision &mdash; except for lithium, which remains <strong>3&ndash;5&times; lower</strong> than predicted. This &ldquo;lithium problem&rdquo; is one of the few cracks in Big Bang cosmology.</p>
+        </div>
 
-  `<p>Inflation has strong circumstantial evidence: scale-invariant perturbations, Gaussian statistics, a flat universe. But its smoking gun &mdash; primordial B-mode polarization &mdash; remains <strong>undetected</strong> (r &lt; 0.036).<sup class="fn"><a>[7]</a><span class="tip"><a href="https://arxiv.org/abs/2407.03577" target="_blank">BB-07 Wang: Inflation Constraints 2024 &rarr;</a></span></sup> Critics argue that inflation requires its own fine-tuning and that &ldquo;eternal inflation&rdquo; makes the theory unfalsifiable. Next-generation experiments may settle this within a decade.</p>
-   <div class="s-stat"><div class="st"><div class="sv">n<sub>s</sub> = 0.965</div><div class="sl">spectral index</div></div><div class="st"><div class="sv">r &lt; 0.036</div><div class="sl">tensor ratio bound</div></div><div class="st"><div class="sv">~2032</div><div class="sl">LiteBIRD launch</div></div></div>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Recombination</em> &amp; the CMB</h2>
+          <p>At <strong>380,000 years</strong> (redshift z &asymp; 1100), the universe cooled to ~3,000 K. Protons captured electrons to form neutral hydrogen. Photons decoupled from matter and streamed freely &mdash; these are the CMB photons we observe today, redshifted from 3,000 K to 2.725 K by cosmic expansion. This is the universe&rsquo;s earliest observable snapshot.</p>
+   <div class="s-stat"><div class="st"><div class="sv">380,000 yr</div><div class="sl">age at recombination</div></div><div class="st"><div class="sv">z &asymp; 1100</div><div class="sl">redshift</div></div><div class="st"><div class="sv">3,000 K</div><div class="sl">temp at decoupling</div></div><div class="st"><div class="sv">2.725 K</div><div class="sl">observed today</div></div></div>
+        </div>
 
-  `<p>Five points of consensus:</p>
-   <ul class="s-list pro"><li>The CMB is real, thermal, and precisely characterized to 6 parameters</li><li>&Lambda;CDM fits the data remarkably well</li><li>Inflation is the leading explanation for flatness, horizon, and seed perturbations</li><li>Primordial nucleosynthesis is confirmed for hydrogen and helium</li><li>Next-generation CMB experiments (LiteBIRD, CMB-S4) may detect primordial gravitational waves</li></ul>`
-];
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>COBE</em>, WMAP, Planck</h2>
+          <p>Three space missions transformed cosmology. <strong>COBE</strong> (1989) confirmed the CMB&rsquo;s blackbody spectrum and first detected anisotropies. <strong>WMAP</strong> (2001) delivered precision cosmology. <strong>Planck</strong> (2009) produced the finest CMB map ever, fitting the entire universe with just <strong>6 parameters</strong>.<sup class="fn"><a>[3]</a><span class="tip"><a href="https://www.esa.int/Science_Exploration/Space_Science/Planck/Planck_and_the_cosmic_microwave_background" target="_blank">BB-03 ESA: Planck Mission &rarr;</a></span></sup></p>
+        </div>
 
-const details = [
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div><h2>The <em>Hot</em> Big Bang</h2></div>
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Seeds</em> of Structure</h2>
+          <p>The CMB anisotropies &mdash; tiny temperature variations of ~30 microkelvin &mdash; are the seeds from which all cosmic structure grew. The power spectrum encodes acoustic oscillations in the primordial plasma: the first peak confirms flat geometry, peak ratios encode baryon and dark matter densities, and the spectral index is <strong>nearly scale-invariant</strong> (n<sub>s</sub> = 0.965) &mdash; as inflation predicts.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Inflation</em>: The First 10<sup>&minus;32</sup> Seconds</h2>
+          <p>Two problems haunted the standard Big Bang: why is the CMB the same temperature everywhere (<strong>horizon problem</strong>), and why is the universe so precisely flat (<strong>flatness problem</strong>)? Alan Guth&rsquo;s 1980 proposal of <strong>cosmic inflation</strong><sup class="fn"><a>[5]</a><span class="tip"><a href="https://www.symmetrymagazine.org/article/cosmic-inflation" target="_blank">BB-05 Symmetry Mag: Cosmic Inflation &rarr;</a></span></sup> &mdash; exponential expansion from 10<sup>&minus;36</sup> to 10<sup>&minus;32</sup> seconds &mdash; solved both, stretching a sub-proton patch to larger than the observable universe.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Evidence</em> &amp; Critique</h2>
+          <p>Inflation has strong circumstantial evidence: scale-invariant perturbations, Gaussian statistics, a flat universe. But its smoking gun &mdash; primordial B-mode polarization &mdash; remains <strong>undetected</strong> (r &lt; 0.036).<sup class="fn"><a>[7]</a><span class="tip"><a href="https://arxiv.org/abs/2407.03577" target="_blank">BB-07 Wang: Inflation Constraints 2024 &rarr;</a></span></sup> Critics argue that inflation requires its own fine-tuning and that &ldquo;eternal inflation&rdquo; makes the theory unfalsifiable. Next-generation experiments may settle this within a decade.</p>
+   <div class="s-stat"><div class="st"><div class="sv">n<sub>s</sub> = 0.965</div><div class="sl">spectral index</div></div><div class="st"><div class="sv">r &lt; 0.036</div><div class="sl">tensor ratio bound</div></div><div class="st"><div class="sv">~2032</div><div class="sl">LiteBIRD launch</div></div></div>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>What <em>We</em> Know</h2>
+          <p>Five points of consensus:</p>
+   <ul class="s-list pro"><li>The CMB is real, thermal, and precisely characterized to 6 parameters</li><li>&Lambda;CDM fits the data remarkably well</li><li>Inflation is the leading explanation for flatness, horizon, and seed perturbations</li><li>Primordial nucleosynthesis is confirmed for hydrogen and helium</li><li>Next-generation CMB experiments (LiteBIRD, CMB-S4) may detect primordial gravitational waves</li></ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div><h2>The <em>Hot</em> Big Bang</h2></div>
 
 <h3>Three Pillars of Evidence</h3>
 <p>The Big Bang theory rests on three independent lines of evidence, each discovered decades apart, each pointing to the same origin story. The first is Hubble expansion: in 1929, Edwin Hubble showed that galaxies are receding from us, and the further away they are, the faster they recede. Run the movie backward and everything converges to a single hot, dense point roughly 13.8 billion years ago.</p>
@@ -90,9 +155,11 @@ const details = [
 <div class="callout"><h4>Key Insight</h4><p>The Big Bang happened everywhere simultaneously. Observing the CMB means observing the Big Bang &mdash; or more precisely, the moment 380,000 years later when the universe first became transparent. Every direction reveals this same moment.</p></div>
 
 <h3>What Came Before?</h3>
-<p>General relativity predicts a singularity at t = 0 &mdash; a point of infinite density where physics breaks down. This is widely regarded not as a real prediction but as a sign that GR fails at extreme densities and a quantum theory of gravity is needed. Proposals include the Hartle-Hawking &ldquo;no boundary&rdquo; condition (time becomes space-like near the origin, so &ldquo;before&rdquo; is meaningless), Penrose&rsquo;s conformal cyclic cosmology, and various bouncing models from loop quantum gravity. None is confirmed.</p>`,
+<p>General relativity predicts a singularity at t = 0 &mdash; a point of infinite density where physics breaks down. This is widely regarded not as a real prediction but as a sign that GR fails at extreme densities and a quantum theory of gravity is needed. Proposals include the Hartle-Hawking &ldquo;no boundary&rdquo; condition (time becomes space-like near the origin, so &ldquo;before&rdquo; is meaningless), Penrose&rsquo;s conformal cyclic cosmology, and various bouncing models from loop quantum gravity. None is confirmed.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">02</div><h2>The <em>First</em> Three Minutes</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02</div><h2>The <em>First</em> Three Minutes</h2></div>
 
 <h3>A Universe-Sized Nuclear Reactor</h3>
 <p>For the first few minutes after the Big Bang, the entire universe was a nuclear furnace. Temperatures exceeded a billion kelvin &mdash; hot enough for protons and neutrons to fuse. The physics of this epoch is remarkably well understood because it involves nuclear reactions at energies accessible to particle accelerators. We can literally reproduce Big Bang conditions (in terms of energy per particle) in the lab.</p>
@@ -137,9 +204,11 @@ const details = [
 <h3>The Lithium Problem</h3>
 <p>Nucleosynthesis predictions for hydrogen and helium-4 match observations beautifully. Deuterium also agrees well. But lithium-7 is observed at 3&ndash;5 times below the predicted abundance. This is not a minor discrepancy &mdash; it has persisted for decades and resisted multiple attempts at resolution. Possible explanations include: stellar depletion (lithium is destroyed inside stars, and what we observe is post-processed), non-standard nuclear reaction rates, new particles that alter the neutron-to-proton ratio, or systematic errors in the extremely challenging observations of primordial lithium. None is conclusive.</p>
 
-<div class="callout"><h4>The Precision of BBN</h4><p>Big Bang nucleosynthesis is remarkable for what it gets right: from one free parameter (the baryon-to-photon ratio, measured independently from the CMB), it predicts the abundances of four elements across twelve orders of magnitude. The lithium discrepancy is the only significant failure &mdash; and even skeptics agree it may have a mundane explanation.</p></div>`,
+<div class="callout"><h4>The Precision of BBN</h4><p>Big Bang nucleosynthesis is remarkable for what it gets right: from one free parameter (the baryon-to-photon ratio, measured independently from the CMB), it predicts the abundances of four elements across twelve orders of magnitude. The lithium discrepancy is the only significant failure &mdash; and even skeptics agree it may have a mundane explanation.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">03</div><h2><em>Recombination</em> &amp; the CMB</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03</div><h2><em>Recombination</em> &amp; the CMB</h2></div>
 
 <h3>The Universe Becomes Transparent</h3>
 <p>For the first 380,000 years, the universe was opaque. Photons were trapped in a dense plasma, constantly scattering off free electrons in a fog of ionized hydrogen. The photon mean free path was absurdly short &mdash; a photon could travel only a few centimeters before hitting an electron. Information could not propagate. The universe was a glowing, featureless wall of light.</p>
@@ -173,9 +242,11 @@ const details = [
 <h3>A Perfect Blackbody</h3>
 <p>The CMB spectrum is the most perfect blackbody ever measured. COBE&rsquo;s FIRAS instrument (1990) showed deviations from a Planck spectrum of less than 50 parts per million. This tells us the early universe was in nearly perfect thermal equilibrium &mdash; precisely what the hot Big Bang model predicts. Any energy-injecting process after recombination (decaying particles, black holes) would distort this spectrum. The near-perfection constrains such processes to extraordinary precision.</p>
 
-<div class="callout"><h4>Why &ldquo;Recombination&rdquo;?</h4><p>The name is a historical accident. Protons and electrons had never been combined before &mdash; they were combining for the first time. But the term was borrowed from plasma physics, where ionized gas &ldquo;recombines,&rdquo; and the name stuck. Cosmologists occasionally use &ldquo;the epoch of first combination&rdquo; but the standard term endures.</p></div>`,
+<div class="callout"><h4>Why &ldquo;Recombination&rdquo;?</h4><p>The name is a historical accident. Protons and electrons had never been combined before &mdash; they were combining for the first time. But the term was borrowed from plasma physics, where ionized gas &ldquo;recombines,&rdquo; and the name stuck. Cosmologists occasionally use &ldquo;the epoch of first combination&rdquo; but the standard term endures.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">04</div><h2><em>COBE</em>, WMAP, Planck</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04</div><h2><em>COBE</em>, WMAP, Planck</h2></div>
 
 <h3>COBE: The First Map (1989)</h3>
 <p>The Cosmic Background Explorer was NASA&rsquo;s first dedicated CMB satellite. Its FIRAS instrument confirmed the blackbody spectrum with extraordinary precision. Its DMR instrument detected anisotropies &mdash; temperature variations of ~30 microkelvin, one part in 100,000. George Smoot, at the 1992 press conference, called it &ldquo;looking at the face of God.&rdquo; He and John Mather shared the 2006 Nobel Prize. COBE proved that the early universe was not perfectly smooth &mdash; it had the seeds of all future structure.</p>
@@ -220,9 +291,11 @@ const details = [
 <p>ESA&rsquo;s Planck satellite produced the finest CMB map ever &mdash; and likely the finest possible from space (the CMB itself limits ultimate resolution through Silk damping). Planck&rsquo;s six-parameter &Lambda;CDM fit is breathtaking in its economy: from just six numbers &mdash; baryon density, cold dark matter density, dark energy density, optical depth to reionization, scalar spectral index, and amplitude of perturbations &mdash; you can predict the full 2,500+ multipole power spectrum. The fit is extraordinary. It&rsquo;s as if Newton had derived planetary orbits from six initial conditions.</p>
 <p>The Planck results refined the cosmic composition: 4.9% ordinary matter, 26.8% dark matter, 68.3% dark energy. Age: 13.799 &pm; 0.021 billion years. Hubble constant: 67.4 &pm; 0.5 km/s/Mpc &mdash; significantly lower than local measurements (~73 km/s/Mpc), creating what is now called the Hubble tension (see <a href="s7-frontiers.dd.html" title="Observational Frontiers">S7</a>).</p>
 
-<div class="callout"><h4>Six Numbers</h4><p>The universe&rsquo;s entire large-scale structure can be predicted from six parameters measured by Planck. This is either the most elegant model in physics &mdash; or a sign that we are overfitting a model we don&rsquo;t fully understand. The Hubble tension suggests the latter may have some truth.</p></div>`,
+<div class="callout"><h4>Six Numbers</h4><p>The universe&rsquo;s entire large-scale structure can be predicted from six parameters measured by Planck. This is either the most elegant model in physics &mdash; or a sign that we are overfitting a model we don&rsquo;t fully understand. The Hubble tension suggests the latter may have some truth.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">05</div><h2><em>Seeds</em> of Structure</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05</div><h2><em>Seeds</em> of Structure</h2></div>
 
 <h3>Acoustic Oscillations</h3>
 <p>Before recombination, photons and baryons were locked in a tightly coupled fluid. Gravity pulled matter into overdense regions; radiation pressure pushed it back out. The result was sound waves &mdash; acoustic oscillations in the primordial plasma. These waves had been ringing since inflation ended, and at recombination (380,000 years), they froze in place. The pattern of peaks and troughs in the CMB power spectrum is a snapshot of these frozen sound waves.</p>
@@ -257,9 +330,11 @@ const details = [
 <h3>From Fluctuations to Galaxies</h3>
 <p>The CMB anisotropies are the seeds of all cosmic structure. Where the primordial plasma was slightly denser, gravity eventually won: matter accumulated, forming the first stars (at ~100&ndash;400 Myr), then galaxies, then clusters, then the cosmic web. The entire hierarchy of structure &mdash; everything visible through telescopes &mdash; grew from temperature variations of 30 microkelvin in a plasma 380,000 years old. The CMB is both a birth certificate and a blueprint.</p>
 
-<div class="callout"><h4>Precision at Its Limit</h4><p>The CMB power spectrum has been measured so precisely that the main uncertainty is now cosmic variance &mdash; the statistical noise from having only one universe to observe. At the largest angular scales (low l), we are limited not by instrument sensitivity but by the finite number of independent modes on the sky.</p></div>`,
+<div class="callout"><h4>Precision at Its Limit</h4><p>The CMB power spectrum has been measured so precisely that the main uncertainty is now cosmic variance &mdash; the statistical noise from having only one universe to observe. At the largest angular scales (low l), we are limited not by instrument sensitivity but by the finite number of independent modes on the sky.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">06</div><h2><em>Inflation</em>: The First 10<sup>&minus;32</sup> Seconds</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06</div><h2><em>Inflation</em>: The First 10<sup>&minus;32</sup> Seconds</h2></div>
 
 <h3>The Horizon Problem</h3>
 <p>Look at opposite sides of the CMB sky. The two patches are separated by 93 billion light-years and have the same temperature to one part in 100,000. But in the standard Big Bang model, they were never in causal contact &mdash; no signal, not even light, could have traveled between them in the 380,000 years before recombination. How did they &ldquo;agree&rdquo; on a temperature? This is the horizon problem.</p>
@@ -297,9 +372,11 @@ const details = [
 <p>In 1980, Alan Guth proposed that the universe underwent a brief period of exponential expansion between roughly 10<sup>&minus;36</sup> and 10<sup>&minus;32</sup> seconds after the Big Bang. During this interval, a region smaller than a proton was stretched to larger than the observable universe. This solves both problems at once: the horizon problem, because regions that appear causally disconnected today were actually in contact before inflation stretched them apart; and the flatness problem, because inflation drives the universe toward flatness the way inflating a balloon makes its surface appear flat.</p>
 <p>Inflation also solved the magnetic monopole problem (GUTs predict monopoles that should dominate the universe; inflation dilutes them to unobservable densities) and, most remarkably, provided a mechanism for generating the seed perturbations: quantum vacuum fluctuations, stretched to macroscopic scales by the exponential expansion. These fluctuations became the CMB anisotropies, which became galaxies.</p>
 
-<div class="callout"><h4>The Quantum Origin of Structure</h4><p>Every galaxy, every star, every planet exists because quantum vacuum fluctuations during inflation were stretched to cosmic scales. The largest structures in the universe trace their origin to the smallest possible fluctuations in the quantum vacuum. This connection between the smallest quantum scales and the largest cosmic structures is one of inflation theory&rsquo;s most striking implications.</p></div>`,
+<div class="callout"><h4>The Quantum Origin of Structure</h4><p>Every galaxy, every star, every planet exists because quantum vacuum fluctuations during inflation were stretched to cosmic scales. The largest structures in the universe trace their origin to the smallest possible fluctuations in the quantum vacuum. This connection between the smallest quantum scales and the largest cosmic structures is one of inflation theory&rsquo;s most striking implications.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">07</div><h2><em>Evidence</em> &amp; Critique</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07</div><h2><em>Evidence</em> &amp; Critique</h2></div>
 
 <h3>Evidence For Inflation</h3>
 <p>Inflation makes several specific predictions, most of which have been confirmed. The spectral index of perturbations should be nearly but not exactly scale-invariant: Planck measures n<sub>s</sub> = 0.9649 &pm; 0.0042, consistent with the simplest inflation models. Perturbations should be nearly Gaussian: no significant non-Gaussianity has been detected. The universe should be flat: &#937;<sub>k</sub> = 0.001 &pm; 0.002. There should be superhorizon correlations (perturbations larger than the horizon at decoupling): the CMB confirms these at large angular scales.</p>
@@ -349,9 +426,11 @@ const details = [
 <p>They propose alternatives: bouncing cosmologies (the universe contracts then re-expands, avoiding the singularity and homogenizing naturally), the ekpyrotic model (two branes collide in higher-dimensional space), and slow-contraction scenarios. These alternatives are mathematically coherent and avoid the multiverse problem, but they are less developed and make fewer testable predictions than inflation.</p>
 <p>The counterargument from inflation&rsquo;s defenders is powerful: inflation&rsquo;s core predictions &mdash; spectral index, Gaussianity, flatness, superhorizon modes &mdash; were made <em>before</em> the high-precision data existed, and the data confirmed them. No alternative theory has matched this track record of pre-data predictions. The debate is vigorous and ongoing, touching fundamental questions about what counts as a scientific theory when the predictions are statistical rather than deterministic.</p>
 
-<div class="callout"><h4>LiteBIRD and CMB-S4</h4><p>JAXA&rsquo;s LiteBIRD satellite (launch ~2032) and the ground-based CMB-S4 experiment aim to measure r down to 0.001. If primordial B-modes exist at the levels predicted by many inflation models, these experiments will find them. If they don&rsquo;t, the simplest slow-roll models are ruled out &mdash; though the inflation framework itself survives with modified potentials. Either outcome reshapes cosmology.</p></div>`,
+<div class="callout"><h4>LiteBIRD and CMB-S4</h4><p>JAXA&rsquo;s LiteBIRD satellite (launch ~2032) and the ground-based CMB-S4 experiment aim to measure r down to 0.001. If primordial B-modes exist at the levels predicted by many inflation models, these experiments will find them. If they don&rsquo;t, the simplest slow-roll models are ruled out &mdash; though the inflation framework itself survives with modified potentials. Either outcome reshapes cosmology.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num">08</div><h2>What <em>We</em> Know</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08</div><h2>What <em>We</em> Know</h2></div>
 
 <h3>Consensus</h3>
 <p>The Big Bang framework is among the most thoroughly tested theories in science. The CMB exists, has a perfect blackbody spectrum at 2.725 K, and shows anisotropies at one part in 100,000 that encode the universe&rsquo;s geometry, age, and composition. &Lambda;CDM fits this data with six parameters &mdash; an economy that rivals Newton&rsquo;s laws. Primordial nucleosynthesis correctly predicts hydrogen and helium abundances. Inflation is the leading explanation for flatness, the horizon problem, and the seeds of structure.</p>
@@ -411,41 +490,116 @@ const details = [
   <text x="200" y="192" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" class="lbl">Each messenger probes a different epoch of the early universe</text>
 </svg></div>
 
-<div class="callout"><h4>The Core Insight</h4><p>The first 380,000 years of cosmic history are better understood than most periods of human history. From a single snapshot &mdash; the CMB &mdash; we have extracted the age, geometry, composition, and initial conditions of the universe. The remaining questions (inflation vs. alternatives, the Hubble tension, the lithium problem) are not signs of a theory in crisis but of a theory so precise that its remaining puzzles stand out starkly against an otherwise extraordinary fit.</p></div>`
-];
+<div class="callout"><h4>The Core Insight</h4><p>The first 380,000 years of cosmic history are better understood than most periods of human history. From a single snapshot &mdash; the CMB &mdash; we have extracted the age, geometry, composition, and initial conditions of the universe. The remaining questions (inflation vs. alternatives, the Hubble tension, the lithium problem) are not signs of a theory in crisis but of a theory so precise that its remaining puzzles stand out starkly against an otherwise extraordinary fit.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = '<div class="ctrl-group" id="ctrl-group"><button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button><button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()"><span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span><span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span></button></div><nav class="sidebar" id="sidebar"><div class="sidebar-head"><div class="sidebar-logo">B<em>B</em></div></div><div class="sidebar-nav" id="sidebar-nav"></div></nav><div class="main" id="main"><div class="main-head"><div class="main-head-inner"><div class="hero-badge"><span class="dot"></span> THE COSMOS &middot; S2 &middot; 7 SOURCES</div><div class="hero-title">The Big Bang &amp; <em>CMB</em></div><div class="masthead-rule"></div><div class="masthead-sub"><span>The first 380,000 years &mdash; from quantum fluctuations to the universe&rsquo;s baby photo</span></div></div></div><div class="main-scroll" id="main-scroll"></div></div><div class="right closed" id="right"><div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div><div class="right-inner" id="right-inner"></div></div>';
-document.body.appendChild(shell);
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => { const item = document.createElement('div'); item.className = 'sidebar-item' + (idx === 0 ? ' active' : ''); item.setAttribute('data-label', sec.short); item.innerHTML = '<span class="sidebar-num">' + sec.num + '</span><span class="sidebar-label">' + sec.short + '</span>'; item.onclick = () => scrollToSection(idx); sidebarNav.appendChild(item); });
-const sidebarTip = document.createElement('div'); sidebarTip.className = 'sidebar-tooltip'; document.body.appendChild(sidebarTip);
-const sidebarEl = document.querySelector('.sidebar'); let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
-sidebarNav.addEventListener('mousemove', (e) => { if (!document.body.classList.contains('detail-open')) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; } const item = e.target.closest('.sidebar-item'); if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; } const rect = item.getBoundingClientRect(); const sRight = sidebarEl.getBoundingClientRect().right; sidebarTip.textContent = item.getAttribute('data-label'); sidebarTip.style.left = (sRight - 1) + 'px'; sidebarTip.style.top = rect.top + 'px'; sidebarTip.style.height = rect.height + 'px'; if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); } });
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
+
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
 const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div'); mainInner.className = 'main-scroll-inner'; mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => { const block = document.createElement('div'); block.className = 'section-block'; block.innerHTML = '<div class="s-num"><span>' + sec.num + '</span><button class="s-detail-btn" onclick="openDetail(' + idx + ')"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div><h2>' + sec.title + '</h2>' + summaries[idx]; mainInner.appendChild(block); });
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => { const d = document.createElement('div'); d.className = 'detail'; d.id = 'detail-' + idx; d.innerHTML = details[idx]; rightInner.appendChild(d); });
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
+
+// Detail panel
 let lastDetailIdx = 0;
-function scrollToSection(idx) { const blocks = document.querySelectorAll('.section-block'); if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'}); }
-function openDetail(idx) { lastDetailIdx = idx; document.querySelectorAll('.detail').forEach(d => d.style.display = 'none'); document.getElementById('detail-' + idx).style.display = 'block'; document.getElementById('right').classList.remove('closed'); document.body.classList.add('detail-open'); document.getElementById('right').scrollTop = 0; document.getElementById('right-sticky-title').classList.remove('visible'); }
-function closeRight() { document.getElementById('right').classList.add('closed'); document.body.classList.remove('detail-open'); }
-function toggleDetail() { if (document.body.classList.contains('detail-open')) { closeRight(); } else { openDetail(lastDetailIdx); } }
-function toggleTheme() { const c = document.body.getAttribute('data-theme'); document.body.setAttribute('data-theme', c === 'light' ? 'dark' : 'light'); localStorage.setItem('theme', c === 'light' ? 'dark' : 'light'); }
-const savedTheme = localStorage.getItem('theme') || 'light'; document.body.setAttribute('data-theme', savedTheme);
-mainScroll.addEventListener('scroll', () => { document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40); const blocks = mainScroll.querySelectorAll('.section-block'); const items = document.querySelectorAll('.sidebar-item'); let activeIdx = 0; blocks.forEach((b, i) => { if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i; }); items.forEach((item, i) => item.classList.toggle('active', i === activeIdx)); });
-const rightPanelOuter = document.getElementById('right'); const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => { const ad = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]'); if (!ad) return; const h2 = ad.querySelector('.detail-header h2') || ad.querySelector('h2'); if (!h2) return; const r = h2.getBoundingClientRect(); const pr = rightPanelOuter.getBoundingClientRect(); const tb = document.querySelector('.right-topbar'); if (r.bottom < pr.top + 56) { stickyTitle.textContent = h2.textContent; stickyTitle.classList.add('visible'); tb.classList.add('scrolled'); } else { stickyTitle.classList.remove('visible'); tb.classList.remove('scrolled'); } });
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
+  document.body.classList.add('detail-open');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
+}
+function closeRight() {
+  rightPanel.classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
+
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
+
+// Compact header + scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  let activeIdx = 0;
+  sectionBlocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
 </script>
-<script>
-const NB_IMAGES = [
-  { target: 'hero', type: 'hero', file: 'img/s2-hero.png', prompt: 'Cosmic microwave background radiation oval projection map showing temperature anisotropies, acoustic oscillation rings visible, the universe baby photo at 380000 years, minimal ink line drawing on warm cream paper, single violet accent color, editorial sketch style' }
-];
-</script>
-<script src="../../nano-banana.js"></script>
-</body></html>
+</body>
+</html>

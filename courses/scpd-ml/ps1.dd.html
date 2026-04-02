@@ -316,77 +316,34 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-// Data
-const sections = [
-  {num:'1',short:'PS1 Overview',title:'<em>Problem</em> Set 1 Overview'},
-  {num:'2',short:'GLM Convexity Setup',title:'<em>GLM</em> Convexity Setup'},
-  {num:'3',short:'Proving Convexity',title:'<em>Proving</em> Convexity'},
-  {num:'4',short:'Feature Maps Problem',title:'<em>Feature</em> Maps Problem'},
-  {num:'5',short:'Feature Map Analysis',title:'<em>Feature</em> Map Analysis'},
-  {num:'6',short:'Stability of Learning',title:'<em>Stability</em> of Learning'},
-  {num:'7',short:'Stability Analysis',title:'<em>Stability</em> Analysis'},
-  {num:'8',short:'Key Takeaways',title:'Key <em>Takeaways</em>'},
-  {num:'9',short:'References',title:'References & <em>Further</em> Reading'}
-];
 
-const summaries = [
-  `<p>This problem set covers three fundamental concepts in machine learning: generalized linear models, feature representations, and algorithmic stability. Across 25 points and 3 problems, you'll explore the mathematical foundations that connect probabilistic modeling, kernel methods, and generalization theory. Each problem builds on core week 1-2 concepts from XCS229, creating a cohesive understanding of supervised learning.</p><p>The problems span theoretical proofs, computational implementations, and conceptual connections. Work through each section carefully, as the insights from earlier problems illuminate the later ones. Focus on building intuition alongside rigorous mathematics.</p>`,
+<div class="shell">
 
-  `<p>Generalized linear models (GLMs) form the foundation for supervised learning. The key insight is that the negative log-likelihood (NLL) of GLMs exhibits a convex structure, enabling efficient optimization. This section establishes the mathematical setup: understanding the exponential family, the link function, and how the Hessian matrix determines convexity properties.</p><p>The problem asks you to prove that for any GLM, the negative log-likelihood is a convex function of the parameters. This requires understanding the relationship between the second derivative (Hessian) and positive semi-definiteness, ultimately connecting to the information matrix of the exponential family.</p>`,
-
-  `<p>Proving convexity involves demonstrating that the Hessian of the NLL is positive semi-definite. For exponential family distributions, this follows from the structure of the sufficient statistics and the log-partition function. The proof strategy combines calculus, linear algebra, and properties specific to exponential families.</p><p>Key techniques include: taking derivatives of the NLL with respect to parameters, recognizing the Hessian as a variance-covariance-like matrix, and showing that it can be written as X^T D X where D is diagonal with positive entries. This establishes not just convexity but also strict convexity for most GLMs.</p>`,
-
-  `<p>Feature maps transform raw inputs into a higher-dimensional representation where linear models become more expressive. This problem explores explicit feature maps and their computational implications. You'll work with polynomial kernels, computing feature representations that correspond to polynomial features in the original space.</p><p>The central question: how do we efficiently represent polynomial features, and what computational cost does this entail? By understanding explicit feature maps, you gain insight into why the kernel trick exists—as a computational shortcut for high-dimensional feature representations.</p>`,
-
-  `<p>Analyzing feature maps requires comparing dimensionality, computational cost, and representational power. For polynomial degree d features in d-dimensional input space, the feature map dimension grows polynomially. This analysis motivates kernel methods: computing inner products in feature space without explicitly constructing features.</p><p>The kernel trick exploits the fact that certain inner products in feature space can be computed efficiently in input space. Understanding this connection bridges explicit representations and implicit kernel methods, showing how mathematical structure enables computational efficiency in machine learning.</p>`,
-
-  `<p>Stability of learning algorithms quantifies how much the learned hypothesis changes when one training example is perturbed or removed. This concept connects directly to generalization bounds: stable algorithms generalize well from finite samples. Algorithmic stability provides a framework for understanding why regularization works and how sample complexity relates to model complexity.</p><p>Uniform stability—the strongest notion—requires that removing any single example changes the learned function by at most a small amount. This property ensures that the algorithm's performance on unseen data closely matches its training performance, establishing generalization guarantees independent of model class assumptions.</p>`,
-
-  `<p>Analyzing stability involves computing how the leave-one-out error relates to the training error, and connecting this to regularization strength. For learning algorithms like regularized linear regression, stability can be explicitly quantified in terms of the regularization parameter. The leave-one-out cross-validation error provides an empirical measure of stability.</p><p>The deep connection emerges: stable algorithms have low generalization gaps. This explains why regularization (ridge regression, LASSO) works—it enforces stability by preventing the algorithm from fitting too closely to any particular training example. The relationship between stability and regularization parameter strength is fundamental to understanding overfitting and generalization.</p>`,
-
-  `<p>This problem set synthesizes three core machine learning concepts. Convexity enables efficient optimization of GLMs. Feature maps and kernels provide flexible representations while managing computational complexity. Stability theory explains generalization and justifies regularization. Together, they form the mathematical and conceptual foundation for supervised learning.</p><p>As you complete this problem set, recognize how these concepts interlock: convex optimization finds efficient solutions, feature representations enable expressivity, and stability theory guarantees that these solutions generalize. These three pillars—optimization, representation, and generalization—define modern machine learning practice.</p>`,
-
-  `<p>To deepen your understanding of the concepts covered in Problem Set 1, refer to these key resources. The Stanford CS229 course materials provide comprehensive lectures on GLMs, kernels, and generalization. Lecture notes on exponential families and convexity are essential for Problem 1. For feature maps and kernel methods, review the supervised learning lectures. Stability theory is covered in advanced generalization lectures.</p><p>The Elements of Statistical Learning (ESL) is an authoritative reference for practical machine learning theory. Murphy's Machine Learning textbook provides excellent intuitions alongside mathematics. For rigorous proofs and advanced topics, consult survey papers on convex optimization and algorithmic stability.</p>`
-];
-
-const details = [
-  `<div class="detail-header"><span class="num">Section 1</span><h2><em>PS1</em> Overview</h2></div><h3>Problem Set Structure</h3><p>Problem Set 1 contains three problems worth 25 total points, distributed across weeks 1-2 material from XCS229. Each problem targets a distinct learning area but builds toward a unified understanding of supervised learning foundations.</p><p><strong>Problem 1 (GLM Convexity):</strong> Theoretical—prove that the negative log-likelihood of any GLM is convex. This problem emphasizes mathematical rigor and understanding exponential family distributions. Expect to work with Hessians, positive semi-definite matrices, and properties of the log-partition function.</p><p><strong>Problem 2 (Feature Maps):</strong> Mixed—implement explicit feature maps for polynomial kernels, compare computational costs, and explain the kernel trick. This problem bridges theory and implementation, requiring both mathematical insight and coding ability.</p><p><strong>Problem 3 (Stability):</strong> Theoretical/computational—prove uniform stability bounds for regularized learning, compute leave-one-out errors, and connect stability to generalization. This problem requires understanding algorithmic stability and its implications for generalization.</p><h3>Key Themes</h3><p>All three problems emphasize <em>why</em> we use particular techniques in machine learning. Convexity explains why we can optimize GLMs efficiently. Feature maps show how to build expressive models while managing dimensionality. Stability theory justifies regularization and predicts generalization.</p><div class="callout"><h4>Time Management</h4><p>Allocate your time strategically. Problem 1 is the most theoretical—allow sufficient time for careful proofs. Problem 2 combines theory and coding—test your implementations thoroughly. Problem 3 requires connecting abstract concepts to concrete algorithms.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 2</span><h2><em>GLM</em> Convexity Setup</h2></div><h3>Exponential Family Distributions</h3><p>GLMs are built on exponential family distributions, which have the canonical form: p(y|x,θ) = b(y) exp(θ^T T(y) - A(θ)) where T(y) is the sufficient statistic, A(θ) is the log-partition function, and b(y) is the base measure.</p><p>For supervised learning, we parameterize θ as a linear function of the input: θ = θ(w,x) = w^T φ(x) for some feature map φ. The log-likelihood for a single example becomes log p(y|x,w) = log b(y) + w^T φ(x) T(y) - A(w^T φ(x)).</p><h3>Negative Log-Likelihood</h3><p>The NLL for a single example is: ℓ(w) = -log p(y|x,w) = -log b(y) - w^T φ(x) T(y) + A(w^T φ(x)). For a dataset of n examples, the total NLL is the sum: L(w) = Σ ℓ_i(w).</p><p>The structure of the NLL is key: it's the log-partition function A(w^T φ(x)) minus a linear term. The log-partition function is always convex for exponential families, and the linear term doesn't affect convexity. Therefore, the NLL is convex.</p><h3>Hessian Analysis</h3><p>To prove convexity rigorously, compute the Hessian ∇²ℓ(w). For a single example: ∇²ℓ(w) = ∇² A(w^T φ(x)) = A''(w^T φ(x)) φ(x) φ(x)^T. Here, A''(w^T φ(x)) is the second derivative of the log-partition function with respect to its argument.</p><p>The key fact: A''(η) = Var[T(y)|η] ≥ 0 for any exponential family. This variance term is always non-negative, making ∇²ℓ(w) = A''(w^T φ(x)) φ(x) φ(x)^T a positive semi-definite matrix (outer product scaled by a non-negative scalar).</p><div class="callout"><h4>Proof Strategy</h4><p>Your proof should: (1) Write the NLL for a GLM, (2) Compute the Hessian, (3) Recognize it as a variance-weighted outer product, (4) Conclude positive semi-definiteness and thus convexity. Connect each step to exponential family properties.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 3</span><h2><em>Proving</em> Convexity</h2></div><h3>Convexity Definition</h3><p>A function f is convex if for all x, y and λ ∈ [0,1]: f(λx + (1-λ)y) ≤ λf(x) + (1-λ)f(y). Equivalently, for twice-differentiable f: the Hessian ∇²f(x) is positive semi-definite for all x.</p><p>For the NLL of a GLM, we use the Hessian criterion. Compute ∇²L(w) where L(w) = Σ ℓ_i(w) is the total NLL. The Hessian is a sum of individual Hessians: ∇²L(w) = Σ ∇²ℓ_i(w).</p><h3>Step-by-Step Proof Outline</h3><p><strong>Step 1:</strong> Write the single-example NLL: ℓ_i(w) = -w^T φ(x_i) T(y_i) + A(w^T φ(x_i)). The first term is linear in w (Hessian is 0). The second term's Hessian is what matters.</p><p><strong>Step 2:</strong> Differentiate once: ∇ℓ_i(w) = -φ(x_i) T(y_i) + A'(w^T φ(x_i)) φ(x_i). Here, A'(η) = E[T(y)|η] is the expected sufficient statistic.</p><p><strong>Step 3:</strong> Differentiate again: ∇²ℓ_i(w) = A''(w^T φ(x_i)) φ(x_i) φ(x_i)^T. Recognize φ(x_i) φ(x_i)^T as an outer product (positive semi-definite for any vector).</p><p><strong>Step 4:</strong> Note that A''(η) = Var[T(y)|η] ≥ 0. This is a fundamental property of log-partition functions: they're convex, so their second derivative is non-negative.</p><p><strong>Step 5:</strong> Conclude: ∇²ℓ_i(w) = A''(w^T φ(x_i)) φ(x_i) φ(x_i)^T is a non-negative scalar times a positive semi-definite matrix, hence positive semi-definite.</p><p><strong>Step 6:</strong> The total Hessian ∇²L(w) = Σ ∇²ℓ_i(w) is a sum of positive semi-definite matrices, hence positive semi-definite. Therefore L(w) is convex.</p><h3>Key Insights</h3><p>The proof hinges on the exponential family property that A''(η) = Var[T(y)|η]. This variance is always non-negative, which is why all GLMs have convex loss functions. This guarantees that any local minimum is a global minimum, enabling efficient optimization via gradient descent.</p><div class="callout"><h4>Common Mistakes</h4><p>Don't confuse the Hessian of A(η) with the Hessian of the NLL. The NLL involves A(w^T φ(x)), so you need to apply chain rule: the Hessian of the composition is A''(w^T φ(x)) φ(x) φ(x)^T, not just A''(w^T φ(x)). Pay careful attention to matrix calculus.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 4</span><h2><em>Feature</em> Maps Problem</h2></div><h3>Explicit vs. Implicit Representations</h3><p>A feature map φ: ℝ^d → ℝ^m maps input vectors to higher-dimensional feature vectors. For example, the polynomial degree-2 feature map on ℝ^2 is φ(x) = [x_1, x_2, x_1², x_1 x_2, x_2²]^T, producing a 5-dimensional output.</p><p>The explicit feature map approach: compute φ(x) directly, then apply a linear model w^T φ(x). The kernel method: implicitly work in feature space by computing inner products ⟨φ(x), φ(x')⟩ without explicitly constructing φ(x).</p><h3>Polynomial Kernels</h3><p>The polynomial kernel of degree d is: K(x, x') = (⟨x, x'⟩ + 1)^d. This kernel implicitly corresponds to a feature map that includes all monomials of degree ≤ d. For d=2 in ℝ^2: K(x,x') = (x_1x_1' + x_2x_2' + 1)² expands to exactly the inner product of explicit features [1, x_1, x_2, x_1², √2 x_1 x_2, x_2²].</p><p>In this problem, you'll work with explicit polynomial features, computing the feature dimension and the computational cost of evaluating features and their inner products.</p><h3>Computational Analysis</h3><p>For a degree-d polynomial feature map on d-dimensional inputs, the number of features (feature dimension) is (d+d choose d) = O(d^d), which grows very quickly. For d=10 input features and degree 3, this becomes thousands of features.</p><p>The kernel trick avoids constructing these features explicitly. Instead, compute K(x_i, x_j) = (⟨x_i, x_j⟩ + 1)^d directly in input space. For each pair of examples, this takes O(d) time (computing the inner product) plus O(d) time (raising to power d), versus O(d^d) time to construct both feature vectors explicitly.</p><div class="callout"><h4>Implementation Hint</h4><p>When implementing polynomial features, use recursive definitions or combinatorial generation to construct all monomials systematically. Compute feature vectors explicitly for small examples to verify correctness, then time the operations and compare to kernel method timings.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 5</span><h2><em>Feature</em> Map Analysis</h2></div><h3>Dimensionality Growth</h3><p>The number of polynomial features of degree exactly d (not ≤ d) in p dimensions is the number of ways to choose d items from p with replacement: (p+d-1 choose d) ≈ p^d / d! for fixed p as d grows. For all features of degree ≤ d, sum over all degrees: ≈ O((p+d choose p)).</p><p>For concrete example: 10 input features, polynomial degree 3 gives (10+3 choose 3) = 286 features. Degree 4 gives (10+4 choose 4) = 1001 features. Degree 5 gives 2002 features. This rapid growth is why explicit feature maps become impractical for high-degree polynomials.</p><h3>Computational Cost Comparison</h3><p><strong>Explicit approach:</strong> Construct feature vector for one example: O(number of features). For n examples, building the feature matrix is O(n × number of features). Training a linear model is O(n × m²) where m is number of features.</p><p><strong>Kernel method:</strong> Computing the kernel matrix is O(n² × d) where d is input dimension. Training using kernel methods (e.g., kernel ridge regression) is O(n³) for solving the normal equations. The advantage: d is small and fixed, while the number of features can be huge.</p><h3>The Kernel Trick</h3><p>The key insight: many learning algorithms depend only on inner products between examples, not on the examples themselves. If you can compute ⟨φ(x_i), φ(x_j)⟩ efficiently (via a kernel function), you never need to construct φ explicitly.</p><p>For polynomial features, K(x,x') = (⟨x, x'⟩ + 1)^d computes the inner product in feature space in O(d) time instead of O(d^d) time. This is the computational breakthrough that makes kernel methods practical.</p><h3>When Explicit vs. Implicit?</h3><p>Use explicit features when: the feature dimension is moderate (< 1000), you want interpretable features, or you're using algorithms that don't depend only on inner products. Use kernels when: the feature dimension would be very large, you're using SVMs or kernel ridge regression, or you want to use non-polynomial kernels (RBF, etc.).</p><div class="callout"><h4>Analysis Checklist</h4><p>Your analysis should quantify: the exact feature dimension for polynomial degree d and input dimension p, the time to compute one feature vector, the time for n feature vectors, and compare to kernel method timing. Include actual numbers for a concrete example.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 6</span><h2><em>Stability</em> of Learning</h2></div><h3>Algorithmic Stability Concept</h3><p>An algorithm A is stable if small changes to the training set cause small changes to the learned hypothesis. Formally, uniform stability requires: for all training sets S and S' differing in one example, and all test examples z, |A(S)(z) - A(S')(z)| ≤ β for some small β.</p><p>Stable algorithms generalize well: if training error equals test error on average (which stability ensures), then low training error implies low test error. This is why regularization works—it enforces stability by preventing overfitting to particular training examples.</p><h3>Leave-One-Out Cross-Validation</h3><p>Compute the leave-one-out error: for each training example (x_i, y_i), remove it from the training set, train on the remaining n-1 examples, and measure error on the held-out example. The leave-one-out error is an empirical estimate of test error and reveals how stable the algorithm is.</p><p>For a stable algorithm, leave-one-out error ≈ training error. For an unstable algorithm (e.g., memorizing the training set), leave-one-out error >> training error. This reveals overfitting and suggests increasing regularization.</p><h3>Stability-Generalization Connection</h3><p>Theorem (informal): If an algorithm is uniformly stable with stability parameter β, then with high probability over random training sets, test error ≤ training error + O(β√(log(1/δ)/n)). This bound depends on stability β and sample size n, not directly on model complexity.</p><p>This is remarkable: instead of bounding complexity via VC dimension or Rademacher complexity, we bound generalization via algorithmic properties. This explains why regularization (which increases stability) improves generalization even for high-complexity model classes.</p><div class="callout"><h4>Why Stability Matters</h4><p>Stability connects optimization, regularization, and generalization. Convex objectives (from earlier in this problem set!) enable stable optimization. Regularization increases stability. Stability guarantees generalization. This forms the complete picture of supervised learning: optimize a convex, stable objective to achieve good generalization.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 7</span><h2><em>Stability</em> Analysis</h2></div><h3>Uniform Stability in Regularized Learning</h3><p>For regularized linear regression: w = (X^T X + λI)^(-1) X^T y. Uniform stability can be proved by analyzing how this solution changes when one example is removed. The key is the matrix inversion lemma and properties of regularization.</p><p><strong>Proof sketch:</strong> When example i is removed, the solution changes by Δw = (X^T X + λI)^(-1) x_i e_i where e_i is the residual. The magnitude of this change is bounded by (1/λ) × ||x_i|| × |e_i|. The bound holds uniformly across all examples, establishing stability.</p><h3>Regularization Parameter and Stability</h3><p>Larger λ (stronger regularization) leads to smaller stability parameter β. This makes intuitive sense: stronger regularization makes the solution less sensitive to individual examples. In the limit λ → ∞, the algorithm ignores the data (very stable but high bias). The optimal λ balances stability and fitting.</p><p>The leave-one-out error for ridge regression has a closed form: LOO error = Σ (y_i - ŷ_i)² / (1 - H_ii)² where H_ii is the i-th diagonal of the hat matrix X(X^T X + λI)^(-1) X^T. Examples with high H_ii (high leverage) contribute more to LOO error, revealing which examples most affect stability.</p><h3>Computing Stability Bounds</h3><p><strong>For ridge regression:</strong> The uniform stability parameter is β = O(||x||²_max / λ). This makes the dependency explicit: stability improves (β decreases) with stronger regularization and decreases with larger input norms.</p><p><strong>Generalization bound:</strong> With stability β, the generalization error is at most training error + O(β√log(1/δ)/n) with probability 1-δ. For ridge regression with λ proportional to √n, this gives a bound of O(1/√n), which matches standard generalization rates.</p><h3>Practical Implications</h3><p>Use leave-one-out error or cross-validation to estimate stability empirically. If LOO error >> training error, the algorithm is unstable—increase regularization. If LOO error ≈ training error, the algorithm is stable. This test is more direct than model complexity arguments and works for any learning algorithm.</p><div class="callout"><h4>Verification Strategy</h4><p>Compute leave-one-out error for small datasets with different λ values. Observe how LOO error decreases as λ increases, then increases again (bias-variance tradeoff). The optimal λ minimizes LOO error, revealing the stability-bias balance.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 8</span><h2>Key <em>Takeaways</em></h2></div><h3>The Three Pillars of Supervised Learning</h3><p><strong>Optimization:</strong> GLMs have convex loss functions, enabling efficient gradient-based optimization to global optima. This isn't specific to GLMs—convex objectives are central to machine learning because they guarantee optimal solutions can be found efficiently.</p><p><strong>Representation:</strong> Feature maps (explicit or implicit via kernels) provide flexible expressivity while managing computational complexity. The kernel trick bridges high-dimensional feature spaces with efficient input-space computation, enabling powerful non-linear learning.</p><p><strong>Generalization:</strong> Stability theory explains why regularized learning generalizes. By making the algorithm less sensitive to individual training examples, regularization ensures that training error reflects test error. This provides a unified view of why regularization works across different models.</p><h3>Connections Across Problems</h3><p><strong>From Problem 1 to Problem 2:</strong> Convex optimization of GLMs is only useful if you can represent the data effectively. Feature maps let you build expressive models while maintaining the convexity that enables efficient optimization.</p><p><strong>From Problem 2 to Problem 3:</strong> Expressive models risk overfitting. Stability theory explains how regularization controls expressivity—by enforcing stability, regularization ensures that more flexible models don't sacrifice generalization. This explains the bias-variance tradeoff from a stability perspective.</p><p><strong>Unified View:</strong> Start with a flexible model class (features). Make the loss convex (GLMs). Add regularization for stability (generalization). Optimize efficiently (gradient descent on convex objectives). This recipe, grounded in theory, is how modern machine learning works.</p><h3>Advanced Connections</h3><p><strong>Kernels and Stability:</strong> Kernel methods inherit stability from the learning algorithm. RBF kernels with regularization are stable because they're used with regularized learning algorithms. The expressivity of the kernel (controlled by bandwidth parameter) trades off with stability.</p><p><strong>Neural Networks and Stability:</strong> Deep learning doesn't always use convex objectives or explicit stability analysis, yet it generalizes. This remains an open area of research. Some hypotheses: implicit regularization from SGD provides stability, the overparameterized regime has implicit stability properties, or margin-based stability arguments apply.</p><p><strong>Beyond Supervised Learning:</strong> The three pillars extend to other settings. In unsupervised learning, optimization and representation remain key, while stability takes different forms (e.g., robustness to perturbations). Understanding these foundations prepares you for advanced machine learning research.</p><div class="callout"><h4>Synthesis Challenge</h4><p>Write a page explaining how a regularized GLM (e.g., logistic regression with L2 regularization) instantiates all three pillars: why its loss is convex (optimization), what feature map it implicitly uses (representation), and how regularization provides stability (generalization). This synthesis demonstrates mastery of Problem Set 1.</p></div>`,
-
-  `<div class="detail-header"><span class="num">Section 9</span><h2>References & <em>Further</em> Reading</h2></div><h3>Stanford CS229 Course Materials</h3><p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course page with lecture notes, problem sets, and syllabus. Essential resource for all topics covered in this problem set.</p><p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Comprehensive notes on supervised learning, covering exponential families, GLMs, kernels, and generalization theory. Weeks 1-2 notes are directly relevant to this problem set.</p><h3>Core Concepts: GLMs and Convexity</h3><p><a href="https://en.wikipedia.org/wiki/Generalized_linear_model" target="_blank">Wikipedia: Generalized Linear Models</a> — Overview of GLM framework, exponential family parameterization, and link functions.</p><p><a href="https://en.wikipedia.org/wiki/Exponential_family" target="_blank">Wikipedia: Exponential Family</a> — Mathematical foundations of exponential families, sufficient statistics, and log-partition functions essential for understanding GLM convexity.</p><h3>Feature Maps and Kernels</h3><p><a href="https://en.wikipedia.org/wiki/Kernel_method" target="_blank">Wikipedia: Kernel Methods</a> — Introduction to kernel tricks, feature maps, and kernel matrices. Explains the connection between explicit and implicit feature representations.</p><p><a href="https://en.wikipedia.org/wiki/Polynomial_kernel" target="_blank">Wikipedia: Polynomial Kernel</a> — Specific coverage of polynomial kernels and their corresponding feature maps.</p><h3>Stability and Generalization</h3><p><a href="https://en.wikipedia.org/wiki/Algorithmic_stability" target="_blank">Wikipedia: Algorithmic Stability</a> — Introduction to stability definitions and connections to generalization bounds.</p><p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Comprehensive reference for convex optimization, regularization, kernel methods, and generalization theory. Chapters 2-4 and Chapter 12 (Unsupervised Learning) are particularly relevant.</p><h3>Advanced References</h3><p><a href="https://en.wikipedia.org/wiki/Convex_function" target="_blank">Wikipedia: Convex Functions</a> — Mathematical foundations of convexity, Hessian analysis, and positive semi-definiteness.</p><p><a href="https://en.wikipedia.org/wiki/Hessian_matrix" target="_blank">Wikipedia: Hessian Matrix</a> — Detailed treatment of Hessian matrices and their role in determining function properties.</p><div class="callout"><h4>How to Use These References</h4><p>Start with the Stanford CS229 course page and relevant lecture notes for your problem area. Use Wikipedia for quick refreshers on mathematical concepts. Consult ESL for rigorous proofs and practical context. As you work through each problem, cross-reference the relevant sections to deepen understanding and verify your approach.</p></div>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
   <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
       <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
       <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
     </button>
   </div>
+
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-head">
       <div class="sidebar-logo">X<em>229</em></div>
     </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="PS1 Overview"><span class="sidebar-num">1</span><span class="sidebar-label">PS1 Overview</span></div>
+      <div class="sidebar-item" data-section="1" data-label="GLM Convexity Setup"><span class="sidebar-num">2</span><span class="sidebar-label">GLM Convexity Setup</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Proving Convexity"><span class="sidebar-num">3</span><span class="sidebar-label">Proving Convexity</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Feature Maps Problem"><span class="sidebar-num">4</span><span class="sidebar-label">Feature Maps Problem</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Feature Map Analysis"><span class="sidebar-num">5</span><span class="sidebar-label">Feature Map Analysis</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Stability of Learning"><span class="sidebar-num">6</span><span class="sidebar-label">Stability of Learning</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Stability Analysis"><span class="sidebar-num">7</span><span class="sidebar-label">Stability Analysis</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Key Takeaways"><span class="sidebar-num">8</span><span class="sidebar-label">Key Takeaways</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">9</span><span class="sidebar-label">References</span></div>
+    </div>
   </nav>
+
   <div class="main" id="main">
     <div class="main-head">
       <div class="main-head-inner">
@@ -396,46 +353,145 @@ shell.innerHTML = `
         <div class="masthead-sub"><span>25 Points · Convexity, Features & Stability</span></div>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>1</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Problem</em> Set 1 Overview</h2>
+          <p>This problem set covers three fundamental concepts in machine learning: generalized linear models, feature representations, and algorithmic stability. Across 25 points and 3 problems, you'll explore the mathematical foundations that connect probabilistic modeling, kernel methods, and generalization theory. Each problem builds on core week 1-2 concepts from XCS229, creating a cohesive understanding of supervised learning.</p><p>The problems span theoretical proofs, computational implementations, and conceptual connections. Work through each section carefully, as the insights from earlier problems illuminate the later ones. Focus on building intuition alongside rigorous mathematics.</p>
+        </div>
+
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>2</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>GLM</em> Convexity Setup</h2>
+          <p>Generalized linear models (GLMs) form the foundation for supervised learning. The key insight is that the negative log-likelihood (NLL) of GLMs exhibits a convex structure, enabling efficient optimization. This section establishes the mathematical setup: understanding the exponential family, the link function, and how the Hessian matrix determines convexity properties.</p><p>The problem asks you to prove that for any GLM, the negative log-likelihood is a convex function of the parameters. This requires understanding the relationship between the second derivative (Hessian) and positive semi-definiteness, ultimately connecting to the information matrix of the exponential family.</p>
+        </div>
+
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>3</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Proving</em> Convexity</h2>
+          <p>Proving convexity involves demonstrating that the Hessian of the NLL is positive semi-definite. For exponential family distributions, this follows from the structure of the sufficient statistics and the log-partition function. The proof strategy combines calculus, linear algebra, and properties specific to exponential families.</p><p>Key techniques include: taking derivatives of the NLL with respect to parameters, recognizing the Hessian as a variance-covariance-like matrix, and showing that it can be written as X^T D X where D is diagonal with positive entries. This establishes not just convexity but also strict convexity for most GLMs.</p>
+        </div>
+
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>4</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Feature</em> Maps Problem</h2>
+          <p>Feature maps transform raw inputs into a higher-dimensional representation where linear models become more expressive. This problem explores explicit feature maps and their computational implications. You'll work with polynomial kernels, computing feature representations that correspond to polynomial features in the original space.</p><p>The central question: how do we efficiently represent polynomial features, and what computational cost does this entail? By understanding explicit feature maps, you gain insight into why the kernel trick exists—as a computational shortcut for high-dimensional feature representations.</p>
+        </div>
+
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>5</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Feature</em> Map Analysis</h2>
+          <p>Analyzing feature maps requires comparing dimensionality, computational cost, and representational power. For polynomial degree d features in d-dimensional input space, the feature map dimension grows polynomially. This analysis motivates kernel methods: computing inner products in feature space without explicitly constructing features.</p><p>The kernel trick exploits the fact that certain inner products in feature space can be computed efficiently in input space. Understanding this connection bridges explicit representations and implicit kernel methods, showing how mathematical structure enables computational efficiency in machine learning.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>6</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Stability</em> of Learning</h2>
+          <p>Stability of learning algorithms quantifies how much the learned hypothesis changes when one training example is perturbed or removed. This concept connects directly to generalization bounds: stable algorithms generalize well from finite samples. Algorithmic stability provides a framework for understanding why regularization works and how sample complexity relates to model complexity.</p><p>Uniform stability—the strongest notion—requires that removing any single example changes the learned function by at most a small amount. This property ensures that the algorithm's performance on unseen data closely matches its training performance, establishing generalization guarantees independent of model class assumptions.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>7</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Stability</em> Analysis</h2>
+          <p>Analyzing stability involves computing how the leave-one-out error relates to the training error, and connecting this to regularization strength. For learning algorithms like regularized linear regression, stability can be explicitly quantified in terms of the regularization parameter. The leave-one-out cross-validation error provides an empirical measure of stability.</p><p>The deep connection emerges: stable algorithms have low generalization gaps. This explains why regularization (ridge regression, LASSO) works—it enforces stability by preventing the algorithm from fitting too closely to any particular training example. The relationship between stability and regularization parameter strength is fundamental to understanding overfitting and generalization.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>8</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Key <em>Takeaways</em></h2>
+          <p>This problem set synthesizes three core machine learning concepts. Convexity enables efficient optimization of GLMs. Feature maps and kernels provide flexible representations while managing computational complexity. Stability theory explains generalization and justifies regularization. Together, they form the mathematical and conceptual foundation for supervised learning.</p><p>As you complete this problem set, recognize how these concepts interlock: convex optimization finds efficient solutions, feature representations enable expressivity, and stability theory guarantees that these solutions generalize. These three pillars—optimization, representation, and generalization—define modern machine learning practice.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>9</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>To deepen your understanding of the concepts covered in Problem Set 1, refer to these key resources. The Stanford CS229 course materials provide comprehensive lectures on GLMs, kernels, and generalization. Lecture notes on exponential families and convexity are essential for Problem 1. For feature maps and kernel methods, review the supervised learning lectures. Stability theory is covered in advanced generalization lectures.</p><p>The Elements of Statistical Learning (ESL) is an authoritative reference for practical machine learning theory. Murphy's Machine Learning textbook provides excellent intuitions alongside mathematics. For rigorous proofs and advanced topics, consult survey papers on convex optimization and algorithmic stability.</p>
+        </div>
+
+      </div>
+    </div>
   </div>
+
   <div class="right closed" id="right">
     <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><span class="num">Section 1</span><h2><em>PS1</em> Overview</h2></div><h3>Problem Set Structure</h3><p>Problem Set 1 contains three problems worth 25 total points, distributed across weeks 1-2 material from XCS229. Each problem targets a distinct learning area but builds toward a unified understanding of supervised learning foundations.</p><p><strong>Problem 1 (GLM Convexity):</strong> Theoretical—prove that the negative log-likelihood of any GLM is convex. This problem emphasizes mathematical rigor and understanding exponential family distributions. Expect to work with Hessians, positive semi-definite matrices, and properties of the log-partition function.</p><p><strong>Problem 2 (Feature Maps):</strong> Mixed—implement explicit feature maps for polynomial kernels, compare computational costs, and explain the kernel trick. This problem bridges theory and implementation, requiring both mathematical insight and coding ability.</p><p><strong>Problem 3 (Stability):</strong> Theoretical/computational—prove uniform stability bounds for regularized learning, compute leave-one-out errors, and connect stability to generalization. This problem requires understanding algorithmic stability and its implications for generalization.</p><h3>Key Themes</h3><p>All three problems emphasize <em>why</em> we use particular techniques in machine learning. Convexity explains why we can optimize GLMs efficiently. Feature maps show how to build expressive models while managing dimensionality. Stability theory justifies regularization and predicts generalization.</p><div class="callout"><h4>Time Management</h4><p>Allocate your time strategically. Problem 1 is the most theoretical—allow sufficient time for careful proofs. Problem 2 combines theory and coding—test your implementations thoroughly. Problem 3 requires connecting abstract concepts to concrete algorithms.</p></div>
+      </div>
+
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><span class="num">Section 2</span><h2><em>GLM</em> Convexity Setup</h2></div><h3>Exponential Family Distributions</h3><p>GLMs are built on exponential family distributions, which have the canonical form: p(y|x,θ) = b(y) exp(θ^T T(y) - A(θ)) where T(y) is the sufficient statistic, A(θ) is the log-partition function, and b(y) is the base measure.</p><p>For supervised learning, we parameterize θ as a linear function of the input: θ = θ(w,x) = w^T φ(x) for some feature map φ. The log-likelihood for a single example becomes log p(y|x,w) = log b(y) + w^T φ(x) T(y) - A(w^T φ(x)).</p><h3>Negative Log-Likelihood</h3><p>The NLL for a single example is: ℓ(w) = -log p(y|x,w) = -log b(y) - w^T φ(x) T(y) + A(w^T φ(x)). For a dataset of n examples, the total NLL is the sum: L(w) = Σ ℓ_i(w).</p><p>The structure of the NLL is key: it's the log-partition function A(w^T φ(x)) minus a linear term. The log-partition function is always convex for exponential families, and the linear term doesn't affect convexity. Therefore, the NLL is convex.</p><h3>Hessian Analysis</h3><p>To prove convexity rigorously, compute the Hessian ∇²ℓ(w). For a single example: ∇²ℓ(w) = ∇² A(w^T φ(x)) = A''(w^T φ(x)) φ(x) φ(x)^T. Here, A''(w^T φ(x)) is the second derivative of the log-partition function with respect to its argument.</p><p>The key fact: A''(η) = Var[T(y)|η] ≥ 0 for any exponential family. This variance term is always non-negative, making ∇²ℓ(w) = A''(w^T φ(x)) φ(x) φ(x)^T a positive semi-definite matrix (outer product scaled by a non-negative scalar).</p><div class="callout"><h4>Proof Strategy</h4><p>Your proof should: (1) Write the NLL for a GLM, (2) Compute the Hessian, (3) Recognize it as a variance-weighted outer product, (4) Conclude positive semi-definiteness and thus convexity. Connect each step to exponential family properties.</p></div>
+      </div>
+
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><span class="num">Section 3</span><h2><em>Proving</em> Convexity</h2></div><h3>Convexity Definition</h3><p>A function f is convex if for all x, y and λ ∈ [0,1]: f(λx + (1-λ)y) ≤ λf(x) + (1-λ)f(y). Equivalently, for twice-differentiable f: the Hessian ∇²f(x) is positive semi-definite for all x.</p><p>For the NLL of a GLM, we use the Hessian criterion. Compute ∇²L(w) where L(w) = Σ ℓ_i(w) is the total NLL. The Hessian is a sum of individual Hessians: ∇²L(w) = Σ ∇²ℓ_i(w).</p><h3>Step-by-Step Proof Outline</h3><p><strong>Step 1:</strong> Write the single-example NLL: ℓ_i(w) = -w^T φ(x_i) T(y_i) + A(w^T φ(x_i)). The first term is linear in w (Hessian is 0). The second term's Hessian is what matters.</p><p><strong>Step 2:</strong> Differentiate once: ∇ℓ_i(w) = -φ(x_i) T(y_i) + A'(w^T φ(x_i)) φ(x_i). Here, A'(η) = E[T(y)|η] is the expected sufficient statistic.</p><p><strong>Step 3:</strong> Differentiate again: ∇²ℓ_i(w) = A''(w^T φ(x_i)) φ(x_i) φ(x_i)^T. Recognize φ(x_i) φ(x_i)^T as an outer product (positive semi-definite for any vector).</p><p><strong>Step 4:</strong> Note that A''(η) = Var[T(y)|η] ≥ 0. This is a fundamental property of log-partition functions: they're convex, so their second derivative is non-negative.</p><p><strong>Step 5:</strong> Conclude: ∇²ℓ_i(w) = A''(w^T φ(x_i)) φ(x_i) φ(x_i)^T is a non-negative scalar times a positive semi-definite matrix, hence positive semi-definite.</p><p><strong>Step 6:</strong> The total Hessian ∇²L(w) = Σ ∇²ℓ_i(w) is a sum of positive semi-definite matrices, hence positive semi-definite. Therefore L(w) is convex.</p><h3>Key Insights</h3><p>The proof hinges on the exponential family property that A''(η) = Var[T(y)|η]. This variance is always non-negative, which is why all GLMs have convex loss functions. This guarantees that any local minimum is a global minimum, enabling efficient optimization via gradient descent.</p><div class="callout"><h4>Common Mistakes</h4><p>Don't confuse the Hessian of A(η) with the Hessian of the NLL. The NLL involves A(w^T φ(x)), so you need to apply chain rule: the Hessian of the composition is A''(w^T φ(x)) φ(x) φ(x)^T, not just A''(w^T φ(x)). Pay careful attention to matrix calculus.</p></div>
+      </div>
+
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><span class="num">Section 4</span><h2><em>Feature</em> Maps Problem</h2></div><h3>Explicit vs. Implicit Representations</h3><p>A feature map φ: ℝ^d → ℝ^m maps input vectors to higher-dimensional feature vectors. For example, the polynomial degree-2 feature map on ℝ^2 is φ(x) = [x_1, x_2, x_1², x_1 x_2, x_2²]^T, producing a 5-dimensional output.</p><p>The explicit feature map approach: compute φ(x) directly, then apply a linear model w^T φ(x). The kernel method: implicitly work in feature space by computing inner products ⟨φ(x), φ(x')⟩ without explicitly constructing φ(x).</p><h3>Polynomial Kernels</h3><p>The polynomial kernel of degree d is: K(x, x') = (⟨x, x'⟩ + 1)^d. This kernel implicitly corresponds to a feature map that includes all monomials of degree ≤ d. For d=2 in ℝ^2: K(x,x') = (x_1x_1' + x_2x_2' + 1)² expands to exactly the inner product of explicit features [1, x_1, x_2, x_1², √2 x_1 x_2, x_2²].</p><p>In this problem, you'll work with explicit polynomial features, computing the feature dimension and the computational cost of evaluating features and their inner products.</p><h3>Computational Analysis</h3><p>For a degree-d polynomial feature map on d-dimensional inputs, the number of features (feature dimension) is (d+d choose d) = O(d^d), which grows very quickly. For d=10 input features and degree 3, this becomes thousands of features.</p><p>The kernel trick avoids constructing these features explicitly. Instead, compute K(x_i, x_j) = (⟨x_i, x_j⟩ + 1)^d directly in input space. For each pair of examples, this takes O(d) time (computing the inner product) plus O(d) time (raising to power d), versus O(d^d) time to construct both feature vectors explicitly.</p><div class="callout"><h4>Implementation Hint</h4><p>When implementing polynomial features, use recursive definitions or combinatorial generation to construct all monomials systematically. Compute feature vectors explicitly for small examples to verify correctness, then time the operations and compare to kernel method timings.</p></div>
+      </div>
+
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><span class="num">Section 5</span><h2><em>Feature</em> Map Analysis</h2></div><h3>Dimensionality Growth</h3><p>The number of polynomial features of degree exactly d (not ≤ d) in p dimensions is the number of ways to choose d items from p with replacement: (p+d-1 choose d) ≈ p^d / d! for fixed p as d grows. For all features of degree ≤ d, sum over all degrees: ≈ O((p+d choose p)).</p><p>For concrete example: 10 input features, polynomial degree 3 gives (10+3 choose 3) = 286 features. Degree 4 gives (10+4 choose 4) = 1001 features. Degree 5 gives 2002 features. This rapid growth is why explicit feature maps become impractical for high-degree polynomials.</p><h3>Computational Cost Comparison</h3><p><strong>Explicit approach:</strong> Construct feature vector for one example: O(number of features). For n examples, building the feature matrix is O(n × number of features). Training a linear model is O(n × m²) where m is number of features.</p><p><strong>Kernel method:</strong> Computing the kernel matrix is O(n² × d) where d is input dimension. Training using kernel methods (e.g., kernel ridge regression) is O(n³) for solving the normal equations. The advantage: d is small and fixed, while the number of features can be huge.</p><h3>The Kernel Trick</h3><p>The key insight: many learning algorithms depend only on inner products between examples, not on the examples themselves. If you can compute ⟨φ(x_i), φ(x_j)⟩ efficiently (via a kernel function), you never need to construct φ explicitly.</p><p>For polynomial features, K(x,x') = (⟨x, x'⟩ + 1)^d computes the inner product in feature space in O(d) time instead of O(d^d) time. This is the computational breakthrough that makes kernel methods practical.</p><h3>When Explicit vs. Implicit?</h3><p>Use explicit features when: the feature dimension is moderate (< 1000), you want interpretable features, or you're using algorithms that don't depend only on inner products. Use kernels when: the feature dimension would be very large, you're using SVMs or kernel ridge regression, or you want to use non-polynomial kernels (RBF, etc.).</p><div class="callout"><h4>Analysis Checklist</h4><p>Your analysis should quantify: the exact feature dimension for polynomial degree d and input dimension p, the time to compute one feature vector, the time for n feature vectors, and compare to kernel method timing. Include actual numbers for a concrete example.</p></div>
+      </div>
+
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><span class="num">Section 6</span><h2><em>Stability</em> of Learning</h2></div><h3>Algorithmic Stability Concept</h3><p>An algorithm A is stable if small changes to the training set cause small changes to the learned hypothesis. Formally, uniform stability requires: for all training sets S and S' differing in one example, and all test examples z, |A(S)(z) - A(S')(z)| ≤ β for some small β.</p><p>Stable algorithms generalize well: if training error equals test error on average (which stability ensures), then low training error implies low test error. This is why regularization works—it enforces stability by preventing overfitting to particular training examples.</p><h3>Leave-One-Out Cross-Validation</h3><p>Compute the leave-one-out error: for each training example (x_i, y_i), remove it from the training set, train on the remaining n-1 examples, and measure error on the held-out example. The leave-one-out error is an empirical estimate of test error and reveals how stable the algorithm is.</p><p>For a stable algorithm, leave-one-out error ≈ training error. For an unstable algorithm (e.g., memorizing the training set), leave-one-out error >> training error. This reveals overfitting and suggests increasing regularization.</p><h3>Stability-Generalization Connection</h3><p>Theorem (informal): If an algorithm is uniformly stable with stability parameter β, then with high probability over random training sets, test error ≤ training error + O(β√(log(1/δ)/n)). This bound depends on stability β and sample size n, not directly on model complexity.</p><p>This is remarkable: instead of bounding complexity via VC dimension or Rademacher complexity, we bound generalization via algorithmic properties. This explains why regularization (which increases stability) improves generalization even for high-complexity model classes.</p><div class="callout"><h4>Why Stability Matters</h4><p>Stability connects optimization, regularization, and generalization. Convex objectives (from earlier in this problem set!) enable stable optimization. Regularization increases stability. Stability guarantees generalization. This forms the complete picture of supervised learning: optimize a convex, stable objective to achieve good generalization.</p></div>
+      </div>
+
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><span class="num">Section 7</span><h2><em>Stability</em> Analysis</h2></div><h3>Uniform Stability in Regularized Learning</h3><p>For regularized linear regression: w = (X^T X + λI)^(-1) X^T y. Uniform stability can be proved by analyzing how this solution changes when one example is removed. The key is the matrix inversion lemma and properties of regularization.</p><p><strong>Proof sketch:</strong> When example i is removed, the solution changes by Δw = (X^T X + λI)^(-1) x_i e_i where e_i is the residual. The magnitude of this change is bounded by (1/λ) × ||x_i|| × |e_i|. The bound holds uniformly across all examples, establishing stability.</p><h3>Regularization Parameter and Stability</h3><p>Larger λ (stronger regularization) leads to smaller stability parameter β. This makes intuitive sense: stronger regularization makes the solution less sensitive to individual examples. In the limit λ → ∞, the algorithm ignores the data (very stable but high bias). The optimal λ balances stability and fitting.</p><p>The leave-one-out error for ridge regression has a closed form: LOO error = Σ (y_i - ŷ_i)² / (1 - H_ii)² where H_ii is the i-th diagonal of the hat matrix X(X^T X + λI)^(-1) X^T. Examples with high H_ii (high leverage) contribute more to LOO error, revealing which examples most affect stability.</p><h3>Computing Stability Bounds</h3><p><strong>For ridge regression:</strong> The uniform stability parameter is β = O(||x||²_max / λ). This makes the dependency explicit: stability improves (β decreases) with stronger regularization and decreases with larger input norms.</p><p><strong>Generalization bound:</strong> With stability β, the generalization error is at most training error + O(β√log(1/δ)/n) with probability 1-δ. For ridge regression with λ proportional to √n, this gives a bound of O(1/√n), which matches standard generalization rates.</p><h3>Practical Implications</h3><p>Use leave-one-out error or cross-validation to estimate stability empirically. If LOO error >> training error, the algorithm is unstable—increase regularization. If LOO error ≈ training error, the algorithm is stable. This test is more direct than model complexity arguments and works for any learning algorithm.</p><div class="callout"><h4>Verification Strategy</h4><p>Compute leave-one-out error for small datasets with different λ values. Observe how LOO error decreases as λ increases, then increases again (bias-variance tradeoff). The optimal λ minimizes LOO error, revealing the stability-bias balance.</p></div>
+      </div>
+
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><span class="num">Section 8</span><h2>Key <em>Takeaways</em></h2></div><h3>The Three Pillars of Supervised Learning</h3><p><strong>Optimization:</strong> GLMs have convex loss functions, enabling efficient gradient-based optimization to global optima. This isn't specific to GLMs—convex objectives are central to machine learning because they guarantee optimal solutions can be found efficiently.</p><p><strong>Representation:</strong> Feature maps (explicit or implicit via kernels) provide flexible expressivity while managing computational complexity. The kernel trick bridges high-dimensional feature spaces with efficient input-space computation, enabling powerful non-linear learning.</p><p><strong>Generalization:</strong> Stability theory explains why regularized learning generalizes. By making the algorithm less sensitive to individual training examples, regularization ensures that training error reflects test error. This provides a unified view of why regularization works across different models.</p><h3>Connections Across Problems</h3><p><strong>From Problem 1 to Problem 2:</strong> Convex optimization of GLMs is only useful if you can represent the data effectively. Feature maps let you build expressive models while maintaining the convexity that enables efficient optimization.</p><p><strong>From Problem 2 to Problem 3:</strong> Expressive models risk overfitting. Stability theory explains how regularization controls expressivity—by enforcing stability, regularization ensures that more flexible models don't sacrifice generalization. This explains the bias-variance tradeoff from a stability perspective.</p><p><strong>Unified View:</strong> Start with a flexible model class (features). Make the loss convex (GLMs). Add regularization for stability (generalization). Optimize efficiently (gradient descent on convex objectives). This recipe, grounded in theory, is how modern machine learning works.</p><h3>Advanced Connections</h3><p><strong>Kernels and Stability:</strong> Kernel methods inherit stability from the learning algorithm. RBF kernels with regularization are stable because they're used with regularized learning algorithms. The expressivity of the kernel (controlled by bandwidth parameter) trades off with stability.</p><p><strong>Neural Networks and Stability:</strong> Deep learning doesn't always use convex objectives or explicit stability analysis, yet it generalizes. This remains an open area of research. Some hypotheses: implicit regularization from SGD provides stability, the overparameterized regime has implicit stability properties, or margin-based stability arguments apply.</p><p><strong>Beyond Supervised Learning:</strong> The three pillars extend to other settings. In unsupervised learning, optimization and representation remain key, while stability takes different forms (e.g., robustness to perturbations). Understanding these foundations prepares you for advanced machine learning research.</p><div class="callout"><h4>Synthesis Challenge</h4><p>Write a page explaining how a regularized GLM (e.g., logistic regression with L2 regularization) instantiates all three pillars: why its loss is convex (optimization), what feature map it implicitly uses (representation), and how regularization provides stability (generalization). This synthesis demonstrates mastery of Problem Set 1.</p></div>
+      </div>
+
+      <div class="detail" id="detail-8">
+        <div class="detail-header"><span class="num">Section 9</span><h2>References & <em>Further</em> Reading</h2></div><h3>Stanford CS229 Course Materials</h3><p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course page with lecture notes, problem sets, and syllabus. Essential resource for all topics covered in this problem set.</p><p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Comprehensive notes on supervised learning, covering exponential families, GLMs, kernels, and generalization theory. Weeks 1-2 notes are directly relevant to this problem set.</p><h3>Core Concepts: GLMs and Convexity</h3><p><a href="https://en.wikipedia.org/wiki/Generalized_linear_model" target="_blank">Wikipedia: Generalized Linear Models</a> — Overview of GLM framework, exponential family parameterization, and link functions.</p><p><a href="https://en.wikipedia.org/wiki/Exponential_family" target="_blank">Wikipedia: Exponential Family</a> — Mathematical foundations of exponential families, sufficient statistics, and log-partition functions essential for understanding GLM convexity.</p><h3>Feature Maps and Kernels</h3><p><a href="https://en.wikipedia.org/wiki/Kernel_method" target="_blank">Wikipedia: Kernel Methods</a> — Introduction to kernel tricks, feature maps, and kernel matrices. Explains the connection between explicit and implicit feature representations.</p><p><a href="https://en.wikipedia.org/wiki/Polynomial_kernel" target="_blank">Wikipedia: Polynomial Kernel</a> — Specific coverage of polynomial kernels and their corresponding feature maps.</p><h3>Stability and Generalization</h3><p><a href="https://en.wikipedia.org/wiki/Algorithmic_stability" target="_blank">Wikipedia: Algorithmic Stability</a> — Introduction to stability definitions and connections to generalization bounds.</p><p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Comprehensive reference for convex optimization, regularization, kernel methods, and generalization theory. Chapters 2-4 and Chapter 12 (Unsupervised Learning) are particularly relevant.</p><h3>Advanced References</h3><p><a href="https://en.wikipedia.org/wiki/Convex_function" target="_blank">Wikipedia: Convex Functions</a> — Mathematical foundations of convexity, Hessian analysis, and positive semi-definiteness.</p><p><a href="https://en.wikipedia.org/wiki/Hessian_matrix" target="_blank">Wikipedia: Hessian Matrix</a> — Detailed treatment of Hessian matrices and their role in determining function properties.</p><div class="callout"><h4>How to Use These References</h4><p>Start with the Stanford CS229 course page and relevant lecture notes for your problem area. Use Wikipedia for quick refreshers on mathematical concepts. Consult ESL for rigorous proofs and practical context. As you work through each problem, cross-reference the relevant sections to deepen understanding and verify your approach.</p></div>
+      </div>
+    </div>
   </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -445,96 +501,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -547,9 +559,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
 </body>
 </html>

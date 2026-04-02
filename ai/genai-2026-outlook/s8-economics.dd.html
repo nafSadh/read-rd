@@ -323,110 +323,39 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   /* Wikipedia-style citations */
   sup{font-size:11px;line-height:0;vertical-align:super}sup.fn{position:relative;cursor:pointer;font-family:var(--sans)}sup.fn>a{color:var(--link);font-weight:600;text-decoration:none;border-bottom:none}sup.fn:hover>a{color:var(--bright)}sup.fn .tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text);white-space:normal;max-width:480px;min-width:200px;z-index:50;pointer-events:auto;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.15)}sup.fn .tip a{color:var(--link);text-decoration:none;border-bottom:1px dotted var(--accent)}sup.fn .tip a:hover{color:var(--bright);border-bottom-style:solid}sup.fn:hover .tip,sup.fn .tip:hover{display:block}sup.fn .tip::after{content:'';position:absolute;left:0;right:0;top:100%;height:10px}
 
-    </style>
+    
+  .section-nav{display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase}
+  .section-nav a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)}
+  .section-nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  </style>
 </head>
-<body>
-<script>
+<body data-theme="light">
 
-const sections = [
-  { num: '01', short: 'Overview', title: '<em>Economics</em> &amp; Infrastructure' },
-  { num: '02', short: 'Capex', title: 'The $<em>500B</em> Capex Wave' },
-  { num: '03', short: 'Revenue', title: '<em>Revenue</em> vs Investment' },
-  { num: '04', short: 'Deflation', title: 'The <em>Pricing</em> Collapse' },
-  { num: '05', short: 'Disruption', title: '<em>Market</em> Disruption' },
-  { num: '06', short: 'Consensus', title: 'What <em>Everyone</em> Agrees On' },
-  { num: '07', short: 'Bubble', title: 'The <em>Bubble</em> Question' }
-];
+<div class="shell">
 
-const summaries = [
-  `<p><strong>$500B+</strong> in hyperscaler capital expenditure. <strong>$252B</strong> in corporate AI investment. AI company revenues growing <strong>9&times;</strong>. But 42% of companies abandoned most AI initiatives in 2024. The economics of AI in 2026 are defined by a single question: is this rational investment or speculative excess?</p>
-   <p>The answer depends on which metric you look at. Revenue growth is real: OpenAI targeting $15B, <a href="https://www.anthropic.com/research/agentic-coding-trends-2026" target="_blank">Anthropic</a> $7B ARR. Pricing collapse is real: 10&times; annual cost deflation. But so is the gap between investment and realized enterprise value (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>&rsquo;s adoption-value gap).</p>
-   <div class="s-stat">
-     <div class="st"><div class="sv">$500B+</div><div class="sl">hyperscaler capex 2026</div></div>
-     <div class="st"><div class="sv">$252B</div><div class="sl">corporate AI investment 2024</div></div>
-     <div class="st"><div class="sv">9&times;</div><div class="sl">AI company revenue growth</div></div>
-     <div class="st"><div class="sv">$58B</div><div class="sl">productivity market at stake</div></div>
-   </div>`,
-  `<p><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">Goldman Sachs</a><sup class="fn"><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">[1]</a><span class="tip">Goldman Sachs &mdash; AI investment forecasts and hyperscaler capex analysis.</span></sup>: the seven biggest tech companies now represent <strong>30%+ of the S&amp;P 500&rsquo;s market cap</strong> and ~25% of its earnings. They are collectively spending $500B+ on AI infrastructure in 2026 &mdash; data centers, chips, power agreements, cooling systems.</p>
-   <p>For context: $500B is roughly the GDP of Thailand. It exceeds the entire US defense R&amp;D budget. It is the largest concentrated infrastructure investment by private companies in modern history. The bet is that AI will generate returns that justify this unprecedented capital deployment.</p>
-   <p>The &ldquo;gigawatt ceiling&rdquo; (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>) constrains how fast this capital can be deployed. Power, not money, is the bottleneck. Companies are &ldquo;obsessing over allocating every megawatt to activities with the highest return.&rdquo;</p>`,
-  `<p>AI revenue is real and growing fast. <a href="https://epoch.ai/" target="_blank">Epoch AI</a><sup class="fn"><a href="https://epoch.ai/" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; AI company revenue growth tracking (9&times; in 2023-2024).</span></sup>: combined revenues of leading AI companies grew <strong>9&times; in 2023-2024.</strong> OpenAI is targeting $15B revenue in 2026. <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a> grew from $4.7B to $7B ARR in 2025. The AI industry is generating substantial cash, not just burning venture capital.</p>
-   <p>But revenue doesn&rsquo;t equal returns. <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford</a><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[3]</a><span class="tip">Stanford AI Index 2025 &mdash; $252B corporate AI investment in 2024.</span></sup>: total corporate AI investment was $252B in 2024 (up 26% YoY). US private AI investment: $109B. GenAI specifically: $33.9B. These numbers dwarf current AI revenues. The gap between investment and revenue is the fuel for the bubble debate.</p>
-   <p><a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a><sup class="fn"><a href="https://www.spglobal.com/" target="_blank">[4]</a><span class="tip">S&amp;P Global &mdash; 42% of companies abandoned most AI initiatives in 2024.</span></sup>: <strong>42% of companies abandoned most AI initiatives in 2024</strong>, up from 17% the prior year. The projects being abandoned suggest that a significant portion of AI investment is not generating returns.</p>`,
-  `<p>The most structurally important economic trend: <strong>~10&times; annual cost deflation</strong> for equivalent AI capability. GPT-4-level inference went from ~$30 to &lt;$1 per million tokens in three years. This isn&rsquo;t a one-time price cut &mdash; it&rsquo;s an exponential curve driven by hardware, algorithmic, and architectural improvements (detailed in <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>).</p>
-   <p>The economic consequence: applications that were impossible at $30/M tokens become viable at $1. Use cases that are marginal at $1 become compelling at $0.10. Each 10&times; drop opens a new tier of economically viable applications. This is the mechanism by which AI moves from premium service to infrastructure commodity.</p>
-   <p>For AI companies, deflation is a double-edged sword: it expands the market (more use cases are viable) but compresses margins (the same capability gets cheaper every year). The business model shifts from charging for capability to charging for integration, reliability, and ecosystem.</p>`,
-  `<p><a href="https://www.gartner.com/en/articles/gartner-top-10-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a><sup class="fn"><a href="https://www.gartner.com/en/articles/gartner-top-10-strategic-predictions-for-2026-and-beyond" target="_blank">[5]</a><span class="tip">Gartner &mdash; AI agents challenge mainstream productivity tools; $58B market.</span></sup>: AI agents create the &ldquo;first true challenge to mainstream productivity tools in <strong>35 years</strong>&rdquo; &mdash; a $58B market. If agents can draft documents, manage schedules, prepare presentations, and coordinate workflows, the productivity software stack (Office, Google Workspace, project management tools) faces fundamental disruption.</p>
-   <p>IBM: &ldquo;a new class of chips for agentic workloads may emerge&rdquo; &mdash; alongside GPUs, purpose-built hardware for the 3B-7B model workloads that dominate real-world deployment (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s efficiency argument). If this materializes, the chip market diversifies beyond <a href="https://arxiv.org/abs/2409.15790" target="_blank">NVIDIA&rsquo;s</a> current 60%+ share.</p>
-   <p>The AI device breakout (<a href="https://www.salesforce.com/blog/ai-agents-predictions/" target="_blank">Salesforce</a>): dedicated AI hardware moving beyond phones and laptops. Whether this becomes a real market category or another smart-speaker-scale disappointment is one of 2026&rsquo;s open bets.</p>`,
-  `<p>Four convergence points: <strong>1.</strong> Investment is massive and unprecedented &mdash; $500B+ capex is not debatable. <strong>2.</strong> Revenue is real and growing 9&times;, but concentrated in a few companies. <strong>3.</strong> Cost deflation is structural and enabling new use cases at each 10&times; drop. <strong>4.</strong> Power (not money) is the binding infrastructure constraint.</p>
-   <p>The meta-finding: the economic story is not &ldquo;AI doesn&rsquo;t generate value&rdquo; (it does &mdash; $15B OpenAI, $7B Anthropic) nor &ldquo;AI investment is rational&rdquo; (42% abandonment rate suggests much of it isn&rsquo;t). It&rsquo;s that <strong>value is concentrating</strong> in AI providers while <strong>enterprise returns are elusive</strong> for most deployers.</p>`,
-  `<p>The bubble question is the survey&rsquo;s most irreducible disagreement. <strong>The case for bubble:</strong> $252B invested, 42% of initiatives abandoned, 56% of CEOs with no gains (<a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank">PwC</a>), investment dramatically exceeds revenue. <a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> data shows project abandonment <em>accelerating.</em></p>
-   <p><strong>The case against:</strong> 9&times; revenue growth, $15B+ at a single company, 78% adoption, 10&times; annual cost deflation enabling new use cases. Unlike dot-com, AI companies have real revenue, real customers, and real utility.</p>
-   <p>The honest answer: <strong>both arguments cite valid evidence.</strong> AI is simultaneously generating real value (for providers and a minority of deployers) and attracting speculative investment (from the majority who haven&rsquo;t realized returns). This is consistent with what economist Carlota Perez calls the &ldquo;installation phase&rdquo; of a technological revolution &mdash; massive capital deployment that eventually produces returns, but with substantial waste and correction along the way.</p>`
-];
-
-const details = [
-  `<div class="detail-header"><div class="num">01</div><h2><em>Economics</em> &amp; Infrastructure</h2></div>
-   <h3>The Economic Stakes</h3>
-   <p>Every previous section feeds into this one. <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s cost deflation determines AI&rsquo;s economic trajectory. <a href="s3-agents.dd.html" title="AI Agents">S3</a>&rsquo;s 40% agent failure rate determines how much investment generates returns. <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>&rsquo;s adoption-value gap quantifies the distance between spending and benefit. <a href="s5-employment.dd.html" title="Employment &amp; Labor">S5</a>&rsquo;s employment effects shape the political response. <a href="s6-trust.dd.html" title="Public Perception &amp; Trust">S6</a>&rsquo;s trust deficit constrains adoption speed. <a href="s7-regulation.dd.html" title="Regulation &amp; Governance">S7</a>&rsquo;s regulatory landscape determines compliance costs. S8 asks: given all of this, are the economics working?</p>
-   <p>Five sources provide the data. <a href="https://www.goldmansachs.com/insights/articles/ai-in-2026" target="_blank">Goldman Sachs</a> gives the macro view ($500B+ capex, hyperscaler concentration). <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> identifies the market disruption ($58B productivity software). IBM frames the technology-hardware intersection. <a href="https://llm-stats.com/" target="_blank">LLM-Stats</a> tracks the deflation curve. <a href="https://www.understandingai.org/" target="_blank">Understanding AI</a> provides company-level revenue data. Together they paint a picture of an industry with real revenue, unprecedented investment, and a gap between the two that is either a sign of early-stage rational investment or a speculative bubble.</p>
-   <div class="callout"><strong>How this section connects:</strong> The bubble question cannot be answered with economic data alone. It depends on whether the adoption-value gap (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) closes or widens, whether agent deployments (<a href="s3-agents.dd.html" title="AI Agents">S3</a>) succeed at scale, whether the career ladder damage (<a href="s5-employment.dd.html" title="Employment &amp; Labor">S5</a>) creates political backlash, and whether regulation (<a href="s7-regulation.dd.html" title="Regulation &amp; Governance">S7</a>) imposes costs that shift the economic calculus. The economics section is the capstone where every other trend&rsquo;s implications converge.</div>`,
-  `<div class="detail-header"><div class="num">02</div><h2>The $<em>500B</em> Capex Wave</h2></div>
-   <p><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">Goldman Sachs</a> frames the scale of AI investment through the lens of market concentration. The seven biggest technology companies now account for more than 30% of the S&amp;P 500&rsquo;s market capitalization and roughly 25% of its earnings. They are collectively deploying over $500 billion in capital expenditure on AI infrastructure in 2026.</p>
-   <p>The investment goes to physical infrastructure: data centers with tens of thousands of GPUs, power procurement agreements, cooling systems, networking equipment, and the real estate to house it all. Bloomberg reports a 400,000-GPU cluster under construction at an estimated cost of $17 billion for a single facility. <a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">Microsoft&rsquo;s</a> Stargate project in Wisconsin approaches $15 billion. xAI is expanding Colossus toward 1 million GPUs at 1.2 GW capacity.</p>
-   <p>These numbers are unprecedented for private companies. For comparison: the Manhattan Project (in 2024 dollars) cost roughly $30 billion. The Apollo Program cost roughly $260 billion. The entire US defense R&amp;D budget is approximately $140 billion annually. The hyperscalers are spending 3-4&times; the defense R&amp;D budget on AI infrastructure in a single year.</p>
-   <p>The constraint, as <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a> established, is power. $500B in capital expenditure can buy the chips and build the buildings, but it cannot create gigawatts of electrical power overnight. Power infrastructure has multi-year construction timelines, environmental review requirements, and grid interconnection queues. Companies that secured power agreements two years ago are now positioned to deploy; those that didn&rsquo;t are scrambling.</p>
-   <div class="callout"><strong>The concentration risk:</strong> Seven companies are making this $500B bet. If AI returns materialize, these companies capture most of the value. If returns don&rsquo;t materialize, the write-downs will be enormous &mdash; concentrated in the same companies that represent 30% of the S&amp;P 500. This is a systemic risk that extends beyond the AI industry to the broader equity market.</div>`,
-  `<div class="detail-header"><div class="num">03</div><h2><em>Revenue</em> vs Investment</h2></div>
-   <p>The revenue story is encouraging. <a href="https://epoch.ai/" target="_blank">Epoch AI</a> reports that the combined revenues of leading AI companies grew more than 9&times; in 2023-2024. This is not a vaporware industry &mdash; AI companies are generating real cash from real customers for real services. OpenAI is targeting $15 billion in revenue for 2026. <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a> grew from $4.7B to approximately $7B in annual recurring revenue during 2025. These are substantial businesses by any measure.</p>
-   <p>But revenue is not the same as return on investment. <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford&rsquo;s AI Index</a> reports total corporate AI investment of $252 billion in 2024, up 26% year-over-year. US private AI investment alone was $109 billion. GenAI specifically attracted $33.9 billion in private investment. These numbers dramatically exceed current AI industry revenues. Even accounting for the lag between investment and revenue, the ratio is stretched.</p>
-   <p><a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> provides the most sobering datapoint: 42% of companies abandoned most of their AI initiatives in 2024, up from 17% the prior year. The average organization scrapped 46% of AI proofs-of-concept. This is not the behavior of an industry where investment is matching returns. It&rsquo;s the behavior of an industry where a significant portion of investment is failing to generate value &mdash; and organizations are starting to cut their losses.</p>
-   <p><a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank">PwC&rsquo;s</a> CEO survey (from <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) adds another dimension: 56% of CEOs captured neither revenue nor cost savings from AI. Only 12% achieved both. If most CEOs can&rsquo;t point to financial returns after 2+ years of AI investment, the $252B in aggregate corporate AI spending includes a substantial component that is not generating returns.</p>
-   <div class="callout"><strong>The installation-phase interpretation:</strong> Economist Carlota Perez&rsquo;s framework for technological revolutions distinguishes between the &ldquo;installation phase&rdquo; (massive capital deployment, speculation, infrastructure building) and the &ldquo;deployment phase&rdquo; (returns materialize as infrastructure enables new business models). By this reading, $500B in capex and 42% project failure are both normal: the railroad era had similar investment patterns. The question is whether we&rsquo;re in 1847 (pre-crash) or 1870 (pre-boom).</div>`,
-  `<div class="detail-header"><div class="num">04</div><h2>The <em>Pricing</em> Collapse</h2></div>
-   <p>The pricing trajectory for AI inference is the most structurally important economic trend in the section. GPT-4-level capability cost approximately $30 per million tokens in early 2023. By early 2026, equivalent capability costs less than $1 per million tokens. That is roughly 30&times; deflation in three years, or approximately 10&times; per year.</p>
-   <p>This deflation is not slowing down. <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a> identified three compounding curves: hardware price-performance improving 40%/year, algorithmic efficiency gaining 3&times;/year, and architectural efficiency (the 142&times; model shrinkage). These curves show no sign of flattening.</p>
-   <p>The economic consequence is profound. Each 10&times; cost reduction opens a new tier of viable applications. At $30/M tokens, AI was cost-effective only for high-value, low-volume tasks (legal research, financial analysis). At $1/M tokens, it becomes viable for medium-value, medium-volume tasks (customer service, content generation). At $0.10/M tokens, it becomes viable for low-value, high-volume tasks (email sorting, data classification, routine documentation). This is the mechanism by which AI moves from premium service to background infrastructure.</p>
-   <p>For AI companies, deflation creates a strategic tension. Revenue per query drops 10&times;/year, which means you need 10&times; more queries to maintain the same revenue. The companies that win are those that expand usage faster than prices fall &mdash; which requires expanding into new use cases and new customer segments at each price tier. OpenAI&rsquo;s trajectory from API provider to consumer product to enterprise platform reflects this pressure.</p>
-   <div class="callout"><strong>The deflation endgame:</strong> If pricing continues on the current trajectory, GPT-4-level inference costs $0.001/M tokens by 2030 &mdash; essentially free. At that point, the capability itself has zero economic value, and all value resides in the system around it: integration, reliability, customization, governance. This is exactly <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s &ldquo;model as commodity&rdquo; thesis playing out in pricing data.</div>`,
-  `<div class="detail-header"><div class="num">05</div><h2><em>Market</em> Disruption</h2></div>
-   <p><a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> identifies what they call &ldquo;the first true challenge to mainstream productivity tools in 35 years.&rdquo; The $58 billion productivity software market &mdash; dominated by Microsoft Office and Google Workspace since the late 1980s &mdash; faces fundamental disruption from AI agents that can draft, summarize, schedule, coordinate, and present without the traditional tool paradigm of blank documents and empty spreadsheets.</p>
-   <p>The disruption model: instead of opening Word and writing a document, you describe what you need and an agent produces it. Instead of building a spreadsheet, you describe the analysis and an agent generates the data model. Instead of creating a presentation, you specify the audience and key messages and an agent builds the deck. The tools don&rsquo;t disappear &mdash; they become execution surfaces for agent-generated content rather than primary creation interfaces.</p>
-   <p>IBM adds the hardware dimension: alongside GPUs, &ldquo;a new class of chips for agentic workloads may emerge.&rdquo; <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s efficiency argument (7B models are 10-30&times; more cost-effective for most sub-tasks) implies a hardware opportunity for chips optimized for the small-model workloads that dominate actual deployment. ASIC-based accelerators, chiplet designs, analog inference, and quantum-assisted optimizers are all maturing. If purpose-built agentic chips emerge, NVIDIA&rsquo;s 60%+ market share faces competitive pressure from below.</p>
-   <div class="callout"><strong>The $58B question:</strong> <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner&rsquo;s</a> prediction of productivity software disruption is the most ambitious market forecast in the survey. The incumbents (Microsoft, Google) are also the leading AI providers. Whether AI disrupts their existing products or strengthens their position depends on whether the disruption comes from within (Copilot as a feature of Office) or from without (standalone AI tools that replace Office entirely). So far, the former is winning.</div>`,
-  `<div class="detail-header"><div class="num">06</div><h2>What <em>Everyone</em> Agrees On</h2></div>
-   <p><strong>1. Investment is massive and unprecedented.</strong> $500B+ hyperscaler capex. $252B corporate AI investment. These numbers are not debatable &mdash; they represent physical infrastructure under construction and money already spent. <strong>2. Revenue is real and growing.</strong> 9&times; revenue growth for leading AI companies. $15B+ at OpenAI, $7B at <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a>. This is not a zero-revenue bubble. <strong>3. Cost deflation is structural.</strong> 10&times;/year for equivalent capability. Three independent compounding curves with no sign of flattening. <strong>4. Power is the binding constraint.</strong> Not money, not chips, not algorithms. Multi-year construction timelines make power the strategic bottleneck.</p>
-   <p>The meta-finding: AI generates real economic value &mdash; for AI providers. The question is whether that value extends to the broader economy (the enterprise deployers from <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) at a rate that justifies the investment being made.</p>
-   <div class="callout"><strong>The capstone finding:</strong> Value is concentrating in AI providers (OpenAI, Anthropic, cloud hyperscalers) while enterprise returns remain elusive for most deployers. This is consistent with an infrastructure buildout phase where the infrastructure providers profit before the infrastructure users do &mdash; similar to how railroad companies profited before the industries they enabled did, or how cloud providers (AWS) profited before most cloud adopters achieved ROI. The question is not whether value will eventually flow to enterprise deployers but how many investment cycles it takes and how much capital is wasted along the way.</div>`,
-  `<div class="detail-header"><div class="num">07</div><h2>The <em>Bubble</em> Question</h2></div>
-   <h3>The Case For Bubble</h3>
-   <p>The circumstantial evidence is substantial. $252B in corporate AI investment. 42% of companies abandoning most AI initiatives (up from 17%). 56% of CEOs with no financial gains. <a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> data showing project abandonment <em>accelerating</em>. Investment dramatically exceeding current revenue. <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> predicting 40% of agent projects canceled. The pattern &mdash; massive investment with modest returns and rising abandonment rates &mdash; resembles the dot-com era circa 1999.</p>
-   <h3>The Case Against</h3>
-   <p>Unlike the dot-com bubble, AI companies have real and rapidly growing revenue. OpenAI&rsquo;s $15B target is not a fantasy &mdash; they have a path to it based on existing customer growth. 78% of organizations use AI (not the 5% adoption of internet commerce in 1999). The 10&times; annual cost deflation creates a genuine expanding market. The technology works &mdash; SWE-bench went from 4% to 72% in a year (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>). AI company revenues grew 9&times; in 2023-2024. Historical analogies suggest this might be closer to 2004 (post-crash but pre-boom for the real internet economy) than 1999.</p>
-   <h3>The Honest Assessment</h3>
-   <p>Both arguments cite valid evidence because both are <em>partially true simultaneously.</em> AI is generating real value for a minority of organizations (AI providers, high-performer deployers) while attracting speculative investment from the majority (who haven&rsquo;t realized returns). The investment-to-return ratio is stretched but not obviously irrational if you take a 5-10 year view. Some portion of the $500B capex will generate excellent returns. Some portion will be written off.</p>
-   <p>The defining characteristic of a bubble is that it can only be identified after the fact. Anyone claiming certainty in either direction &mdash; &ldquo;definitely a bubble&rdquo; or &ldquo;definitely not&rdquo; &mdash; is selling confidence they don&rsquo;t have. What we <em>can</em> say: the economic fundamentals (real revenue, real utility, cost deflation) are stronger than the dot-com era. The investment-to-return gap (42% abandonment, 56% CEO no-gains) is cause for concern but not alarm if you believe the gap will close over a multi-year horizon.</p>
-   <div class="callout"><strong>What to watch:</strong> The leading indicator is the project abandonment rate. If S&amp;P Global&rsquo;s 42% holds steady or declines in 2026-2027, it suggests organizations are learning what works and concentrating investment on viable use cases. If it rises toward 60-70%, the investment-value gap is widening and a correction becomes likely. The second indicator: AI company revenue growth. If the 9&times; growth rate decelerates sharply, the revenue story that supports current valuations weakens. If it sustains at even 3-4&times;, the economic fundamentals are solid.</div>`
-];
-
-
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
   <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
       <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
       <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
     </button>
   </div>
+
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-head">
       <div class="sidebar-logo">E<em>c</em></div>
     </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Overview"><span class="sidebar-num">01</span><span class="sidebar-label">Overview</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Capex"><span class="sidebar-num">02</span><span class="sidebar-label">Capex</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Revenue"><span class="sidebar-num">03</span><span class="sidebar-label">Revenue</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Deflation"><span class="sidebar-num">04</span><span class="sidebar-label">Deflation</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Disruption"><span class="sidebar-num">05</span><span class="sidebar-label">Disruption</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Consensus"><span class="sidebar-num">06</span><span class="sidebar-label">Consensus</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Bubble"><span class="sidebar-num">07</span><span class="sidebar-label">Bubble</span></div>
+    </div>
   </nav>
+
   <div class="main" id="main">
     <div class="main-head">
       <div class="main-head-inner">
@@ -436,46 +365,181 @@ shell.innerHTML = `
         <div class="masthead-sub"><span>$500B capex, 9&times; revenue growth, and the bubble question</span></div>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Economics</em> &amp; Infrastructure</h2>
+          <p><strong>$500B+</strong> in hyperscaler capital expenditure. <strong>$252B</strong> in corporate AI investment. AI company revenues growing <strong>9&times;</strong>. But 42% of companies abandoned most AI initiatives in 2024. The economics of AI in 2026 are defined by a single question: is this rational investment or speculative excess?</p>
+   <p>The answer depends on which metric you look at. Revenue growth is real: OpenAI targeting $15B, <a href="https://www.anthropic.com/research/agentic-coding-trends-2026" target="_blank">Anthropic</a> $7B ARR. Pricing collapse is real: 10&times; annual cost deflation. But so is the gap between investment and realized enterprise value (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>&rsquo;s adoption-value gap).</p>
+   <div class="s-stat">
+     <div class="st"><div class="sv">$500B+</div><div class="sl">hyperscaler capex 2026</div></div>
+     <div class="st"><div class="sv">$252B</div><div class="sl">corporate AI investment 2024</div></div>
+     <div class="st"><div class="sv">9&times;</div><div class="sl">AI company revenue growth</div></div>
+     <div class="st"><div class="sv">$58B</div><div class="sl">productivity market at stake</div></div>
+   </div>
+        </div>
+
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The $<em>500B</em> Capex Wave</h2>
+          <p><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">Goldman Sachs</a><sup class="fn"><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">[1]</a><span class="tip">Goldman Sachs &mdash; AI investment forecasts and hyperscaler capex analysis.</span></sup>: the seven biggest tech companies now represent <strong>30%+ of the S&amp;P 500&rsquo;s market cap</strong> and ~25% of its earnings. They are collectively spending $500B+ on AI infrastructure in 2026 &mdash; data centers, chips, power agreements, cooling systems.</p>
+   <p>For context: $500B is roughly the GDP of Thailand. It exceeds the entire US defense R&amp;D budget. It is the largest concentrated infrastructure investment by private companies in modern history. The bet is that AI will generate returns that justify this unprecedented capital deployment.</p>
+   <p>The &ldquo;gigawatt ceiling&rdquo; (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>) constrains how fast this capital can be deployed. Power, not money, is the bottleneck. Companies are &ldquo;obsessing over allocating every megawatt to activities with the highest return.&rdquo;</p>
+        </div>
+
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Revenue</em> vs Investment</h2>
+          <p>AI revenue is real and growing fast. <a href="https://epoch.ai/" target="_blank">Epoch AI</a><sup class="fn"><a href="https://epoch.ai/" target="_blank">[2]</a><span class="tip">Epoch AI &mdash; AI company revenue growth tracking (9&times; in 2023-2024).</span></sup>: combined revenues of leading AI companies grew <strong>9&times; in 2023-2024.</strong> OpenAI is targeting $15B revenue in 2026. <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a> grew from $4.7B to $7B ARR in 2025. The AI industry is generating substantial cash, not just burning venture capital.</p>
+   <p>But revenue doesn&rsquo;t equal returns. <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford</a><sup class="fn"><a href="https://aiindex.stanford.edu/report/" target="_blank">[3]</a><span class="tip">Stanford AI Index 2025 &mdash; $252B corporate AI investment in 2024.</span></sup>: total corporate AI investment was $252B in 2024 (up 26% YoY). US private AI investment: $109B. GenAI specifically: $33.9B. These numbers dwarf current AI revenues. The gap between investment and revenue is the fuel for the bubble debate.</p>
+   <p><a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a><sup class="fn"><a href="https://www.spglobal.com/" target="_blank">[4]</a><span class="tip">S&amp;P Global &mdash; 42% of companies abandoned most AI initiatives in 2024.</span></sup>: <strong>42% of companies abandoned most AI initiatives in 2024</strong>, up from 17% the prior year. The projects being abandoned suggest that a significant portion of AI investment is not generating returns.</p>
+        </div>
+
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Pricing</em> Collapse</h2>
+          <p>The most structurally important economic trend: <strong>~10&times; annual cost deflation</strong> for equivalent AI capability. GPT-4-level inference went from ~$30 to &lt;$1 per million tokens in three years. This isn&rsquo;t a one-time price cut &mdash; it&rsquo;s an exponential curve driven by hardware, algorithmic, and architectural improvements (detailed in <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>).</p>
+   <p>The economic consequence: applications that were impossible at $30/M tokens become viable at $1. Use cases that are marginal at $1 become compelling at $0.10. Each 10&times; drop opens a new tier of economically viable applications. This is the mechanism by which AI moves from premium service to infrastructure commodity.</p>
+   <p>For AI companies, deflation is a double-edged sword: it expands the market (more use cases are viable) but compresses margins (the same capability gets cheaper every year). The business model shifts from charging for capability to charging for integration, reliability, and ecosystem.</p>
+        </div>
+
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Market</em> Disruption</h2>
+          <p><a href="https://www.gartner.com/en/articles/gartner-top-10-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a><sup class="fn"><a href="https://www.gartner.com/en/articles/gartner-top-10-strategic-predictions-for-2026-and-beyond" target="_blank">[5]</a><span class="tip">Gartner &mdash; AI agents challenge mainstream productivity tools; $58B market.</span></sup>: AI agents create the &ldquo;first true challenge to mainstream productivity tools in <strong>35 years</strong>&rdquo; &mdash; a $58B market. If agents can draft documents, manage schedules, prepare presentations, and coordinate workflows, the productivity software stack (Office, Google Workspace, project management tools) faces fundamental disruption.</p>
+   <p>IBM: &ldquo;a new class of chips for agentic workloads may emerge&rdquo; &mdash; alongside GPUs, purpose-built hardware for the 3B-7B model workloads that dominate real-world deployment (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s efficiency argument). If this materializes, the chip market diversifies beyond <a href="https://arxiv.org/abs/2409.15790" target="_blank">NVIDIA&rsquo;s</a> current 60%+ share.</p>
+   <p>The AI device breakout (<a href="https://www.salesforce.com/blog/ai-agents-predictions/" target="_blank">Salesforce</a>): dedicated AI hardware moving beyond phones and laptops. Whether this becomes a real market category or another smart-speaker-scale disappointment is one of 2026&rsquo;s open bets.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>What <em>Everyone</em> Agrees On</h2>
+          <p>Four convergence points: <strong>1.</strong> Investment is massive and unprecedented &mdash; $500B+ capex is not debatable. <strong>2.</strong> Revenue is real and growing 9&times;, but concentrated in a few companies. <strong>3.</strong> Cost deflation is structural and enabling new use cases at each 10&times; drop. <strong>4.</strong> Power (not money) is the binding infrastructure constraint.</p>
+   <p>The meta-finding: the economic story is not &ldquo;AI doesn&rsquo;t generate value&rdquo; (it does &mdash; $15B OpenAI, $7B Anthropic) nor &ldquo;AI investment is rational&rdquo; (42% abandonment rate suggests much of it isn&rsquo;t). It&rsquo;s that <strong>value is concentrating</strong> in AI providers while <strong>enterprise returns are elusive</strong> for most deployers.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Bubble</em> Question</h2>
+          <p>The bubble question is the survey&rsquo;s most irreducible disagreement. <strong>The case for bubble:</strong> $252B invested, 42% of initiatives abandoned, 56% of CEOs with no gains (<a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank">PwC</a>), investment dramatically exceeds revenue. <a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> data shows project abandonment <em>accelerating.</em></p>
+   <p><strong>The case against:</strong> 9&times; revenue growth, $15B+ at a single company, 78% adoption, 10&times; annual cost deflation enabling new use cases. Unlike dot-com, AI companies have real revenue, real customers, and real utility.</p>
+   <p>The honest answer: <strong>both arguments cite valid evidence.</strong> AI is simultaneously generating real value (for providers and a minority of deployers) and attracting speculative investment (from the majority who haven&rsquo;t realized returns). This is consistent with what economist Carlota Perez calls the &ldquo;installation phase&rdquo; of a technological revolution &mdash; massive capital deployment that eventually produces returns, but with substantial waste and correction along the way.</p>
+        </div>
+
+        <div class="section-nav">
+          <span>&larr; <a href="s1-llms.dd.html">S1</a></span>
+          <span><a href="s4-workplace.dd.html">S4</a> &rarr;</span>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div class="right closed" id="right">
     <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01</div><h2><em>Economics</em> &amp; Infrastructure</h2></div>
+   <h3>The Economic Stakes</h3>
+   <p>Every previous section feeds into this one. <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s cost deflation determines AI&rsquo;s economic trajectory. <a href="s3-agents.dd.html" title="AI Agents">S3</a>&rsquo;s 40% agent failure rate determines how much investment generates returns. <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>&rsquo;s adoption-value gap quantifies the distance between spending and benefit. <a href="s5-employment.dd.html" title="Employment &amp; Labor">S5</a>&rsquo;s employment effects shape the political response. <a href="s6-trust.dd.html" title="Public Perception &amp; Trust">S6</a>&rsquo;s trust deficit constrains adoption speed. <a href="s7-regulation.dd.html" title="Regulation &amp; Governance">S7</a>&rsquo;s regulatory landscape determines compliance costs. S8 asks: given all of this, are the economics working?</p>
+   <p>Five sources provide the data. <a href="https://www.goldmansachs.com/insights/articles/ai-in-2026" target="_blank">Goldman Sachs</a> gives the macro view ($500B+ capex, hyperscaler concentration). <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> identifies the market disruption ($58B productivity software). IBM frames the technology-hardware intersection. <a href="https://llm-stats.com/" target="_blank">LLM-Stats</a> tracks the deflation curve. <a href="https://www.understandingai.org/" target="_blank">Understanding AI</a> provides company-level revenue data. Together they paint a picture of an industry with real revenue, unprecedented investment, and a gap between the two that is either a sign of early-stage rational investment or a speculative bubble.</p>
+   <div class="callout"><strong>How this section connects:</strong> The bubble question cannot be answered with economic data alone. It depends on whether the adoption-value gap (<a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) closes or widens, whether agent deployments (<a href="s3-agents.dd.html" title="AI Agents">S3</a>) succeed at scale, whether the career ladder damage (<a href="s5-employment.dd.html" title="Employment &amp; Labor">S5</a>) creates political backlash, and whether regulation (<a href="s7-regulation.dd.html" title="Regulation &amp; Governance">S7</a>) imposes costs that shift the economic calculus. The economics section is the capstone where every other trend&rsquo;s implications converge.</div>
+      </div>
+
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02</div><h2>The $<em>500B</em> Capex Wave</h2></div>
+   <p><a href="https://www.goldmansachs.com/insights/articles/ai-in-2026-seven-predictions" target="_blank">Goldman Sachs</a> frames the scale of AI investment through the lens of market concentration. The seven biggest technology companies now account for more than 30% of the S&amp;P 500&rsquo;s market capitalization and roughly 25% of its earnings. They are collectively deploying over $500 billion in capital expenditure on AI infrastructure in 2026.</p>
+   <p>The investment goes to physical infrastructure: data centers with tens of thousands of GPUs, power procurement agreements, cooling systems, networking equipment, and the real estate to house it all. Bloomberg reports a 400,000-GPU cluster under construction at an estimated cost of $17 billion for a single facility. <a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/01/15/7-ai-trends-for-2026/" target="_blank">Microsoft&rsquo;s</a> Stargate project in Wisconsin approaches $15 billion. xAI is expanding Colossus toward 1 million GPUs at 1.2 GW capacity.</p>
+   <p>These numbers are unprecedented for private companies. For comparison: the Manhattan Project (in 2024 dollars) cost roughly $30 billion. The Apollo Program cost roughly $260 billion. The entire US defense R&amp;D budget is approximately $140 billion annually. The hyperscalers are spending 3-4&times; the defense R&amp;D budget on AI infrastructure in a single year.</p>
+   <p>The constraint, as <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a> established, is power. $500B in capital expenditure can buy the chips and build the buildings, but it cannot create gigawatts of electrical power overnight. Power infrastructure has multi-year construction timelines, environmental review requirements, and grid interconnection queues. Companies that secured power agreements two years ago are now positioned to deploy; those that didn&rsquo;t are scrambling.</p>
+   <div class="callout"><strong>The concentration risk:</strong> Seven companies are making this $500B bet. If AI returns materialize, these companies capture most of the value. If returns don&rsquo;t materialize, the write-downs will be enormous &mdash; concentrated in the same companies that represent 30% of the S&amp;P 500. This is a systemic risk that extends beyond the AI industry to the broader equity market.</div>
+      </div>
+
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03</div><h2><em>Revenue</em> vs Investment</h2></div>
+   <p>The revenue story is encouraging. <a href="https://epoch.ai/" target="_blank">Epoch AI</a> reports that the combined revenues of leading AI companies grew more than 9&times; in 2023-2024. This is not a vaporware industry &mdash; AI companies are generating real cash from real customers for real services. OpenAI is targeting $15 billion in revenue for 2026. <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a> grew from $4.7B to approximately $7B in annual recurring revenue during 2025. These are substantial businesses by any measure.</p>
+   <p>But revenue is not the same as return on investment. <a href="https://aiindex.stanford.edu/report/" target="_blank">Stanford&rsquo;s AI Index</a> reports total corporate AI investment of $252 billion in 2024, up 26% year-over-year. US private AI investment alone was $109 billion. GenAI specifically attracted $33.9 billion in private investment. These numbers dramatically exceed current AI industry revenues. Even accounting for the lag between investment and revenue, the ratio is stretched.</p>
+   <p><a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> provides the most sobering datapoint: 42% of companies abandoned most of their AI initiatives in 2024, up from 17% the prior year. The average organization scrapped 46% of AI proofs-of-concept. This is not the behavior of an industry where investment is matching returns. It&rsquo;s the behavior of an industry where a significant portion of investment is failing to generate value &mdash; and organizations are starting to cut their losses.</p>
+   <p><a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank">PwC&rsquo;s</a> CEO survey (from <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) adds another dimension: 56% of CEOs captured neither revenue nor cost savings from AI. Only 12% achieved both. If most CEOs can&rsquo;t point to financial returns after 2+ years of AI investment, the $252B in aggregate corporate AI spending includes a substantial component that is not generating returns.</p>
+   <div class="callout"><strong>The installation-phase interpretation:</strong> Economist Carlota Perez&rsquo;s framework for technological revolutions distinguishes between the &ldquo;installation phase&rdquo; (massive capital deployment, speculation, infrastructure building) and the &ldquo;deployment phase&rdquo; (returns materialize as infrastructure enables new business models). By this reading, $500B in capex and 42% project failure are both normal: the railroad era had similar investment patterns. The question is whether we&rsquo;re in 1847 (pre-crash) or 1870 (pre-boom).</div>
+      </div>
+
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04</div><h2>The <em>Pricing</em> Collapse</h2></div>
+   <p>The pricing trajectory for AI inference is the most structurally important economic trend in the section. GPT-4-level capability cost approximately $30 per million tokens in early 2023. By early 2026, equivalent capability costs less than $1 per million tokens. That is roughly 30&times; deflation in three years, or approximately 10&times; per year.</p>
+   <p>This deflation is not slowing down. <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a> identified three compounding curves: hardware price-performance improving 40%/year, algorithmic efficiency gaining 3&times;/year, and architectural efficiency (the 142&times; model shrinkage). These curves show no sign of flattening.</p>
+   <p>The economic consequence is profound. Each 10&times; cost reduction opens a new tier of viable applications. At $30/M tokens, AI was cost-effective only for high-value, low-volume tasks (legal research, financial analysis). At $1/M tokens, it becomes viable for medium-value, medium-volume tasks (customer service, content generation). At $0.10/M tokens, it becomes viable for low-value, high-volume tasks (email sorting, data classification, routine documentation). This is the mechanism by which AI moves from premium service to background infrastructure.</p>
+   <p>For AI companies, deflation creates a strategic tension. Revenue per query drops 10&times;/year, which means you need 10&times; more queries to maintain the same revenue. The companies that win are those that expand usage faster than prices fall &mdash; which requires expanding into new use cases and new customer segments at each price tier. OpenAI&rsquo;s trajectory from API provider to consumer product to enterprise platform reflects this pressure.</p>
+   <div class="callout"><strong>The deflation endgame:</strong> If pricing continues on the current trajectory, GPT-4-level inference costs $0.001/M tokens by 2030 &mdash; essentially free. At that point, the capability itself has zero economic value, and all value resides in the system around it: integration, reliability, customization, governance. This is exactly <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s &ldquo;model as commodity&rdquo; thesis playing out in pricing data.</div>
+      </div>
+
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05</div><h2><em>Market</em> Disruption</h2></div>
+   <p><a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> identifies what they call &ldquo;the first true challenge to mainstream productivity tools in 35 years.&rdquo; The $58 billion productivity software market &mdash; dominated by Microsoft Office and Google Workspace since the late 1980s &mdash; faces fundamental disruption from AI agents that can draft, summarize, schedule, coordinate, and present without the traditional tool paradigm of blank documents and empty spreadsheets.</p>
+   <p>The disruption model: instead of opening Word and writing a document, you describe what you need and an agent produces it. Instead of building a spreadsheet, you describe the analysis and an agent generates the data model. Instead of creating a presentation, you specify the audience and key messages and an agent builds the deck. The tools don&rsquo;t disappear &mdash; they become execution surfaces for agent-generated content rather than primary creation interfaces.</p>
+   <p>IBM adds the hardware dimension: alongside GPUs, &ldquo;a new class of chips for agentic workloads may emerge.&rdquo; <a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>&rsquo;s efficiency argument (7B models are 10-30&times; more cost-effective for most sub-tasks) implies a hardware opportunity for chips optimized for the small-model workloads that dominate actual deployment. ASIC-based accelerators, chiplet designs, analog inference, and quantum-assisted optimizers are all maturing. If purpose-built agentic chips emerge, NVIDIA&rsquo;s 60%+ market share faces competitive pressure from below.</p>
+   <div class="callout"><strong>The $58B question:</strong> <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner&rsquo;s</a> prediction of productivity software disruption is the most ambitious market forecast in the survey. The incumbents (Microsoft, Google) are also the leading AI providers. Whether AI disrupts their existing products or strengthens their position depends on whether the disruption comes from within (Copilot as a feature of Office) or from without (standalone AI tools that replace Office entirely). So far, the former is winning.</div>
+      </div>
+
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06</div><h2>What <em>Everyone</em> Agrees On</h2></div>
+   <p><strong>1. Investment is massive and unprecedented.</strong> $500B+ hyperscaler capex. $252B corporate AI investment. These numbers are not debatable &mdash; they represent physical infrastructure under construction and money already spent. <strong>2. Revenue is real and growing.</strong> 9&times; revenue growth for leading AI companies. $15B+ at OpenAI, $7B at <a href="https://www.anthropic.com/research/swe-bench-sonnet" target="_blank">Anthropic</a>. This is not a zero-revenue bubble. <strong>3. Cost deflation is structural.</strong> 10&times;/year for equivalent capability. Three independent compounding curves with no sign of flattening. <strong>4. Power is the binding constraint.</strong> Not money, not chips, not algorithms. Multi-year construction timelines make power the strategic bottleneck.</p>
+   <p>The meta-finding: AI generates real economic value &mdash; for AI providers. The question is whether that value extends to the broader economy (the enterprise deployers from <a href="s4-workplace.dd.html" title="Workplace Adoption">S4</a>) at a rate that justifies the investment being made.</p>
+   <div class="callout"><strong>The capstone finding:</strong> Value is concentrating in AI providers (OpenAI, Anthropic, cloud hyperscalers) while enterprise returns remain elusive for most deployers. This is consistent with an infrastructure buildout phase where the infrastructure providers profit before the infrastructure users do &mdash; similar to how railroad companies profited before the industries they enabled did, or how cloud providers (AWS) profited before most cloud adopters achieved ROI. The question is not whether value will eventually flow to enterprise deployers but how many investment cycles it takes and how much capital is wasted along the way.</div>
+      </div>
+
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07</div><h2>The <em>Bubble</em> Question</h2></div>
+   <h3>The Case For Bubble</h3>
+   <p>The circumstantial evidence is substantial. $252B in corporate AI investment. 42% of companies abandoning most AI initiatives (up from 17%). 56% of CEOs with no financial gains. <a href="https://www.spglobal.com/" target="_blank">S&amp;P Global</a> data showing project abandonment <em>accelerating</em>. Investment dramatically exceeding current revenue. <a href="https://www.gartner.com/en/articles/gartner-top-strategic-predictions-for-2026-and-beyond" target="_blank">Gartner</a> predicting 40% of agent projects canceled. The pattern &mdash; massive investment with modest returns and rising abandonment rates &mdash; resembles the dot-com era circa 1999.</p>
+   <h3>The Case Against</h3>
+   <p>Unlike the dot-com bubble, AI companies have real and rapidly growing revenue. OpenAI&rsquo;s $15B target is not a fantasy &mdash; they have a path to it based on existing customer growth. 78% of organizations use AI (not the 5% adoption of internet commerce in 1999). The 10&times; annual cost deflation creates a genuine expanding market. The technology works &mdash; SWE-bench went from 4% to 72% in a year (<a href="s1-llms.dd.html" title="LLMs &amp; Foundation Models">S1</a>). AI company revenues grew 9&times; in 2023-2024. Historical analogies suggest this might be closer to 2004 (post-crash but pre-boom for the real internet economy) than 1999.</p>
+   <h3>The Honest Assessment</h3>
+   <p>Both arguments cite valid evidence because both are <em>partially true simultaneously.</em> AI is generating real value for a minority of organizations (AI providers, high-performer deployers) while attracting speculative investment from the majority (who haven&rsquo;t realized returns). The investment-to-return ratio is stretched but not obviously irrational if you take a 5-10 year view. Some portion of the $500B capex will generate excellent returns. Some portion will be written off.</p>
+   <p>The defining characteristic of a bubble is that it can only be identified after the fact. Anyone claiming certainty in either direction &mdash; &ldquo;definitely a bubble&rdquo; or &ldquo;definitely not&rdquo; &mdash; is selling confidence they don&rsquo;t have. What we <em>can</em> say: the economic fundamentals (real revenue, real utility, cost deflation) are stronger than the dot-com era. The investment-to-return gap (42% abandonment, 56% CEO no-gains) is cause for concern but not alarm if you believe the gap will close over a multi-year horizon.</p>
+   <div class="callout"><strong>What to watch:</strong> The leading indicator is the project abandonment rate. If S&amp;P Global&rsquo;s 42% holds steady or declines in 2026-2027, it suggests organizations are learning what works and concentrating investment on viable use cases. If it rises toward 60-70%, the investment-value gap is widening and a correction becomes likely. The second indicator: AI company revenue growth. If the 9&times; growth rate decelerates sharply, the revenue story that supports current valuations weakens. If it sustains at even 3-4&times;, the economic fundamentals are solid.</div>
+      </div>
+    </div>
   </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -485,96 +549,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -587,11 +607,7 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-
-
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
 </script>
 </body>

@@ -317,110 +317,191 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-// Data: sections
-const sections = [
-  { num: '1', short: 'Overview', title: '<em>PS1</em> Overview — 40 Points' },
-  { num: '2', short: 'Probability', title: '<em>Probability</em> Review & Foundations' },
-  { num: '3', short: 'PyTorch', title: '<em>PyTorch</em> Fundamentals' },
-  { num: '4', short: 'Autoregressive', title: '<em>Autoregressive</em> Density Estimation' },
-  { num: '5', short: 'MADE', title: '<em>MADE</em>: Masked Autoencoders' },
-  { num: '6', short: 'PixelCNN', title: '<em>PixelCNN</em> Basics' },
-  { num: '7', short: 'Training', title: '<em>Training</em> & Evaluation' },
-  { num: '8', short: 'Takeaways', title: 'Key <em>Takeaways</em>' },
-  { num: '9', short: 'References', title: 'References & <em>Further</em> Reading' }
-];
+<div class="shell">
 
-// Data: summaries
-const summaries = [
-  `<p>Problem Set 1 introduces the foundational concepts of generative modeling through autoregressive density estimation. Students implement a basic autoregressive model in PyTorch, learning how to decompose joint distributions as conditional products: p(x) = ∏ p(xᵢ|x<i). This assignment spans weeks 1–2 and combines probability theory, PyTorch mechanics, and architectural design patterns that underpin advanced generative models like transformers.</p>
-<p>The problem set covers probability fundamentals (chain rule, Bayes' rule, KL divergence), PyTorch workflows (tensors, autograd, datasets, training loops), and two key architectures—MADE and PixelCNN—that efficiently compute likelihoods on high-dimensional data. By the end, students understand how to construct masked networks, evaluate density models, and sample from learned distributions.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>Probability theory is the mathematical backbone of generative modeling. The chain rule decomposes joint probabilities into conditional products, enabling tractable factorizations of high-dimensional distributions. Bayes' rule relates posterior to likelihood and prior, foundational for understanding model inference. KL divergence quantifies the distance between two distributions and motivates the variational objectives used in more advanced models.</p>
-<p>Students review conditional independence, marginal distributions, and the relationship between likelihood and cross-entropy loss. These concepts appear throughout deep generative modeling, especially in variational inference, diffusion models, and transformer-based architectures. Mastering probability notation and manipulation is essential for reading research papers and deriving custom model objectives.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Overview"><span class="sidebar-num">1</span><span class="sidebar-label">Overview</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Probability"><span class="sidebar-num">2</span><span class="sidebar-label">Probability</span></div>
+      <div class="sidebar-item" data-section="2" data-label="PyTorch"><span class="sidebar-num">3</span><span class="sidebar-label">PyTorch</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Autoregressive"><span class="sidebar-num">4</span><span class="sidebar-label">Autoregressive</span></div>
+      <div class="sidebar-item" data-section="4" data-label="MADE"><span class="sidebar-num">5</span><span class="sidebar-label">MADE</span></div>
+      <div class="sidebar-item" data-section="5" data-label="PixelCNN"><span class="sidebar-num">6</span><span class="sidebar-label">PixelCNN</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Training"><span class="sidebar-num">7</span><span class="sidebar-label">Training</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Takeaways"><span class="sidebar-num">8</span><span class="sidebar-label">Takeaways</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">9</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>PyTorch provides the computational tools for deep learning. Tensors are the core data structure—multi-dimensional arrays supporting vectorized operations on GPU. Autograd implements automatic differentiation, computing gradients via backpropagation without explicit derivative code. Datasets and DataLoaders handle batching, shuffling, and memory-efficient loading of training data. Custom training loops tie these together: forward pass, loss computation, backward pass, and parameter updates.</p>
-<p>Students implement standard practices: defining models as <code>nn.Module</code> subclasses, using optimizers like Adam, and organizing code with reproducibility and modularity in mind. Understanding PyTorch deeply—not just as a black box—enables debugging, custom loss functions, and novel model architectures that will be central to later problem sets in the course.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · PROBLEM SET 1</div>
+        <div class="hero-title">PS1: <em>Autoregressive</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>40 Points · Introduction, PyTorch & Density Estimation</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>Autoregressive density estimation models the joint distribution p(x) as a product of conditionals: p(x₁, x₂, ..., xₙ) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) · ... · p(xₙ|x₁,...,xₙ₋₁). This factorization is always valid (following from the chain rule) but requires designing architectures that respect the ordering: each variable's prediction must depend only on previous variables. The negative log-likelihood (NLL) loss directly optimizes this probability, making training straightforward and evaluation unambiguous.</p>
-<p>The autoregressive framework is powerful and general: it works for both continuous and discrete data, supports exact likelihood evaluation, and naturally generates samples sequentially. Students implement neural networks that learn these conditional distributions, experiment with different orderings, and compute bits-per-dimension (bits/dim) metrics to evaluate generative quality. This approach forms the basis for recurrent neural networks, transformers, and diffusion models.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>1</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>PS1</em> Overview — 40 Points</h2>
+          <p>Problem Set 1 introduces the foundational concepts of generative modeling through autoregressive density estimation. Students implement a basic autoregressive model in PyTorch, learning how to decompose joint distributions as conditional products: p(x) = ∏ p(xᵢ|x<i). This assignment spans weeks 1–2 and combines probability theory, PyTorch mechanics, and architectural design patterns that underpin advanced generative models like transformers.</p>
+<p>The problem set covers probability fundamentals (chain rule, Bayes' rule, KL divergence), PyTorch workflows (tensors, autograd, datasets, training loops), and two key architectures—MADE and PixelCNN—that efficiently compute likelihoods on high-dimensional data. By the end, students understand how to construct masked networks, evaluate density models, and sample from learned distributions.</p>
+        </div>
 
-  `<p>Masked Autoencoders for Distribution Estimation (MADE) elegantly enforce the autoregressive ordering constraint through layer-wise masking. Each neuron in a hidden layer is assigned a variable index, and connections are restricted so a neuron can only depend on variables with lower indices. This single-pass architecture computes all conditional distributions p(xᵢ|x<i) in parallel for a given sample, enabling efficient likelihood evaluation and sampling without reordering or multiple forward passes.</p>
-<p>The key technical challenge is designing the mask matrices to enforce ordering while maintaining hidden layer expressiveness. Students implement mask generation algorithms, understand why masking matters (preventing information leakage from future variables), and appreciate the efficiency gains. MADE showcases how architectural constraints can be elegantly baked into the network structure, a pattern repeated in PixelCNN and many modern architectures.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>2</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Probability</em> Review & Foundations</h2>
+          <p>Probability theory is the mathematical backbone of generative modeling. The chain rule decomposes joint probabilities into conditional products, enabling tractable factorizations of high-dimensional distributions. Bayes' rule relates posterior to likelihood and prior, foundational for understanding model inference. KL divergence quantifies the distance between two distributions and motivates the variational objectives used in more advanced models.</p>
+<p>Students review conditional independence, marginal distributions, and the relationship between likelihood and cross-entropy loss. These concepts appear throughout deep generative modeling, especially in variational inference, diffusion models, and transformer-based architectures. Mastering probability notation and manipulation is essential for reading research papers and deriving custom model objectives.</p>
+        </div>
 
-  `<p>PixelCNN adapts the autoregressive factorization to image data by modeling pixels in raster order (top-to-bottom, left-to-right). Masked convolutions—where kernel weights are zeroed to prevent future pixel access—enforce the ordering constraint while preserving spatial structure and parameter efficiency. The receptive field of masked convolutions grows with depth, enabling long-range dependencies within the image. PixelCNN naturally generates coherent image samples by conditioning each pixel on all previous ones.</p>
-<p>Students implement masked convolutions, visualize receptive fields to verify causality, and sample from PixelCNN-trained models. The architecture demonstrates how to build generative models for high-dimensional structured data. While later variants (PixelCNN++, Gated PixelCNN) add refinements, the core masked convolution mechanism remains central to efficient autoregressive image modeling and illustrates the broader principle of enforcing constraints through architectural design.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>3</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>PyTorch</em> Fundamentals</h2>
+          <p>PyTorch provides the computational tools for deep learning. Tensors are the core data structure—multi-dimensional arrays supporting vectorized operations on GPU. Autograd implements automatic differentiation, computing gradients via backpropagation without explicit derivative code. Datasets and DataLoaders handle batching, shuffling, and memory-efficient loading of training data. Custom training loops tie these together: forward pass, loss computation, backward pass, and parameter updates.</p>
+<p>Students implement standard practices: defining models as <code>nn.Module</code> subclasses, using optimizers like Adam, and organizing code with reproducibility and modularity in mind. Understanding PyTorch deeply—not just as a black box—enables debugging, custom loss functions, and novel model architectures that will be central to later problem sets in the course.</p>
+        </div>
 
-  `<p>Training a generative model optimizes the negative log-likelihood (NLL) loss, directly maximizing the probability the model assigns to training data. Evaluation uses multiple metrics: NLL on held-out test data, bits-per-dimension (NLL in bits, normalized by data dimension), and qualitative sample quality. NLL provides an exact, comparable measure across models; bits/dim scales to different data sizes for fair comparison. Sampling—drawing from the learned distribution—is both a practical evaluation (do the samples look good?) and a unique advantage of models with tractable likelihoods.</p>
-<p>Students implement training loops with learning rate scheduling, regularization, and checkpoint saving. They compute and interpret test NLL/bits/dim, generate samples via sequential conditioning, and analyze failure cases. Understanding when models underfit or overfit, and how architectural choices affect both likelihood and sample quality, builds intuition for designing better generative models. These practices—careful evaluation, metric selection, and ablation studies—carry through to every subsequent problem set.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>4</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Autoregressive</em> Density Estimation</h2>
+          <p>Autoregressive density estimation models the joint distribution p(x) as a product of conditionals: p(x₁, x₂, ..., xₙ) = p(x₁) · p(x₂|x₁) · p(x₃|x₁,x₂) · ... · p(xₙ|x₁,...,xₙ₋₁). This factorization is always valid (following from the chain rule) but requires designing architectures that respect the ordering: each variable's prediction must depend only on previous variables. The negative log-likelihood (NLL) loss directly optimizes this probability, making training straightforward and evaluation unambiguous.</p>
+<p>The autoregressive framework is powerful and general: it works for both continuous and discrete data, supports exact likelihood evaluation, and naturally generates samples sequentially. Students implement neural networks that learn these conditional distributions, experiment with different orderings, and compute bits-per-dimension (bits/dim) metrics to evaluate generative quality. This approach forms the basis for recurrent neural networks, transformers, and diffusion models.</p>
+        </div>
 
-  `<p>Problem Set 1 establishes core competencies: probability notation and manipulations, PyTorch proficiency, and the autoregressive factorization framework. Students see how elegant mathematical ideas (chain rule, conditional independence) translate into concrete algorithms and PyTorch code. The MADE and PixelCNN implementations demystify how theoretical constraints become practical network designs through masking and structured computation. The training and evaluation workflow—loss optimization, metric tracking, sample generation—is replicated and refined throughout the course.</p>
-<p>These foundations are essential for later problem sets tackling variational autoencoders, diffusion models, flow-based models, and energy-based models. The autoregressive perspective—modeling complex distributions as products of simpler conditionals—remains a core technique in modern deep generative modeling. Mastery of this problem set positions students to understand and innovate in the rapidly evolving landscape of generative AI.</p>`,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>5</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>MADE</em>: Masked Autoencoders</h2>
+          <p>Masked Autoencoders for Distribution Estimation (MADE) elegantly enforce the autoregressive ordering constraint through layer-wise masking. Each neuron in a hidden layer is assigned a variable index, and connections are restricted so a neuron can only depend on variables with lower indices. This single-pass architecture computes all conditional distributions p(xᵢ|x<i) in parallel for a given sample, enabling efficient likelihood evaluation and sampling without reordering or multiple forward passes.</p>
+<p>The key technical challenge is designing the mask matrices to enforce ordering while maintaining hidden layer expressiveness. Students implement mask generation algorithms, understand why masking matters (preventing information leakage from future variables), and appreciate the efficiency gains. MADE showcases how architectural constraints can be elegantly baked into the network structure, a pattern repeated in PixelCNN and many modern architectures.</p>
+        </div>
 
-  `<p>This section provides curated references for deeper understanding of autoregressive models and foundational generative modeling concepts. The papers, blogs, and resources listed below cover key topics from Problem Set 1, including chain rule and probability fundamentals, autoregressive density estimation, masked architectures (MADE, PixelCNN), and PyTorch implementation. Lilian Weng's blog posts offer intuitive explanations of complex concepts; arXiv papers provide rigorous mathematical foundations and empirical results. Stanford's course materials supplement the problem set and offer additional perspective on generative modeling as a field.</p>
-<p>Students are encouraged to read these materials actively: work through derivations on paper, implement algorithms from scratch when possible, and compare different authors' explanations to build robust understanding. The references span theoretical foundations (probability theory, neural networks) to practical implementation (PyTorch, model architecture design) to empirical evaluation (likelihood metrics, sample quality assessment). This breadth reflects the reality of modern generative modeling research, which requires depth in mathematics, deep learning, and experimental methodology.</p>`
-];
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>6</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>PixelCNN</em> Basics</h2>
+          <p>PixelCNN adapts the autoregressive factorization to image data by modeling pixels in raster order (top-to-bottom, left-to-right). Masked convolutions—where kernel weights are zeroed to prevent future pixel access—enforce the ordering constraint while preserving spatial structure and parameter efficiency. The receptive field of masked convolutions grows with depth, enabling long-range dependencies within the image. PixelCNN naturally generates coherent image samples by conditioning each pixel on all previous ones.</p>
+<p>Students implement masked convolutions, visualize receptive fields to verify causality, and sample from PixelCNN-trained models. The architecture demonstrates how to build generative models for high-dimensional structured data. While later variants (PixelCNN++, Gated PixelCNN) add refinements, the core masked convolution mechanism remains central to efficient autoregressive image modeling and illustrates the broader principle of enforcing constraints through architectural design.</p>
+        </div>
 
-// Data: details (4-6 paragraphs each)
-const details = [
-  `<div class="detail-header"><div class="num">Section 1</div><h2><em>PS1</em> Overview — 40 Points</h2></div>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>7</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Training</em> & Evaluation</h2>
+          <p>Training a generative model optimizes the negative log-likelihood (NLL) loss, directly maximizing the probability the model assigns to training data. Evaluation uses multiple metrics: NLL on held-out test data, bits-per-dimension (NLL in bits, normalized by data dimension), and qualitative sample quality. NLL provides an exact, comparable measure across models; bits/dim scales to different data sizes for fair comparison. Sampling—drawing from the learned distribution—is both a practical evaluation (do the samples look good?) and a unique advantage of models with tractable likelihoods.</p>
+<p>Students implement training loops with learning rate scheduling, regularization, and checkpoint saving. They compute and interpret test NLL/bits/dim, generate samples via sequential conditioning, and analyze failure cases. Understanding when models underfit or overfit, and how architectural choices affect both likelihood and sample quality, builds intuition for designing better generative models. These practices—careful evaluation, metric selection, and ablation studies—carry through to every subsequent problem set.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>8</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Key <em>Takeaways</em></h2>
+          <p>Problem Set 1 establishes core competencies: probability notation and manipulations, PyTorch proficiency, and the autoregressive factorization framework. Students see how elegant mathematical ideas (chain rule, conditional independence) translate into concrete algorithms and PyTorch code. The MADE and PixelCNN implementations demystify how theoretical constraints become practical network designs through masking and structured computation. The training and evaluation workflow—loss optimization, metric tracking, sample generation—is replicated and refined throughout the course.</p>
+<p>These foundations are essential for later problem sets tackling variational autoencoders, diffusion models, flow-based models, and energy-based models. The autoregressive perspective—modeling complex distributions as products of simpler conditionals—remains a core technique in modern deep generative modeling. Mastery of this problem set positions students to understand and innovate in the rapidly evolving landscape of generative AI.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>9</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>This section provides curated references for deeper understanding of autoregressive models and foundational generative modeling concepts. The papers, blogs, and resources listed below cover key topics from Problem Set 1, including chain rule and probability fundamentals, autoregressive density estimation, masked architectures (MADE, PixelCNN), and PyTorch implementation. Lilian Weng's blog posts offer intuitive explanations of complex concepts; arXiv papers provide rigorous mathematical foundations and empirical results. Stanford's course materials supplement the problem set and offer additional perspective on generative modeling as a field.</p>
+<p>Students are encouraged to read these materials actively: work through derivations on paper, implement algorithms from scratch when possible, and compare different authors' explanations to build robust understanding. The references span theoretical foundations (probability theory, neural networks) to practical implementation (PyTorch, model architecture design) to empirical evaluation (likelihood metrics, sample quality assessment). This breadth reflects the reality of modern generative modeling research, which requires depth in mathematics, deep learning, and experimental methodology.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">Section 1</div><h2><em>PS1</em> Overview — 40 Points</h2></div>
 <p>Problem Set 1 is the first graded assignment in XCS236 (Generative Models) and anchors the course in foundational concepts and practical implementation. Spanning weeks 1–2, it covers probability theory, PyTorch fundamentals, and two flagship autoregressive architectures: MADE and PixelCNN. The assignment is worth 40 points and includes both coding and written components that test understanding of how probability theory, deep learning frameworks, and architectural design combine to build working generative models.</p>
 <p>The problem set is structured in stages: first, students implement a simple autoregressive model from scratch to understand the mechanics of factorizing joint distributions. Next, they implement MADE, learning how to enforce autoregressive ordering through masking. Third, they implement PixelCNN for image generation, applying masked convolutions. Finally, they train, evaluate, and analyze both models on real datasets, computing likelihoods and generating samples. This progression builds from theory to implementation to empirical understanding.</p>
 <p>Key learning outcomes include: (1) fluency with autoregressive factorization and chain rule manipulations; (2) ability to implement PyTorch models with custom layers and loss functions; (3) understanding of how masking enforces architectural constraints; (4) experience with training generative models and interpreting likelihood-based metrics; (5) familiarity with sampling, likelihood evaluation, and qualitative assessment of generative quality.</p>
-<p>The problem set emphasizes both correctness and insight. Students are expected to debug their implementations, verify that likelihoods are computed correctly, and understand why certain design choices matter. Written responses ask students to explain concepts like bits/dim, the motivation for masking, and the tradeoffs between different orderings. This balance—code and reasoning—reflects the reality of modern generative modeling research, where strong intuition and working implementations go hand-in-hand.</p>`,
+<p>The problem set emphasizes both correctness and insight. Students are expected to debug their implementations, verify that likelihoods are computed correctly, and understand why certain design choices matter. Written responses ask students to explain concepts like bits/dim, the motivation for masking, and the tradeoffs between different orderings. This balance—code and reasoning—reflects the reality of modern generative modeling research, where strong intuition and working implementations go hand-in-hand.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 2</div><h2><em>Probability</em> Review & Foundations</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">Section 2</div><h2><em>Probability</em> Review & Foundations</h2></div>
 <p>The chain rule of probability is the most important result for this problem set. For a joint distribution p(x₁, x₂, ..., xₙ), the chain rule decomposes this as: p(x₁, x₂, ..., xₙ) = p(x₁) · p(x₂|x₁) · p(x₃|x₁, x₂) · ... · p(xₙ|x₁, ..., xₙ₋₁). This factorization is always valid—it follows directly from the definition of conditional probability—and is the mathematical foundation for all autoregressive models. The order of variables can be arbitrary; different orderings yield different factorizations but represent the same joint distribution.</p>
 <p>Bayes' rule relates the posterior distribution p(y|x) to the likelihood p(x|y), prior p(y), and marginal likelihood: p(y|x) = p(x|y) · p(y) / p(x). While PS1 focuses on likelihood (forward modeling), Bayes' rule appears in later problem sets on inference and variational autoencoders. Understanding how likelihood and prior combine—and how normalization (the marginal p(x)) ensures a valid posterior—is fundamental to probabilistic modeling.</p>
 <p>KL divergence measures the difference between two distributions: D_KL(p || q) = Σ_x p(x) log(p(x) / q(x)). It is always non-negative and zero only when p = q. In generative modeling, KL divergence quantifies how well a learned distribution q approximates the true data distribution p. The reverse KL divergence D_KL(q || p) appears in variational inference and emphasizes modes of p (staying where p is high), while forward KL D_KL(p || q) emphasizes coverage (avoiding where p is low). Maximum likelihood training implicitly minimizes forward KL divergence between data and model distributions.</p>
 <p>Conditional independence structures simplify probability computations and enable efficient algorithms. For example, if variables are independent given a condition, their joint conditional factors into a product. Markov chains exhibit temporal Markov property: future states depend only on the present, not the past. These structures appear explicitly in recurrent neural networks (RNNs), hidden Markov models (HMMs), and later in diffusion models and transformer attention masks. Recognizing conditional independence in a problem often suggests architectural simplifications and computational savings.</p>
 <p>Cross-entropy and negative log-likelihood (NLL) are the practical losses for training generative models. For a model p_θ(x) with parameters θ, the NLL loss is -log p_θ(x). Training on a dataset minimizes average NLL across samples, which is equivalent to maximum likelihood estimation (MLE). The cross-entropy H(p, q) = -Σ_x p(x) log q(x) reduces to NLL when p is the empirical data distribution. Understanding why NLL is the right loss (it directly optimizes the probability the model assigns to data) motivates the designs of MADE and PixelCNN.</p>
-<p>Students review these concepts through both theory (deriving factorizations, applying Bayes' rule) and practice (computing likelihoods, implementing loss functions). Clear probability notation is non-negotiable: confusion between p(x|y) and p(y|x), or between joint and conditional, leads to incorrect implementations and misinterpreted results. Careful notation and step-by-step derivations build the precision required for deep learning research.</p>`,
+<p>Students review these concepts through both theory (deriving factorizations, applying Bayes' rule) and practice (computing likelihoods, implementing loss functions). Clear probability notation is non-negotiable: confusion between p(x|y) and p(y|x), or between joint and conditional, leads to incorrect implementations and misinterpreted results. Careful notation and step-by-step derivations build the precision required for deep learning research.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 3</div><h2><em>PyTorch</em> Fundamentals</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">Section 3</div><h2><em>PyTorch</em> Fundamentals</h2></div>
 <p>Tensors are PyTorch's fundamental data structure—multi-dimensional arrays that support GPU computation and automatic differentiation. A tensor can be 0-D (scalar), 1-D (vector), 2-D (matrix), or higher. Key properties include shape (dimensions), dtype (data type, e.g., float32), and device (CPU or GPU). Tensors are created via constructors (<code>torch.tensor</code>, <code>torch.zeros</code>, <code>torch.randn</code>) or loaded from data. Vectorized operations on tensors are dramatically faster than Python loops, especially on GPUs, making tensor-centric code essential for efficient deep learning.</p>
 <p>Autograd enables automatic differentiation via backpropagation. When a tensor is created with <code>requires_grad=True</code> and used in computations, PyTorch builds a computational graph tracking operations. Calling <code>.backward()</code> on a scalar loss propagates gradients backward through the graph. Each tensor's <code>.grad</code> attribute accumulates gradients with respect to the loss. This abstraction is powerful: complex models with millions of parameters compute gradients correctly without explicit derivative code. Students must understand when gradients are computed (any operation on requires_grad tensors), when to zero them (<code>optimizer.zero_grad()</code>), and how <code>with torch.no_grad()</code> disables gradient tracking for inference.</p>
 <p>Datasets and DataLoaders handle data organization and batching. A <code>Dataset</code> is a wrapper around data that provides <code>__len__</code> and <code>__getitem__</code> methods, returning individual samples. A <code>DataLoader</code> wraps the dataset, applying batching, shuffling, and parallel loading. For PS1, students use standard datasets (MNIST, CIFAR-10) or implement custom datasets. The DataLoader abstraction decouples model code from data handling, making experiments reproducible and code modular. Properly configured dataloaders are essential for avoiding memory overflow and ensuring training efficiency.</p>
 <p>Neural network modules are defined as subclasses of <code>nn.Module</code>. The <code>__init__</code> method defines layers and parameters; the <code>forward</code> method specifies computation. PyTorch's <code>nn</code> library provides standard layers (Linear, Conv2d, BatchNorm, etc.) with proper initialization and gradient support. Students design models by composing these layers, and PyTorch automatically tracks parameters for optimization. Custom layers can be implemented by subclassing <code>nn.Module</code> and defining forward computation—useful for implementing masked linear layers or masked convolutions in PS1.</p>
 <p>Optimizers update model parameters based on gradients. The Adam optimizer, widely used in deep learning, maintains moving averages of gradients and second moments, adapting learning rates per parameter. SGD (stochastic gradient descent) and other optimizers are also available. A typical training loop: (1) forward pass through model, (2) compute loss, (3) zero gradients, (4) backprop, (5) optimizer step. Learning rate scheduling adjusts the learning rate during training, often decreasing it over epochs to refine model parameters. Early stopping, checkpoint saving, and validation monitoring are standard practices for avoiding overfitting and selecting the best model.</p>
-<p>Students implement these concepts hands-on: creating tensors, performing operations, building models, running forward-backward passes, and training on real data. Debugging tools include <code>print(tensor.shape)</code> to verify dimensions, <code>assert</code> statements to validate assumptions, and examining gradients to detect vanishing/exploding gradients. PyTorch errors often point to shape mismatches; developing intuition for tensor shapes and operations is invaluable. The goal is fluency: PyTorch code should be written and read as naturally as basic Python, enabling focus on model design and algorithmic innovation.</p>`,
+<p>Students implement these concepts hands-on: creating tensors, performing operations, building models, running forward-backward passes, and training on real data. Debugging tools include <code>print(tensor.shape)</code> to verify dimensions, <code>assert</code> statements to validate assumptions, and examining gradients to detect vanishing/exploding gradients. PyTorch errors often point to shape mismatches; developing intuition for tensor shapes and operations is invaluable. The goal is fluency: PyTorch code should be written and read as naturally as basic Python, enabling focus on model design and algorithmic innovation.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 4</div><h2><em>Autoregressive</em> Density Estimation</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">Section 4</div><h2><em>Autoregressive</em> Density Estimation</h2></div>
 <p>The autoregressive factorization decomposes a joint distribution p(x₁, x₂, ..., xₙ) into a product of conditionals following a fixed ordering. Mathematically: p(x₁, x₂, ..., xₙ) = p(x₁) · p(x₂|x₁) · p(x₃|x₁, x₂) · ... · p(xₙ|x<n). The ordering (1 → 2 → ... → n) is arbitrary and can be permuted; different orderings define different factorizations of the same joint distribution. The order matters for computational efficiency and model expressiveness, but does not affect the final likelihood when marginalized over all variables. This flexibility allows us to choose orderings convenient for architecture and sampling.</p>
 <p>To model this factorization, a neural network must satisfy the autoregressive property: the network's output for variable i (representing p(xᵢ|x<i)) depends only on inputs x₁, ..., xᵢ₋₁, not on xᵢ, xᵢ₊₁, ..., xₙ. This constraint is non-trivial to enforce in a deep network. Naive approaches, like fully-connected networks applied sequentially, are inefficient. Masking provides an elegant solution: zero out connections that would violate the ordering, embedding the constraint into network weights. Students implement masked linear layers and masked convolutions, understanding that masking is not just a trick but a fundamental technique for enforcing causality in learned models.</p>
 <p>Training an autoregressive model minimizes negative log-likelihood (NLL). For a dataset {x⁽¹⁾, x⁽²⁾, ...}, the empirical loss is (1/N) Σ ᵢ -log p_θ(x⁽ⁱ⁾). Computing -log p_θ(x) factorizes as -log Π ᵢ p_θ(xᵢ|x<i) = Σ ᵢ -log p_θ(xᵢ|x<i). For discrete data, each conditional p_θ(xᵢ|x<i) is a categorical distribution (softmax over possible values), and the corresponding cross-entropy loss is -log(softmax output). For continuous data, the conditional might be a Gaussian, and the loss involves -log of the Gaussian density. The loss is straightforward to compute given network outputs, enabling simple, scalable training.</p>
 <p>Evaluation focuses on likelihood-based metrics. The test negative log-likelihood (NLL) measures how well the model generalizes; lower is better. Bits-per-dimension (bits/dim) normalizes NLL by the data dimensionality: bits/dim = NLL / (N_dims · log 2). This metric enables comparison across datasets of different sizes. For example, a bits/dim of 3 means the model uses on average 3 bits per dimension to compress data. Comparing bits/dim across models and datasets—reported in papers and leaderboards—provides a standard evaluation framework. Sampling is also crucial: sequential generation of samples (x₁ ~ p_θ(x₁), then x₂ ~ p_θ(x₂|x₁), etc.) yields model-generated data. Qualitative assessment (do samples look realistic?) complements quantitative metrics.</p>
-<p>Students implement simple autoregressive models (e.g., for 1-D or 2-D synthetic data), verify that likelihoods are computed correctly via numerical tests, and understand the ordering's effect on convergence and expressiveness. They experiment with different architectures and orderings, observing how these choices affect training dynamics and sample quality. This hands-on experience with autoregressive density estimation—from theory to implementation to empirical analysis—builds intuition for more complex models like RNNs, transformers, and diffusion models that leverage autoregressive principles.</p>`,
+<p>Students implement simple autoregressive models (e.g., for 1-D or 2-D synthetic data), verify that likelihoods are computed correctly via numerical tests, and understand the ordering's effect on convergence and expressiveness. They experiment with different architectures and orderings, observing how these choices affect training dynamics and sample quality. This hands-on experience with autoregressive density estimation—from theory to implementation to empirical analysis—builds intuition for more complex models like RNNs, transformers, and diffusion models that leverage autoregressive principles.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 5</div><h2><em>MADE</em>: Masked Autoencoders</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">Section 5</div><h2><em>MADE</em>: Masked Autoencoders</h2></div>
 <p>Masked Autoencoders for Distribution Estimation (MADE) solves the efficiency problem of autoregressive modeling: naively applying a neural network to enforce autoregressive ordering requires multiple forward passes (one per variable) or inefficient sequential computation. MADE's key insight is to assign each neuron in a hidden layer a variable index (1 to n), then mask connections so that neuron with index j can only receive inputs from neurons with indices < j (in the input layer and previous hidden layers). This single-pass architecture computes all n conditionals p(xᵢ|x<i) in parallel: a shared set of hidden layers process all input variables, and n separate output groups (one per variable) produce each conditional's parameters.</p>
 <p>Implementing the mask is straightforward but requires care. For the input-to-hidden layer, a mask matrix has shape (hidden_dim, input_dim); entry (j, i) is 1 if neuron j can receive input i, and 0 otherwise. For neuron j with index m_j, it can receive input i if m_i < m_j (in a proper data ordering). For hidden-to-hidden layers, each neuron has an index; similarly, connections respect these indices. For hidden-to-output, neuron representing xᵢ has index i and can receive from hidden neurons with indices < i. Mask generation algorithms (Germain et al., 2015) efficiently construct these masks, often randomly permuting indices to enhance model expressiveness.</p>
 <p>The power of MADE is computational: a single forward pass through the network computes all conditional distributions, enabling efficient likelihood evaluation. For a dataset sample x, the forward pass outputs parameters for all p(xᵢ|x<i), and the loss sums the cross-entropy losses for each conditional. Sampling is also straightforward: sample x₁ from p(x₁), then sample x₂ from p(x₂|x₁), etc. Because all conditionals are computed in one pass, this is only slightly slower than a single forward pass, much faster than naive autoregressive sampling. This efficiency advantage scales with dimensionality, making MADE practical for high-dimensional data.</p>
 <p>Students implement masked linear layers, understanding the mask structure and how to apply it (masking weights to zero, or not backpropagating to masked entries). They verify the mask is correct by checking that neurons with higher indices do not receive inputs from neurons with lower indices—a simple assertion on mask patterns. They implement the full MADE architecture: input → masked hidden layers → output. They compute likelihoods on validation data and generate samples, comparing learned distributions to baseline models. Debugging the mask is critical; incorrect masking leads to valid-looking code that produces nonsensical likelihoods (model assigns high probability to impossible samples).</p>
-<p>MADE demonstrates a broader principle in deep learning: architectural constraints can be elegantly enforced through structured connectivity and masking, rather than explicit variable ordering in the computation graph. This principle appears in PixelCNN (masked convolutions), transformers (causal attention masks), and many other architectures. Understanding MADE deeply—not just using it as a black box—builds the architectural intuition needed to design novel models and debug existing ones. The assignment asks students to experiment with different mask generation strategies, analyze the effect of network width and depth on expressiveness, and compare MADE's efficiency to naive autoregressive models.</p>`,
+<p>MADE demonstrates a broader principle in deep learning: architectural constraints can be elegantly enforced through structured connectivity and masking, rather than explicit variable ordering in the computation graph. This principle appears in PixelCNN (masked convolutions), transformers (causal attention masks), and many other architectures. Understanding MADE deeply—not just using it as a black box—builds the architectural intuition needed to design novel models and debug existing ones. The assignment asks students to experiment with different mask generation strategies, analyze the effect of network width and depth on expressiveness, and compare MADE's efficiency to naive autoregressive models.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 6</div><h2><em>PixelCNN</em> Basics</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">Section 6</div><h2><em>PixelCNN</em> Basics</h2></div>
 <p>PixelCNN (van den Oord et al., 2016) extends the autoregressive framework to images by modeling pixels in raster order: left-to-right, top-to-bottom (or other canonical orderings). The factorization is p(image) = Π_{row, col} p(pixel_{row,col} | all previous pixels). Convolutional networks are natural for image modeling because they exploit spatial structure and are parameter-efficient. However, naive convolutions cannot implement the autoregressive constraint: a standard convolutional layer has a receptive field that includes current and future pixels, violating causality. PixelCNN solves this through masked convolutions: convolutional kernels are masked so that the central pixel and future pixels have zero weight, allowing each pixel's prediction to depend only on previous pixels.</p>
 <p>Masked convolutions are implemented via kernel masking (multiplying kernel weights by a binary mask after each forward pass, or during initialization) or architectural masking (manipulating input or kernel to naturally enforce the constraint). The receptive field is crucial: a single masked convolution has a small receptive field, limited to pixels directly before the current one. To model long-range dependencies (e.g., object boundaries far away), the network must stack many masked convolutions, gradually expanding the receptive field. Visualizing receptive fields—which previous pixels contribute to a given pixel's prediction—verifies that the causality constraint is satisfied. Deep PixelCNN models have receptive fields spanning the entire image, enabling rich conditional distributions.</p>
 <p>The output of PixelCNN is a categorical distribution over pixel values for each location. For 8-bit images (256 possible values per pixel), the network outputs logits (or softmax probabilities) over 256 classes for each pixel. The loss is cross-entropy: for pixel x_{row,col} with true value v, the loss is -log p(x_{row,col} = v | previous pixels). Summing over all pixels and batch samples yields the total loss. Training proceeds with standard backpropagation and optimization. Sampling is sequential: sample the first pixel from p(x₁), then the second from p(x₂|x₁), and so on. Sampling an entire image requires H × W forward passes (one per pixel), or faster variants compute all pixels in parallel but require sorting predictions to respect the ordering (less common for PixelCNN).</p>
 <p>Students implement PixelCNN by defining masked convolutions as custom modules, stacking them into a network, and training on image datasets (e.g., MNIST, CIFAR-10). They verify masking by visualizing receptive fields and checking that masked layers preserve causality. They compute test likelihood and bits/dim, comparing to baseline models. They generate samples by sequential sampling, analyzing the quality and diversity of generated images. PixelCNN naturally produces images pixel-by-pixel, often capturing low-level texture details early in generation and higher-level structure later—a phenomenon worth observing and discussing.</p>
-<p>PixelCNN showcases how to apply autoregressive principles to structured high-dimensional data. Images have millions of pixels, yet PixelCNN's factorization and efficient masking make training tractable. Later refinements (PixelCNN++, Gated PixelCNN) add improved conditional distributions (mixture of logistics), skip connections, and faster sampling, but the core idea—masked convolutions enforcing causal structure—remains. Understanding PixelCNN deeply prepares students for other spatially-structured autoregressive models and the architectural patterns used in diffusion models and other modern generative systems.</p>`,
+<p>PixelCNN showcases how to apply autoregressive principles to structured high-dimensional data. Images have millions of pixels, yet PixelCNN's factorization and efficient masking make training tractable. Later refinements (PixelCNN++, Gated PixelCNN) add improved conditional distributions (mixture of logistics), skip connections, and faster sampling, but the core idea—masked convolutions enforcing causal structure—remains. Understanding PixelCNN deeply prepares students for other spatially-structured autoregressive models and the architectural patterns used in diffusion models and other modern generative systems.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 7</div><h2><em>Training</em> & Evaluation</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">Section 7</div><h2><em>Training</em> & Evaluation</h2></div>
 <p>Training a generative model is relatively straightforward: initialize parameters, iterate over batches of data, compute loss, backpropagate, and update parameters. The loss is negative log-likelihood (NLL). For MADE and PixelCNN, the forward pass computes model outputs (parameters of conditional distributions), and the backward pass computes gradients of the NLL with respect to parameters. A key practice is gradient monitoring: check that gradients are not vanishing (near zero) or exploding (very large), which indicate pathological behavior. Learning rate is typically constant or decayed over epochs. Checkpointing saves the best model (on validation data) and enables resuming interrupted training.</p>
 <p>Hyperparameter tuning affects convergence and generalization. Key hyperparameters include network architecture (number of layers, width, kernel sizes for convolutions), learning rate, batch size, regularization (L2 weight decay, dropout), and training duration. Too small a learning rate slows convergence; too large causes instability. Too small a batch size has high variance; too large wastes GPU memory. Regularization prevents overfitting—critical for fitting complex models on finite data. Students tune hyperparameters via grid search, random search, or Bayesian optimization, comparing validation loss across configurations. This exercise builds intuition for balancing model capacity, data size, and computational budget.</p>
 <p>Evaluation relies on multiple metrics. Test NLL is the primary metric: lower NLL on held-out test data indicates better generalization. Since NLL depends on the number of dimensions, bits-per-dimension (NLL / (num_dims · log(2))) provides a normalized, comparable metric. For example, constant model (always predicting average distribution) has a baseline bits/dim; the learned model should do better. Tracking both train and test metrics reveals overfitting: train loss decreases while test loss plateaus or increases. Plotting learning curves (loss vs. epoch) helps diagnose training dynamics and select checkpoint criteria (e.g., early stopping based on validation loss).</p>
 <p>Sampling is both a practical output (generate images) and an evaluation tool. Sequential sampling—generating one variable at a time conditioned on previous ones—is the standard method and works for any autoregressive model. For images, this means generating pixel-by-pixel. Sampling quality is assessed qualitatively (do images look realistic?) and quantitatively (e.g., via Inception Score, FID, or other metrics, though these are more advanced). Comparing samples from different model architectures and training procedures highlights which design choices improve generative quality. Students generate samples at different stages of training, noting how sample quality improves as the model trains.</p>
-<p>Common pitfalls include: (1) incorrect likelihood computation (often due to masking bugs in MADE/PixelCNN), leading to likelihoods that don't improve despite training; (2) shape mismatches in loss computation (ensure batch dimension is handled consistently); (3) forgetting to zero gradients between updates (causes accumulated gradients); (4) overfitting due to insufficient regularization or excessive model capacity; (5) numerical instability (large logits in softmax, log of zero). Debugging involves printing intermediate tensor shapes and values, checking loss components (individual conditionals' losses), and verifying that the model is actually learning by monitoring test loss. These practices—careful metric tracking, multiple evaluation perspectives, and systematic debugging—are essential for any deep learning project.</p>`,
+<p>Common pitfalls include: (1) incorrect likelihood computation (often due to masking bugs in MADE/PixelCNN), leading to likelihoods that don't improve despite training; (2) shape mismatches in loss computation (ensure batch dimension is handled consistently); (3) forgetting to zero gradients between updates (causes accumulated gradients); (4) overfitting due to insufficient regularization or excessive model capacity; (5) numerical instability (large logits in softmax, log of zero). Debugging involves printing intermediate tensor shapes and values, checking loss components (individual conditionals' losses), and verifying that the model is actually learning by monitoring test loss. These practices—careful metric tracking, multiple evaluation perspectives, and systematic debugging—are essential for any deep learning project.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 8</div><h2>Key <em>Takeaways</em></h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">Section 8</div><h2>Key <em>Takeaways</em></h2></div>
 <p>Problem Set 1 provides a complete end-to-end experience in generative modeling. Students learn that probability theory—specifically, the chain rule and conditional factorization—provides a principled framework for modeling complex distributions. They see how neural networks, carefully constrained via masking, can parameterize these conditional distributions. They implement and train working models, observing the progression from theory to code to empirical results. This trajectory—from mathematics to implementation to evaluation—repeats throughout the course and mirrors how research in generative modeling is conducted.</p>
 <p>The autoregressive perspective is foundational. It applies to any data type—text, images, audio, structured data—provided an ordering is defined. RNNs and Transformers, the dominant architectures in NLP, are autoregressive models. Diffusion models and flow-based models, though different in mechanism, also leverage autoregressive intuitions. Mastery of autoregressive factorization and the techniques for enforcing causality in networks opens doors to understanding and developing models across these domains. The specific architectures (MADE, PixelCNN) will be refined or replaced by newer methods, but the underlying principles are enduring.</p>
 <p>Likelihood-based evaluation is a core advantage of autoregressive models. Unlike generative adversarial networks (GANs, covered later), autoregressive models directly compute and optimize the true likelihood of data. This enables unambiguous model comparison, principled hyperparameter selection, and theoretical analysis. However, likelihood and sample quality do not always correlate perfectly—a model with high likelihood may produce blurry samples, while a low-likelihood model may generate sharp but unrealistic samples. Understanding this tradeoff, and the different evaluation criteria appropriate for different applications, is crucial for deploying generative models responsibly.</p>
 <p>Implementation skills are as important as theory. Debugging neural networks requires careful attention to shapes, values, and gradients. Writing modular, well-commented code enables fast iteration and collaboration. PyTorch's abstractions (autograd, modules, optimizers) handle much of the complexity, but understanding what happens under the hood—how gradients are computed, how parameters are updated—deepens capability. Students who implement from scratch, rather than blindly copying code, develop intuition and debugging skills that prove invaluable when facing novel problems or debugging sophisticated models.</p>
-<p>Problem Set 1 is a foundation on which the course builds. Later problem sets introduce variational autoencoders (where we cannot directly compute likelihood but learn to lower-bound it), diffusion models (where the generative process is learned step-by-step), flow-based models (which compose invertible transformations), and energy-based models (which use unnormalized distributions). Each approach has strengths and weaknesses. Understanding autoregressive models deeply—their efficiency, expressiveness, limitations, and practical considerations—provides context and intuition for comparing these alternatives. The skills, concepts, and code patterns from PS1 recur and extend throughout the course, making depth of understanding a lasting asset.</p>`,
+<p>Problem Set 1 is a foundation on which the course builds. Later problem sets introduce variational autoencoders (where we cannot directly compute likelihood but learn to lower-bound it), diffusion models (where the generative process is learned step-by-step), flow-based models (which compose invertible transformations), and energy-based models (which use unnormalized distributions). Each approach has strengths and weaknesses. Understanding autoregressive models deeply—their efficiency, expressiveness, limitations, and practical considerations—provides context and intuition for comparing these alternatives. The skills, concepts, and code patterns from PS1 recur and extend throughout the course, making depth of understanding a lasting asset.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">Section 9</div><h2>References & <em>Further</em> Reading</h2></div>
+      <div class="detail" id="detail-8">
+        <div class="detail-header"><div class="num">Section 9</div><h2>References & <em>Further</em> Reading</h2></div>
 <h4>Foundational Papers</h4>
 <ul class="s-list">
 <li><a href="https://arxiv.org/abs/1502.03044" target="_blank">MADE: Masked Autoencoders for Distribution Estimation (Germain et al., 2015)</a> — Core autoregressive architecture covered in PS1; introduces masking strategy for efficient single-pass likelihood computation.</li>
@@ -453,75 +534,47 @@ const details = [
 <ul class="s-list">
 <li><a href="https://cs236.stanford.edu/" target="_blank">Stanford CS236: Deep Generative Models</a> — Official course website; lectures, problem sets, and additional resources on the full generative modeling curriculum.</li>
 </ul>
-<p><strong>How to Use These References:</strong> Start with conceptual blogs (Lilian Weng) for intuition, then dive into papers for rigorous mathematics. Use PyTorch documentation as needed for implementation. Return to Wikipedia articles to refresh background concepts. The full course website and Stanford materials contextualize PS1 within the broader generative modeling landscape.</p>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · PROBLEM SET 1</div>
-        <div class="hero-title">PS1: <em>Autoregressive</em> Models</div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>40 Points · Introduction, PyTorch & Density Estimation</span></div>
+<p><strong>How to Use These References:</strong> Start with conceptual blogs (Lilian Weng) for intuition, then dive into papers for rigorous mathematics. Use PyTorch documentation as needed for implementation. Return to Wikipedia articles to refresh background concepts. The full course website and Stanford materials contextualize PS1 within the broader generative modeling landscape.</p>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -531,96 +584,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -633,10 +642,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

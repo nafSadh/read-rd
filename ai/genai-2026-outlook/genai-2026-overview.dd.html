@@ -329,41 +329,120 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-const sections = [
-  { num: '01', short: 'Tech Frontier', title: 'The <em>Technology</em> Frontier' },
-  { num: '02', short: 'AI Agents', title: '<em>AI</em> Agents: Hype Meets Reality' },
-  { num: '03', short: 'Workplace', title: '<em>Workplace</em>: Evangelism → Evaluation' },
-  { num: '04', short: 'Employment', title: '<em>Employment</em>: The Knowledge Split' },
-  { num: '05', short: 'Public Trust', title: '<em>Public</em> Perception & Trust' },
-  { num: '06', short: 'Regulation', title: '<em>Regulation</em> & Legal' },
-  { num: '07', short: 'Economics', title: '<em>Economics</em> & Infrastructure' },
-  { num: '08', short: 'Scenarios', title: '<em>Forward</em> Scenarios' },
-  { num: '09', short: 'Tensions', title: '<em>Six</em> Tensions' },
-];
-const summaries = [
-  `<p>GPQA 50%→75%+ in 18 months. GPT-4-level performance at 1/100th the 2023 cost. Context windows have plateaued at ~1M tokens. Chinese open-source models (Qwen, DeepSeek) becoming Silicon Valley infrastructure. The "commodity point" for models is approaching — competition shifts from models to systems.</p>
-  <p><strong>Multimodal as table stakes:</strong> By end of 2026, "frontier model" means a system that speaks, listens, sees, imagines, and edits. Text-only models will be "as archaic as a DOS command line" (Nielsen). Meanwhile, SLMs (7B) are 10-30× cheaper and sufficient for most agentic sub-tasks (NVIDIA position paper).</p>`,
-  `<p><strong>Bull:</strong> 40% of enterprise apps will include task-specific agents by 2026 (Gartner). CIO AI adoption up 282% (Salesforce). METR task-length doubling: agents now handle ~5-hour SWE tasks at 50% success.</p>
-  <p><strong>Bear:</strong> 40% of agentic projects canceled by end 2027 (also Gartner). Agents are "the most hyped since GenAI" and heading into the trough of disillusionment (MIT Sloan). "Not ready for prime-time business." 25% of AI spend deferred by 2027 (Forrester).</p>`,
-  `<p>Stanford HAI: "The era of AI evangelism is giving way to an era of AI evaluation." The question is no longer "Can AI do this?" but "How well, at what cost, and for whom?"</p>
-  <p>Individual Copilot use delivers "incremental and mostly unmeasurable" gains (MIT Sloan). The value lives in enterprise-level embedded workflows, not bolted-on tools. Engineers use AI in 60% of work but fully delegate only 0-20% — the "60/20 paradox" (Anthropic). 82% of end-users now use free AI tools at work.</p>`,
-  `<p><strong>The Dallas Fed framework:</strong> AI substitutes for codified knowledge (entry-level) but complements tacit knowledge (experienced). Wages rising in high-experience AI-exposed jobs. But the career ladder is breaking — entry-level development becoming "cost-ineffective."</p>
-  <p>Young tech workers already hit: 20-30 year olds in tech, unemployment up ~3pp since 2025 (Goldman). Yet Yale Budget Lab finds "no discernible disruption" to the broader labor market 33 months post-ChatGPT. 37.1M exposed workers, but 70% have high adaptive capacity (Brookings).</p>`,
-  `<p><strong>The KPMG landmark:</strong> 48,000 people across 47 countries. 66% use AI regularly. 83% see benefits. But only 46% trust AI systems. 56% report making mistakes due to AI. 66% don't verify AI output. The trust-use gap is the defining human challenge.</p>
-  <p>Excitement correlates with economic optimism (Ipsos). Western countries dominated by fear/worry. Trust in AI increasing but governance trust flat since 2020 (UQ). 54% trust AI not to discriminate more than humans.</p>`,
-  `<p>Legal battles shifting from training (mostly won) to deployment liability: chatbot encouragement of suicide, defamation by AI, insurer flight. "Death by AI" legal claims predicted to exceed 2,000 by end 2026 (Gartner). AI sovereignty accelerating — countries building or hosting own models.</p>
-  <p>Anthropic already paid $1.5B settlement. Cornell's Grimmelmann: "Courts won't enjoin AI companies out of existence, but will impose serious consequences."</p>`,
-  `<p>$500B+ hyperscaler capex in 2026. OpenAI targeting $30B revenue (2x 2025). Anthropic targeting $15B. The "gigawatt ceiling" — power is the binding constraint, not compute.</p>
-  <p>Counter-narrative: Stanford's Landay calls it "a very speculative bubble." Forrester: 25% of AI spend deferred by 2027 due to ROI concerns. IBM predicts models hitting "commodity point" — differentiation moves to systems, integration, governance.</p>`,
-  `<p><strong>AI 2027 (fast takeoff):</strong> Agents doing full SWE work by mid-2027. AI-accelerated R&D as inflection. Stock market +30% in 2026.</p>
+
+<div class="shell">
+
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">🔮</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Tech Frontier"><span class="sidebar-num">01</span><span class="sidebar-label">Tech Frontier</span></div>
+      <div class="sidebar-item" data-section="1" data-label="AI Agents"><span class="sidebar-num">02</span><span class="sidebar-label">AI Agents</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Workplace"><span class="sidebar-num">03</span><span class="sidebar-label">Workplace</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Employment"><span class="sidebar-num">04</span><span class="sidebar-label">Employment</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Public Trust"><span class="sidebar-num">05</span><span class="sidebar-label">Public Trust</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Regulation"><span class="sidebar-num">06</span><span class="sidebar-label">Regulation</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Economics"><span class="sidebar-num">07</span><span class="sidebar-label">Economics</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Scenarios"><span class="sidebar-num">08</span><span class="sidebar-label">Scenarios</span></div>
+      <div class="sidebar-item" data-section="8" data-label="Tensions"><span class="sidebar-num">09</span><span class="sidebar-label">Tensions</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> DEEP DIVE · 51 SOURCES · 9 DIMENSIONS</div>
+        <div class="hero-title">GenAI 2026 <em>Outlook</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>What people are saying, predicting, and measuring — and where sources contradict each other</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Technology</em> Frontier</h2>
+          <p>GPQA 50%→75%+ in 18 months. GPT-4-level performance at 1/100th the 2023 cost. Context windows have plateaued at ~1M tokens. Chinese open-source models (Qwen, DeepSeek) becoming Silicon Valley infrastructure. The "commodity point" for models is approaching — competition shifts from models to systems.</p>
+  <p><strong>Multimodal as table stakes:</strong> By end of 2026, "frontier model" means a system that speaks, listens, sees, imagines, and edits. Text-only models will be "as archaic as a DOS command line" (Nielsen). Meanwhile, SLMs (7B) are 10-30× cheaper and sufficient for most agentic sub-tasks (NVIDIA position paper).</p>
+        </div>
+
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>AI</em> Agents: Hype Meets Reality</h2>
+          <p><strong>Bull:</strong> 40% of enterprise apps will include task-specific agents by 2026 (Gartner). CIO AI adoption up 282% (Salesforce). METR task-length doubling: agents now handle ~5-hour SWE tasks at 50% success.</p>
+  <p><strong>Bear:</strong> 40% of agentic projects canceled by end 2027 (also Gartner). Agents are "the most hyped since GenAI" and heading into the trough of disillusionment (MIT Sloan). "Not ready for prime-time business." 25% of AI spend deferred by 2027 (Forrester).</p>
+        </div>
+
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Workplace</em>: Evangelism → Evaluation</h2>
+          <p>Stanford HAI: "The era of AI evangelism is giving way to an era of AI evaluation." The question is no longer "Can AI do this?" but "How well, at what cost, and for whom?"</p>
+  <p>Individual Copilot use delivers "incremental and mostly unmeasurable" gains (MIT Sloan). The value lives in enterprise-level embedded workflows, not bolted-on tools. Engineers use AI in 60% of work but fully delegate only 0-20% — the "60/20 paradox" (Anthropic). 82% of end-users now use free AI tools at work.</p>
+        </div>
+
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Employment</em>: The Knowledge Split</h2>
+          <p><strong>The Dallas Fed framework:</strong> AI substitutes for codified knowledge (entry-level) but complements tacit knowledge (experienced). Wages rising in high-experience AI-exposed jobs. But the career ladder is breaking — entry-level development becoming "cost-ineffective."</p>
+  <p>Young tech workers already hit: 20-30 year olds in tech, unemployment up ~3pp since 2025 (Goldman). Yet Yale Budget Lab finds "no discernible disruption" to the broader labor market 33 months post-ChatGPT. 37.1M exposed workers, but 70% have high adaptive capacity (Brookings).</p>
+        </div>
+
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Public</em> Perception & Trust</h2>
+          <p><strong>The KPMG landmark:</strong> 48,000 people across 47 countries. 66% use AI regularly. 83% see benefits. But only 46% trust AI systems. 56% report making mistakes due to AI. 66% don't verify AI output. The trust-use gap is the defining human challenge.</p>
+  <p>Excitement correlates with economic optimism (Ipsos). Western countries dominated by fear/worry. Trust in AI increasing but governance trust flat since 2020 (UQ). 54% trust AI not to discriminate more than humans.</p>
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Regulation</em> & Legal</h2>
+          <p>Legal battles shifting from training (mostly won) to deployment liability: chatbot encouragement of suicide, defamation by AI, insurer flight. "Death by AI" legal claims predicted to exceed 2,000 by end 2026 (Gartner). AI sovereignty accelerating — countries building or hosting own models.</p>
+  <p>Anthropic already paid $1.5B settlement. Cornell's Grimmelmann: "Courts won't enjoin AI companies out of existence, but will impose serious consequences."</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Economics</em> & Infrastructure</h2>
+          <p>$500B+ hyperscaler capex in 2026. OpenAI targeting $30B revenue (2x 2025). Anthropic targeting $15B. The "gigawatt ceiling" — power is the binding constraint, not compute.</p>
+  <p>Counter-narrative: Stanford's Landay calls it "a very speculative bubble." Forrester: 25% of AI spend deferred by 2027 due to ROI concerns. IBM predicts models hitting "commodity point" — differentiation moves to systems, integration, governance.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Forward</em> Scenarios</h2>
+          <p><strong>AI 2027 (fast takeoff):</strong> Agents doing full SWE work by mid-2027. AI-accelerated R&D as inflection. Stock market +30% in 2026.</p>
   <p><strong>Understanding AI (steady):</strong> Models improve, economic impact modest. GDP growth won't exceed 3.5%. No AI catastrophe in 2026.</p>
-  <p><strong>Stanford (reckoning):</strong> "2026 may mark the moment AI confronts its actual utility." Rigor over hype. No AGI this year.</p>`,
-  `<p>Six tensions where sources directly contradict each other: jobs (net positive vs transition pain), productivity (transformative vs unmeasurable), agent readiness (40% adoption vs 40% canceled), trust (66% use vs 46% trust), model trajectory (AGI 2027 vs no disruption), bubble ($500B capex vs ROI concerns).</p>
-  <p>The meta-pattern: technology advancing faster than institutions can absorb it. The gap between what AI <em>can</em> do in demos and what it <em>does</em> do in production is the story of 2026.</p>`,
-];
-const details = [
-  `<h3>LLM Capability & Cost Deflation</h3>
+  <p><strong>Stanford (reckoning):</strong> "2026 may mark the moment AI confronts its actual utility." Rigor over hype. No AGI this year.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Six</em> Tensions</h2>
+          <p>Six tensions where sources directly contradict each other: jobs (net positive vs transition pain), productivity (transformative vs unmeasurable), agent readiness (40% adoption vs 40% canceled), trust (66% use vs 46% trust), model trajectory (AGI 2027 vs no disruption), bubble ($500B capex vs ROI concerns).</p>
+  <p>The meta-pattern: technology advancing faster than institutions can absorb it. The gap between what AI <em>can</em> do in demos and what it <em>does</em> do in production is the story of 2026.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <h3>LLM Capability & Cost Deflation</h3>
   <p>The raw numbers: GPQA went from ~50% to 75%+ in 18 months. GPT-4-level performance now costs <$1/M tokens vs ~$30/M in early 2023 — a 30× reduction. Over 500 models are now tracked across 50+ benchmarks.</p>
   <p><strong>Context window plateau:</strong> After rapid growth from 8K tokens (ChatGPT, Nov 2022) to 2M (Gemini 1.5 Pro, Feb 2024), progress stalled. Anthropic hasn't changed its default since Claude 2.1. GPT-5.2's 400K window is smaller than GPT-4.1's. Google shrank back to 1M. The transformer architecture hits diminishing returns at extreme lengths, and "context rot" degrades quality before the nominal limit is reached.</p>
   <p><strong>Chinese open-source dominance:</strong> Qwen2.5-1.5B-Instruct has 8.85M downloads. MIT Tech Review: "In 2026, expect more Silicon Valley apps to quietly ship on top of Chinese open models." DeepSeek's open-weight playbook forced even OpenAI to release open-source models. The geopolitical irony: Chinese firms gain global trust through openness during US-China antagonism.</p>
@@ -373,8 +452,11 @@ const details = [
   <h3>Efficiency Counter-Narrative</h3>
   <p>NVIDIA position paper (Belcak & Heinrich): SLMs (7B) are 10-30× cheaper per inference and sufficient for most agentic sub-tasks when fine-tuned. "Insisting on LLMs for all such tasks reflects a misallocation of computational resources — one that is economically inefficient." IBM predicts "frontier vs efficient model classes" as a defining split. Edge AI moves from hype to reality.</p>
   <p>Stanford's Landay: "We have huge models, but we've seen better models that are smaller. It seems like we've reached some peak data." More effort on curating smaller, higher-quality datasets — quality over quantity.</p>
-  <div class="callout"><h4>Key Stat</h4><p>GPT-4-level performance: ~$30/M tokens (2023) → <$1/M tokens (2026). Approximately 10× cost reduction per year for equivalent capability.</p></div>`,
-  `<h3>The Bull Case</h3>
+  <div class="callout"><h4>Key Stat</h4><p>GPT-4-level performance: ~$30/M tokens (2023) → <$1/M tokens (2026). Approximately 10× cost reduction per year for equivalent capability.</p></div>
+      </div>
+
+      <div class="detail" id="detail-1">
+        <h3>The Bull Case</h3>
   <p>Gartner: 40% of enterprise apps will include task-specific agents by 2026. 90% of B2B buying AI-agent intermediated by 2028. IDC: 40% of G2000 job roles will involve working with AI agents. CB Insights: 115+ companies in customer service AI market, 6 private companies at $100M+ revenue. Salesforce CIO AI adoption up 282%.</p>
   <p>METR task-length trajectory: coding task completion (50% success) doubling every 5-7 months. Claude Opus 4.5 handles ~5-hour human tasks. If trend holds → 20-hour tasks by end 2026 (half a SWE work week).</p>
   <h3>The Bear Case</h3>
@@ -386,8 +468,11 @@ const details = [
   <p>This contradicts: 97M+ monthly MCP SDK downloads, AAIF governance, adoption by every major AI provider. It's a minority view but worth tracking as a contrarian signal.</p>
   <h3>The Resolution</h3>
   <p>Most likely path: agents work in narrow, well-defined domains (customer service, coding, incident response) but fail in open-ended business processes. MIT Sloan: "We are confident agents will handle most transactions in many large-scale business processes within five years" — more optimistic than Karpathy's 10 years, but acknowledging 2026 isn't the year.</p>
-  <div class="callout"><h4>Gartner's Double Prediction</h4><p>40% of enterprise apps will include agents by 2026. Also: 40% of agentic projects will be canceled by end 2027. Both can be true — high adoption, high failure rate.</p></div>`,
-  `<h3>The Stanford Thesis: Evangelism → Evaluation</h3>
+  <div class="callout"><h4>Gartner's Double Prediction</h4><p>40% of enterprise apps will include agents by 2026. Also: 40% of agentic projects will be canceled by end 2027. Both can be true — high adoption, high failure rate.</p></div>
+      </div>
+
+      <div class="detail" id="detail-2">
+        <h3>The Stanford Thesis: Evangelism → Evaluation</h3>
   <p>Stanford HAI faculty converge: "The era of AI evangelism is giving way to an era of AI evaluation." The question shifts from "Can AI do this?" to "How well, at what cost, and for whom?"</p>
   <p>Specific domain predictions: Legal AI moves to standardized benchmarks and ROI-tied evaluation. Healthcare develops frameworks for evaluating the "tsunami of noise" from AI startups. AI sovereignty gains steam — countries building own LLMs or hosting others' on own GPUs.</p>
   <p>Landay: "In 2026 we'll hear more companies say that AI hasn't yet shown productivity increases, except in certain target areas like programming and call centers. We'll hear about a lot of failed AI projects."</p>
@@ -398,8 +483,11 @@ const details = [
   <p>Anthropic 2026 Agentic Coding Trends: engineers use AI in ~60% of work but fully delegate only 0-20%. This isn't failure — it's the contour of effective collaboration. Engineers develop "intuitions for AI delegation" over time. ~27% of AI-assisted work consists of tasks that wouldn't have been done otherwise. Case studies: Fountain (50% faster), Rakuten (7h autonomous), TELUS (500K hours saved).</p>
   <h3>Adoption Data</h3>
   <p>ITSM.tools: Only 2% report no AI use. 82% use free AI tools at work (up from 71%). Trust increased for 62%. Better decision-making jumped from 28% → 47% as top benefit. But only 16% fully trust AI for autonomous operational decisions. 22% allow some autonomous decisions in specific scenarios.</p>
-  <div class="callout"><h4>The Paradox</h4><p>82% use AI tools at work. Only 16% trust them for autonomous decisions. The gap is where governance, evaluation, and organizational redesign need to happen.</p></div>`,
-  `<h3>The Dallas Fed Framework: Codified vs Tacit</h3>
+  <div class="callout"><h4>The Paradox</h4><p>82% use AI tools at work. Only 16% trust them for autonomous decisions. The gap is where governance, evaluation, and organizational redesign need to happen.</p></div>
+      </div>
+
+      <div class="detail" id="detail-3">
+        <h3>The Dallas Fed Framework: Codified vs Tacit</h3>
   <p>A particularly rigorous framework for understanding AI's labor impact comes from the Dallas Fed (Feb 2026). The key distinction: <strong>codified knowledge</strong> (book learning, rules, procedures) is automatable. <strong>Tacit knowledge</strong> (judgment, experience, relationships) is complemented.</p>
   <p>Result: AI substitutes for entry-level workers (who primarily have codified knowledge) and augments experienced workers (whose tacit knowledge becomes more valuable). "Wages are rising in AI-exposed occupations that place a high value on a worker's tacit knowledge and experience."</p>
   <p><strong>The career ladder crisis:</strong> "The current model of white-collar career progression involves taking an entry-level job and doing codifiable tasks while slowly learning tacit knowledge. Firms are going to find that AI is making this method of employee development cost-ineffective, at least in the short run." How do workers gain experience if entry-level positions disappear?</p>
@@ -409,8 +497,11 @@ const details = [
   <p><strong>Brookings:</strong> 37.1M highly AI-exposed workers. Of those, 70% (26.5M) have HIGH adaptive capacity — high pay, financial buffers, diverse skills. The vulnerable concentration: 6.1M clerical/admin workers with LOW adaptive capacity. Office clerks (2.5M), secretaries (1.7M), receptionists (965K).</p>
   <h3>Gender & Generation</h3>
   <p>79% of employed women in US work in jobs at high automation risk (vs 58% men). Workers 18-24 are 129% more likely than those 65+ to worry about AI replacing their job. 49% of Gen Z believe AI has reduced the value of their college education. WEF: 85-92M jobs displaced globally by 2030, but 97-170M new roles created — net positive only at the macro level.</p>
-  <div class="security-box"><h4>The Broken Ladder</h4><p>AI automates entry-level codifiable tasks → entry positions become cost-ineffective → workers can't gain tacit knowledge on the job → long-term talent pipeline breaks. This is the structural problem that no amount of net job creation resolves.</p></div>`,
-  `<h3>KPMG/Melbourne Global Study</h3>
+  <div class="security-box"><h4>The Broken Ladder</h4><p>AI automates entry-level codifiable tasks → entry positions become cost-ineffective → workers can't gain tacit knowledge on the job → long-term talent pipeline breaks. This is the structural problem that no amount of net job creation resolves.</p></div>
+      </div>
+
+      <div class="detail" id="detail-4">
+        <h3>KPMG/Melbourne Global Study</h3>
   <p>The largest study to date: 48,000 people across 47 countries (University of Melbourne + KPMG, late 2024-early 2025). Representative sampling. Key findings:</p>
   <ul>
   <li>66% use AI regularly</li>
@@ -427,8 +518,11 @@ const details = [
   <p><strong>University of Queensland (17 countries, longitudinal):</strong> Trust in AI increased since 2020 in AU/UK/US/CA/DE. But NO change in perceived adequacy of regulations. NO change in confidence in entities to develop, use, or govern AI. Awareness up, adoption up, trust up — but governance trust completely flat.</p>
   <h3>The Generational Paradox</h3>
   <p>42% of Gen X/Millennials trust AI in Australia vs 25% of older generations. Younger workers are simultaneously more trusting of AI AND more worried about losing their jobs to it. This dual response may reflect greater direct exposure to AI in daily work.</p>
-  <div class="callout"><h4>The Core Paradox</h4><p>66% use AI regularly. 66% don't evaluate its accuracy. 56% have made mistakes because of it. Only 46% trust it. People are building dependence on a technology they simultaneously don't trust and don't verify.</p></div>`,
-  `<h3>From Training Lawsuits to Deployment Liability</h3>
+  <div class="callout"><h4>The Core Paradox</h4><p>66% use AI regularly. 66% don't evaluate its accuracy. 56% have made mistakes because of it. Only 46% trust it. People are building dependence on a technology they simultaneously don't trust and don't verify.</p></div>
+      </div>
+
+      <div class="detail" id="detail-5">
+        <h3>From Training Lawsuits to Deployment Liability</h3>
   <p>MIT Technology Review: The first wave of AI lawsuits (rights holders suing over training data) has mostly been won by tech companies. The second wave will be "far messier" — centered on deployment harms.</p>
   <p>Unresolved questions: Can AI companies be held liable for what chatbots encourage people to do (e.g., teen suicide)? If a chatbot spreads false information about you, can the creator be sued for defamation? If companies lose, will insurers shun AI companies?</p>
   <p>Key upcoming case: Family of a teen who died by suicide will bring OpenAI to court in November 2026.</p>
@@ -437,8 +531,11 @@ const details = [
   <h3>AI Sovereignty</h3>
   <p>Gartner: 35% of countries will be locked into region-specific AI platforms using proprietary contextual data by 2027. Stanford's Landay: "AI sovereignty will gain huge steam this year." Models: countries building own LLMs, running others' on own GPUs, ensuring data doesn't leave borders. Massive data center investments (UAE, South Korea). Nvidia and OpenAI making world tours.</p>
   <p>Gartner also: 50% of global organizations will require "AI-free" skills assessments by end of 2026, to counter atrophy of critical-thinking skills from GenAI dependence.</p>
-  <div class="callout"><h4>Prediction</h4><p>"Death by AI" legal claims will exceed 2,000 by end of 2026. The fights center on deployment harms, not training rights. — Gartner</p></div>`,
-  `<h3>The Infrastructure Build</h3>
+  <div class="callout"><h4>Prediction</h4><p>"Death by AI" legal claims will exceed 2,000 by end of 2026. The fights center on deployment harms, not training rights. — Gartner</p></div>
+      </div>
+
+      <div class="detail" id="detail-6">
+        <h3>The Infrastructure Build</h3>
   <p>$500B+ hyperscaler capex in 2026 (Google, Microsoft, Amazon, Meta, Oracle). Seven biggest tech companies: 30%+ of S&P 500 market cap, ~25% of index earnings. The investment is larger, as % of GDP, than the peak of the Apollo Project or Interstate Highway System.</p>
   <p><strong>The gigawatt ceiling:</strong> Power is the binding constraint. The first gigawatt-scale clusters start operating early 2026. Multi-year lead times for new power facilities. Companies will "obsess over allocating every megawatt to activities with the highest return."</p>
   <h3>Revenue Growth</h3>
@@ -447,8 +544,11 @@ const details = [
   <h3>Hardware Evolution</h3>
   <p>IBM: "GPUs will remain king, but ASIC-based accelerators, chiplet designs, analog inference and even quantum-assisted optimizers will mature. Maybe a new class of chips for agentic workloads will emerge." IBM also predicts first quantum computer outperforming classical in 2026. Quantum-AI convergence via tools like Qiskit Code Assistant.</p>
   <p>GPT-4-level pricing: ~$30/M tokens (early 2023) → <$1/M tokens (2026). ~10× annual cost deflation for equivalent performance. Competition + infrastructure improvements drive continuous cost reduction.</p>
-  <div class="callout"><h4>Scale</h4><p>$500B+ hyperscaler capex in 2026. Larger than Apollo Project or Interstate Highway System (% of GDP). Power, not compute, is the binding constraint.</p></div>`,
-  `<h3>Scenario 1: Fast Takeoff (AI 2027)</h3>
+  <div class="callout"><h4>Scale</h4><p>$500B+ hyperscaler capex in 2026. Larger than Apollo Project or Interstate Highway System (% of GDP). Power, not compute, is the binding constraint.</p></div>
+      </div>
+
+      <div class="detail" id="detail-7">
+        <h3>Scenario 1: Fast Takeoff (AI 2027)</h3>
   <p>Former OpenAI researcher Daniel Kokotajlo and team wrote a detailed scenario. Key claims: agents doing full SWE work by mid-2027. AI-accelerated AI R&D as the key inflection point. Stock market +30% in 2026 led by AI companies. Junior SWE job market "in turmoil." "AI can do everything taught by a CS degree." Two endings written: slowdown and race.</p>
   <p>Understanding AI assessment: "We don't believe AI is a bubble on the verge of popping, but neither do we think we're close to a 'fast takeoff.' We expect models to continue improving — but it will take a while for the full impact to be felt across the economy." GDP growth under 3.5% (90% confidence).</p>
   <h3>Scenario 2: Steady Progress</h3>
@@ -457,8 +557,11 @@ const details = [
   <h3>Scenario 3: Reckoning</h3>
   <p>Stanford HAI: "After years of fast expansion and billion-dollar bets, 2026 may mark the moment artificial intelligence confronts its actual utility." The year demands rigor over hype. "No AGI this year" (Landay, HAI Co-Director).</p>
   <p>MIT Sloan: GenAI in the "trough of disillusionment." Agents heading there next. But: "We are confident that AI agents will handle most transactions in many large-scale business processes within five years." The reckoning is about timeline and specificity, not about whether AI works.</p>
-  <div class="callout"><h4>The Meta-Question</h4><p>All three scenarios agree AI is transformative. They disagree on timeline (months vs years vs decades) and on whether 2026 is an acceleration or a reckoning. The evidence suggests: both. Acceleration in narrow domains, reckoning in broad claims.</p></div>`,
-  `<h3>1. Jobs: Net Positive vs Transition Pain</h3>
+  <div class="callout"><h4>The Meta-Question</h4><p>All three scenarios agree AI is transformative. They disagree on timeline (months vs years vs decades) and on whether 2026 is an acceleration or a reckoning. The evidence suggests: both. Acceleration in narrow domains, reckoning in broad claims.</p></div>
+      </div>
+
+      <div class="detail" id="detail-8">
+        <h3>1. Jobs: Net Positive vs Transition Pain</h3>
   <p><strong>For:</strong> WEF projects 97-170M new jobs vs 85-92M displaced (net positive). BLS: "displacement tends to take longer than technologists expect." Goldman: historically, tech disruption effects are temporary (2 years).</p>
   <p><strong>Against:</strong> Goldman: young tech workers already hit (unemployment +3pp). Dallas Fed: career ladder breaking as entry-level codifiable work becomes cost-ineffective. 79% of employed women at high automation risk. The transition is real even if the endpoint is positive.</p>
   <h3>2. Productivity: Transformative vs Unmeasurable</h3>
@@ -472,76 +575,47 @@ const details = [
   <p>AI 2027: agents eclipsing all humans by late 2027. Yale: "no discernible disruption" 33 months in. BLS: slow historically. The resolution is domain-specific: software engineering already disrupted, most other jobs barely touched. The economy-wide transformation is real but measured in years, not months.</p>
   <h3>6. Bubble: $500B Capex vs ROI Concerns</h3>
   <p>Hyperscalers investing at Apollo Program scale. Revenue growing fast (OpenAI, Anthropic). But Forrester: 25% deferred. Stanford: "speculative bubble." The gigawatt ceiling may force prioritization before ROI scrutiny does. Late 2026 will produce the first real enterprise ROI data at scale.</p>
-  <div class="security-box"><h4>The Meta-Pattern</h4><p>Technology advancing faster than institutions can absorb it. The gap between what AI <em>can</em> do in demos and what it <em>does</em> do in production is the story of 2026. The winners will be organizations that close that gap through rigorous evaluation, not organizations that chase the next capability announcement.</p></div>`,
-];
-// DOM BUILDER — Do not modify below this line
-// ════════════════════════════════════════════════
-
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">🔮</div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> DEEP DIVE · 51 SOURCES · 9 DIMENSIONS</div>
-        <div class="hero-title">GenAI 2026 <em>Outlook</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>What people are saying, predicting, and measuring — and where sources contradict each other</span></div>
+  <div class="security-box"><h4>The Meta-Pattern</h4><p>Technology advancing faster than institutions can absorb it. The gap between what AI <em>can</em> do in demos and what it <em>does</em> do in production is the story of 2026. The winners will be organizations that close that gap through rigorous evaluation, not organizations that chase the next capability announcement.</p></div>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -551,96 +625,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -653,106 +683,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
-</script>
-<script>
-(function(){
-  var MP3 = 'genai-2026-overview.mp3';
-
-  // 1. Inject CSS
-  var css = document.createElement('style');
-  css.textContent = `
-    .audio-bar{display:flex;align-items:center;gap:10px;padding:10px 0 4px;margin-top:6px;max-height:50px;overflow:hidden;transition:max-height .35s ease,padding .35s ease,opacity .25s ease}
-    .main-head.compact .audio-bar{max-height:0;padding:0;opacity:0;margin:0;pointer-events:none}
-    .audio-bar audio{height:32px;flex:1;min-width:0;border-radius:0;filter:contrast(.9)}
-    [data-theme="dark"] .audio-bar audio{filter:invert(1) contrast(.85) hue-rotate(180deg)}
-    .ctrl-btn.audio-ctrl{display:none;position:relative}
-    .ctrl-btn.audio-ctrl.playing{color:var(--accent)}
-    .ctrl-btn.audio-ctrl.playing::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
-    .audio-bottom{position:fixed;bottom:0;left:0;right:0;z-index:500;display:flex;align-items:center;gap:12px;padding:6px 24px;background:color-mix(in srgb,var(--bg2) 85%,transparent);border-top:1px solid var(--border);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 -2px 12px #00000010;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none}
-    .audio-bottom.visible{transform:translateY(0);pointer-events:auto}
-    .audio-bottom audio{height:32px;flex:1;min-width:0;border-radius:0;filter:contrast(.9)}
-    .audio-bottom .audio-dismiss{cursor:pointer;color:var(--dim);font-size:13px;padding:4px 8px;border:none;background:none;font-family:var(--sans);letter-spacing:.5px;transition:color .2s}
-    .audio-bottom .audio-dismiss:hover{color:var(--accent)}
-    [data-theme="dark"] .audio-bottom audio{filter:invert(1) contrast(.85) hue-rotate(180deg)}
-  `;
-  document.head.appendChild(css);
-
-  // 2. Inline audio bar — insert after masthead-sub
-  var bar = document.createElement('div');
-  bar.className = 'audio-bar';
-  bar.innerHTML = '<audio id="audio-main" controls preload="none" src="'+MP3+'"></audio>';
-  var sub = document.querySelector('.masthead-sub');
-  if(!sub) sub = document.querySelector('.masthead-rule');
-  if(sub) sub.parentNode.insertBefore(bar, sub.nextSibling);
-
-  // 3. Mini button in ctrl-group
-  var miniBtn = document.createElement('button');
-  miniBtn.className = 'ctrl-btn audio-ctrl';
-  miniBtn.title = 'Play audio';
-  miniBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
-  var ctrlGroup = document.getElementById('ctrl-group');
-  if(ctrlGroup) ctrlGroup.insertBefore(miniBtn, ctrlGroup.firstChild);
-
-  // 4. Sticky bottom bar
-  var bottomBar = document.createElement('div');
-  bottomBar.className = 'audio-bottom';
-  bottomBar.innerHTML = '<audio id="audio-bottom-el" controls preload="none" src="'+MP3+'"></audio><button class="audio-dismiss" id="audio-bottom-dismiss">\u2715</button>';
-  document.body.appendChild(bottomBar);
-
-  var mainAudio = document.getElementById('audio-main');
-  var bottomAudio = document.getElementById('audio-bottom-el');
-  var bottomDismiss = document.getElementById('audio-bottom-dismiss');
-  if(!mainAudio||!bottomAudio) return;
-
-  var isCompact = false, dismissed = false;
-  var head = document.querySelector('.main-head');
-
-  if(head){
-    new MutationObserver(function(){
-      isCompact = head.classList.contains('compact');
-      miniBtn.style.display = isCompact ? 'flex' : 'none';
-      if(isCompact && !bottomAudio.paused && !dismissed) bottomBar.classList.add('visible');
-      if(!isCompact){
-        if(!bottomAudio.paused){
-          mainAudio.currentTime = bottomAudio.currentTime;
-          bottomAudio.pause();
-          mainAudio.play();
-        }
-        bottomBar.classList.remove('visible');
-      }
-    }).observe(head, {attributes:true, attributeFilter:['class']});
-  }
-
-  mainAudio.addEventListener('play', function(){
-    miniBtn.classList.add('playing'); dismissed = false;
-    if(isCompact){
-      bottomAudio.currentTime = mainAudio.currentTime;
-      mainAudio.pause(); bottomAudio.play();
-      bottomBar.classList.add('visible');
-    }
-  });
-  mainAudio.addEventListener('pause', function(){ miniBtn.classList.remove('playing'); });
-  mainAudio.addEventListener('ended', function(){ miniBtn.classList.remove('playing'); });
-
-  bottomAudio.addEventListener('play', function(){ miniBtn.classList.add('playing'); });
-  bottomAudio.addEventListener('pause', function(){ miniBtn.classList.remove('playing'); });
-  bottomAudio.addEventListener('ended', function(){ miniBtn.classList.remove('playing'); bottomBar.classList.remove('visible'); });
-
-  miniBtn.addEventListener('click', function(){
-    dismissed = false;
-    if(bottomAudio.paused && mainAudio.paused){ bottomAudio.play(); bottomBar.classList.add('visible'); }
-    else if(!bottomAudio.paused) bottomAudio.pause();
-    else if(!mainAudio.paused) mainAudio.pause();
-  });
-
-  bottomDismiss.addEventListener('click', function(){
-    bottomAudio.pause(); bottomBar.classList.remove('visible'); dismissed = true;
-  });
-})();
 </script>
 </body>
 </html>

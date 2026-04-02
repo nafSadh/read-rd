@@ -267,32 +267,110 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-const sections = [
-  { num: '01', label: 'Generative vs Discriminative', title: '<em>Generative</em> vs Discriminative' },
-  { num: '02', label: 'Gaussian Discriminant Analysis', title: '<em>Gaussian</em> Discriminant Analysis' },
-  { num: '03', label: 'Logistic Regression', title: '<em>Logistic</em> Regression' },
-  { num: '04', label: 'Naive Bayes', title: '<em>Naive</em> Bayes' },
-  { num: '05', label: 'Support Vector Machines', title: '<em>Support</em> Vector Machines' },
-  { num: '06', label: 'Softmax & Multiclass', title: '<em>Softmax</em> & Multiclass' },
-  { num: '07', label: 'Decision Boundaries', title: '<em>Decision</em> Boundaries' },
-  { num: '08', label: 'When to Use What', title: '<em>When</em> to Use What' },
-  { num: '09', short: 'Sources', label: 'Sources', title: '<em>Sources</em> & References' }
-];
 
-const summaries = [
-  '<p>The fundamental divide in classification algorithms: generative models learn P(x|y) and P(y), while discriminative models learn P(y|x). This drives the asymptotic error vs. sample efficiency tradeoff.</p>',
-  '<p>Assumes data within each class follows a multivariate Gaussian. Estimates mean and covariance per class via MLE. Produces linear boundaries (LDA) or quadratic boundaries (QDA) depending on shared covariance.</p>',
-  '<p>Models P(y|x) directly with sigmoid σ(w·x + b). Uses cross-entropy loss and gradient descent. Regularization (L1/L2) prevents overfitting and provides interpretable feature weights.</p>',
-  '<p>Generative model with strong conditional independence assumption. Laplace smoothing prevents zero probabilities. Excels in high-dimensional sparse data (text classification, spam filtering).</p>',
-  '<p>Maximizes margin between classes via hinge loss. Dual form + kernel trick enables nonlinear boundaries. Soft margin (C parameter) balances misclassification vs. margin width.</p>',
-  '<p>Generalizes logistic regression to K classes. Softmax function produces K-dimensional probability distribution. Cross-entropy loss sums distances between labels and output distributions.</p>',
-  '<p>Side-by-side comparison of how each algorithm partitions feature space. GDA produces elliptical contours, SVM creates max-margin hyperplanes, Naive Bayes builds axis-aligned boundaries.</p>',
-  '<p>Decision grid: dataset size, dimensionality, interpretability, training speed, assumptions. Fast heuristics for choosing the right algorithm for your problem.</p>'
-];
+<div class="shell">
 
-const details = [
-  `<div class="detail-header"><div class="num">01</div><h2><em>Generative</em> vs Discriminative</h2></div>
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">P<em>S</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label=""><span class="sidebar-num">01</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="1" data-label=""><span class="sidebar-num">02</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="2" data-label=""><span class="sidebar-num">03</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="3" data-label=""><span class="sidebar-num">04</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="4" data-label=""><span class="sidebar-num">05</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="5" data-label=""><span class="sidebar-num">06</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="6" data-label=""><span class="sidebar-num">07</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="7" data-label=""><span class="sidebar-num">08</span><span class="sidebar-label"></span></div>
+      <div class="sidebar-item" data-section="8" data-label="Sources"><span class="sidebar-num">09</span><span class="sidebar-label">Sources</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SCPD ML Course</div>
+        <div class="hero-title">ML <em>Problem Sets</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>GDA · Logistic Regression · Naive Bayes · SVMs · Decision Boundaries</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Generative</em> vs Discriminative</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Gaussian</em> Discriminant Analysis</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Logistic</em> Regression</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Naive</em> Bayes</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Support</em> Vector Machines</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Softmax</em> & Multiclass</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Decision</em> Boundaries</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>When</em> to Use What</h2>
+          
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Sources</em> & References</h2>
+          
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01</div><h2><em>Generative</em> vs Discriminative</h2></div>
 <p>The choice between generative and discriminative models fundamentally affects how algorithms learn from data. Ng & Jordan (2001) showed there are two distinct regimes: generative classifiers learn faster with small data, discriminative classifiers have lower asymptotic error with large data.</p>
 <h3>Generative Approach</h3>
 <p><strong>Models:</strong> P(x, y) = P(y) · P(x|y). Learns class-conditional distributions and class priors.</p>
@@ -311,9 +389,11 @@ const details = [
 <div class="feat"><h4 style="color:var(--green)">Generative Wins When:</h4><p>• Small datasets (n &lt; 1000)<br>• High-dimensional sparse data (text, NLP)<br>• Missing data (can impute via P(x|y))<br>• Interpretability of class distributions matters</p></div>
 <div class="feat"><h4 style="color:var(--cyan)">Discriminative Wins When:</h4><p>• Large datasets (n &gt; 10,000)<br>• Dense features<br>• Asymptotic performance critical<br>• Direct P(y|x) fit is flexible</p></div>
 </div>
-<p>The convergence rate is O(1/m) for generative (m = sample size), but asymptotic error is higher. Discriminative has slower convergence O(1/√m) but lower asymptotic error. They cross over around m ≈ 1-5K samples depending on problem.</p>`,
+<p>The convergence rate is O(1/m) for generative (m = sample size), but asymptotic error is higher. Discriminative has slower convergence O(1/√m) but lower asymptotic error. They cross over around m ≈ 1-5K samples depending on problem.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">02</div><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02</div><h2><em>Gaussian</em> Discriminant Analysis</h2></div>
 <p>Gaussian Discriminant Analysis (GDA) models class-conditional distributions as multivariate Gaussians. It is a generative model: we learn P(y) and P(x|y), then use Bayes rule to compute P(y|x).</p>
 <h3>Model Formulation</h3>
 <p><strong>Class prior:</strong> P(y) = φ^y(1-φ)^(1-y) for y ∈ {0, 1}.</p>
@@ -360,9 +440,11 @@ const details = [
 <li>When interpretable class distributions help understanding</li>
 <li>Dense features (not sparse high-dimensional data)</li>
 <li>LDA as baseline: simple, linear, fewer parameters</li>
-</ul>`,
+</ul>
+      </div>
 
-  `<div class="detail-header"><div class="num">03</div><h2><em>Logistic</em> Regression</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03</div><h2><em>Logistic</em> Regression</h2></div>
 <p>Logistic Regression directly models P(y|x) using the sigmoid function. It is a discriminative classifier, making no assumptions about the feature distribution P(x).</p>
 <h3>The Sigmoid Function</h3>
 <p><strong>Definition:</strong> σ(z) = 1 / (1 + e^(-z)). Maps R → (0, 1).</p>
@@ -390,9 +472,11 @@ const details = [
 <div class="feat"><h4>L1 Regularization</h4><p>• Sharp corners at 0<br>• Drives some weights to exactly 0<br>• Automatic feature selection<br>• Less sensitive to scale</p></div>
 </div>
 <h3>Feature Engineering Matters</h3>
-<p>Logistic Regression is linear in the feature space. Add polynomial features (x₁², x₁x₂, etc.) to capture nonlinear relationships. This increases model capacity but risks overfitting.</p>`,
+<p>Logistic Regression is linear in the feature space. Add polynomial features (x₁², x₁x₂, etc.) to capture nonlinear relationships. This increases model capacity but risks overfitting.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">04</div><h2><em>Naive</em> Bayes</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04</div><h2><em>Naive</em> Bayes</h2></div>
 <p>Naive Bayes is a generative classifier that applies Bayes theorem with a strong conditional independence assumption: given the class y, all features x_j are independent.</p>
 <h3>The Naive Independence Assumption</h3>
 <p><strong>Bayes rule:</strong> P(y|x) = P(x|y)P(y) / P(x)</p>
@@ -422,9 +506,11 @@ Gaussian NB: P(x_j|y) = N(μ_{jk}, σ²_{jk})
 <div class="feat"><h4>Naive Bayes</h4><p>• Generative (learns P(x|y))<br>• Fast training (just count)<br>• Works with small data<br>• Clear probability estimates<br>• Less flexible decision boundary</p></div>
 <div class="feat"><h4>Logistic Regression</h4><p>• Discriminative (learns P(y|x))<br>• Gradient-based optimization<br>• Needs more data for good fit<br>• No explicit P(x) model<br>• More flexible, can fit better</p></div>
 </div>
-<p>Naive Bayes learns faster with small data (O(n) samples), but logistic regression has lower asymptotic error as n → ∞ (both converge, but LR has lower limit).</p>`,
+<p>Naive Bayes learns faster with small data (O(n) samples), but logistic regression has lower asymptotic error as n → ∞ (both converge, but LR has lower limit).</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">05</div><h2><em>Support</em> Vector Machines</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05</div><h2><em>Support</em> Vector Machines</h2></div>
 <p>Support Vector Machines (SVMs) find the hyperplane that maximizes the margin between classes. They use hinge loss and can employ the kernel trick for nonlinear classification.</p>
 <h3>The Margin and Hard-Margin SVM</h3>
 <p><strong>Geometric margin:</strong> Distance from point x to hyperplane w^T x + b = 0 is |w^T x + b| / ||w||.</p>
@@ -483,9 +569,11 @@ s.t. 0 ≤ α_i ≤ C,  Σ α_i y^(i) = 0
 </svg>
 </div>
 <h3>SVM vs. Logistic Regression</h3>
-<ul class="s-list pro"><li>SVMs: Better for small-medium datasets, clearer geometric interpretation</li><li>Logistic Reg: Probabilistic outputs, scales to large data, more interpretable weights</li><li>SVMs with RBF kernel: Nonlinear, but slow to predict. Logistic with kernel: Slow to train</li></ul>`,
+<ul class="s-list pro"><li>SVMs: Better for small-medium datasets, clearer geometric interpretation</li><li>Logistic Reg: Probabilistic outputs, scales to large data, more interpretable weights</li><li>SVMs with RBF kernel: Nonlinear, but slow to predict. Logistic with kernel: Slow to train</li></ul>
+      </div>
 
-  `<div class="detail-header"><div class="num">06</div><h2><em>Softmax</em> & Multiclass</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06</div><h2><em>Softmax</em> & Multiclass</h2></div>
 <p>Softmax Regression generalizes logistic regression from binary to K-class classification. It models P(y|x) as a categorical distribution using the softmax function.</p>
 <h3>The Softmax Function</h3>
 <p><strong>Definition:</strong> σ_k(z) = e^(z_k) / Σ_j e^(z_j)</p>
@@ -511,9 +599,11 @@ P(y=k|x) = e^(z_k) / Σ_j e^(z_j) = softmax(z)_k
 <div class="feat"><h4>Softmax</h4><p>• Single K-class model<br>• Directly optimizes joint distribution<br>• Probabilities sum to 1<br>• More principled (MLE)<br>• Shared representation</p></div>
 </div>
 <h3>Connection to Neural Networks</h3>
-<p>Softmax is the standard output layer in neural networks for multiclass classification. Hidden layers learn nonlinear features, softmax outputs class probabilities. Logistic regression is the single-layer version (no hidden layers).</p>`,
+<p>Softmax is the standard output layer in neural networks for multiclass classification. Hidden layers learn nonlinear features, softmax outputs class probabilities. Logistic regression is the single-layer version (no hidden layers).</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">07</div><h2><em>Decision</em> Boundaries Compared</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07</div><h2><em>Decision</em> Boundaries Compared</h2></div>
 <p>The shape of the decision boundary reveals each algorithm's implicit assumptions about the data. Here we compare them on a 2D synthetic dataset.</p>
 <h3>Theoretical Decision Surfaces</h3>
 <ul class="s-list">
@@ -575,9 +665,11 @@ P(y=k|x) = e^(z_k) / Σ_j e^(z_j) = softmax(z)_k
 <p><strong>Middle ground:</strong> Naive Bayes. Makes strong independence assumptions but learns quickly from small data.</p>
 <h3>Regularization Shapes Decision Boundaries</h3>
 <p>In logistic regression, increasing λ (L2 penalty) pushes weights toward 0, tilting the boundary closer to the origin and making the decision surface more conservative. Decreasing λ allows the boundary to fit the training data more tightly.</p>
-<p>In SVMs, smaller C (penalty for margin violations) allows more slack, softening the boundary. Larger C hardens the boundary to fit training data precisely.</p>`,
+<p>In SVMs, smaller C (penalty for margin violations) allows more slack, softening the boundary. Larger C hardens the boundary to fit training data precisely.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">08</div><h2><em>When</em> to Use What</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08</div><h2><em>When</em> to Use What</h2></div>
 <p>This section provides a practical flowchart for selecting the right algorithm. No single algorithm is best—context matters.</p>
 <h3>Quick Decision Grid</h3>
 <div class="feat-grid">
@@ -692,85 +784,51 @@ P(y=k|x) = e^(z_k) / Σ_j e^(z_j) = softmax(z)_k
 <li><strong>Is interpretability critical?</strong> Yes → LDA or Logistic Reg. No → Continue.</li>
 <li><strong>Willing to engineer polynomial features?</strong> Yes → Logistic + poly. No → Continue.</li>
 <li><strong>Use SVM + RBF kernel:</strong> Flexible, strong regularization via C.</li>
-</ol>`,
-  `<p>References and sources for further study on the topics covered in this deep dive.</p>`,
-  `<div class="detail-header"><div class="num">09 · Sources</div><h2><em>Sources</em> & References</h2></div>
-<h3>Stanford XCS229 Course</h3>
-<p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course homepage with all problem sets, lecture notes, and supplementary materials.</p>
-<p><a href="https://cs229.stanford.edu/section/" target="_blank">CS229 Lecture Notes & Sections</a> — Comprehensive lecture notes covering all topics tested in the problem sets: supervised learning, unsupervised learning, regularization, and evaluation.</p>
-<h3>Recommended Textbooks</h3>
-<p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie, Tibshirani & Friedman — The Elements of Statistical Learning</a> — Gold standard reference for statistical learning theory and practical machine learning algorithms. Covers all major topics in depth.</p>
-<p><a href="https://www.deeplearningbook.org/" target="_blank">Goodfellow, Bengio & Courville — Deep Learning</a> — MIT Press textbook providing rigorous treatment of neural networks and deep learning methods.</p>
-<h3>Online Learning Platforms</h3>
-<p><a href="https://www.3blue1brown.com/" target="_blank">3Blue1Brown</a> — Exceptional visual explanations of linear algebra, calculus, and neural networks.</p>
-<p><a href="https://en.wikipedia.org/wiki/Machine_learning" target="_blank">Wikipedia: Machine Learning</a> — Comprehensive reference for key concepts, algorithms, and applications.
-`
-];
+</ol>
+      </div>
 
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head"><div class="sidebar-logo">P<em>S</em></div></div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> SCPD ML Course</div>
-        <div class="hero-title">ML <em>Problem Sets</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>GDA · Logistic Regression · Naive Bayes · SVMs · Decision Boundaries</span></div>
+      <div class="detail" id="detail-8">
+        <p>References and sources for further study on the topics covered in this deep dive.</p>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((s, i) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (i === 0 ? ' active' : '');
-  item.onclick = () => selectSection(i);
-  item.setAttribute('data-label', s.label);
-  item.innerHTML = `<span class="sidebar-num">${s.num}</span><span class="sidebar-label">${s.label}</span>`;
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -780,103 +838,66 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-sections.forEach((s, i) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.dataset.section = i;
+// Detail panel
+let lastDetailIdx = 0;
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
-  let btn = `<button class="s-detail-btn" onclick="selectSection(${i})"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="6 2 14 2 14 14 6 14"/><polyline points="2 14 2 4 8 4"/></svg></button>`;
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
+  document.body.classList.add('detail-open');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
+}
+function closeRight() {
+  rightPanel.classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
 
-  block.innerHTML = `
-    <div class="s-num">${s.num} <span style="opacity:.5">/</span> 08 ${btn}</div>
-    <h2>${s.title || s.label}</h2>
-    ${summaries[i]}
-  `;
-  mainScroll.appendChild(block);
-});
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-// Build right panel
-const right = document.getElementById('right');
-const rightInner = document.getElementById('right-inner');
-sections.forEach((s, i) => {
-  const det = document.createElement('div');
-  det.className = 'detail';
-  det.dataset.section = i;
-  det.innerHTML = details[i];
-  rightInner.appendChild(det);
-});
-
-// Main functions
-window.toggleTheme = function() {
-  const body = document.body;
-  const newTheme = body.dataset.theme === 'light' ? 'dark' : 'light';
-  body.dataset.theme = newTheme;
-  localStorage.setItem('theme', newTheme);
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
 };
 
-window.toggleDetail = function() {
-  document.body.classList.toggle('detail-open');
-  const mainHead = document.querySelector('.main-head');
-  mainHead.classList.toggle('compact');
-};
-
-window.selectSection = function(idx) {
-  document.querySelectorAll('.sidebar-item').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
+// Compact header + scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  let activeIdx = 0;
+  sectionBlocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  document.querySelectorAll('.section-block').forEach((el, i) => {
-    if (i === idx) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-  document.querySelectorAll('.detail').forEach((el, i) => {
-    el.style.display = i === idx ? 'block' : 'none';
-  });
-  document.getElementById('right-sticky-title').textContent = sections[idx].label;
-  document.getElementById('right-sticky-title').classList.add('visible');
-};
-
-// Scroll spy
-document.getElementById('main-scroll').addEventListener('scroll', function() {
-  const blocks = document.querySelectorAll('.section-block');
-  let current = 0;
-  blocks.forEach((block, i) => {
-    const rect = block.getBoundingClientRect();
-    if (rect.top < 200) current = i;
-  });
-  document.querySelectorAll('.sidebar-item').forEach((el, i) => {
-    el.classList.toggle('active', i === current);
-  });
-  document.querySelectorAll('.detail').forEach((el, i) => {
-    el.style.display = i === current ? 'block' : 'none';
-  });
-  document.getElementById('right-sticky-title').textContent = sections[current].label;
-  document.getElementById('right-sticky-title').classList.add('visible');
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
-// Right panel scroll listener
-document.getElementById('right').addEventListener('scroll', function() {
+// Sticky header in right panel
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
-  if (this.scrollTop > 0) {
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
     topbar.classList.add('scrolled');
   } else {
+    stickyTitle.classList.remove('visible');
     topbar.classList.remove('scrolled');
   }
 });
 
-// Theme persistence
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.dataset.theme = savedTheme;
+// ESC closes detail panel
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
-// Close detail on ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.body.classList.remove('detail-open');
-    document.querySelector('.main-head').classList.remove('compact');
-  }
-});
 </script>
 </body>
 </html>

@@ -316,44 +316,110 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </style>
 </head>
 <body data-theme="light">
-<script>
-// DATA: Sections
-const sections = [
-  {num:'01',short:'Overview',title:'PS2 Overview'},
-  {num:'02',short:'Linear Class',title:'Linear Classification'},
-  {num:'03',short:'Boundaries',title:'Decision Boundary Analysis'},
-  {num:'04',short:'PU Learning',title:'Positive-Only Learning'},
-  {num:'05',short:'PU Theory',title:'PU Learning Theory'},
-  {num:'06',short:'Imbalance',title:'Imbalanced Datasets'},
-  {num:'07',short:'Resampling',title:'Resampling & Reweighting'},
-  {num:'08',short:'Takeaways',title:'Key Takeaways'},
-  {num:'09',short:'References',title:'References & <em>Further</em> Reading'},
-];
 
-// DATA: Summary text (shown in main view)
-const summaries = [
-  `<p>Problem Set 2 (35 points) spans linear classifiers, positive-only learning, and imbalanced data—three fundamental challenges in supervised learning. This problem set bridges weeks 2-3 material and prepares you for real-world classification tasks where data is messy.</p><p>Three problems build complementary skills: logistic regression versus Gaussian discriminant analysis, learning from incomplete labels, and handling class imbalance. Together, they form a comprehensive foundation in practical classification.</p>`,
+<div class="shell">
 
-  `<p>Problem 01 compares two core linear classification algorithms on the same dataset. Logistic regression models the conditional probability directly; GDA makes a generative assumption about the class distributions.</p><p>Both produce linear decision boundaries, but their inductive biases differ. Understanding when each shines and when they fail is essential for model selection in practice.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  `<p>Decision boundaries are where the classifier changes its prediction. In high dimensions, linear boundaries may be insufficient, requiring feature engineering or nonlinear models. This section explores when linearity works and when you need to augment the feature space.</p><p>Visualizing boundaries reveals classifier behavior, class overlap, and margin structure—intuition that guides algorithm choice and hyperparameter tuning.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Overview"><span class="sidebar-num">01</span><span class="sidebar-label">Overview</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Linear Class"><span class="sidebar-num">02</span><span class="sidebar-label">Linear Class</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Boundaries"><span class="sidebar-num">03</span><span class="sidebar-label">Boundaries</span></div>
+      <div class="sidebar-item" data-section="3" data-label="PU Learning"><span class="sidebar-num">04</span><span class="sidebar-label">PU Learning</span></div>
+      <div class="sidebar-item" data-section="4" data-label="PU Theory"><span class="sidebar-num">05</span><span class="sidebar-label">PU Theory</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Imbalance"><span class="sidebar-num">06</span><span class="sidebar-label">Imbalance</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Resampling"><span class="sidebar-num">07</span><span class="sidebar-label">Resampling</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Takeaways"><span class="sidebar-num">08</span><span class="sidebar-label">Takeaways</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  `<p>Positive-only (PU) learning handles a realistic scenario: you observe positive labels but cannot distinguish between unlabeled and negative examples. This is common in medical diagnosis, churn prediction, and recommendation systems.</p><p>The key insight is that unlabeled data carries information. By assuming SCAR (selected completely at random), you can estimate p(y=1|x) from observed frequencies and label densities.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Problem Set 2</div>
+        <div class="hero-title">PS2: <em>Classification</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>35 Points · Linear Models, PU Learning & Imbalance</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  `<p>PU learning theory formalizes identifiability. Under SCAR, you can recover the true classifier even from biased labels—provided the unlabeled population is representative. Estimating the class prior π = p(s=1|y=1) is the bottleneck.</p><p>Label frequency and the constant-factor assumption unlock closed-form solutions. Theory validates the intuition that unlabeled data is not wasted.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>PS2 Overview</h2>
+          <p>Problem Set 2 (35 points) spans linear classifiers, positive-only learning, and imbalanced data—three fundamental challenges in supervised learning. This problem set bridges weeks 2-3 material and prepares you for real-world classification tasks where data is messy.</p><p>Three problems build complementary skills: logistic regression versus Gaussian discriminant analysis, learning from incomplete labels, and handling class imbalance. Together, they form a comprehensive foundation in practical classification.</p>
+        </div>
 
-  `<p>Class imbalance occurs when one class vastly outnumbers the other. Standard accuracy is misleading; a majority-class baseline trivializes the problem. Precision, recall, F1, and ROC-AUC reveal true classifier performance.</p><p>Imbalance is rampant in fraud detection, disease screening, and anomaly detection. Addressing it requires both evaluation metrics and training strategies.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Linear Classification</h2>
+          <p>Problem 01 compares two core linear classification algorithms on the same dataset. Logistic regression models the conditional probability directly; GDA makes a generative assumption about the class distributions.</p><p>Both produce linear decision boundaries, but their inductive biases differ. Understanding when each shines and when they fail is essential for model selection in practice.</p>
+        </div>
 
-  `<p>Resampling (over- and undersampling) and reweighting adjust the class distribution seen during training. Oversampling the minority class or undersampling the majority can balance gradients. Cost-sensitive learning directly penalizes minority errors more heavily.</p><p>SMOTE (Synthetic Minority Oversampling) generates synthetic samples, mitigating overfitting to the (small) minority set. Each approach trades off computational cost, variance, and bias.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Decision Boundary Analysis</h2>
+          <p>Decision boundaries are where the classifier changes its prediction. In high dimensions, linear boundaries may be insufficient, requiring feature engineering or nonlinear models. This section explores when linearity works and when you need to augment the feature space.</p><p>Visualizing boundaries reveals classifier behavior, class overlap, and margin structure—intuition that guides algorithm choice and hyperparameter tuning.</p>
+        </div>
 
-  `<p>This problem set unifies three perspectives: algorithmic (logistic regression vs. GDA), information-theoretic (PU learning's use of unlabeled data), and practical (imbalance handling). Mastering these lays a strong foundation for subsequent classification tasks.</p><p>The real lesson: classification is not monolithic. Your choice of model, loss, metrics, and training strategy must align with data characteristics and business requirements.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Positive-Only Learning</h2>
+          <p>Positive-only (PU) learning handles a realistic scenario: you observe positive labels but cannot distinguish between unlabeled and negative examples. This is common in medical diagnosis, churn prediction, and recommendation systems.</p><p>The key insight is that unlabeled data carries information. By assuming SCAR (selected completely at random), you can estimate p(y=1|x) from observed frequencies and label densities.</p>
+        </div>
 
-  `<p>Comprehensive references for classification theory and practice. Stanford CS229 covers logistic regression, GDA, and loss functions. For positive-only learning, see lecture notes on semi-supervised learning and the foundational PU learning papers. The Elements of Statistical Learning provides rigorous treatment of classifiers, evaluation metrics, and imbalance. Scikit-learn and imbalanced-learn documentation offer practical implementation guidance.</p><p>Key Wikipedia articles cover logistic regression, Gaussian discriminant analysis, precision/recall, and ROC curves. For SMOTE and advanced resampling techniques, consult the original papers and modern survey articles on class imbalance.</p>`
-];
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>PU Learning Theory</h2>
+          <p>PU learning theory formalizes identifiability. Under SCAR, you can recover the true classifier even from biased labels—provided the unlabeled population is representative. Estimating the class prior π = p(s=1|y=1) is the bottleneck.</p><p>Label frequency and the constant-factor assumption unlock closed-form solutions. Theory validates the intuition that unlabeled data is not wasted.</p>
+        </div>
 
-// DATA: Detail content (shown in side panel when expanded)
-const details = [
-  `<div class="detail-header"><div class="num">01 — Overview</div><h2>PS2 Overview</h2></div>
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Imbalanced Datasets</h2>
+          <p>Class imbalance occurs when one class vastly outnumbers the other. Standard accuracy is misleading; a majority-class baseline trivializes the problem. Precision, recall, F1, and ROC-AUC reveal true classifier performance.</p><p>Imbalance is rampant in fraud detection, disease screening, and anomaly detection. Addressing it requires both evaluation metrics and training strategies.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Resampling & Reweighting</h2>
+          <p>Resampling (over- and undersampling) and reweighting adjust the class distribution seen during training. Oversampling the minority class or undersampling the majority can balance gradients. Cost-sensitive learning directly penalizes minority errors more heavily.</p><p>SMOTE (Synthetic Minority Oversampling) generates synthetic samples, mitigating overfitting to the (small) minority set. Each approach trades off computational cost, variance, and bias.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Key Takeaways</h2>
+          <p>This problem set unifies three perspectives: algorithmic (logistic regression vs. GDA), information-theoretic (PU learning's use of unlabeled data), and practical (imbalance handling). Mastering these lays a strong foundation for subsequent classification tasks.</p><p>The real lesson: classification is not monolithic. Your choice of model, loss, metrics, and training strategy must align with data characteristics and business requirements.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>Comprehensive references for classification theory and practice. Stanford CS229 covers logistic regression, GDA, and loss functions. For positive-only learning, see lecture notes on semi-supervised learning and the foundational PU learning papers. The Elements of Statistical Learning provides rigorous treatment of classifiers, evaluation metrics, and imbalance. Scikit-learn and imbalanced-learn documentation offer practical implementation guidance.</p><p>Key Wikipedia articles cover logistic regression, Gaussian discriminant analysis, precision/recall, and ROC curves. For SMOTE and advanced resampling techniques, consult the original papers and modern survey articles on class imbalance.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01 — Overview</div><h2>PS2 Overview</h2></div>
    <p>Problem Set 2 (35 points) contains three complementary problems that deepen your understanding of supervised classification. Each problem targets a different aspect of real-world complexity.</p>
    <h3>Problem Structure</h3>
    <p><strong>01—Linear Classification (12 pts):</strong> Compare logistic regression and Gaussian Discriminant Analysis on the same synthetic data. Implement both, analyze decision boundaries, and understand their inductive biases and convergence properties.</p>
@@ -362,9 +428,11 @@ const details = [
    <h3>Learning Outcomes</h3>
    <p>By the end, you will understand linear classifier trade-offs, how to learn from incomplete label information, and practical strategies for imbalanced data. You will also recognize that evaluation metrics must match problem structure.</p>
    <h3>Recommended Resources</h3>
-   <p>Review lecture notes on logistic regression, GDA, and loss functions. Consult the textbook sections on semi-supervised learning and class imbalance. The sklearn documentation for imbalance handling (imbalanced-learn) is also invaluable.</p>`,
+   <p>Review lecture notes on logistic regression, GDA, and loss functions. Consult the textbook sections on semi-supervised learning and class imbalance. The sklearn documentation for imbalance handling (imbalanced-learn) is also invaluable.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">02 — Linear Classification</div><h2>Linear Classification</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02 — Linear Classification</div><h2>Linear Classification</h2></div>
    <p>Linear classifiers (logistic regression and GDA) form the backbone of supervised learning. Both partition the input space with a hyperplane, but they make different assumptions about the data-generating process.</p>
    <h3>Logistic Regression</h3>
    <p>Logistic regression directly models p(y=1|x) = σ(θ^T x). It uses maximum likelihood estimation and empirical risk minimization. The learned boundary is the set where p(y=1|x) = 0.5. Logistic regression is robust and requires fewer assumptions; it works well even when the data does not follow any particular distributional form.</p>
@@ -373,9 +441,11 @@ const details = [
    <h3>Empirical Comparison</h3>
    <p>On the same synthetic dataset, plot the learned boundaries for both models. Compare: (1) convergence speed, (2) decision boundary shape, (3) robustness to outliers, and (4) classification accuracy on held-out data. Document your findings in the writeup.</p>
    <h3>Key Insight</h3>
-   <p>Logistic regression is a discriminative model (learns p(y|x) directly), while GDA is generative (learns the full joint). Generative models can be more data-efficient but are less flexible. Discriminative models are more robust but may require more data.</p>`,
+   <p>Logistic regression is a discriminative model (learns p(y|x) directly), while GDA is generative (learns the full joint). Generative models can be more data-efficient but are less flexible. Discriminative models are more robust but may require more data.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">03 — Decision Boundary Analysis</div><h2>Decision Boundary Analysis</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03 — Decision Boundary Analysis</div><h2>Decision Boundary Analysis</h2></div>
    <p>The decision boundary is the set of points where the classifier's prediction changes. Understanding boundary geometry reveals classifier strengths and weaknesses.</p>
    <h3>Linearity and Feature Space</h3>
    <p>Both logistic regression and GDA with a diagonal covariance matrix produce linear boundaries in the original feature space. If the data is not linearly separable, you must either augment the feature space (add polynomial or interaction terms) or use a nonlinear model.</p>
@@ -384,9 +454,11 @@ const details = [
    <h3>Margin and Confidence</h3>
    <p>The margin is the distance from a point to the decision boundary. Points far from the boundary are classified with high confidence. Margins reveal which regions are well-learned and which are ambiguous. Small margins indicate potential overfitting or overlapping class distributions.</p>
    <h3>Feature Engineering</h3>
-   <p>If the boundary is nonlinear, engineer features: polynomial terms (x_1^2, x_1 x_2), radial basis functions, or domain-specific transformations. Re-train the linear classifier in the augmented space. Document which features improve the boundary.</p>`,
+   <p>If the boundary is nonlinear, engineer features: polynomial terms (x_1^2, x_1 x_2), radial basis functions, or domain-specific transformations. Re-train the linear classifier in the augmented space. Document which features improve the boundary.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">04 — Positive-Only Learning</div><h2>Positive-Only Learning</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04 — Positive-Only Learning</div><h2>Positive-Only Learning</h2></div>
    <p>Positive-only (PU) learning addresses a practical scenario: you observe positive examples explicitly, but the unlabeled set contains both positives and negatives. You cannot directly observe the negative class.</p>
    <h3>Problem Setup</h3>
    <p>You observe labeled pairs (x, s) where s = 1 indicates a positive label, and s = 0 indicates unlabeled (unknown true label y). The true label y ∈ {0, 1}, and the relationship is s = 1 ⟹ y = 1 (labeled positives are true positives) but y = 0 ⟹ s = 0 (negatives are unlabeled).</p>
@@ -395,9 +467,11 @@ const details = [
    <h3>Core Insight</h3>
    <p>Observed frequency f(s=1|x) = p(s=1|x) = p(s=1|y=1) · p(y=1|x) = π · p(y=1|x), where π is the label frequency. By estimating π from aggregate statistics, you can recover p(y=1|x) = f(s=1|x) / π.</p>
    <h3>Practical Steps</h3>
-   <p>Estimate π (the fraction of observed positives among true positives), using methods like label frequency or Elkan-Noto constant-factor assumptions. Then, train a classifier on the observed positives vs. rest, then adjust its scores by π. Finally, evaluate on a held-out set with true labels.</p>`,
+   <p>Estimate π (the fraction of observed positives among true positives), using methods like label frequency or Elkan-Noto constant-factor assumptions. Then, train a classifier on the observed positives vs. rest, then adjust its scores by π. Finally, evaluate on a held-out set with true labels.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">05 — PU Learning Theory</div><h2>PU Learning Theory</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05 — PU Learning Theory</div><h2>PU Learning Theory</h2></div>
    <p>PU learning theory formalizes when and how you can recover the true classifier from positive-only observations. The core question: is p(y=1|x) identifiable from p(s=1|x)?</p>
    <h3>Identifiability</h3>
    <p>Under SCAR, p(s=1|x) = π · p(y=1|x) where π = p(s=1|y=1) is a constant. This relationship is linear in p(y=1|x), so you can invert it: p(y=1|x) = p(s=1|x) / π. Identifiability holds as long as π > 0 (at least some positives are labeled) and we can estimate π accurately.</p>
@@ -406,9 +480,11 @@ const details = [
    <h3>Error Bounds</h3>
    <p>Misestimating π introduces systematic bias. If true π = 0.3 but you estimate π = 0.2, your recovered p(y=1|x) will be 1.5× too large. This affects threshold selection and calibration. The problem statement may provide guidance on π estimation.</p>
    <h3>Practical Robustness</h3>
-   <p>PU learning is robust to moderate π misestimation if you use cross-validation and tuning on a held-out labeled set. Sensitivity analysis (vary π and observe performance) quantifies robustness. Always validate on a separate test set with true labels.</p>`,
+   <p>PU learning is robust to moderate π misestimation if you use cross-validation and tuning on a held-out labeled set. Sensitivity analysis (vary π and observe performance) quantifies robustness. Always validate on a separate test set with true labels.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">06 — Imbalanced Datasets</div><h2>Imbalanced Datasets</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06 — Imbalanced Datasets</div><h2>Imbalanced Datasets</h2></div>
    <p>Class imbalance arises when one class is much rarer than the other. Standard accuracy is a poor metric; even a baseline that always predicts the majority class achieves high accuracy.</p>
    <h3>The Problem</h3>
    <p>In fraud detection, disease screening, or anomaly detection, the positive class is often 1–5% of the data. Training a standard classifier on raw data biases it toward the majority class; the gradient for the minority class is overwhelmed. The model learns to "mostly predict negative" and achieves high accuracy despite uselessness.</p>
@@ -417,9 +493,11 @@ const details = [
    <h3>Why Accuracy Fails</h3>
    <p>If 99% of data is negative and the model always predicts negative, accuracy = 99% but recall = 0% (catching no true positives). In cost-sensitive settings, missing a positive may be far more expensive than a false alarm.</p>
    <h3>Evaluation Discipline</h3>
-   <p>Always report multiple metrics. Use stratified k-fold cross-validation to preserve class distribution in each fold. On imbalanced data, random split can lead to leakage (e.g., all positives in test set). Use a held-out test set with the true class distribution.</p>`,
+   <p>Always report multiple metrics. Use stratified k-fold cross-validation to preserve class distribution in each fold. On imbalanced data, random split can lead to leakage (e.g., all positives in test set). Use a held-out test set with the true class distribution.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">07 — Resampling & Reweighting</div><h2>Resampling & Reweighting</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07 — Resampling & Reweighting</div><h2>Resampling & Reweighting</h2></div>
    <p>Resampling and reweighting adjust the training distribution to address imbalance. Each approach has trade-offs in computational cost, variance, and bias.</p>
    <h3>Oversampling</h3>
    <p>Replicate minority-class examples until the class distribution is balanced. Pros: no data loss, works with any classifier. Cons: increases dataset size and computational cost; can lead to overfitting if you memorize replicated examples. Mitigation: add small noise to replicated examples (jittering).</p>
@@ -430,9 +508,11 @@ const details = [
    <h3>Cost-Sensitive Learning</h3>
    <p>Assign higher misclassification cost to the minority class. In logistic regression, weight the loss: loss = w+ · (minority errors) + w− · (majority errors). Set w+ > w− to prioritize minority performance. This avoids the data-manipulation of resampling, directly optimizing the imbalanced objective.</p>
    <h3>Ensemble Methods</h3>
-   <p>Train multiple classifiers on different resampled versions of the data (e.g., balanced random forests). Averaging predictions often reduces variance and improves robustness to resampling artifacts.</p>`,
+   <p>Train multiple classifiers on different resampled versions of the data (e.g., balanced random forests). Averaging predictions often reduces variance and improves robustness to resampling artifacts.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">08 — Key Takeaways</div><h2>Key Takeaways</h2></div>
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08 — Key Takeaways</div><h2>Key Takeaways</h2></div>
    <p>Problem Set 2 synthesizes algorithmic, information-theoretic, and practical perspectives on classification. These three problems are not isolated; they interact in real applications.</p>
    <h3>Algorithmic Perspective: Model Choice</h3>
    <p>Logistic regression and GDA are both linear classifiers, but they embody different inductive biases. Logistic regression is discriminative and robust; GDA is generative and can be sample-efficient. Neither is universally best; context dictates choice.</p>
@@ -443,9 +523,11 @@ const details = [
    <h3>Integration</h3>
    <p>A real-world classification task may combine all three themes: you might use logistic regression (linear classifier), adjust for label imbalance (reweighting), and even have some positive-only labels (semi-supervised). Mastery of these fundamentals prepares you for such complexity.</p>
    <h3>Next Steps</h3>
-   <p>After PS2, deepen your understanding with nonlinear classifiers (neural networks, kernel methods), advanced semi-supervised techniques (consistency regularization, pseudo-labeling), and domain-specific applications (NLP, computer vision, time series). The foundations you build here will anchor everything ahead.</p>`,
+   <p>After PS2, deepen your understanding with nonlinear classifiers (neural networks, kernel methods), advanced semi-supervised techniques (consistency regularization, pseudo-labeling), and domain-specific applications (NLP, computer vision, time series). The foundations you build here will anchor everything ahead.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num">09 — References</div><h2>References & <em>Further</em> Reading</h2></div>
+      <div class="detail" id="detail-8">
+        <div class="detail-header"><div class="num">09 — References</div><h2>References & <em>Further</em> Reading</h2></div>
    <h3>Stanford CS229 Course Materials</h3>
    <p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229: Machine Learning</a> — Official course page with lectures on logistic regression, GDA, and loss functions. See weeks 2-3 lecture notes for material directly relevant to PS2.</p>
    <h3>Linear Classification Theory</h3>
@@ -460,75 +542,47 @@ const details = [
    <h3>Advanced References</h3>
    <p><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">The Elements of Statistical Learning (ESL) - Free PDF</a> — Authoritative reference for classification, including logistic regression (Chapter 4), GAM models, and evaluation metrics (Chapter 11). Highly recommended for rigorous treatment of linear classifiers and imbalance.</p>
    <p><a href="https://imbalanced-learn.org/" target="_blank">imbalanced-learn Documentation</a> — Python library for handling imbalanced datasets. Includes SMOTE, random over/undersampling, and advanced resampling techniques.</p>
-   <div class="callout"><h4>Learning Path</h4><p>Start with Stanford CS229 lectures on logistic regression and GDA. Review Wikipedia articles on precision/recall and ROC curves to understand evaluation metrics. Consult ESL Chapter 4 for rigorous mathematical treatment of linear classifiers. Use imbalanced-learn documentation for practical implementation. For PU learning, search for foundational papers by Elkan & Noto on label bias correction.</p></div>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>229</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> Stanford XCS229 · Problem Set 2</div>
-        <div class="hero-title">PS2: <em>Classification</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>35 Points · Linear Models, PU Learning & Imbalance</span></div>
+   <div class="callout"><h4>Learning Path</h4><p>Start with Stanford CS229 lectures on logistic regression and GDA. Review Wikipedia articles on precision/recall and ROC curves to understand evaluation metrics. Consult ESL Chapter 4 for rigorous mathematical treatment of linear classifiers. Use imbalanced-learn documentation for practical implementation. For PU learning, search for foundational papers by Elkan & Noto on label bias correction.</p></div>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -538,96 +592,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -640,9 +650,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
 </body>
 </html>

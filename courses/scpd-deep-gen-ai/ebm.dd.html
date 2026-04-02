@@ -317,32 +317,62 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-const sections = [
-  { num: '01', short: 'Energy Functions', title: '<em>Energy</em> Functions' },
-  { num: '02', short: 'Boltzmann Distribution', title: '<em>Boltzmann</em> Distribution' },
-  { num: '03', short: 'Training EBMs', title: '<em>Training</em> EBMs' },
-  { num: '04', short: 'MCMC Sampling', title: '<em>MCMC</em> Sampling' },
-  { num: '05', short: 'Restricted Boltzmann', title: '<em>Restricted</em> Boltzmann Machines' },
-  { num: '06', short: 'Deep Boltzmann', title: 'Deep <em>Boltzmann</em> Machines' },
-  { num: '07', short: 'Modern EBMs', title: '<em>Modern</em> EBMs' },
-  { num: '08', short: 'EBM Connections', title: '<em>EBM</em> Connections' },
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
-];
+<div class="shell">
 
-const summaries = [
-  // 01 Energy Functions
-  `<p>Energy-based models (EBMs) define probability distributions through an energy function E(x). The probability of a data point x is proportional to the exponential negative energy: p(x) ∝ exp(−E(x)). This elegant formulation allows us to specify complex, unnormalized densities by designing energy functions that assign low energy to probable data and high energy to improbable data.</p>
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Energy Functions"><span class="sidebar-num">01</span><span class="sidebar-label">Energy Functions</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Boltzmann Distribution"><span class="sidebar-num">02</span><span class="sidebar-label">Boltzmann Distribution</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Training EBMs"><span class="sidebar-num">03</span><span class="sidebar-label">Training EBMs</span></div>
+      <div class="sidebar-item" data-section="3" data-label="MCMC Sampling"><span class="sidebar-num">04</span><span class="sidebar-label">MCMC Sampling</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Restricted Boltzmann"><span class="sidebar-num">05</span><span class="sidebar-label">Restricted Boltzmann</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Deep Boltzmann"><span class="sidebar-num">06</span><span class="sidebar-label">Deep Boltzmann</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Modern EBMs"><span class="sidebar-num">07</span><span class="sidebar-label">Modern EBMs</span></div>
+      <div class="sidebar-item" data-section="7" data-label="EBM Connections"><span class="sidebar-num">08</span><span class="sidebar-label">EBM Connections</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
+        <div class="hero-title">Energy-Based <em>Models</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 5–6 · Energy Functions, MCMC & Contrastive Divergence</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Energy</em> Functions</h2>
+          <p>Energy-based models (EBMs) define probability distributions through an energy function E(x). The probability of a data point x is proportional to the exponential negative energy: p(x) ∝ exp(−E(x)). This elegant formulation allows us to specify complex, unnormalized densities by designing energy functions that assign low energy to probable data and high energy to improbable data.</p>
   <p>The partition function Z normalizes the distribution: p(x) = exp(−E(x)) / Z, where Z = ∑_x exp(−E(x)). Computing Z is generally intractable for continuous high-dimensional spaces, which is why EBMs are often left unnormalized in practice. Energy functions can be learned as neural networks, transforming the model from probabilistic to implicit, enabling flexible density modeling without explicit likelihood evaluation.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">p(x) ∝ exp(−E(x))</div><div class="sl">Core Relation</div></div>
     <div class="st"><div class="sv">Z = ∑ exp(−E)</div><div class="sl">Partition Function</div></div>
     <div class="st"><div class="sv">Intractable</div><div class="sl">Normalization</div></div>
     <div class="st"><div class="sv">Implicit Models</div><div class="sl">NN-Parameterized</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 02 Boltzmann Distribution
-  `<p>The Boltzmann distribution originates from statistical mechanics, where energy E(x) is related to system states at thermal equilibrium. The distribution p(x) = exp(−E(x)/T) / Z depends on temperature T: as T → 0, probability concentrates on low-energy states; as T → ∞, all states become equally likely. This temperature parameter enables annealing strategies in sampling and provides an intuitive physical interpretation of model behavior.</p>
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Boltzmann</em> Distribution</h2>
+          <p>The Boltzmann distribution originates from statistical mechanics, where energy E(x) is related to system states at thermal equilibrium. The distribution p(x) = exp(−E(x)/T) / Z depends on temperature T: as T → 0, probability concentrates on low-energy states; as T → ∞, all states become equally likely. This temperature parameter enables annealing strategies in sampling and provides an intuitive physical interpretation of model behavior.</p>
   <p>Free energy F(x) = −T log p(x) = E(x) − T log Z represents the thermodynamic cost of a state. Minimizing free energy corresponds to maximizing likelihood in machine learning. The Boltzmann framework connects probabilistic modeling to physics, allowing researchers to leverage decades of statistical mechanics insights. Temperature plays a crucial role in controlling the sharpness of the distribution and aids in escaping local minima during training.</p>
   <div class="feat-grid">
     <div class="feat">
@@ -361,10 +391,13 @@ const summaries = [
       <h4>Physical Interpretation</h4>
       <p>Statistical mechanics provides intuition for training dynamics and model behavior.</p>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 03 Training EBMs
-  `<p>Training EBMs is challenging because the partition function Z is intractable. Contrastive divergence (CD) approximates the gradient of log Z by running MCMC for a few steps from data samples, then correcting the bias. This speeds up training dramatically compared to exact likelihood estimation. Score matching provides an alternative: matching the score function ∇_x log p(x) directly without computing Z, sidestepping normalization entirely.</p>
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Training</em> EBMs</h2>
+          <p>Training EBMs is challenging because the partition function Z is intractable. Contrastive divergence (CD) approximates the gradient of log Z by running MCMC for a few steps from data samples, then correcting the bias. This speeds up training dramatically compared to exact likelihood estimation. Score matching provides an alternative: matching the score function ∇_x log p(x) directly without computing Z, sidestepping normalization entirely.</p>
   <p>Noise contrastive estimation (NCE) and its variants reformulate density estimation as classification: distinguishing data from noise. Modern approaches like noise contrastive estimation with exponential families and other divergence measures (f-divergence, Wasserstein) have been developed. Each method trades off computational cost, bias, and convergence properties. Practitioners often use contrastive divergence for its simplicity, though score matching and NCE offer theoretical advantages in certain settings.</p>
   <div class="callout">
     <h4>Key Training Methods</h4>
@@ -375,10 +408,13 @@ const summaries = [
     <div class="st"><div class="sv">Score Matching</div><div class="sl">Gradient-Based</div></div>
     <div class="st"><div class="sv">Noise Contrastive</div><div class="sl">Classification</div></div>
     <div class="st"><div class="sv">Divergence Estimates</div><div class="sl">Flexible</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 04 MCMC Sampling
-  `<p>Sampling from EBMs requires Markov chain Monte Carlo (MCMC) because we cannot directly draw samples. Langevin dynamics use the score function (gradient of log-density) to guide a random walk: x_{t+1} = x_t + (ε/2) ∇_x log p(x_t) + √ε · z_t, where ε is step size and z_t is Gaussian noise. This converges to the target distribution as ε → 0 and t → ∞. Hamiltonian Monte Carlo (HMC) augments state with momentum, enabling larger steps and faster mixing, crucial for high-dimensional problems.</p>
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>MCMC</em> Sampling</h2>
+          <p>Sampling from EBMs requires Markov chain Monte Carlo (MCMC) because we cannot directly draw samples. Langevin dynamics use the score function (gradient of log-density) to guide a random walk: x_{t+1} = x_t + (ε/2) ∇_x log p(x_t) + √ε · z_t, where ε is step size and z_t is Gaussian noise. This converges to the target distribution as ε → 0 and t → ∞. Hamiltonian Monte Carlo (HMC) augments state with momentum, enabling larger steps and faster mixing, crucial for high-dimensional problems.</p>
   <p>Mixing time—how quickly MCMC forgets initialization—and burn-in (discarding initial samples) are critical practical concerns. Slow mixing can make sampling prohibitively expensive. Advanced techniques like parallel tempering, reversible jump, and replica-exchange methods accelerate mixing. Practitioners must diagnose convergence carefully via diagnostics (autocorrelation, Gelman–Rubin statistic). Understanding MCMC properties is essential for reliable EBM use, as poor sampling corrupts training and evaluation.</p>
   <div class="timeline">
     <div class="tl-item">
@@ -397,10 +433,13 @@ const summaries = [
       <div class="tl-date">Diagnostics</div>
       <div class="tl-text">Check convergence; assess effective sample size post-burn-in.</div>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 05 Restricted Boltzmann Machines
-  `<p>Restricted Boltzmann machines (RBMs) are bipartite graphical models with visible units v and hidden units h. The energy function E(v,h) = −v^T W h − b^T v − c^T h couples visible and hidden variables through weight matrix W, while lacking intra-layer connections. This bipartite structure is key: given visible units, hidden units are conditionally independent, and vice versa. p(h|v) and p(v|h) factor into independent Bernoulli distributions, enabling efficient block Gibbs sampling.</p>
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Restricted</em> Boltzmann Machines</h2>
+          <p>Restricted Boltzmann machines (RBMs) are bipartite graphical models with visible units v and hidden units h. The energy function E(v,h) = −v^T W h − b^T v − c^T h couples visible and hidden variables through weight matrix W, while lacking intra-layer connections. This bipartite structure is key: given visible units, hidden units are conditionally independent, and vice versa. p(h|v) and p(v|h) factor into independent Bernoulli distributions, enabling efficient block Gibbs sampling.</p>
   <p>RBMs serve as building blocks for deeper models and as standalone density models. Training uses contrastive divergence: sample h from p(h|v_data), then sample v' from p(v|h), then h' from p(h|v'). The weight update is proportional to v_data ⊗ h − v' ⊗ h', contrasting data-driven and model-driven statistics. While largely superseded by modern deep learning, RBMs remain pedagogically important and are still used in some applications, especially when interpretability of latent structure is valued.</p>
   <div class="verdict">
     <div class="v-col pro">
@@ -421,20 +460,26 @@ const summaries = [
         <li>Fewer parameters than modern neural networks.</li>
       </ul>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 06 Deep Boltzmann Machines
-  `<p>Deep Boltzmann machines (DBMs) stack multiple layers of hidden units, forming a fully-connected hierarchical structure. Unlike DBNs (deep belief networks with directed connections), DBMs are undirected. The energy function couples all layers: E = −v^T W^(1) h^(1) − h^(1,T) W^(2) h^(2) − .... Inference becomes intractable: conditioning on visible units does not marginalize hidden-layer dependencies. Variational inference uses mean-field approximations, treating each hidden unit's posterior as an independent Bernoulli with parameters updated iteratively.</p>
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Deep <em>Boltzmann</em> Machines</h2>
+          <p>Deep Boltzmann machines (DBMs) stack multiple layers of hidden units, forming a fully-connected hierarchical structure. Unlike DBNs (deep belief networks with directed connections), DBMs are undirected. The energy function couples all layers: E = −v^T W^(1) h^(1) − h^(1,T) W^(2) h^(2) − .... Inference becomes intractable: conditioning on visible units does not marginalize hidden-layer dependencies. Variational inference uses mean-field approximations, treating each hidden unit's posterior as an independent Bernoulli with parameters updated iteratively.</p>
   <p>Training DBMs is complex: greedy pre-training followed by variational EM. Mean-field updates iterate until convergence at each training step, adding computational overhead. Despite advantages in learning hierarchical representations, DBMs have fallen out of favor compared to deep autoencoders and variational autoencoders due to training difficulty and similar expressiveness. However, they offer theoretical insights into hierarchical probabilistic modeling and remain relevant for understanding energy-based deep learning.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Undirected Hierarchy</div><div class="sl">Fully Connected</div></div>
     <div class="st"><div class="sv">Mean-Field Inference</div><div class="sl">Variational</div></div>
     <div class="st"><div class="sv">Greedy Pre-Training</div><div class="sl">Initialization</div></div>
     <div class="st"><div class="sv">Complex Training</div><div class="sl">High Computation</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 07 Modern EBMs
-  `<p>Modern EBMs leverage neural networks as flexible energy function approximators. Instead of explicit latent structures (RBM/DBM), the energy E_θ(x) is a learnable neural network, often a CNN or ResNet. This enables implicit generative modeling: sample via MCMC without a tractable posterior. Stochastic gradient Langevin dynamics (SGLD) adds noise to gradient updates, allowing samples to be drawn efficiently from a mini-batch without full dataset MCMC.</p>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Modern</em> EBMs</h2>
+          <p>Modern EBMs leverage neural networks as flexible energy function approximators. Instead of explicit latent structures (RBM/DBM), the energy E_θ(x) is a learnable neural network, often a CNN or ResNet. This enables implicit generative modeling: sample via MCMC without a tractable posterior. Stochastic gradient Langevin dynamics (SGLD) adds noise to gradient updates, allowing samples to be drawn efficiently from a mini-batch without full dataset MCMC.</p>
   <p>Joint energy models (JEM) unify discriminative (classification) and generative (density) modeling in a single framework. The same energy function supports both: E_θ(x, y) guides classification via −∇_x E(x|y), while ∇_x E(x) supports generation. Recent work explores connections to score-based models (diffusion models), where the score function ∇_x log p(x) is directly learned via score matching, avoiding explicit energy function design. Auto-regressive flows and other neural density estimators provide complementary approaches, though EBMs offer unique advantages in flexible density specification and control via energy design.</p>
   <div class="feat-grid">
     <div class="feat">
@@ -453,10 +498,13 @@ const summaries = [
       <h4>Score-Based Models</h4>
       <p>Learn ∇_x log p directly via score matching; connection to diffusion.</p>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 08 EBM Connections
-  `<p>Energy-based models connect deeply to score-based generative models: the score function ∇_x log p(x) is the gradient of the log energy. Denoising score matching trains a neural network to predict ∇_x log p(x) by matching the score under added noise. Diffusion models learn scores at multiple noise scales, effectively learning a trajectory backward through noise. The connection reveals that diffusion models are implicitly learning energy landscapes across scales, bridging EBMs and modern generative AI.</p>
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>EBM</em> Connections</h2>
+          <p>Energy-based models connect deeply to score-based generative models: the score function ∇_x log p(x) is the gradient of the log energy. Denoising score matching trains a neural network to predict ∇_x log p(x) by matching the score under added noise. Diffusion models learn scores at multiple noise scales, effectively learning a trajectory backward through noise. The connection reveals that diffusion models are implicitly learning energy landscapes across scales, bridging EBMs and modern generative AI.</p>
   <p>Classifier guidance (conditional generation) leverages classifier gradients to shape the energy landscape. A classifier score ∇_x log p(y|x) can be combined with unconditional scores to steer sampling toward desired classes. Score-based models have achieved state-of-the-art generation quality, suggesting energy-based thinking remains central to deep generative modeling. Future directions include better understanding MCMC sampling for high-dimensional EBMs, hybrid approaches combining explicit energy functions with learned scores, and applications to structured prediction and reasoning tasks where explicit energy design provides interpretability advantages.</p>
   <div class="callout">
     <h4>Theoretical Unification</h4>
@@ -467,16 +515,26 @@ const summaries = [
     <div class="st"><div class="sv">Denoising Score Match</div><div class="sl">Training Signal</div></div>
     <div class="st"><div class="sv">Diffusion Models</div><div class="sl">Noisy Schedules</div></div>
     <div class="st"><div class="sv">Classifier Guidance</div><div class="sl">Conditional Control</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 09 References
-  `<p>Energy-based models provide a powerful framework connecting statistical physics, probabilistic inference, and modern deep learning. This section compiles key references for understanding energy functions, Boltzmann machines, and recent resurgence of EBMs in generative modeling.</p>
-   <p>From foundational theory to contemporary applications, these materials document how EBMs complement and connect to VAEs, diffusion models, and score-based approaches.</p>`
-];
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>Energy-based models provide a powerful framework connecting statistical physics, probabilistic inference, and modern deep learning. This section compiles key references for understanding energy functions, Boltzmann machines, and recent resurgence of EBMs in generative modeling.</p>
+   <p>From foundational theory to contemporary applications, these materials document how EBMs complement and connect to VAEs, diffusion models, and score-based approaches.</p>
+        </div>
 
-const details = [
-  // 01 Details
-  `<div class="detail-header">
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 01</div>
     <h2><em>Energy</em> Functions</h2>
   </div>
@@ -487,10 +545,11 @@ const details = [
   <h3>Energy Design Principles</h3>
   <p>Design energy functions to be smooth, avoiding sharp discontinuities that complicate sampling. Ensure the energy landscape has a minimum-energy solution that represents the target distribution. Add regularization (e.g., L2 on weights) to prevent unbounded energy scaling. When using neural networks, architecture (depth, width, skip connections) affects expressiveness and optimization landscape.</p>
   <h3>Computational Considerations</h3>
-  <p>Forward pass (computing E(x)) is typically fast (single neural network evaluation). The bottleneck is sampling: MCMC chains must mix well. For high-dimensional data (images, text), poor mixing means expensive training. Pre-training or better initialization helps. Hybrid approaches combining learned energy with auxiliary latent variables (e.g., variational EBMs) can accelerate both training and sampling.</p>`,
+  <p>Forward pass (computing E(x)) is typically fast (single neural network evaluation). The bottleneck is sampling: MCMC chains must mix well. For high-dimensional data (images, text), poor mixing means expensive training. Pre-training or better initialization helps. Hybrid approaches combining learned energy with auxiliary latent variables (e.g., variational EBMs) can accelerate both training and sampling.</p>
+      </div>
 
-  // 02 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-1">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 02</div>
     <h2><em>Boltzmann</em> Distribution</h2>
   </div>
@@ -501,10 +560,11 @@ const details = [
   <h3>Temperature and Phase Transitions</h3>
   <p>In some models, varying T reveals phase transitions: qualitative changes in the distribution's structure. The critical temperature marks transitions between behaviors (e.g., order-disorder in spin systems). While less prominent in deep learning models, phase transitions in neural networks have been observed, highlighting complex energy landscapes shaped by network architecture and data.</p>
   <h3>Connection to Thermodynamic Limit</h3>
-  <p>Statistical mechanics studies limits as system size N → ∞. Free energy per unit F/N becomes well-defined (self-averaging). In machine learning, this perspective suggests studying how learned distributions behave as data dimension and model capacity grow. Large-N limits often exhibit rich behavior: critical phenomena, emergent structure, robustness properties.</p>`,
+  <p>Statistical mechanics studies limits as system size N → ∞. Free energy per unit F/N becomes well-defined (self-averaging). In machine learning, this perspective suggests studying how learned distributions behave as data dimension and model capacity grow. Large-N limits often exhibit rich behavior: critical phenomena, emergent structure, robustness properties.</p>
+      </div>
 
-  // 03 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-2">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 03</div>
     <h2><em>Training</em> EBMs</h2>
   </div>
@@ -515,10 +575,11 @@ const details = [
   <h3>Mini-Batch Training with Replay Buffer</h3>
   <p>In practice, MCMC chains are expensive to restart from scratch each iteration. A replay buffer maintains a pool of samples from previous iterations, initialized once and reused. New samples are drawn from the buffer, MCMC-updated a few steps, then returned to buffer. This amortizes computational cost and improves stability by maintaining diverse samples across batches.</p>
   <h3>Divergence and Regularization</h3>
-  <p>Without regularization, energy can scale arbitrarily (e.g., E_θ(x) → −∞ for all x). Add L2 regularization on weights, entropy regularization on the energy, or normalize energy magnitudes. Some methods use constrained optimization to keep energy bounded. Proper regularization is crucial for stability and preventing mode collapse in EBM training.</p>`,
+  <p>Without regularization, energy can scale arbitrarily (e.g., E_θ(x) → −∞ for all x). Add L2 regularization on weights, entropy regularization on the energy, or normalize energy magnitudes. Some methods use constrained optimization to keep energy bounded. Proper regularization is crucial for stability and preventing mode collapse in EBM training.</p>
+      </div>
 
-  // 04 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-3">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 04</div>
     <h2><em>MCMC</em> Sampling</h2>
   </div>
@@ -529,10 +590,11 @@ const details = [
   <h3>Parallel Tempering and Replica Exchange</h3>
   <p>Run multiple chains at different temperatures T_1 < T_2 < ... < T_K (hot chains have smoother, flatter energy landscapes). Periodically exchange states between adjacent chains; hotter chains mix faster and can help colder chains escape local minima. This dramatically improves effective mixing, especially for multimodal distributions. Replica exchange methods are more general and apply to other sampling algorithms.</p>
   <h3>Burn-In and Equilibration</h3>
-  <p>Initial samples depend on starting point and should be discarded (burn-in phase). Adaptive methods adjust step size during burn-in to achieve optimal acceptance rates. In Langevin, step sizes are often tuned to achieve ~50% acceptance (though optimal is higher). Properly configured burn-in is essential for valid inference; underbilled burn-in biases estimates toward initial conditions.</p>`,
+  <p>Initial samples depend on starting point and should be discarded (burn-in phase). Adaptive methods adjust step size during burn-in to achieve optimal acceptance rates. In Langevin, step sizes are often tuned to achieve ~50% acceptance (though optimal is higher). Properly configured burn-in is essential for valid inference; underbilled burn-in biases estimates toward initial conditions.</p>
+      </div>
 
-  // 05 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-4">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 05</div>
     <h2><em>Restricted</em> Boltzmann Machines</h2>
   </div>
@@ -543,10 +605,11 @@ const details = [
   <h3>Gaussian RBMs and Extensions</h3>
   <p>Extending RBMs to continuous visible units (Gaussian RBMs) involves modifying conditionals: v follows a Gaussian, h remains Bernoulli. The energy becomes E(v,h) = ½ v^T Λ^{−1} v − v^T W h − b^T v − c^T h. Training procedure is similar but requires handling Gaussian variables. More complex extensions (mixed Bernoulli-Gaussian, spike-and-slab) increase expressiveness but complicate inference and training.</p>
   <h3>Applications and Modern View</h3>
-  <p>Modern use of RBMs: collaborative filtering (Netflix Prize context), feature learning for downstream tasks, anomaly detection, and theoretical study. They serve as building blocks in energy-based models, often paired with other techniques. The RBM literature is rich with insights on graphical models, sampling, and probabilistic inference that generalize beyond RBMs themselves.</p>`,
+  <p>Modern use of RBMs: collaborative filtering (Netflix Prize context), feature learning for downstream tasks, anomaly detection, and theoretical study. They serve as building blocks in energy-based models, often paired with other techniques. The RBM literature is rich with insights on graphical models, sampling, and probabilistic inference that generalize beyond RBMs themselves.</p>
+      </div>
 
-  // 06 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-5">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 06</div>
     <h2>Deep <em>Boltzmann</em> Machines</h2>
   </div>
@@ -557,10 +620,11 @@ const details = [
   <h3>Pre-Training and Initialization</h3>
   <p>Greedy pre-training: train DBM layer 1 (v, h^(1)) as RBM, then treat h^(1) as visible and train (h^(1), h^(2)) as RBM, etc. This initialization avoids poor local minima and accelerates convergence. However, it's computationally expensive and must be coordinated carefully to ensure coherence across layers. Modern deep learning usually skips pre-training in favor of better optimizers and architectures.</p>
   <h3>Relation to Other Hierarchical Models</h3>
-  <p>DBNs (deep belief networks) are partly directed, partly undirected, offering a middle ground. Autoencoders and VAEs provide deterministic or variational hierarchies with explicit encoder-decoder structure. Normalizing flows stack invertible transformations. Each approach trades off tractability (compute likelihood?), expressiveness, and interpretability (can we visualize learned features?).</p>`,
+  <p>DBNs (deep belief networks) are partly directed, partly undirected, offering a middle ground. Autoencoders and VAEs provide deterministic or variational hierarchies with explicit encoder-decoder structure. Normalizing flows stack invertible transformations. Each approach trades off tractability (compute likelihood?), expressiveness, and interpretability (can we visualize learned features?).</p>
+      </div>
 
-  // 07 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-6">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 07</div>
     <h2><em>Modern</em> EBMs</h2>
   </div>
@@ -571,10 +635,11 @@ const details = [
   <h3>Why Neural Network Energies?</h3>
   <p>Parametric energies offer flexibility: design a network for your data structure (CNN for images, Transformer for sequences). Neural networks are universal approximators; with enough capacity, any energy landscape can be learned. This contrasts with hand-crafted energies (e.g., Ising model form), which are rigid but interpretable. The tradeoff: flexibility vs. interpretability.</p>
   <h3>Computational Bottlenecks</h3>
-  <p>MCMC sampling is slow, especially for high-resolution images or long sequences. Techniques to address this: (1) Better initialization (start from previous samples or noise in replay buffer). (2) Hybrid approaches (combine with learned denoiser). (3) Better MCMC (HMC, parallel tempering, ensemble methods). (4) Approximations (few Langevin steps, approximate gradients). Each trades off sample quality for speed.</p>`,
+  <p>MCMC sampling is slow, especially for high-resolution images or long sequences. Techniques to address this: (1) Better initialization (start from previous samples or noise in replay buffer). (2) Hybrid approaches (combine with learned denoiser). (3) Better MCMC (HMC, parallel tempering, ensemble methods). (4) Approximations (few Langevin steps, approximate gradients). Each trades off sample quality for speed.</p>
+      </div>
 
-  // 08 Details
-  `<div class="detail-header">
+      <div class="detail" id="detail-7">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 6 5 10 11 1"></polyline></svg> Section 08</div>
     <h2><em>EBM</em> Connections</h2>
   </div>
@@ -585,9 +650,11 @@ const details = [
   <h3>Hybrid Approaches: EBMs + Diffusion</h3>
   <p>Combining explicit energy functions with diffusion-based sampling: train an energy network E_θ(x), then use SGLD or similar at different noise scales to generate samples. Alternatively, distill diffusion model gradients into an energy function for faster sampling. Such hybrids leverage strengths of both: energy design provides interpretability and control, diffusion provides stable training and sampling.</p>
   <h3>Future Directions</h3>
-  <p>Applications to structured prediction (learn energy over both inputs and outputs, use optimization at test time to find best output). Interpretability (design energies for domain knowledge, e.g., enforcing constraints). Continual learning and adaptation (adjust energy function as new data arrives). Combining with symbolic reasoning (energy-based models for logic, planning). The enduring principle—specify distributions through energy or score functions—will likely remain central to generative modeling and beyond.</p>`,
+  <p>Applications to structured prediction (learn energy over both inputs and outputs, use optimization at test time to find best output). Interpretability (design energies for domain knowledge, e.g., enforcing constraints). Continual learning and adaptation (adjust energy function as new data arrives). Combining with symbolic reasoning (energy-based models for logic, planning). The enduring principle—specify distributions through energy or score functions—will likely remain central to generative modeling and beyond.</p>
+      </div>
 
-  `<div class="detail-header">
+      <div class="detail" id="detail-8">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
     <h2>References & <em>Further</em> Reading</h2>
    </div>
@@ -619,75 +686,47 @@ const details = [
    <ul>
     <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a></li>
     <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng's Blog</a> — Comprehensive tutorials</li>
-   </ul>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> Stanford XCS236 · Deep Generative Models</div>
-        <div class="hero-title">Energy-Based <em>Models</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 5–6 · Energy Functions, MCMC & Contrastive Divergence</span></div>
+   </ul>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -697,96 +736,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -799,9 +794,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
 </body>
 </html>

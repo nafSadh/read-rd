@@ -317,48 +317,97 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-// Data arrays for Decision Trees & Ensemble Methods
-const sections = [
-  { num: '01', short: 'Decision Trees', title: 'Decision Trees' },
-  { num: '02', short: 'Information Gain', title: 'Information Gain' },
-  { num: '03', short: 'Gini Impurity', title: 'Gini Impurity' },
-  { num: '04', short: 'Pruning & Regularization', title: 'Pruning & Regularization' },
-  { num: '05', short: 'Bagging', title: 'Bagging' },
-  { num: '06', short: 'Random Forests', title: 'Random Forests' },
-  { num: '07', short: 'Boosting', title: 'Boosting' },
-  { num: '08', short: 'Gradient Boosting', title: 'Gradient Boosting' }
-,
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }];
+<div class="shell">
 
-const summaries = [
-  // Section 1: Decision Trees
-  `<p>Decision trees recursively partition the feature space into increasingly homogeneous regions, creating a hierarchical structure of binary or multi-way splits. At each node, the algorithm selects the feature and threshold that best separates the data according to a chosen criterion, building a tree where leaves represent final predictions and internal nodes represent decision rules. Trees excel at capturing non-linear relationships and interactions without feature scaling.</p><p>The interpretability of decision trees is unmatched: each path from root to leaf traces a human-readable rule like "if x₁ ≤ 5.2 and x₂ > 3.1 then predict class A." This transparency makes trees invaluable in applications requiring explainability, from medical diagnosis to lending decisions. However, individual trees suffer from high variance and tend to overfit on training data, motivating the use of ensemble methods.</p>`,
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
 
-  // Section 2: Information Gain
-  `<p>Information gain measures the reduction in entropy from a split, quantifying how much a feature decreases uncertainty about the target variable. Entropy H(S) = -Σ pᵢ log₂(pᵢ) represents the impurity of a set S; a lower entropy means more homogeneous labels. The information gain from splitting on feature X is IG(S,X) = H(S) - Σ |Sᵥ|/|S| · H(Sᵥ), where the sum weights the entropy of child nodes by their relative sizes. This criterion, used in algorithms like ID3 and C4.5, greedily selects splits that maximize information gain.</p><p>The greedy approach ensures efficient tree construction but does not guarantee globally optimal trees. Information gain has a bias toward high-cardinality features with many possible values, since they create more child nodes and often achieve lower weighted entropy purely by fragmentation. Practitioners often use gain ratio (normalizing by split entropy) or other criteria to mitigate this effect and build more balanced, interpretable trees.</p>`,
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>229</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Decision Trees"><span class="sidebar-num">01</span><span class="sidebar-label">Decision Trees</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Information Gain"><span class="sidebar-num">02</span><span class="sidebar-label">Information Gain</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Gini Impurity"><span class="sidebar-num">03</span><span class="sidebar-label">Gini Impurity</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Pruning & Regularization"><span class="sidebar-num">04</span><span class="sidebar-label">Pruning & Regularization</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Bagging"><span class="sidebar-num">05</span><span class="sidebar-label">Bagging</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Random Forests"><span class="sidebar-num">06</span><span class="sidebar-label">Random Forests</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Boosting"><span class="sidebar-num">07</span><span class="sidebar-label">Boosting</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Gradient Boosting"><span class="sidebar-num">08</span><span class="sidebar-label">Gradient Boosting</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
 
-  // Section 3: Gini Impurity
-  `<p>Gini impurity provides an alternative to entropy, measuring the probability of misclassifying a randomly selected element if it were labeled according to the class distribution in a node. Defined as Gini(S) = 1 - Σ pᵢ², it ranges from 0 (pure) to 0.5 (maximum impurity at binary classification). The Gini-based split criterion selects the feature that minimizes weighted child impurity: Gini(S,X) = Σ |Sᵥ|/|S| · Gini(Sᵥ). Gini is computationally simpler than entropy since it avoids logarithms and is the default in scikit-learn's DecisionTreeClassifier.</p><p>Empirically, Gini and entropy typically produce similar trees despite their conceptual differences. Gini tends to be slightly faster to compute and creates marginally more balanced splits in certain datasets. Neither method is universally superior; the choice often depends on domain conventions and computational constraints. Both are greedy heuristics that work well in practice but occasionally miss the globally optimal structure.</p>`,
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
+        <div class="hero-title">Decision Trees & <em>Ensembles</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 4 · Trees, Random Forests & Boosting</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
 
-  // Section 4: Pruning & Regularization
-  `<p>Trees grown to full depth invariably overfit: they memorize training noise and fail to generalize. Pre-pruning constrains tree growth by stopping expansion when splits no longer improve validation performance or when constraints are hit—such as maximum tree depth, minimum samples per leaf, or minimum impurity decrease. These hyperparameters directly control model complexity and are easily tuned via cross-validation. Post-pruning, conversely, grows a full tree then removes nodes whose deletion reduces cost-complexity loss, removing the least valuable subtrees first in a sequence from which the best size is selected via validation.</p><p>Cost-complexity pruning balances tree size against training error: CCP(T) = Error(T) + α·|Leaves(T)|, where α controls the penalty on tree size. Larger α favors smaller trees; tuning α on a validation set identifies the optimal complexity. Pre-pruning is faster and often sufficient in practice. Post-pruning, implemented via the pruning path, can sometimes find better trees by exploring the full complexity spectrum. Modern libraries like scikit-learn automate both approaches, making pruning a standard best practice for production trees.</p>`,
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Decision Trees</h2>
+          <p>Decision trees recursively partition the feature space into increasingly homogeneous regions, creating a hierarchical structure of binary or multi-way splits. At each node, the algorithm selects the feature and threshold that best separates the data according to a chosen criterion, building a tree where leaves represent final predictions and internal nodes represent decision rules. Trees excel at capturing non-linear relationships and interactions without feature scaling.</p><p>The interpretability of decision trees is unmatched: each path from root to leaf traces a human-readable rule like "if x₁ ≤ 5.2 and x₂ > 3.1 then predict class A." This transparency makes trees invaluable in applications requiring explainability, from medical diagnosis to lending decisions. However, individual trees suffer from high variance and tend to overfit on training data, motivating the use of ensemble methods.</p>
+        </div>
 
-  // Section 5: Bagging
-  `<p>Bootstrap aggregation (bagging) reduces variance by training multiple models on bootstrap samples—random samples drawn with replacement from the training set—then averaging their predictions. Each bootstrap sample has approximately 63.2% unique examples; the remaining 36.8% are duplicates. Bagging is trivial to parallelize since each model trains independently, making it scalable to large datasets. For regression, predictions average; for classification, voting aggregates class labels. Bagging particularly benefits high-variance, low-bias models like unpruned decision trees, turning an ensemble into a robust predictor.</p><p>Out-of-bag (OOB) error estimates generalization without a separate validation set: for each training example, aggregate predictions from only the bootstrap samples that did not contain it (roughly one-third of the ensemble). OOB error is an unbiased estimate nearly equivalent to leave-one-out cross-validation but computed at negligible cost. Bagging cannot reduce bias; if the base learner is systematically biased, the ensemble inherits that bias. Despite this limitation, bagging is simple, effective, and forms the foundation for random forests, which add feature subsampling to further improve generalization.</p>`,
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Information Gain</h2>
+          <p>Information gain measures the reduction in entropy from a split, quantifying how much a feature decreases uncertainty about the target variable. Entropy H(S) = -Σ pᵢ log₂(pᵢ) represents the impurity of a set S; a lower entropy means more homogeneous labels. The information gain from splitting on feature X is IG(S,X) = H(S) - Σ |Sᵥ|/|S| · H(Sᵥ), where the sum weights the entropy of child nodes by their relative sizes. This criterion, used in algorithms like ID3 and C4.5, greedily selects splits that maximize information gain.</p><p>The greedy approach ensures efficient tree construction but does not guarantee globally optimal trees. Information gain has a bias toward high-cardinality features with many possible values, since they create more child nodes and often achieve lower weighted entropy purely by fragmentation. Practitioners often use gain ratio (normalizing by split entropy) or other criteria to mitigate this effect and build more balanced, interpretable trees.</p>
+        </div>
 
-  // Section 6: Random Forests
-  `<p>Random forests extend bagging by introducing feature subsampling at each split: at each node, only a random subset of √d features (for classification) or d/3 features (for regression) is eligible for splitting, reducing correlation between trees. This decorrelation is critical—if all trees make the same splits on the same features, their predictions are highly correlated and ensemble variance reduction is minimal. By forcing each tree to explore different feature subsets, random forests generate a more diverse ensemble, reducing the effective correlation and amplifying variance reduction.</p><p>Random forests are robust, minimal-tuning algorithms that often perform competitively without hyperparameter tuning. Key hyperparameters are the number of trees (more is safer but slower), max_features (controlling feature subsampling), max_depth, and min_samples_leaf. Feature importance is easily extracted: the total impurity decrease across all splits for each feature, averaged over all trees, quantifies predictive value. Random forests scale to large datasets and handle high-dimensional data gracefully, making them a practical go-to ensemble for many tasks and a strong baseline for benchmarking.</p>`,
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Gini Impurity</h2>
+          <p>Gini impurity provides an alternative to entropy, measuring the probability of misclassifying a randomly selected element if it were labeled according to the class distribution in a node. Defined as Gini(S) = 1 - Σ pᵢ², it ranges from 0 (pure) to 0.5 (maximum impurity at binary classification). The Gini-based split criterion selects the feature that minimizes weighted child impurity: Gini(S,X) = Σ |Sᵥ|/|S| · Gini(Sᵥ). Gini is computationally simpler than entropy since it avoids logarithms and is the default in scikit-learn's DecisionTreeClassifier.</p><p>Empirically, Gini and entropy typically produce similar trees despite their conceptual differences. Gini tends to be slightly faster to compute and creates marginally more balanced splits in certain datasets. Neither method is universally superior; the choice often depends on domain conventions and computational constraints. Both are greedy heuristics that work well in practice but occasionally miss the globally optimal structure.</p>
+        </div>
 
-  // Section 7: Boosting
-  `<p>Boosting trains weak learners sequentially, with each new learner focused on examples the previous ensemble mislabeled. AdaBoost maintains sample weights, initially uniform; after each weak learner trains, weights on misclassified examples increase, forcing subsequent learners to focus on hard cases. The final ensemble is a weighted combination where each learner's weight depends on its training accuracy: α_m = 0.5 · log((1 - err_m) / err_m), where err_m is the weighted error rate. This exponential weighting of mistakes creates a strong feedback loop that drives the ensemble toward low training error.</p><p>Boosting reduces bias by iteratively correcting residuals and errors, complementing bagging's variance reduction. The sequential nature precludes parallelization, but boosting typically needs far fewer base learners than bagging to achieve equivalent generalization. The exponential loss minimized by AdaBoost magnifies the penalty on hard examples, making boosting sensitive to outliers and mislabeled data. Modern variants like LogitBoost and multiclass extensions improve stability. Boosting's power to turn weak learners into strong predictors—combined with its interpretability—made it a foundational technique in machine learning, preceding deep learning as the dominant ensemble method.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Pruning & Regularization</h2>
+          <p>Trees grown to full depth invariably overfit: they memorize training noise and fail to generalize. Pre-pruning constrains tree growth by stopping expansion when splits no longer improve validation performance or when constraints are hit—such as maximum tree depth, minimum samples per leaf, or minimum impurity decrease. These hyperparameters directly control model complexity and are easily tuned via cross-validation. Post-pruning, conversely, grows a full tree then removes nodes whose deletion reduces cost-complexity loss, removing the least valuable subtrees first in a sequence from which the best size is selected via validation.</p><p>Cost-complexity pruning balances tree size against training error: CCP(T) = Error(T) + α·|Leaves(T)|, where α controls the penalty on tree size. Larger α favors smaller trees; tuning α on a validation set identifies the optimal complexity. Pre-pruning is faster and often sufficient in practice. Post-pruning, implemented via the pruning path, can sometimes find better trees by exploring the full complexity spectrum. Modern libraries like scikit-learn automate both approaches, making pruning a standard best practice for production trees.</p>
+        </div>
 
-  // Section 8: Gradient Boosting
-  `<p>Gradient boosting generalizes boosting to arbitrary loss functions by framing ensemble learning as gradient descent in function space. Instead of reweighting samples, gradient boosting fits each new model to the negative gradient (residuals) of the loss function with respect to the current ensemble's predictions. For squared error loss, residuals are simply actual − predicted; for log-loss, they are pseudo-residuals ∂L/∂f. The new tree is scaled by a learning rate (shrinkage) η before adding to the ensemble, controlling step size and improving generalization. Regularization (tree depth, min_samples_leaf, learning rate) is crucial to prevent overfitting.</p><p>XGBoost, LightGBM, and CatBoost are production-grade implementations adding tree-specific regularization (L1/L2 penalties on leaf weights, tree complexity penalties), efficient column-wise splitting, and learned categorical encodings. These libraries dominate Kaggle competitions and real-world applications because of speed, accuracy, and robustness. Gradient boosting subsumes AdaBoost and enables custom loss functions, from quantile regression to ranking metrics. With careful regularization tuning, gradient boosting consistently achieves state-of-the-art performance on tabular data, rivaling deep learning on structured tasks and requiring far less computational resources.</p>`
-,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Bagging</h2>
+          <p>Bootstrap aggregation (bagging) reduces variance by training multiple models on bootstrap samples—random samples drawn with replacement from the training set—then averaging their predictions. Each bootstrap sample has approximately 63.2% unique examples; the remaining 36.8% are duplicates. Bagging is trivial to parallelize since each model trains independently, making it scalable to large datasets. For regression, predictions average; for classification, voting aggregates class labels. Bagging particularly benefits high-variance, low-bias models like unpruned decision trees, turning an ensemble into a robust predictor.</p><p>Out-of-bag (OOB) error estimates generalization without a separate validation set: for each training example, aggregate predictions from only the bootstrap samples that did not contain it (roughly one-third of the ensemble). OOB error is an unbiased estimate nearly equivalent to leave-one-out cross-validation but computed at negligible cost. Bagging cannot reduce bias; if the base learner is systematically biased, the ensemble inherits that bias. Despite this limitation, bagging is simple, effective, and forms the foundation for random forests, which add feature subsampling to further improve generalization.</p>
+        </div>
 
-  // 09 References & Further Reading
-  `<p><strong>Key References:</strong></p>
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Random Forests</h2>
+          <p>Random forests extend bagging by introducing feature subsampling at each split: at each node, only a random subset of √d features (for classification) or d/3 features (for regression) is eligible for splitting, reducing correlation between trees. This decorrelation is critical—if all trees make the same splits on the same features, their predictions are highly correlated and ensemble variance reduction is minimal. By forcing each tree to explore different feature subsets, random forests generate a more diverse ensemble, reducing the effective correlation and amplifying variance reduction.</p><p>Random forests are robust, minimal-tuning algorithms that often perform competitively without hyperparameter tuning. Key hyperparameters are the number of trees (more is safer but slower), max_features (controlling feature subsampling), max_depth, and min_samples_leaf. Feature importance is easily extracted: the total impurity decrease across all splits for each feature, averaged over all trees, quantifies predictive value. Random forests scale to large datasets and handle high-dimensional data gracefully, making them a practical go-to ensemble for many tasks and a strong baseline for benchmarking.</p>
+        </div>
+
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Boosting</h2>
+          <p>Boosting trains weak learners sequentially, with each new learner focused on examples the previous ensemble mislabeled. AdaBoost maintains sample weights, initially uniform; after each weak learner trains, weights on misclassified examples increase, forcing subsequent learners to focus on hard cases. The final ensemble is a weighted combination where each learner's weight depends on its training accuracy: α_m = 0.5 · log((1 - err_m) / err_m), where err_m is the weighted error rate. This exponential weighting of mistakes creates a strong feedback loop that drives the ensemble toward low training error.</p><p>Boosting reduces bias by iteratively correcting residuals and errors, complementing bagging's variance reduction. The sequential nature precludes parallelization, but boosting typically needs far fewer base learners than bagging to achieve equivalent generalization. The exponential loss minimized by AdaBoost magnifies the penalty on hard examples, making boosting sensitive to outliers and mislabeled data. Modern variants like LogitBoost and multiclass extensions improve stability. Boosting's power to turn weak learners into strong predictors—combined with its interpretability—made it a foundational technique in machine learning, preceding deep learning as the dominant ensemble method.</p>
+        </div>
+
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Gradient Boosting</h2>
+          <p>Gradient boosting generalizes boosting to arbitrary loss functions by framing ensemble learning as gradient descent in function space. Instead of reweighting samples, gradient boosting fits each new model to the negative gradient (residuals) of the loss function with respect to the current ensemble's predictions. For squared error loss, residuals are simply actual − predicted; for log-loss, they are pseudo-residuals ∂L/∂f. The new tree is scaled by a learning rate (shrinkage) η before adding to the ensemble, controlling step size and improving generalization. Regularization (tree depth, min_samples_leaf, learning rate) is crucial to prevent overfitting.</p><p>XGBoost, LightGBM, and CatBoost are production-grade implementations adding tree-specific regularization (L1/L2 penalties on leaf weights, tree complexity penalties), efficient column-wise splitting, and learned categorical encodings. These libraries dominate Kaggle competitions and real-world applications because of speed, accuracy, and robustness. Gradient boosting subsumes AdaBoost and enables custom loss functions, from quantile regression to ranking metrics. With careful regularization tuning, gradient boosting consistently achieves state-of-the-art performance on tabular data, rivaling deep learning on structured tasks and requiring far less computational resources.</p>
+        </div>
+
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p><strong>Key References:</strong></p>
 <ul style="font-size: 14px; line-height: 1.8;">
   <li><a href="https://cs229.stanford.edu/" target="_blank">CS229: Machine Learning Course Homepage</a></li>
   <li><a href="https://cs229.stanford.edu/" target="_blank">Stanford Engineering Everywhere - Course Materials</a></li>
@@ -366,11 +415,19 @@ const summaries = [
   <li><a href="https://en.wikipedia.org/wiki/Random_forest" target="_blank">Random Forests - Wikipedia</a></li>
   <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Hastie et al. - Elements of Statistical Learning (Ch. 15)</a></li>
   <li><a href="https://arxiv.org/abs/1603.02754" target="_blank">XGBoost: A Scalable Tree Boosting System</a></li>
-</ul>`];
+</ul>
+        </div>
 
-const details = [
-  // Detail 1: Decision Trees
-  `<div class="detail-header"><div class="num">01</div><h2>Decision Trees</h2></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num">01</div><h2>Decision Trees</h2></div>
   <p>A decision tree is a hierarchical model that partitions the feature space through recursive binary (or multi-way) splits. Starting at the root, each internal node tests a feature against a threshold; the true branch follows if the condition is satisfied, otherwise the false branch is traversed. This process continues until reaching a leaf, which outputs a class label (classification) or continuous value (regression). The learned rules are transparent and mimic human decision-making, making trees invaluable for interpretable machine learning.</p>
   <p>Tree construction greedily selects splits to minimize impurity—entropy or Gini impurity—at each node. This greedy strategy is computationally efficient (O(dn log n) for n samples and d features) but does not guarantee globally optimal trees. Early stopping via max_depth, min_samples_leaf, or min_impurity_decrease prevents overfitting by constraining tree growth. Unpruned trees memorize training data, achieving near-zero training error but poor test performance. Pruning—removing the least valuable subtrees—recovers generalization at the cost of training accuracy.</p>
   <h3>Tree Structure & Splitting</h3>
@@ -417,10 +474,11 @@ const details = [
     </svg>
   </div>
   <h3>Overfitting & Regularization</h3>
-  <p>A fully grown tree achieves zero training error by creating leaves with pure labels, but this memorization does not generalize. Regularization via max_depth, min_samples_leaf, or cost-complexity pruning trades training accuracy for test accuracy. The optimal tree depth is found via cross-validation; shallow trees underfit while deep trees overfit. Post-pruning grows a full tree then removes nodes in order of cost-complexity, selecting the subtree that minimizes validation error.</p>`,
+  <p>A fully grown tree achieves zero training error by creating leaves with pure labels, but this memorization does not generalize. Regularization via max_depth, min_samples_leaf, or cost-complexity pruning trades training accuracy for test accuracy. The optimal tree depth is found via cross-validation; shallow trees underfit while deep trees overfit. Post-pruning grows a full tree then removes nodes in order of cost-complexity, selecting the subtree that minimizes validation error.</p>
+      </div>
 
-  // Detail 2: Information Gain
-  `<div class="detail-header"><div class="num">02</div><h2>Information Gain</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num">02</div><h2>Information Gain</h2></div>
   <p>Information theory provides a principled framework for measuring split quality via information gain. Entropy quantifies the uncertainty in a set of labels: H(S) = -Σ p_c log₂(p_c), where p_c is the proportion of class c in S. A pure set (all same class) has H = 0; a balanced binary set has H = 1. When a split partitions S into subsets S_v, the weighted child entropy is Σ |S_v|/|S| · H(S_v). Information gain IG(S, X) = H(S) - Σ |S_v|/|S| · H(S_v) quantifies entropy reduction—the information learned from splitting on feature X.</p>
   <p>Tree construction greedily selects the feature and threshold maximizing information gain at each node. This approach, used in ID3 and C4.5, is computationally efficient and often produces good trees. However, information gain is biased toward features with many possible values: a feature with k distinct values creates k potential splits, each potentially lowering weighted entropy simply through fragmentation rather than genuine purity improvement. This bias can lead to overly complex splits and poor generalization.</p>
   <h3>Information Gain Formula & Computation</h3>
@@ -454,10 +512,11 @@ const details = [
     </svg>
   </div>
   <h3>Limitations & Extensions</h3>
-  <p>Information gain is a greedy heuristic that does not account for future splits or interactions. A split with lower immediate IG might enable better downstream splits, but greedy selection misses this. Also, IG assumes discrete or binned features; continuous features require threshold scanning. Modern tree libraries (XGBoost, LightGBM) use histogram-based approximations and second-order statistics, trading fine-grained IG for computational efficiency. Despite its limitations, IG remains a powerful, intuitive split criterion that aligns well with information-theoretic principles and produces interpretable, accurate trees in practice.</p>`,
+  <p>Information gain is a greedy heuristic that does not account for future splits or interactions. A split with lower immediate IG might enable better downstream splits, but greedy selection misses this. Also, IG assumes discrete or binned features; continuous features require threshold scanning. Modern tree libraries (XGBoost, LightGBM) use histogram-based approximations and second-order statistics, trading fine-grained IG for computational efficiency. Despite its limitations, IG remains a powerful, intuitive split criterion that aligns well with information-theoretic principles and produces interpretable, accurate trees in practice.</p>
+      </div>
 
-  // Detail 3: Gini Impurity
-  `<div class="detail-header"><div class="num">03</div><h2>Gini Impurity</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num">03</div><h2>Gini Impurity</h2></div>
   <p>Gini impurity measures the probability of misclassifying a random element if labeled according to the class distribution of a node: Gini(S) = 1 - Σ p_c². For binary classification with balanced classes, Gini = 0.5; for pure class, Gini = 0. Unlike entropy (which uses logarithms), Gini is algebraically simpler and does not require transcendental functions. The split criterion selects the feature minimizing weighted child Gini: Gini(S, X) = Σ |S_v|/|S| · Gini(S_v). In scikit-learn's DecisionTreeClassifier and RandomForestClassifier, Gini is the default.</p>
   <p>Empirically, Gini and entropy produce very similar trees and generalization performance. Gini favors slightly more balanced splits, while entropy is more sensitive to the largest minority classes. For high-dimensional problems, Gini's computational simplicity (avoiding log operations) provides marginal speedup. The choice between Gini and entropy is more a matter of convention and computational budget than fundamental performance differences; most practitioners use whichever criterion is the library default and focus on regularization hyperparameters for performance gains.</p>
   <h3>Gini Index & Misclassification Error</h3>
@@ -490,10 +549,11 @@ const details = [
   <h3>Bias Toward Balanced Splits</h3>
   <p>Gini impurity, like entropy, is biased toward features with many distinct values. A feature with k values can create k potential splits; each fragment reduces weighted Gini through increased granularity, not necessarily through purer classification. Practitioners often limit max_features or use gain ratio analogues to counter this bias. Some tree libraries use alternative split criteria like XGBoost's second-order statistics (gradient and hessian), which are more robust to feature cardinality.</p>
   <h3>Modern Extensions</h3>
-  <p>While Gini and entropy dominate classical trees, modern gradient boosting libraries use custom loss functions tailored to the prediction task. XGBoost minimizes regularized learning objectives; LightGBM optimizes Leaf-wise splits using second-order approximations; CatBoost leverages categorical feature interactions. These extensions trade the simplicity of Gini for improved accuracy on complex, high-dimensional datasets. For foundational understanding and most practical tasks, Gini remains the standard, reliable choice.</p>`,
+  <p>While Gini and entropy dominate classical trees, modern gradient boosting libraries use custom loss functions tailored to the prediction task. XGBoost minimizes regularized learning objectives; LightGBM optimizes Leaf-wise splits using second-order approximations; CatBoost leverages categorical feature interactions. These extensions trade the simplicity of Gini for improved accuracy on complex, high-dimensional datasets. For foundational understanding and most practical tasks, Gini remains the standard, reliable choice.</p>
+      </div>
 
-  // Detail 4: Pruning & Regularization
-  `<div class="detail-header"><div class="num">04</div><h2>Pruning & Regularization</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num">04</div><h2>Pruning & Regularization</h2></div>
   <p>Fully grown trees achieve near-zero training error by memorizing noise. Regularization constrains growth to recover generalization. Pre-pruning stops expansion early using hard constraints: max_depth limits tree height, min_samples_leaf ensures leaves contain enough samples, min_impurity_decrease requires splits to improve purity beyond a threshold, min_weight_fraction_leaf bounds the fraction of training samples. These hyperparameters are tuned via cross-validation; typical values are max_depth ∈ [3, 15] and min_samples_leaf ∈ [1, 20].</p>
   <p>Post-pruning grows an unpruned tree, then removes nodes whose deletion reduces cost-complexity loss. Cost-complexity pruning scores each subtree as CCP(T) = Error(T) + α·|Leaves(T)|, where α is a regularization parameter. Larger α penalizes tree size, favoring smaller trees; α=0 prefers the original tree. A sequence of trees from maximum complexity (α=0) to minimum complexity (single root) is computed efficiently via a pruning path. Scikit-learn's cost_complexity_pruning_path() and ccp_alpha parameter implement this; the optimal α is selected via cross-validation on the validation set's CCP values.</p>
   <h3>Pre-Pruning Strategy</h3>
@@ -526,10 +586,11 @@ const details = [
   <h3>Hyperparameter Tuning</h3>
   <p>GridSearchCV or RandomizedSearchCV automate hyperparameter tuning. Example: <code>GridSearchCV(DecisionTreeClassifier(), param_grid={'max_depth': [3,5,7,10], 'min_samples_leaf': [1,5,10]}, cv=5)</code>. Cross-validation ensures the selected hyperparameters generalize to unseen data. For large datasets, randomized search reduces computation. For production systems, early stopping (monitoring validation error during training) or online tuning (adapting hyperparameters as data arrives) can dynamically optimize complexity.</p>
   <h3>Regularization Best Practices</h3>
-  <p>Start with weak regularization (large max_depth, small min_samples_leaf) and gradually increase constraints until cross-validation error stabilizes. Use feature selection (selecting high-variance, low-noise features) to reduce the model's capacity to fit noise. Ensemble methods (bagging, boosting) often obviate the need for aggressive pre-pruning by averaging predictions across diverse subtrees. For critical applications (medical, financial), prioritize interpretability: smaller, shallower trees with aggressive min_samples_leaf constraints ensure that every split is statistically robust.</p>`,
+  <p>Start with weak regularization (large max_depth, small min_samples_leaf) and gradually increase constraints until cross-validation error stabilizes. Use feature selection (selecting high-variance, low-noise features) to reduce the model's capacity to fit noise. Ensemble methods (bagging, boosting) often obviate the need for aggressive pre-pruning by averaging predictions across diverse subtrees. For critical applications (medical, financial), prioritize interpretability: smaller, shallower trees with aggressive min_samples_leaf constraints ensure that every split is statistically robust.</p>
+      </div>
 
-  // Detail 5: Bagging
-  `<div class="detail-header"><div class="num">05</div><h2>Bagging</h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num">05</div><h2>Bagging</h2></div>
   <p>Bootstrap aggregation (bagging) trains multiple models on bootstrap samples—random samples drawn with replacement from the training data—then aggregates predictions. Each bootstrap sample has size n (same as original data) but contains roughly 63.2% unique examples; 36.8% are duplicates. For regression, predictions are averaged; for classification, majority voting is used (or soft voting averaging class probabilities). Bagging is trivial to parallelize since each bootstrap sample is independent, enabling scalability to massive datasets via distributed training.</p>
   <p>Bagging reduces variance without biasing predictions. Mathematically, if models have variance σ² and correlation ρ, the ensemble variance is ρσ² + (1 - ρ)σ²/m where m is the ensemble size. Uncorrelated models (ρ ≈ 0) achieve near σ²/m variance, a factor-m reduction. Bagging works best with high-variance, low-bias base learners like unpruned decision trees, turning an ensemble of overfitting trees into a robust predictor. Bagging cannot reduce bias; if the base learner systematically underestimates (or overestimates), the ensemble inherits that bias.</p>
   <h3>Out-of-Bag Error Estimation</h3>
@@ -575,10 +636,11 @@ const details = [
   <h3>Bias-Variance Trade-off</h3>
   <p>Bagging is a variance reduction technique; it does not reduce bias. Averaging m models with variance σ² and correlation ρ yields ensemble variance ρσ² + (1-ρ)σ²/m. If ρ = 0 (uncorrelated models), variance drops by factor m; if ρ = 1 (perfectly correlated), variance is unchanged. With high-variance, low-bias learners, bagging creates diverse models (ρ is small), achieving significant variance reduction. With low-variance, high-bias learners (e.g., shallow trees, linear models), diversity is limited (ρ is large), and bagging provides minimal benefit.</p>
   <h3>Comparison to Single Models</h3>
-  <p>Bagging always reduces variance (never increases it); test error improves if variance reduction outweighs any bias increase (usually small). For unpruned trees, bagging is dramatically superior: single trees overfit; bagged trees generalize well. For already-regularized models (pruned trees, linear regression with L2 penalty), bagging provides marginal gains since the base learner's bias is already low and variance is controlled. Bagging is a simple, powerful technique for high-variance models, especially when training parallelization is feasible.</p>`,
+  <p>Bagging always reduces variance (never increases it); test error improves if variance reduction outweighs any bias increase (usually small). For unpruned trees, bagging is dramatically superior: single trees overfit; bagged trees generalize well. For already-regularized models (pruned trees, linear regression with L2 penalty), bagging provides marginal gains since the base learner's bias is already low and variance is controlled. Bagging is a simple, powerful technique for high-variance models, especially when training parallelization is feasible.</p>
+      </div>
 
-  // Detail 6: Random Forests
-  `<div class="detail-header"><div class="num">06</div><h2>Random Forests</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num">06</div><h2>Random Forests</h2></div>
   <p>Random forests extend bagging by adding feature subsampling at each split: instead of considering all d features, only a random subset is eligible for splitting. Typical choices are √d features for classification and d/3 for regression. This forced diversity decorrelates trees—if all bagged trees explore the same features, their splits are correlated and variance reduction is minimal. By constraining each tree to a random feature subset, random forests generate diverse, uncorrelated trees, reducing the ensemble correlation ρ and amplifying variance reduction by factor (1-ρ)/ρ.</p>
   <p>Random forests are robust, minimal-tuning algorithms that often perform competitively on tabular data without extensive hyperparameter tuning. The default max_features (√d for classification) is nearly optimal for many datasets. Other key hyperparameters are n_estimators (number of trees, typically 100–1000), max_depth (None for full growth), min_samples_leaf (typically 1–5), and max_samples (bootstrap sample size). Random forests scale well to high-dimensional data, handle mixed feature types, require no feature scaling, and naturally encode feature importances.</p>
   <h3>Feature Subsampling Strategy</h3>
@@ -640,10 +702,11 @@ const details = [
   <h3>Feature Importance & Interpretability</h3>
   <p>Random forests extract global feature importance: for each feature, sum the impurity decrease from all splits across all trees, normalized by the number of trees. Features appearing in many splits with large impurity drops are important; those rarely selected have low importance. Permutation importance, computed on OOB samples, shuffles each feature and measures OOB error increase—robust to feature correlations. Feature importance guides feature engineering, data collection priorities, and domain understanding, making random forests interpretable despite their ensemble nature.</p>
   <h3>Advantages Over Single Trees & Bagging</h3>
-  <p>Random forests reduce correlation between trees via feature subsampling, achieving better variance reduction than standard bagging at minimal computational cost. For datasets with many irrelevant features, random forests are dramatically superior to bagging, since feature subsampling prevents individual trees from picking up spurious correlations. Random forests are industry standard for tabular data: easy to use (few hyperparameters), robust (minimal tuning required), scalable (parallelizable), and interpretable (feature importance). They serve as excellent baselines and are often competitive with more complex methods like gradient boosting.</p>`,
+  <p>Random forests reduce correlation between trees via feature subsampling, achieving better variance reduction than standard bagging at minimal computational cost. For datasets with many irrelevant features, random forests are dramatically superior to bagging, since feature subsampling prevents individual trees from picking up spurious correlations. Random forests are industry standard for tabular data: easy to use (few hyperparameters), robust (minimal tuning required), scalable (parallelizable), and interpretable (feature importance). They serve as excellent baselines and are often competitive with more complex methods like gradient boosting.</p>
+      </div>
 
-  // Detail 7: Boosting
-  `<div class="detail-header"><div class="num">07</div><h2>Boosting</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num">07</div><h2>Boosting</h2></div>
   <p>Boosting trains weak learners sequentially, with each new learner focused on examples the previous ensemble mislabeled. Unlike bagging, which trains learners in parallel on random samples, boosting creates a sequential dependency: each learner's training distribution depends on the prior learner's errors. AdaBoost, the canonical boosting algorithm, maintains sample weights initialized uniformly; after each weak learner trains, weights on misclassified examples are increased exponentially, forcing the next learner to focus on hard cases. The final prediction is a weighted combination of weak learners, where each learner's weight depends on its training accuracy.</p>
   <p>Boosting reduces bias by iteratively correcting residuals, complementing bagging's variance reduction. The exponential weighting of mistakes creates a powerful feedback loop: a weak learner (slightly better than random, ≥50% accuracy on weighted data) reduces weighted error, and the ensemble's training error decreases exponentially with the number of boosting rounds. Unlike bagging, which can be parallelized, boosting requires sequential training (each learner depends on priors). Boosting is also sensitive to outliers and mislabeled data—examples that many learners misclassify receive very high weights, potentially driving the ensemble astray.</p>
   <h3>AdaBoost Algorithm & Exponential Loss</h3>
@@ -690,138 +753,55 @@ const details = [
   <h3>Multiclass & Loss Functions</h3>
   <p>Binary AdaBoost extends to multiclass via one-vs-rest or one-vs-one schemes. SAMME (Stagewise Additive Modeling using a Multiclass Exponential loss) directly handles K-class problems, replacing the binary exponential loss with a generalized version. LogitBoost replaces exponential loss with log-loss (logistic regression loss), which is more robust to outliers. Gentle AdaBoost uses regression (least-squares fitting of residuals) instead of classification, often producing smoother boosting curves. These variants trade some of AdaBoost's theoretical guarantees for improved robustness.</p>
   <h3>Boosting vs Bagging</h3>
-  <p>Bagging trains in parallel, reducing variance without changing bias; boosting trains sequentially, reducing bias. Boosting typically requires fewer learners than bagging for equivalent performance (20–50 boosting rounds vs 100+ bags) but is slower to train. Boosting is sensitive to noise and outliers (large weights on mislabeled examples); bagging is more robust. For clean data, boosting is preferred; for noisy data, bagging or robust boosting variants (LogitBoost, gentle AdaBoost) are safer. Modern practice increasingly favors gradient boosting, which generalizes both and offers additional flexibility.</p>`,
+  <p>Bagging trains in parallel, reducing variance without changing bias; boosting trains sequentially, reducing bias. Boosting typically requires fewer learners than bagging for equivalent performance (20–50 boosting rounds vs 100+ bags) but is slower to train. Boosting is sensitive to noise and outliers (large weights on mislabeled examples); bagging is more robust. For clean data, boosting is preferred; for noisy data, bagging or robust boosting variants (LogitBoost, gentle AdaBoost) are safer. Modern practice increasingly favors gradient boosting, which generalizes both and offers additional flexibility.</p>
+      </div>
 
-  // Detail 8: Gradient Boosting
-  `<div class="detail-header"><div class="num">08</div><h2>Gradient Boosting</h2></div>
-  <p>Gradient boosting generalizes boosting to arbitrary loss functions by framing ensemble learning as gradient descent in function space. Instead of reweighting samples, gradient boosting fits each new model to the negative gradient (residuals) of the loss function. For squared error loss L(y,f) = (y-f)², the gradient is ∂L/∂f = -(y-f), so fitting a tree to residuals (actual - predicted) directly minimizes the loss. For log-loss (classification), pseudo-residuals are ∂L/∂f = y - p(y|x), the class label minus predicted probability. This flexibility enables custom loss functions: quantile loss for quantile regression, ranking metrics for learning-to-rank, etc.</p>
-  <p>XGBoost, LightGBM, and CatBoost are production-grade implementations dominating Kaggle competitions and real-world applications. Beyond the basic gradient descent idea, these libraries add: (1) Regularization via L1/L2 penalties on leaf weights and tree complexity; (2) Second-order statistics (Newton-Raphson using gradient and hessian), enabling faster convergence; (3) Efficient exact/approximate splitting algorithms (histogram-based partitioning); (4) Built-in handling of categorical features (CatBoost). With proper regularization (learning rate, tree depth, early stopping), gradient boosting achieves state-of-the-art performance on tabular data, often rivaling neural networks with far less compute.</p>
-  <h3>Algorithm & Learning Rate (Shrinkage)</h3>
-  <p>Gradient boosting iterates: (1) Compute pseudo-residuals r_i = -∂L/∂f(x_i) for all training samples; (2) Fit a tree to residuals r_i; (3) Update ensemble: f^(m+1) = f^(m) + η·tree_m, where η ∈ (0,1] is the learning rate. Lower learning rates (η=0.01) require more rounds but often generalize better; higher rates (η=0.1) train faster but risk overfitting. Shrinkage (small η) acts as regularization, preventing any single tree from dominating. Typical configurations use η=0.01–0.1 and n_estimators=100–10000, with early stopping on validation loss to prevent overfitting.</p>
-  <h3>Regularization & Hyperparameters</h3>
-  <p>Key hyperparameters control regularization: learning_rate (η) controls step size; max_depth (typically 3–8) limits tree complexity; min_child_weight or min_samples_leaf enforces minimum leaf population; subsample (0.5–1.0) performs row subsampling; colsample_bytree (0.5–1.0) performs column subsampling. L1/L2 regularization penalties (reg_lambda, reg_alpha) penalize non-zero leaf weights. early_stopping_rounds monitors validation loss, stopping if it stagnates, preventing overfitting. Hyperparameter tuning via grid/random search is standard; starting with default values (learning_rate=0.1, max_depth=6) often works well.</p>
-  <div class="diagram-wrap">
-    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
-      <text x="350" y="25" text-anchor="middle" class="lbl-hi" font-weight="500">Gradient Boosting: Sequential Residual Fitting</text>
-      <!-- Iteration 0: Initial -->
-      <text x="50" y="60" class="lbl-hi" font-size="10">Iteration 0: f₀ = constant</text>
-      <circle cx="100" cy="100" r="20" class="node-hi"/>
-      <text x="100" y="110" text-anchor="middle" class="node-text" font-size="10">base</text>
-      <text x="150" y="110" class="lbl" font-size="9">Initial predictions</text>
-      <!-- Residuals 1 -->
-      <text x="50" y="160" class="lbl-hi" font-size="10">Iteration 1: Fit tree to residuals</text>
-      <rect x="80" y="180" width="120" height="60" rx="3" class="node"/>
-      <text x="140" y="215" text-anchor="middle" class="node-sub" font-size="10">Residuals: r_i = y_i - ŷ_i</text>
-      <!-- Tree 1 -->
-      <circle cx="280" cy="200" r="15" class="node"/>
-      <text x="280" y="205" text-anchor="middle" class="node-sub" font-size="9">Tree 1</text>
-      <!-- Update -->
-      <text x="50" y="280" class="lbl-hi" font-size="10">Update: f₁ = f₀ + η·Tree₁</text>
-      <text x="150" y="310" class="lbl" font-size="9">Improved predictions</text>
-      <!-- Residuals 2 -->
-      <text x="50" y="340" class="lbl-hi" font-size="10">Iteration 2: Fit tree to new residuals</text>
-      <rect x="80" y="360" width="120" height="40" rx="3" class="node"/>
-      <text x="140" y="385" text-anchor="middle" class="node-sub" font-size="9">r_i = y_i - f₁(x_i)</text>
-      <!-- Learning curve on right -->
-      <text x="450" y="60" class="lbl-hi" font-size="10">Training & Validation Loss</text>
-      <line x1="420" y1="320" x2="650" y2="320" stroke="var(--border)" stroke-width="1"/>
-      <line x1="420" y1="80" x2="420" y2="320" stroke="var(--border)" stroke-width="1"/>
-      <path d="M 440 300 L 480 200 L 520 140 L 560 110 L 600 100" stroke="var(--red)" stroke-width="2" fill="none"/>
-      <text x="450" y="310" class="lbl-hi" font-size="9" fill="var(--red)">Train</text>
-      <path d="M 440 250 L 480 180 L 520 150 L 560 145 L 600 160" stroke="var(--green)" stroke-width="2" fill="none"/>
-      <text x="500" y="135" class="lbl-hi" font-size="9" fill="var(--green)">Validation</text>
-      <!-- Early stopping -->
-      <circle cx="600" cy="160" r="5" fill="var(--accent)"/>
-      <text x="620" y="165" class="lbl" font-size="8">Stop</text>
-    </svg>
-  </div>
-  <h3>XGBoost, LightGBM, & CatBoost</h3>
-  <p>XGBoost (eXtreme Gradient Boosting) introduces second-order Taylor expansion of the loss, enabling Newton-Raphson optimization and achieving faster convergence. LightGBM builds trees leaf-wise (deepest nodes first) rather than level-wise, reducing tree depth and improving generalization. CatBoost natively handles categorical features via target encoding and symmetric tree growth. All three libraries include GPU support, distributed training, and extensive hyperparameter options. For practitioners, they are industry-standard solutions, dominating machine learning competitions and production systems. XGBoost is the most mature and widely adopted; LightGBM is fastest on large datasets; CatBoost excels with categorical features.</p>
-  <h3>When to Use Gradient Boosting</h3>
-  <p>Gradient boosting excels on tabular data (structured features in rows/columns), where it often outperforms neural networks with far less computation. Use gradient boosting when: (1) interpretability matters (examine feature importance, tree structures); (2) hyperparameter tuning is affordable (grid/random search); (3) performance is critical (boosting typically beats random forests). Avoid if: (1) training data is very small (boosting overfits easily without regularization); (2) features are text/images (use deep learning); (3) interpretability is paramount (inspect individual trees, but ensembles are less transparent than single trees). Modern practice increasingly combines gradient boosting with other methods: stacking ensembles, neural network features + boosting, etc., leveraging complementary strengths.</p>`
-,
+      <div class="detail" id="detail-7">
+        
+      </div>
 
-  // 09 References & Further Reading
-  `<div class="detail-header">
-  <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 09 — Sources</div>
-  <h2><em>Sources</em> & References</h2>
-</div>
-
-<h3>Course Materials</h3>
-<p><a href="https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Breiman — Random Forests (2001)</a> — Seminal paper on random forest ensembles with theoretical analysis and empirical results</p>
-
-<h3>Textbooks & Papers</h3>
-<p><a href="https://statweb.stanford.edu/~jhf/ftp/trebst.pdf" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Friedman — Greedy Function Approximation (2001)</a> — Introduces gradient boosting machines with detailed algorithmic description</p>
-<p><a href="https://hastie.su.domains/ElemStatLearn/" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">Hastie, Tibshirani & Friedman — The Elements of Statistical Learning</a> — Chapters 9-10 cover trees, ensemble methods, and boosting</p>`
-
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>229</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> STANFORD XCS229 · MACHINE LEARNING</div>
-        <div class="hero-title">Decision Trees & <em>Ensembles</em></div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 4 · Trees, Random Forests & Boosting</span></div>
+      <div class="detail" id="detail-8">
+        
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -831,96 +811,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -933,10 +869,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

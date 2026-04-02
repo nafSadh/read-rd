@@ -115,70 +115,137 @@ a:hover{color:var(--accent);border-bottom-color:var(--accent);border-bottom-styl
 .detail a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 .section-block a{color:var(--text);border-bottom-color:color-mix(in srgb,var(--accent),transparent 60%)}
 @media(max-width:1000px){.sidebar{display:none}.ctrl-group{top:10px;right:10px}.shell{display:block}.main{height:100vh;width:100%}.main-head{padding:20px 20px 0}.hero-title{font-size:28px!important}.main-head.compact{padding:0 20px;height:44px}.main-head.compact .hero-title{font-size:18px!important}.main-scroll{padding:0 20px 80px}.section-block{padding:28px 8px}.right{position:fixed;top:0;left:0;width:100%!important;height:100vh!important;z-index:100;border-left:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}.right.closed{transform:translateX(100%);width:100%!important;overflow:hidden}.right:not(.closed){transform:translateX(0)}.right-inner{padding:0 20px 80px}.feat-grid{grid-template-columns:1fr}.feat{border-left:none!important;padding-left:0!important}.feat:nth-child(2n){padding-left:0}.detail p{font-size:16px}}
+  
+  .section-nav{display:flex;justify-content:space-between;align-items:center;padding:32px 0 16px;border-top:1px solid var(--border);margin-top:32px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase}
+  .section-nav a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border)}
+  .section-nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
   </style>
 </head>
-<body>
-<script>
-(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);else document.documentElement.setAttribute('data-theme',window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')})();
+<body data-theme="light">
 
-const sections = [
-  { num: '01', short: 'Decay Curves', title: 'How Skills <em>Decay</em>' },
-  { num: '02', short: 'Motor Memory', title: 'Motor vs. <em>Declarative</em> Decay' },
-  { num: '03', short: 'Use It', title: 'Age &amp; <em>Skill</em> Usage' },
-  { num: '04', short: 'AI Decay', title: '<em>AI-Induced</em> Skill Atrophy' },
-  { num: '05', short: 'Safety', title: 'Safety-Critical <em>Professions</em>' },
-  { num: '06', short: 'Constraints', title: 'Skill Atrophy as <em>Decision</em> Constraint' },
-  { num: '07', short: 'Tensions', title: 'What Sources <em>Disagree</em> On' }
-];
+<div class="shell">
 
-const summaries = [
-  `<p>The quantitative review by <a href="https://www.tandfonline.com/doi/abs/10.1207/s15327043hup1101_3" target="_blank">Tanaka et al.</a> across 50+ skill decay studies identifies consistent patterns: skills degrade with disuse, but the rate depends on task type, initial training quality, and frequency of use. Complex tasks, counterintuitively, decay more slowly than simple ones &mdash; because complex task performance involves a richer network of supporting skills that must all degrade for performance to fall.</p>
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">${SIDEBAR_LOGO}</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Decay Curves"><span class="sidebar-num">01</span><span class="sidebar-label">Decay Curves</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Motor Memory"><span class="sidebar-num">02</span><span class="sidebar-label">Motor Memory</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Use It"><span class="sidebar-num">03</span><span class="sidebar-label">Use It</span></div>
+      <div class="sidebar-item" data-section="3" data-label="AI Decay"><span class="sidebar-num">04</span><span class="sidebar-label">AI Decay</span></div>
+      <div class="sidebar-item" data-section="4" data-label="Safety"><span class="sidebar-num">05</span><span class="sidebar-label">Safety</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Constraints"><span class="sidebar-num">06</span><span class="sidebar-label">Constraints</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Tensions"><span class="sidebar-num">07</span><span class="sidebar-label">Tensions</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> ${HERO_BADGE}</div>
+        <div class="hero-title">${HERO_TITLE}</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>${HERO_SUB_LEFT}</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>How Skills <em>Decay</em></h2>
+          <p>The quantitative review by <a href="https://www.tandfonline.com/doi/abs/10.1207/s15327043hup1101_3" target="_blank">Tanaka et al.</a> across 50+ skill decay studies identifies consistent patterns: skills degrade with disuse, but the rate depends on task type, initial training quality, and frequency of use. Complex tasks, counterintuitively, decay more slowly than simple ones &mdash; because complex task performance involves a richer network of supporting skills that must all degrade for performance to fall.</p>
   <p>The mechanism is memory consolidation: skills move from effortful declarative storage (fragile) to procedural memory (stable but inflexible). Once consolidated, a skill does not disappear suddenly &mdash; it degrades progressively, first losing the ability to adapt, then losing accuracy under stress, and finally losing basic execution reliability.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">50+</div><div class="sl">Studies reviewed</div></div>
     <div class="st"><div class="sv">Complex</div><div class="sl">Decays slowest</div></div>
     <div class="st"><div class="sv">Simple</div><div class="sl">Decays fastest</div></div>
     <div class="st"><div class="sv">Refresher</div><div class="sl">Restores competence</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  `<p>Not all memory degrades equally. Procedural memory &mdash; the implicit knowledge of how to perform physical skills like riding a bicycle, typing, or surgical technique &mdash; is considerably more durable than declarative memory (knowing that something is true). But the durability of motor memory comes at a cost: it is rigid. A skill encoded in motor memory executes as trained, not as currently needed.</p>
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Motor vs. <em>Declarative</em> Decay</h2>
+          <p>Not all memory degrades equally. Procedural memory &mdash; the implicit knowledge of how to perform physical skills like riding a bicycle, typing, or surgical technique &mdash; is considerably more durable than declarative memory (knowing that something is true). But the durability of motor memory comes at a cost: it is rigid. A skill encoded in motor memory executes as trained, not as currently needed.</p>
   <p>The practical constraint: a professional who learned a procedure 20 years ago and has not updated it will execute the 20-year-old version under stress, not the current best practice. Skill atrophy is therefore not only about losing the ability to perform, but about losing the ability to perform correctly &mdash; the skill has survived but the context has changed.</p>
   <div class="feat-grid">
     <div class="feat"><h4>Declarative Memory</h4><p>Explicit knowledge — facts, rules, procedures described in language. Decays faster; recovers faster with retraining.</p></div>
     <div class="feat"><h4>Procedural Memory</h4><p>Implicit skill execution — motor patterns, perceptual-motor routines. Durable but rigid; executes as originally trained.</p></div>
     <div class="feat"><h4>The Decay Asymmetry</h4><p>Declarative knowledge of "how to do X" decays quickly; the motor execution of X is durable. This creates split expertise: knowing what to do but being unable to do it.</p></div>
     <div class="feat"><h4>Stress Regression</h4><p>Under stress, even partially atrophied procedural skills revert to earliest-learned versions. The skill degradation is most visible when it matters most.</p></div>
-  </div>`,
+  </div>
+        </div>
 
-  `<p>A 2025 <a href="https://www.science.org/doi/10.1126/sciadv.ads1560" target="_blank"><em>Science Advances</em> study</a> provides unusually direct evidence for the use-it-or-lose-it principle: skills decline at older ages only for those with below-average skill usage. People who use their skills consistently show age-skill profiles that remain nearly flat into late adulthood. Those who do not show sharp declines.</p>
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Age &amp; <em>Skill</em> Usage</h2>
+          <p>A 2025 <a href="https://www.science.org/doi/10.1126/sciadv.ads1560" target="_blank"><em>Science Advances</em> study</a> provides unusually direct evidence for the use-it-or-lose-it principle: skills decline at older ages only for those with below-average skill usage. People who use their skills consistently show age-skill profiles that remain nearly flat into late adulthood. Those who do not show sharp declines.</p>
   <p>This finding reframes the aging narrative. Cognitive and skill decline is not uniform across an aging cohort &mdash; it tracks usage. The decisions of people who stopped using certain capacities are not governed by age alone, but by the behavioral history that preceded age.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Flat</div><div class="sl">High-usage aging</div></div>
     <div class="st"><div class="sv">Sharp</div><div class="sl">Low-usage aging</div></div>
     <div class="st"><div class="sv">Usage</div><div class="sl">Key moderator</div></div>
     <div class="st"><div class="sv">Work</div><div class="sl">Protective context</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  `<p>An emerging and important finding: <a href="https://link.springer.com/article/10.1186/s41235-024-00572-8" target="_blank">Cognitive Research: Principles and Implications (2024)</a> shows that AI assistance can accelerate skill decay without the user&rsquo;s awareness. When people offload cognitive tasks to AI tools, the skills required for those tasks degrade through disuse &mdash; but because the task is still getting done (by the AI), the user does not notice.</p>
-  <p>This is potentially the most novel form of skill atrophy: technologically mediated, invisible, and self-reinforcing. As the underlying skill degrades, reliance on AI increases, which further degrades the skill. The person is not choosing to rely on AI &mdash; they are increasingly unable to not rely on it.</p>`,
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>AI-Induced</em> Skill Atrophy</h2>
+          <p>An emerging and important finding: <a href="https://link.springer.com/article/10.1186/s41235-024-00572-8" target="_blank">Cognitive Research: Principles and Implications (2024)</a> shows that AI assistance can accelerate skill decay without the user&rsquo;s awareness. When people offload cognitive tasks to AI tools, the skills required for those tasks degrade through disuse &mdash; but because the task is still getting done (by the AI), the user does not notice.</p>
+  <p>This is potentially the most novel form of skill atrophy: technologically mediated, invisible, and self-reinforcing. As the underlying skill degrades, reliance on AI increases, which further degrades the skill. The person is not choosing to rely on AI &mdash; they are increasingly unable to not rely on it.</p>
+        </div>
 
-  `<p>Aviation, medicine, and military contexts provide the clearest evidence for the consequences of skill atrophy because the stakes are unambiguous. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1747938X19304026" target="_blank">The systematic review of competence retention</a> in safety-critical professions documents: skills in these domains degrade without recurrent practice; competence maintenance requires scheduled refresher training; and performance under rare, high-stakes conditions shows the sharpest effects.</p>
-  <p>Pilot automation skill fade is a well-documented example: with increasing cockpit automation, pilots&rsquo; manual flying skills degrade. When automation fails &mdash; precisely the moment when manual skill is most needed &mdash; the degraded skill is what is available. The system was designed to prevent the need for the skill, but in doing so prevented the maintenance of the skill that prevents catastrophe when the system fails.</p>`,
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Safety-Critical <em>Professions</em></h2>
+          <p>Aviation, medicine, and military contexts provide the clearest evidence for the consequences of skill atrophy because the stakes are unambiguous. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1747938X19304026" target="_blank">The systematic review of competence retention</a> in safety-critical professions documents: skills in these domains degrade without recurrent practice; competence maintenance requires scheduled refresher training; and performance under rare, high-stakes conditions shows the sharpest effects.</p>
+  <p>Pilot automation skill fade is a well-documented example: with increasing cockpit automation, pilots&rsquo; manual flying skills degrade. When automation fails &mdash; precisely the moment when manual skill is most needed &mdash; the degraded skill is what is available. The system was designed to prevent the need for the skill, but in doing so prevented the maintenance of the skill that prevents catastrophe when the system fails.</p>
+        </div>
 
-  `<p>The decision-making implications of skill atrophy follow directly from the competence threshold model: when skill falls below a threshold required for viable performance, the option associated with that skill is effectively removed from the choice set. You cannot choose to perform a surgical procedure you are no longer competent to perform. You cannot choose a career path that requires skills you have let decay to incompetence.</p>
-  <p>Most of these threshold effects are invisible until crossed. People overestimate their retained competence in domains they have not practiced recently &mdash; the <em>illusion of competence</em>. The decision that "I could always go back to X" persists long after the skill threshold for doing so has been crossed. By the time the person tries to choose X, the option is no longer genuinely available.</p>`,
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Skill Atrophy as <em>Decision</em> Constraint</h2>
+          <p>The decision-making implications of skill atrophy follow directly from the competence threshold model: when skill falls below a threshold required for viable performance, the option associated with that skill is effectively removed from the choice set. You cannot choose to perform a surgical procedure you are no longer competent to perform. You cannot choose a career path that requires skills you have let decay to incompetence.</p>
+  <p>Most of these threshold effects are invisible until crossed. People overestimate their retained competence in domains they have not practiced recently &mdash; the <em>illusion of competence</em>. The decision that "I could always go back to X" persists long after the skill threshold for doing so has been crossed. By the time the person tries to choose X, the option is no longer genuinely available.</p>
+        </div>
 
-  `<p>Two productive tensions run through the skill atrophy literature.</p>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>What Sources <em>Disagree</em> On</h2>
+          <p>Two productive tensions run through the skill atrophy literature.</p>
   <div class="feat-grid">
     <div class="feat"><h4>How Fast Does Skill Decay?</h4><p>Studies vary enormously in estimated decay rates, from weeks to years. The variance is explained by task type, initial skill level, and measurement method — but practical guidance is hard to give without domain-specific data.</p></div>
     <div class="feat"><h4>Is Refresher Training Always Restorative?</h4><p>The standard claim is that competence can be restored with refresher training. But some studies show that heavily automated procedural skills leave deep traces that interfere with retraining &mdash; the old habit fights the new.</p></div>
     <div class="feat"><h4>Illusion of Competence</h4><p>The most consistent finding may be the hardest to operationalize: people systematically overestimate their retained competence after disuse. Self-report is unreliable. Competence testing is the only valid measure.</p></div>
     <div class="feat"><h4>AI as Threat or Tool?</h4><p>AI-assisted skill maintenance (training simulators, practice systems) could counteract AI-induced atrophy. Whether institutions will invest in the countermeasure alongside the technology is an open question.</p></div>
-  </div>`
-];
+  </div>
+        </div>
 
-const details = [
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div><h2>How Skills <em>Decay</em></h2></div>
+        <div class="section-nav">
+          <span></span>
+          <span><a href="https://www.tandfonline.com/doi/abs/10.1207/s15327043hup1101_3">Tanaka et al.</a> &rarr;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 &mdash; Details</div><h2>How Skills <em>Decay</em></h2></div>
   <p>The foundational quantitative synthesis of skill decay research was published by <a href="https://www.tandfonline.com/doi/abs/10.1207/s15327043hup1101_3" target="_blank">Tanaka and colleagues</a> and remains the most comprehensive review available. Across more than 50 studies spanning cognitive, motor, and procedural skills, several consistent patterns emerge that form the empirical backbone of the skill atrophy case.</p>
   <p>The first key finding is that skill decay is not random or uniform. It follows systematic curves shaped by task characteristics. Simple cognitive tasks — memorizing a list, answering factual questions — decay faster than complex procedural tasks that require the integration of multiple skill components. This is counterintuitive but reproducible: complex skills involve more distributed memory representation, so more must degrade before performance falls below threshold.</p>
   <h3>The Retention Curve</h3>
@@ -206,18 +273,22 @@ const details = [
     <text x="203" y="160" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl" style="fill:#8b2020">threshold</text>
     <rect x="40" y="189" width="320" height="14" fill="rgba(0,0,0,0.03)" rx="3"/>
     <text x="200" y="199" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">Simple tasks cross competence threshold much earlier than complex tasks</text>
-  </svg></div>`,
+  </svg></div>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div><h2>Motor vs. <em>Declarative</em> Decay</h2></div>
+      <div class="detail" id="detail-1">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 &mdash; Details</div><h2>Motor vs. <em>Declarative</em> Decay</h2></div>
   <p>The distinction between declarative and procedural memory is one of the most robust findings in memory science, and it matters enormously for understanding which skills decay and which persist. Declarative memory stores facts and events — it is explicit, accessible to introspection, and expressible in language. Procedural memory stores action sequences and perceptual-motor skills — it is implicit, not directly accessible to introspection, and expressed through performance rather than description.</p>
   <p>The classic example is bicycle riding: people who have not ridden for decades retain the motor skill, even though they may have forgotten how to describe what they are doing. The procedural encoding is durable in a way that declarative encoding is not. But this durability has a shadow: procedural skills are rigid. They execute as encoded, not as needed in the current context.</p>
   <h3>Stress Reversion</h3>
   <p>Under stress, people do not execute their most recently learned version of a skill. They execute the earliest, most deeply encoded version. This is called stress reversion, and it is documented in military, surgical, and aviation settings. A surgeon who trained in the 1990s, updated their technique in 2010, but has not practiced the updated technique under pressure may revert to 1990s technique in a crisis. The updated procedural memory is shallower, and stress strips away the shallower layer first.</p>
   <div class="callout"><h4>The Temporal Hierarchy of Procedural Memory</h4><p>Deeper encoding beats more recent encoding under stress. What you do when it matters most is what you learned earliest and practiced most &mdash; not necessarily what you know is best.</p></div>
   <h3>Split Expertise</h3>
-  <p>One underappreciated consequence of the declarative/procedural asymmetry is "split expertise": the declarative knowledge of how to perform a skill outlasts the procedural ability to perform it. A retired pilot may know exactly what they should be doing in an emergency while being unable to execute it. An aging musician may understand music theory perfectly while being unable to perform at their former level. This split creates a particularly poignant form of decision constraint: the options you can describe and evaluate are not the options you can execute.</p>`,
+  <p>One underappreciated consequence of the declarative/procedural asymmetry is "split expertise": the declarative knowledge of how to perform a skill outlasts the procedural ability to perform it. A retired pilot may know exactly what they should be doing in an emergency while being unable to execute it. An aging musician may understand music theory perfectly while being unable to perform at their former level. This split creates a particularly poignant form of decision constraint: the options you can describe and evaluate are not the options you can execute.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div><h2>Age &amp; <em>Skill</em> Usage</h2></div>
+      <div class="detail" id="detail-2">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 &mdash; Details</div><h2>Age &amp; <em>Skill</em> Usage</h2></div>
   <p>The 2025 <a href="https://www.science.org/doi/10.1126/sciadv.ads1560" target="_blank"><em>Science Advances</em> study</a> is methodologically significant because it does what most aging research cannot: it disentangles the effects of age per se from the effects of usage history. Using large-scale longitudinal data, it shows that the age-skill relationship is almost entirely mediated by usage patterns rather than chronological age itself.</p>
   <p>People who maintain high usage of their skills show age-skill profiles that are effectively flat through late adulthood. People with below-average skill usage show the steep decline that is commonly attributed to aging. The implication is radical: what looks like aging is largely the cumulative effect of disuse. Atrophy is mistaken for aging because the two are confounded in most people&rsquo;s lives &mdash; as people age, they tend to use fewer of their capacities.</p>
   <h3>The Work Context Effect</h3>
@@ -237,75 +308,156 @@ const details = [
     <text x="155" y="182" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">50s</text>
     <text x="240" y="182" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">60s</text>
     <text x="325" y="182" font-family="'IBM Plex Mono',monospace" font-size="7" class="lbl">70s</text>
-  </svg></div>`,
+  </svg></div>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div><h2><em>AI-Induced</em> Skill Atrophy</h2></div>
+      <div class="detail" id="detail-3">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 &mdash; Details</div><h2><em>AI-Induced</em> Skill Atrophy</h2></div>
   <p>The finding from <a href="https://link.springer.com/article/10.1186/s41235-024-00572-8" target="_blank">Cognitive Research: Principles and Implications (2024)</a> deserves particular attention because it identifies a new mechanism of skill atrophy that is both contemporary and structurally invisible. When people use AI assistance for cognitive tasks &mdash; writing, analysis, navigation, calculation &mdash; the underlying skills required for those tasks are not exercised. Disuse begins. But because the task is completed successfully (by the AI), the person receives no performance feedback indicating degradation.</p>
   <p>The conventional skill decay situation involves an aware agent: you know you haven&rsquo;t practiced piano in six months, and you expect to play worse. AI-induced skill decay involves an unaware agent: you have been completing analytical tasks with AI assistance, your analytical skills have degraded, but you believe they are intact because you have been getting correct results.</p>
   <h3>The Dependency Ratchet</h3>
   <p>The structural danger is self-reinforcement. As the underlying skill degrades, the cost of not using AI assistance rises — both in terms of performance quality and cognitive effort. This increases reliance on AI, which further degrades the skill. The dependency ratchet: each turn makes the next turn easier to take and harder to reverse.</p>
   <p>This is not a critique of AI assistance as such. It is a description of a structural dynamic that applies to any tool that performs a cognitive task that would otherwise be performed by a person. The same dynamic applies to GPS navigation and spatial orientation, calculators and mental arithmetic, autocomplete and compositional writing. The tool extends capacity in the short term; the capacity atrophies in the longer term.</p>
-  <div class="callout"><h4>The Illusion of Competence</h4><p>AI-induced atrophy operates below the performer&rsquo;s awareness precisely because the task is still being done. The signal of degradation &mdash; poor performance &mdash; never arrives. The person remains confident in a skill that no longer exists at its original level.</p></div>`,
+  <div class="callout"><h4>The Illusion of Competence</h4><p>AI-induced atrophy operates below the performer&rsquo;s awareness precisely because the task is still being done. The signal of degradation &mdash; poor performance &mdash; never arrives. The person remains confident in a skill that no longer exists at its original level.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div><h2>Safety-Critical <em>Professions</em></h2></div>
+      <div class="detail" id="detail-4">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 &mdash; Details</div><h2>Safety-Critical <em>Professions</em></h2></div>
   <p>Safety-critical professions — aviation, medicine, military, nuclear operation — provide the richest evidence base for skill decay because the consequences of degradation are unambiguous and the documentation requirements are rigorous. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1747938X19304026" target="_blank">The systematic review</a> of competence retention in these settings reaches consistent conclusions: skills degrade without recurrent practice; the rate varies by domain; and the most consequential degradation occurs in skills required only under rare, high-stakes conditions.</p>
   <p>This last point is particularly important. The skills that are most critical in emergencies are typically the ones practiced least, because emergencies are rare. A pilot&rsquo;s manual instrument flying skills are needed mainly when automation fails — precisely the situation the automation is designed to prevent. The automation prevents both the emergency and the practice that would prepare for it.</p>
   <h3>Aviation: The Automation Trap</h3>
   <p>Aviation regulators have documented automation-induced skill fade as a systematic problem. Modern aircraft fly themselves for over 95% of flight time. Pilots who fly heavily automated routes for years lose manual flying proficiency. Aviation authorities now require periodic manual flying exercises specifically to counteract this. The problem is structural, not individual &mdash; it is a consequence of the technology, not the pilots&rsquo; diligence.</p>
   <p>The decision constraint: in the rare scenario where manual flying is required, the degraded skill is what is available. The option of "fly the aircraft manually" is on the menu — but its quality has degraded to the point where its selection produces worse outcomes than it would have a decade earlier.</p>
-  <div class="callout"><h4>The Rare-Event Trap</h4><p>The skills most critical in emergencies are those practiced least, because emergencies are rare. Atrophy is highest precisely where competence would matter most.</p></div>`,
+  <div class="callout"><h4>The Rare-Event Trap</h4><p>The skills most critical in emergencies are those practiced least, because emergencies are rare. Atrophy is highest precisely where competence would matter most.</p></div>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div><h2>Skill Atrophy as <em>Decision</em> Constraint</h2></div>
+      <div class="detail" id="detail-5">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 &mdash; Details</div><h2>Skill Atrophy as <em>Decision</em> Constraint</h2></div>
   <p>The translation from skill atrophy to decision constraint is the most direct connection in this entire project. When a skill degrades below the threshold required for viable execution, the decision option associated with that skill is no longer genuinely available. It may still appear on the menu — "I could go back to medicine," "I could learn the language again," "I could still perform at that level" — but the option&rsquo;s quality has fallen below what the agent would find acceptable, and the agent typically does not know this.</p>
   <p>The illusion of competence is a consistent finding: people systematically overestimate their retained competence in domains they have not practiced recently. This overestimation is not random error &mdash; it is biased toward optimism. The person who stopped playing chess five years ago believes they could still play at their old level. Testing shows they cannot. The option of "play at my old level" has atrophied off the table without the agent&rsquo;s awareness.</p>
   <h3>Narrowing Without Knowing</h3>
   <p>The aggregate effect of skill atrophy across multiple domains is a progressive narrowing of the genuine option set that is invisible to introspection. People navigate with the mental map of their option space as it was at peak competence, not as it is currently. They make decisions that reference options they believe are available but are not. The decisions that remain are not chosen from the surviving option set — they are chosen from a remembered option set that has become a ghost of the real one.</p>
-  <p>This is the skill atrophy contribution to the central thesis. Most people, at any given moment, are choosing from a mental model of their option space that is significantly more generous than the actual surviving option space. The gap between believed options and actual options is the direct measure of skill atrophy&rsquo;s grip on decision-making.</p>`,
+  <p>This is the skill atrophy contribution to the central thesis. Most people, at any given moment, are choosing from a mental model of their option space that is significantly more generous than the actual surviving option space. The gap between believed options and actual options is the direct measure of skill atrophy&rsquo;s grip on decision-making.</p>
+      </div>
 
-  `<div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div><h2>What Sources <em>Disagree</em> On</h2></div>
+      <div class="detail" id="detail-6">
+        <div class="detail-header"><div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 &mdash; Details</div><h2>What Sources <em>Disagree</em> On</h2></div>
   <p>The skill decay literature is more empirically settled than many areas of psychology, but several productive tensions remain that bear on the atrophy thesis.</p>
   <h3>Overlearning and Its Limits</h3>
   <p>A well-established finding: overlearning (practicing past initial mastery) extends the retention period substantially. The implication for the atrophy thesis is that people with higher initial training investment are more protected. But overlearning has diminishing returns, and even heavily overlearned skills eventually decay. The question is not whether decay occurs, but when the competence threshold is crossed.</p>
   <h3>Refresher Training: How Restorative?</h3>
   <p>The optimistic view in the literature is that competence can be restored to prior levels with refresher training. <a href="https://www.researchgate.net/publication/340661372_Skill_Decay_The_Science_and_Practice_of_Mitigating_Skill_Loss_and_Enhancing_Retention" target="_blank">Arthur et al.</a> support this position. But several studies show persistent interference from old procedural traces — the original encoding "competes" with updated learning under conditions of stress or automaticity. Competence may be restored on testing but not in high-demand situations.</p>
   <h3>The Illusion Is the Problem</h3>
-  <p>Perhaps the most consequential finding — that people overestimate their retained competence — is also the least contested in the literature. It is consistent across domains, measurement methods, and populations. The practical upshot: the decision constraint imposed by skill atrophy is largely invisible to the person experiencing it. Subjective confidence and objective competence diverge systematically as disuse accumulates.</p>`
-];
+  <p>Perhaps the most consequential finding — that people overestimate their retained competence — is also the least contested in the literature. It is consistent across domains, measurement methods, and populations. The practical upshot: the decision constraint imposed by skill atrophy is largely invisible to the person experiencing it. Subjective confidence and objective competence diverge systematically as disuse accumulates.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-const HERO_BADGE = 'ATROPHY &amp; DECISION &middot; S2 &middot; 7 SOURCES';
-const HERO_TITLE = '<em>Skill</em> &amp; Capability Atrophy';
-const HERO_SUB_LEFT = 'Use-it-or-lose-it: competence decay as decision constraint';
-const HERO_SUB_RIGHT = 'Tanaka &middot; Arthur &middot; Science Advances 2025';
-const SIDEBAR_LOGO = 'A<em>D</em>';
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-const shell = document.createElement('div');shell.className='shell';
-shell.innerHTML=`<div class="ctrl-group" id="ctrl-group"><button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button><button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()"><span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span><span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span></button></div><nav class="sidebar" id="sidebar"><div class="sidebar-head"><div class="sidebar-logo">${SIDEBAR_LOGO}</div></div><div class="sidebar-nav" id="sidebar-nav"></div></nav><div class="main" id="main"><div class="main-head"><div class="main-head-inner"><div class="hero-badge"><span class="dot"></span> ${HERO_BADGE}</div><div class="hero-title">${HERO_TITLE}</div><div class="masthead-rule"></div><div class="masthead-sub"><span>${HERO_SUB_LEFT}</span><span>${HERO_SUB_RIGHT}</span></div></div></div><div class="main-scroll" id="main-scroll"></div></div><div class="right closed" id="right"><div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div><div class="right-inner" id="right-inner"></div></div>`;
-document.body.appendChild(shell);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
 
-const sidebarNav=document.getElementById('sidebar-nav');
-sections.forEach((sec,idx)=>{const item=document.createElement('div');item.className='sidebar-item'+(idx===0?' active':'');item.setAttribute('data-label',sec.short);item.innerHTML=`<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;item.onclick=()=>scrollToSection(idx);sidebarNav.appendChild(item);});
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
 
-const sidebarTip=document.createElement('div');sidebarTip.className='sidebar-tooltip';document.body.appendChild(sidebarTip);
-const sidebarEl=document.querySelector('.sidebar');let tipActive=false;
-sidebarNav.addEventListener('mouseleave',()=>{tipActive=false;sidebarTip.classList.remove('visible');});
-sidebarNav.addEventListener('mousemove',(e)=>{if(!document.body.classList.contains('detail-open')){if(tipActive){tipActive=false;sidebarTip.classList.remove('visible');}return;}const item=e.target.closest('.sidebar-item');if(!item){if(tipActive){tipActive=false;sidebarTip.classList.remove('visible');}return;}const rect=item.getBoundingClientRect();const sRight=sidebarEl.getBoundingClientRect().right;sidebarTip.textContent=item.getAttribute('data-label');sidebarTip.style.left=(sRight-1)+'px';sidebarTip.style.top=rect.top+'px';sidebarTip.style.height=rect.height+'px';if(!tipActive){tipActive=true;sidebarTip.classList.add('visible');}});
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
 
-const mainScroll=document.getElementById('main-scroll');const mainInner=document.createElement('div');mainInner.className='main-scroll-inner';mainScroll.appendChild(mainInner);
-sections.forEach((sec,idx)=>{const block=document.createElement('div');block.className='section-block';block.innerHTML=`<div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div><h2>${sec.title}</h2>${summaries[idx]}`;mainInner.appendChild(block);});
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
+  }
+  const item = e.target.closest('.sidebar-item');
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
+});
 
-const rightInner=document.getElementById('right-inner');
-sections.forEach((sec,idx)=>{const d=document.createElement('div');d.className='detail';d.id=`detail-${idx}`;d.innerHTML=details[idx];rightInner.appendChild(d);});
+// Detail panel
+let lastDetailIdx = 0;
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
-let lastDetailIdx=0;
-function scrollToSection(idx){const blocks=document.querySelectorAll('.section-block');if(blocks[idx])blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});}
-function openDetail(idx){lastDetailIdx=idx;document.querySelectorAll('.detail').forEach(d=>d.style.display='none');document.getElementById(`detail-${idx}`).style.display='block';document.getElementById('right').classList.remove('closed');document.body.classList.add('detail-open');document.getElementById('right').scrollTop=0;document.getElementById('right-sticky-title').classList.remove('visible');}
-function closeRight(){document.getElementById('right').classList.add('closed');document.body.classList.remove('detail-open');}
-function toggleDetail(){if(document.body.classList.contains('detail-open')){closeRight();}else{openDetail(lastDetailIdx);}}
-function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);}
-mainScroll.addEventListener('scroll',()=>{document.querySelector('.main-head').classList.toggle('compact',mainScroll.scrollTop>40);const blocks=mainScroll.querySelectorAll('.section-block');const items=document.querySelectorAll('.sidebar-item');let ai=0;blocks.forEach((b,i)=>{if(b.getBoundingClientRect().top<mainScroll.getBoundingClientRect().top+120)ai=i;});items.forEach((item,i)=>item.classList.toggle('active',i===ai));});
-const rightPanelOuter=document.getElementById('right');const stickyTitle=document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll',()=>{const ad=rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');if(!ad)return;const h2=ad.querySelector('.detail-header h2')||ad.querySelector('h2');if(!h2)return;const rect=h2.getBoundingClientRect();const panelRect=rightPanelOuter.getBoundingClientRect();const topbar=document.querySelector('.right-topbar');if(rect.bottom<panelRect.top+56){stickyTitle.textContent=h2.textContent;stickyTitle.classList.add('visible');topbar.classList.add('scrolled');}else{stickyTitle.classList.remove('visible');topbar.classList.remove('scrolled');}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRight();});
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
+  document.body.classList.add('detail-open');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
+}
+function closeRight() {
+  rightPanel.classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
+
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
+
+// Compact header + scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  let activeIdx = 0;
+  sectionBlocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
 </script>
 </body>
 </html>

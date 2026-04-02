@@ -317,32 +317,62 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-const sections = [
-  { num: '01', short: 'Chain Rule', title: '<em>Chain</em> Rule Decomposition' },
-  { num: '02', short: 'NADE', title: '<em>NADE</em> — Neural Density Estimation' },
-  { num: '03', short: 'MADE', title: '<em>MADE</em> — Masked Autoencoder' },
-  { num: '04', short: 'PixelCNN', title: '<em>PixelCNN</em> — Image Generation' },
-  { num: '05', short: 'WaveNet', title: '<em>WaveNet</em> — Audio Synthesis' },
-  { num: '06', short: 'Transformers', title: '<em>Transformer</em> Language Models' },
-  { num: '07', short: 'Sampling', title: '<em>Sampling</em> Strategies' },
-  { num: '08', short: 'Analysis', title: '<em>Strengths</em> & Limitations' },
-  { num: '09', short: 'References', title: 'References & <em>Further</em> Reading' }
-];
+<div class="shell">
 
-const summaries = [
-  // 01 Chain Rule
-  `<p>Autoregressive models factorize the joint probability distribution p(x₁, x₂, ..., xₙ) using the chain rule of probability. Rather than modeling the entire joint distribution directly, we decompose it as a product of conditional distributions: p(x) = ∏ᵢ p(xᵢ|x₁, ..., xᵢ₋₁). This factorization is theoretically exact and allows tractable computation of likelihood.</p>
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">X<em>236</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Chain Rule"><span class="sidebar-num">01</span><span class="sidebar-label">Chain Rule</span></div>
+      <div class="sidebar-item" data-section="1" data-label="NADE"><span class="sidebar-num">02</span><span class="sidebar-label">NADE</span></div>
+      <div class="sidebar-item" data-section="2" data-label="MADE"><span class="sidebar-num">03</span><span class="sidebar-label">MADE</span></div>
+      <div class="sidebar-item" data-section="3" data-label="PixelCNN"><span class="sidebar-num">04</span><span class="sidebar-label">PixelCNN</span></div>
+      <div class="sidebar-item" data-section="4" data-label="WaveNet"><span class="sidebar-num">05</span><span class="sidebar-label">WaveNet</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Transformers"><span class="sidebar-num">06</span><span class="sidebar-label">Transformers</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Sampling"><span class="sidebar-num">07</span><span class="sidebar-label">Sampling</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Analysis"><span class="sidebar-num">08</span><span class="sidebar-label">Analysis</span></div>
+      <div class="sidebar-item" data-section="8" data-label="References"><span class="sidebar-num">09</span><span class="sidebar-label">References</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
+        <div class="hero-title"><em>Autoregressive</em> Models</div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span>Week 1–2 · Chain Rule, MADE, PixelCNN & Transformers</span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Chain</em> Rule Decomposition</h2>
+          <p>Autoregressive models factorize the joint probability distribution p(x₁, x₂, ..., xₙ) using the chain rule of probability. Rather than modeling the entire joint distribution directly, we decompose it as a product of conditional distributions: p(x) = ∏ᵢ p(xᵢ|x₁, ..., xᵢ₋₁). This factorization is theoretically exact and allows tractable computation of likelihood.</p>
   <p>The key insight is that ordering matters—different orderings yield different conditional factorizations, though all are valid. Some orderings may be more efficient or natural depending on domain structure. Once established, an autoregressive model learns each conditional distribution p(xᵢ|x₁, ..., xᵢ₋₁) using a neural network, enabling both density estimation and generation.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Exact</div><div class="sl">Likelihood</div></div>
     <div class="st"><div class="sv">Tractable</div><div class="sl">Training</div></div>
     <div class="st"><div class="sv">Sequential</div><div class="sl">Generation</div></div>
     <div class="st"><div class="sv">Order</div><div class="sl">Dependent</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 02 NADE
-  `<p>Neural Autoregressive Density Estimation (NADE) is one of the first efficient autoregressive models. It uses masked weight matrices to ensure that the prediction of xᵢ only depends on x₁, ..., xᵢ₋₁. The key innovation is weight sharing and efficient masking, allowing single-pass evaluation of the entire distribution without explicitly computing intermediate terms.</p>
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>NADE</em> — Neural Density Estimation</h2>
+          <p>Neural Autoregressive Density Estimation (NADE) is one of the first efficient autoregressive models. It uses masked weight matrices to ensure that the prediction of xᵢ only depends on x₁, ..., xᵢ₋₁. The key innovation is weight sharing and efficient masking, allowing single-pass evaluation of the entire distribution without explicitly computing intermediate terms.</p>
   <p>NADE learns a shared hidden layer representation that is reused across all conditional distributions. For binary data, it demonstrates strong empirical results on benchmarks like MNIST and Caltech101. The model scales better than fully general density estimators and provides exact likelihood computation, making it valuable for both density estimation and generative modeling tasks.</p>
   <div class="feat-grid">
     <div class="feat">
@@ -361,20 +391,26 @@ const summaries = [
       <h4>Binary Data</h4>
       <p>Originally designed for binary data but extended to continuous and categorical variables later.</p>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 03 MADE
-  `<p>MADE (Masked Autoencoder for Density Estimation) extends NADE with more expressive architectures. It applies masking to general neural networks, using a clever assignment of ordering masks to hidden and output units. Each hidden unit h_j is assigned an ordering mask m_j that ensures dependencies respect the autoregressive ordering. The output prediction for xᵢ only uses hidden units whose masks allow it.</p>
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>MADE</em> — Masked Autoencoder</h2>
+          <p>MADE (Masked Autoencoder for Density Estimation) extends NADE with more expressive architectures. It applies masking to general neural networks, using a clever assignment of ordering masks to hidden and output units. Each hidden unit h_j is assigned an ordering mask m_j that ensures dependencies respect the autoregressive ordering. The output prediction for xᵢ only uses hidden units whose masks allow it.</p>
   <p>MADE improves upon NADE by supporting deep networks while maintaining tractability. It can be trained with any architecture (fully connected, convolutional) as long as masking is properly applied. The approach is elegant: masks are binary matrices that zero out connections violating the autoregressive property, making it universally applicable to arbitrary neural network architectures.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Deep</div><div class="sl">Networks</div></div>
     <div class="st"><div class="sv">Masked</div><div class="sl">Connections</div></div>
     <div class="st"><div class="sv">Arbitrary</div><div class="sl">Architectures</div></div>
     <div class="st"><div class="sv">Elegant</div><div class="sl">Design</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 04 PixelCNN
-  `<p>PixelCNN applies autoregressive modeling to image generation by factorizing p(image) = ∏ᵢ p(pixelᵢ|pixel₁, ..., pixelᵢ₋₁) where pixels are ordered in raster scan (top-to-bottom, left-to-right). The network uses masked convolutional filters—specifically gated convolutions—to respect the ordering while processing images efficiently. Color channels (R, G, B) follow strict dependencies: red depends on prior pixels, green on prior pixels and current red, blue on prior pixels and current red/green.</p>
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>PixelCNN</em> — Image Generation</h2>
+          <p>PixelCNN applies autoregressive modeling to image generation by factorizing p(image) = ∏ᵢ p(pixelᵢ|pixel₁, ..., pixelᵢ₋₁) where pixels are ordered in raster scan (top-to-bottom, left-to-right). The network uses masked convolutional filters—specifically gated convolutions—to respect the ordering while processing images efficiently. Color channels (R, G, B) follow strict dependencies: red depends on prior pixels, green on prior pixels and current red, blue on prior pixels and current red/green.</p>
   <p>PixelCNN's masked convolutions use a receptive field carefully designed to avoid causality violations. Each layer's receptive field grows, allowing predictions to incorporate increasingly distant context. Gated units (multiplicative gates) improve expressiveness. The model generates pixels sequentially, which is slow but guarantees valid distributions. High-quality image generation is achieved on datasets like CIFAR-10 and ImageNet, though generation speed remains a practical limitation.</p>
   <div class="feat-grid">
     <div class="feat">
@@ -393,20 +429,26 @@ const summaries = [
       <h4>Sequential Generation</h4>
       <p>Pixels generated one-at-a-time left-to-right, top-to-bottom, enabling exact sampling from distribution.</p>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 05 WaveNet
-  `<p>WaveNet adapts autoregressive modeling to raw audio waveforms, modeling p(audio) as a product of conditionals over time-steps. The innovation is dilated (atrous) causal convolutions that efficiently expand receptive field size without increasing parameter count. Each layer applies convolutions at different dilation rates (1, 2, 4, 8, ..., 2^k), allowing each timestep's prediction to depend on exponentially many prior timesteps with few layers.</p>
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>WaveNet</em> — Audio Synthesis</h2>
+          <p>WaveNet adapts autoregressive modeling to raw audio waveforms, modeling p(audio) as a product of conditionals over time-steps. The innovation is dilated (atrous) causal convolutions that efficiently expand receptive field size without increasing parameter count. Each layer applies convolutions at different dilation rates (1, 2, 4, 8, ..., 2^k), allowing each timestep's prediction to depend on exponentially many prior timesteps with few layers.</p>
   <p>Causal convolutions ensure predictions at time t depend only on timesteps ≤ t, maintaining autoregressive validity. Gated activations similar to PixelCNN enhance expressiveness. WaveNet generates audio by sampling from predicted distributions at each timestep, producing high-fidelity speech, music, and instrument synthesis. Conditioning on mel-spectrograms or text enables voice conversion and TTS applications. Despite sequential generation's slowness, the model's quality and conditioning flexibility made it highly influential.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Dilated</div><div class="sl">Convolutions</div></div>
     <div class="st"><div class="sv">Causal</div><div class="sl">Masking</div></div>
     <div class="st"><div class="sv">Raw</div><div class="sl">Waveforms</div></div>
     <div class="st"><div class="sv">μ-law</div><div class="sl">Encoding</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 06 Transformers
-  `<p>Transformer Language Models apply autoregressive factorization to text using the GPT architecture. Tokens are generated sequentially where each token's distribution p(tᵢ|t₁,...,tᵢ₋₁) is modeled using self-attention with a causal mask. The causal attention mask zeroes out attention weights for future positions, ensuring tokens cannot attend to tokens they should predict.</p>
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Transformer</em> Language Models</h2>
+          <p>Transformer Language Models apply autoregressive factorization to text using the GPT architecture. Tokens are generated sequentially where each token's distribution p(tᵢ|t₁,...,tᵢ₋₁) is modeled using self-attention with a causal mask. The causal attention mask zeroes out attention weights for future positions, ensuring tokens cannot attend to tokens they should predict.</p>
   <p>Transformers scale dramatically with model size and data, discovering emergent capabilities. Scaling laws show perplexity decreases predictably with model size and compute. Large language models (GPT-2, GPT-3, etc.) achieve remarkable few-shot learning through in-context learning—adapting behavior based on prompt examples without fine-tuning. The combination of transformer efficiency, scaling law predictability, and emergent abilities makes them dominant in modern generative AI.</p>
   <div class="feat-grid">
     <div class="feat">
@@ -425,20 +467,26 @@ const summaries = [
       <h4>Efficient Computation</h4>
       <p>Parallelizable training despite sequential generation; self-attention enables long-range dependencies efficiently.</p>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 07 Sampling
-  `<p>Autoregressive generation requires sampling strategies at inference time. Greedy decoding selects the highest-probability token at each step—fast but often repetitive. Temperature scaling adjusts probability distributions: higher temperatures flatten distributions (more randomness), lower temperatures sharpen them (more deterministic). Top-k sampling restricts sampling to the k most likely tokens, eliminating very low-probability tail noise while preserving diversity.</p>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Sampling</em> Strategies</h2>
+          <p>Autoregressive generation requires sampling strategies at inference time. Greedy decoding selects the highest-probability token at each step—fast but often repetitive. Temperature scaling adjusts probability distributions: higher temperatures flatten distributions (more randomness), lower temperatures sharpen them (more deterministic). Top-k sampling restricts sampling to the k most likely tokens, eliminating very low-probability tail noise while preserving diversity.</p>
   <p>Nucleus (top-p) sampling selects the smallest set of tokens with cumulative probability ≥ p, adapting dynamically to distribution shape. Beam search explores multiple hypothesis sequences in parallel, keeping the b best partial sequences at each step and returning the highest-scoring complete sequence. These strategies trade between quality (determinism), diversity (randomness), and computational cost (inference speed).</p>
   <div class="s-stat">
     <div class="st"><div class="sv">Greedy</div><div class="sl">Fast, Dull</div></div>
     <div class="st"><div class="sv">Beam Search</div><div class="sl">Quality-Focused</div></div>
     <div class="st"><div class="sv">Top-k/p</div><div class="sl">Diversity</div></div>
     <div class="st"><div class="sv">Temperature</div><div class="sl">Stochasticity</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 08 Analysis
-  `<p>Autoregressive models offer fundamental strengths: they provide exact likelihood computation, enabling principled comparison via log-likelihood on test sets. They generate sample-by-sample with no approximation, and can be conditioned flexibly on any subset of variables. Likelihood provides a clear optimization target during training without variational bounds or adversarial losses.</p>
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Strengths</em> & Limitations</h2>
+          <p>Autoregressive models offer fundamental strengths: they provide exact likelihood computation, enabling principled comparison via log-likelihood on test sets. They generate sample-by-sample with no approximation, and can be conditioned flexibly on any subset of variables. Likelihood provides a clear optimization target during training without variational bounds or adversarial losses.</p>
   <p>However, limitations are significant. Sequential generation is slow—generating N tokens requires N forward passes. Weak inductive biases mean ordering sensitivity (e.g., word order in text, pixel ordering in images) affects results. Long-range dependencies are expensive to model computationally. Modern large language models compensate through massive scale and data, but fundamental sequential generation cost remains. Other generative model families (diffusion, flow, VAE) address different trade-offs—faster generation, conditional generation, or latent structure learning.</p>
   <div class="verdict">
     <div class="v-col pro">
@@ -459,16 +507,26 @@ const summaries = [
         <li>Expensive long-range dependencies</li>
       </ul>
     </div>
-  </div>`,
+  </div>
+        </div>
 
-  // 09 References
-  `<p>Autoregressive models have deep roots in probability theory and machine learning. This section provides key references for further study of chain rule factorization, neural density estimation, and practical applications in image and audio generation.</p>
-   <p>The papers below establish both theoretical foundations and efficient implementations that have become standard tools for generative modeling across multiple domains.</p>`
-];
+        <div class="section-block" data-section="8">
+          <div class="s-num"><span>09</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>References & <em>Further</em> Reading</h2>
+          <p>Autoregressive models have deep roots in probability theory and machine learning. This section provides key references for further study of chain rule factorization, neural density estimation, and practical applications in image and audio generation.</p>
+   <p>The papers below establish both theoretical foundations and efficient implementations that have become standard tools for generative modeling across multiple domains.</p>
+        </div>
 
-const details = [
-  // 01 Chain Rule Detail
-  `<div class="detail-header">
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 01</div>
     <h2><em>Chain</em> Rule Decomposition</h2>
   </div>
@@ -496,10 +554,11 @@ const details = [
   </div>
   <h3>Training vs. Generation</h3>
   <p>During training, we minimize -log p(x₁, x₂, ..., xₙ) = -Σᵢ log p(xᵢ|x₁,...,xᵢ₋₁), summed over training data. Each term is a standard supervised learning problem: predict xᵢ from context, minimize cross-entropy. This parallels teacher forcing in sequence models.</p>
-  <p>At generation time, we autoregress: sample x₁ ~ p(x₁), then x₂ ~ p(x₂|x₁ˢᵃᵐᵖˡᵉᵈ), etc. Sampling from learned conditionals ensures diversity. The entire generation process is exact, sampling from the learned distribution without approximation.</p>`,
+  <p>At generation time, we autoregress: sample x₁ ~ p(x₁), then x₂ ~ p(x₂|x₁ˢᵃᵐᵖˡᵉᵈ), etc. Sampling from learned conditionals ensures diversity. The entire generation process is exact, sampling from the learned distribution without approximation.</p>
+      </div>
 
-  // 02 NADE Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-1">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 02</div>
     <h2><em>NADE</em> — Neural Autoregressive Density Estimation</h2>
   </div>
@@ -512,10 +571,11 @@ const details = [
   <p>Traditional approaches might evaluate p(xᵢ|context) via separate networks for each i, requiring n forward passes. NADE evaluates all n conditionals in one forward pass through the shared hidden layer, with different output neurons predicting each conditional. This efficiency enabled scalability to high-dimensional data.</p>
   <h3>Extension to Continuous Data</h3>
   <p>The original NADE uses Bernoulli outputs (binary data). Extensions model continuous variables using Gaussian outputs (diagonal covariance), mixture of Gaussians, or copula approaches. For categorical variables, softmax outputs replace sigmoid. Modern variants combine these for mixed-type data.</p>
-  <p>NADE's influence extended to mixture density networks and energy-based models. Its simplicity and efficiency made it popular for density estimation tasks, though transformer-based models have since supplanted it for high-dimensional structured data.</p>`,
+  <p>NADE's influence extended to mixture density networks and energy-based models. Its simplicity and efficiency made it popular for density estimation tasks, though transformer-based models have since supplanted it for high-dimensional structured data.</p>
+      </div>
 
-  // 03 MADE Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-2">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 03</div>
     <h2><em>MADE</em> — Masked Autoencoder for Density Estimation</h2>
   </div>
@@ -552,10 +612,11 @@ const details = [
       <polyline points="120,172 160,217" class="edge-hi"/><polyline points="180,172 160,217" class="edge-hi"/>
       <text x="20" y="260" class="lbl" font-size="12">Masks ensure outputs only receive inputs from predecessors in ordering</text>
     </svg>
-  </div>`,
+  </div>
+      </div>
 
-  // 04 PixelCNN Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-3">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 04</div>
     <h2><em>PixelCNN</em> — Autoregressive Image Generation</h2>
   </div>
@@ -586,10 +647,11 @@ const details = [
       <text x="200" y="130" class="lbl" font-size="12">✗ does NOT depend on 3,6</text>
       <text x="20" y="165" class="lbl" font-size="11">Each pixel's conditional depends only on spatially prior pixels in raster ordering</text>
     </svg>
-  </div>`,
+  </div>
+      </div>
 
-  // 05 WaveNet Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-4">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 05</div>
     <h2><em>WaveNet</em> — Raw Audio Synthesis</h2>
   </div>
@@ -620,10 +682,11 @@ const details = [
       <line x1="70" y1="140" x2="430" y2="140" stroke="var(--accent)" stroke-width="2"/><text x="250" y="155" class="lbl-hi" text-anchor="middle" font-size="10">Layer 10 (d=512): receptive field ~1024 samples</text>
       <text x="20" y="195" class="lbl" font-size="11">Exponential dilation grows receptive field exponentially, allowing long-range temporal context with few layers</text>
     </svg>
-  </div>`,
+  </div>
+      </div>
 
-  // 06 Transformers Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-5">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 06</div>
     <h2><em>Transformer</em> Language Models (GPT)</h2>
   </div>
@@ -658,10 +721,11 @@ const details = [
         <text x="220" y="95" class="lbl" font-size="11" text-anchor="start">Lower triangle: allowed<br/>Upper triangle: masked to -∞<br/>Softmax(−∞) = 0: no future attention</text>
       </g>
     </svg>
-  </div>`,
+  </div>
+      </div>
 
-  // 07 Sampling Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-6">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 07</div>
     <h2><em>Sampling</em> Strategies at Inference Time</h2>
   </div>
@@ -696,10 +760,11 @@ const details = [
         <text x="300" y="200" class="lbl" font-size="11">(cumulative prob ≥ 0.9)</text>
       </g>
     </svg>
-  </div>`,
+  </div>
+      </div>
 
-  // 08 Strengths & Limitations Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-7">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="5.5"/></svg> Section 08</div>
     <h2><em>Strengths</em>, Limitations & Alternatives</h2>
   </div>
@@ -722,10 +787,11 @@ const details = [
   <div class="callout">
     <h4>Key Takeaway</h4>
     <p>Autoregressive models excel at likelihood estimation and structured generation with flexible conditioning. Their sequential generation is slow but exact. Modern dominance in language modeling reflects these properties. For faster generation or avoiding ordering assumptions, diffusion or flow-based alternatives are worth exploring.</p>
-  </div>`,
+  </div>
+      </div>
 
-  // 09 References Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-8">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5"/></svg> Section 09</div>
     <h2>References & <em>Further</em> Reading</h2>
    </div>
@@ -747,75 +813,47 @@ const details = [
    <ul>
     <li><a href="https://lilianweng.github.io/" target="_blank">Lilian Weng's Blog</a> — Comprehensive tutorials on generative modeling</li>
     <li><a href="https://deepgenerativemodels.github.io/" target="_blank">CS236: Deep Generative Models</a> — Course materials and lectures</li>
-   </ul>`
-];
-
-// Build DOM
-const shell = document.createElement('div');
-shell.className = 'shell';
-shell.innerHTML = `
-  <div class="ctrl-group" id="ctrl-group">
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" id="detail-btn" onclick="toggleDetail()">
-      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
-      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
-    </button>
-  </div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo">X<em>236</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  </nav>
-  <div class="main" id="main">
-    <div class="main-head">
-      <div class="main-head-inner">
-        <div class="hero-badge"><span class="dot"></span> STANFORD XCS236 · DEEP GENERATIVE MODELS</div>
-        <div class="hero-title"><em>Autoregressive</em> Models</div>
-        <div class="masthead-rule"></div>
-        <div class="masthead-sub"><span>Week 1–2 · Chain Rule, MADE, PixelCNN & Transformers</span></div>
+   </ul>
       </div>
     </div>
-    <div class="main-scroll" id="main-scroll"></div>
   </div>
-  <div class="right closed" id="right">
-    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
-    <div class="right-inner" id="right-inner"></div>
-  </div>
-`;
-document.body.appendChild(shell);
+</div>
 
-// Build sidebar
-const sidebarNav = document.getElementById('sidebar-nav');
-sections.forEach((sec, idx) => {
-  const item = document.createElement('div');
-  item.className = 'sidebar-item' + (idx === 0 ? ' active' : '');
-  item.setAttribute('data-label', sec.short);
-  item.innerHTML = `<span class="sidebar-num">${sec.num}</span><span class="sidebar-label">${sec.short}</span>`;
-  item.onclick = () => scrollToSection(idx);
-  sidebarNav.appendChild(item);
-});
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-// Sidebar hover tooltip
-const sidebarTip = document.createElement('div');
-sidebarTip.className = 'sidebar-tooltip';
-document.body.appendChild(sidebarTip);
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
+
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
+
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
+
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
 const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
 let tipActive = false;
-sidebarNav.addEventListener('mouseleave', () => {
-  tipActive = false;
-  sidebarTip.classList.remove('visible');
-});
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
 sidebarNav.addEventListener('mousemove', (e) => {
   if (!document.body.classList.contains('detail-open')) {
     if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
     return;
   }
   const item = e.target.closest('.sidebar-item');
-  if (!item) {
-    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-    return;
-  }
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
   const rect = item.getBoundingClientRect();
   const sRight = sidebarEl.getBoundingClientRect().right;
   sidebarTip.textContent = item.getAttribute('data-label');
@@ -825,96 +863,52 @@ sidebarNav.addEventListener('mousemove', (e) => {
   if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
 
-// Build main scroll
-const mainScroll = document.getElementById('main-scroll');
-const mainInner = document.createElement('div');
-mainInner.className = 'main-scroll-inner';
-mainScroll.appendChild(mainInner);
-sections.forEach((sec, idx) => {
-  const block = document.createElement('div');
-  block.className = 'section-block';
-  block.innerHTML = `
-    <div class="s-num"><span>${sec.num}</span><button class="s-detail-btn" onclick="openDetail(${idx})"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
-    <h2>${sec.title}</h2>
-    ${summaries[idx]}
-  `;
-  mainInner.appendChild(block);
-});
-
-// Build details
-const rightInner = document.getElementById('right-inner');
-sections.forEach((sec, idx) => {
-  const detailDiv = document.createElement('div');
-  detailDiv.className = 'detail';
-  detailDiv.id = `detail-${idx}`;
-  detailDiv.innerHTML = details[idx];
-  rightInner.appendChild(detailDiv);
-});
-
-// Functions
+// Detail panel
 let lastDetailIdx = 0;
-
-function scrollToSection(idx) {
-  const blocks = document.querySelectorAll('.section-block');
-  if (blocks[idx]) blocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
 
 function openDetail(idx) {
   lastDetailIdx = idx;
   document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
-  document.getElementById(`detail-${idx}`).style.display = 'block';
-  document.getElementById('right').classList.remove('closed');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
   document.body.classList.add('detail-open');
-  document.getElementById('right').scrollTop = 0;
-  document.getElementById('right-sticky-title').classList.remove('visible');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
 }
-
 function closeRight() {
-  document.getElementById('right').classList.add('closed');
+  rightPanel.classList.add('closed');
   document.body.classList.remove('detail-open');
 }
 
-function toggleDetail() {
-  if (document.body.classList.contains('detail-open')) {
-    closeRight();
-  } else {
-    openDetail(lastDetailIdx);
-  }
-}
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
 
-function toggleTheme() {
-  const current = document.body.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-}
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.body.setAttribute('data-theme', savedTheme);
-
-// Compact main header + sidebar scroll spy
+// Compact header + scroll spy
 mainScroll.addEventListener('scroll', () => {
   document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
-  const blocks = mainScroll.querySelectorAll('.section-block');
-  const items = document.querySelectorAll('.sidebar-item');
   let activeIdx = 0;
-  blocks.forEach((b, i) => {
+  sectionBlocks.forEach((b, i) => {
     if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
   });
-  items.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
 });
 
 // Sticky header in right panel
-const rightPanelOuter = document.getElementById('right');
-const stickyTitle = document.getElementById('right-sticky-title');
-rightPanelOuter.addEventListener('scroll', () => {
-  const activeDetail = rightPanelOuter.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
   if (!activeDetail) return;
   const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
   if (!h2) return;
   const rect = h2.getBoundingClientRect();
-  const panelRect = rightPanelOuter.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
   const topbar = document.querySelector('.right-topbar');
   if (rect.bottom < panelRect.top + 56) {
     stickyTitle.textContent = h2.textContent;
@@ -927,10 +921,8 @@ rightPanelOuter.addEventListener('scroll', () => {
 });
 
 // ESC closes detail panel
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeRight();
-});
-</script>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
 
+</script>
 </body>
 </html>

@@ -356,71 +356,113 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </head>
 <body data-theme="light">
 
-<script>
-const sections = [
-  { num: '01', short: 'Feature Map', title: 'The <em>Feature</em> Map Idea' },
-  { num: '02', short: 'Kernel Trick', title: 'The <em>Kernel</em> Trick' },
-  { num: '03', short: 'Common Kernels', title: '<em>Common</em> Kernels' },
-  { num: '04', short: 'Mercer', title: 'Mercer\'s Theorem &amp; <em>Validity</em>' },
-  { num: '05', short: 'SVM', title: '<em>Kernel</em> SVM' },
-  { num: '06', short: 'Beyond', title: '<em>Beyond</em> SVMs' },
-  { num: '07', short: 'Limitations', title: '<em>Limitations</em> &amp; Modern Context' },
-  { num: '08', short: 'Sources', title: '<em>Sources</em> & References' }
-];
+<div class="shell">
 
-const summaries = [
-  // 01 Feature Map
-  `<p>The fundamental insight behind kernel methods is that linear classifiers become far more powerful when applied to nonlinearly transformed data. If we map input points x from their original space to a higher-dimensional feature space via φ(x), linear separation becomes possible for problems that are impossible in the original space.</p>
+  <div class="ctrl-group" id="ctrl-group">
+    <button class="ctrl-btn theme-btn" id="theme-btn"></button>
+    <button class="ctrl-btn detail-btn" id="detail-btn">
+      <span class="icon-open"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></span>
+      <span class="icon-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="6.5" y1="4" x2="13" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="6.5" y1="12" x2="13" y2="12"/></svg></span>
+    </button>
+  </div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">K<em>M</em></div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-item active" data-section="0" data-label="Feature Map"><span class="sidebar-num">01</span><span class="sidebar-label">Feature Map</span></div>
+      <div class="sidebar-item" data-section="1" data-label="Kernel Trick"><span class="sidebar-num">02</span><span class="sidebar-label">Kernel Trick</span></div>
+      <div class="sidebar-item" data-section="2" data-label="Common Kernels"><span class="sidebar-num">03</span><span class="sidebar-label">Common Kernels</span></div>
+      <div class="sidebar-item" data-section="3" data-label="Mercer"><span class="sidebar-num">04</span><span class="sidebar-label">Mercer</span></div>
+      <div class="sidebar-item" data-section="4" data-label="SVM"><span class="sidebar-num">05</span><span class="sidebar-label">SVM</span></div>
+      <div class="sidebar-item" data-section="5" data-label="Beyond"><span class="sidebar-num">06</span><span class="sidebar-label">Beyond</span></div>
+      <div class="sidebar-item" data-section="6" data-label="Limitations"><span class="sidebar-num">07</span><span class="sidebar-label">Limitations</span></div>
+      <div class="sidebar-item" data-section="7" data-label="Sources"><span class="sidebar-num">08</span><span class="sidebar-label">Sources</span></div>
+    </div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="main-head">
+      <div class="main-head-inner">
+        <div class="hero-badge"><span class="dot"></span> SCPD ML Course</div>
+        <div class="hero-title">Kernel <em>Methods</em></div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-sub"><span></span></div>
+      </div>
+    </div>
+    <div class="main-scroll" id="main-scroll">
+      <div class="main-scroll-inner">
+
+        <div class="section-block" data-section="0">
+          <div class="s-num"><span>01</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Feature</em> Map Idea</h2>
+          <p>The fundamental insight behind kernel methods is that linear classifiers become far more powerful when applied to nonlinearly transformed data. If we map input points x from their original space to a higher-dimensional feature space via φ(x), linear separation becomes possible for problems that are impossible in the original space.</p>
   <p>Classical example: the XOR problem. Two classes are perfectly separable in 2D by a circle, but no linear boundary works. However, map the points to 3D via φ(x) = (x₁, x₂, x₁·x₂), and the classes separate via a plane. The cost is the explicit computation and storage of these higher-dimensional features—yet the kernel trick eliminates this overhead.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">x ∈ ℝᵈ</div><div class="sl">Original Space</div></div>
     <div class="st"><div class="sv">φ(x) ∈ ℝᴰ</div><div class="sl">Feature Space</div></div>
     <div class="st"><div class="sv">D ≫ d</div><div class="sl">Often Exponential</div></div>
     <div class="st"><div class="sv">O(D)</div><div class="sl">Naive Cost</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 02 Kernel Trick
-  `<p>Many algorithms in machine learning depend only on inner products ⟨x, y⟩ between data points. The kernel trick exploits this: instead of explicitly computing φ(x) and φ(y), define K(x, y) = ⟨φ(x), φ(y)⟩, a kernel function that directly computes the inner product in feature space without materializing the features.</p>
+        <div class="section-block" data-section="1">
+          <div class="s-num"><span>02</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>The <em>Kernel</em> Trick</h2>
+          <p>Many algorithms in machine learning depend only on inner products ⟨x, y⟩ between data points. The kernel trick exploits this: instead of explicitly computing φ(x) and φ(y), define K(x, y) = ⟨φ(x), φ(y)⟩, a kernel function that directly computes the inner product in feature space without materializing the features.</p>
   <p>Practical example: polynomial kernel K(x, y) = (⟨x, y⟩ + c)ᵈ implicitly maps to all monomials of degree ≤ d. For 100D input and d=3, this represents ~171,700 features, yet K is computed in O(100) time. The kernel acts as a similarity function: K(x, y) measures closeness in feature space, encoding the geometry of the problem.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">K(x,y)</div><div class="sl">Similarity</div></div>
     <div class="st"><div class="sv">φ(x)·φ(y)</div><div class="sl">Inner Product</div></div>
     <div class="st"><div class="sv">O(D)→O(d)</div><div class="sl">Complexity Gain</div></div>
     <div class="st"><div class="sv">≈171k</div><div class="sl">Implicit Features</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 03 Common Kernels
-  `<p>Several kernels appear repeatedly in practice. The <strong>linear kernel</strong> K(x, y) = ⟨x, y⟩ requires no feature map. The <strong>polynomial kernel</strong> K(x, y) = (⟨x, y⟩ + c)ᵈ encodes polynomial features up to degree d, controlled by offset c and degree d.</p>
+        <div class="section-block" data-section="2">
+          <div class="s-num"><span>03</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Common</em> Kernels</h2>
+          <p>Several kernels appear repeatedly in practice. The <strong>linear kernel</strong> K(x, y) = ⟨x, y⟩ requires no feature map. The <strong>polynomial kernel</strong> K(x, y) = (⟨x, y⟩ + c)ᵈ encodes polynomial features up to degree d, controlled by offset c and degree d.</p>
   <p>The <strong>RBF (Gaussian) kernel</strong> K(x, y) = exp(−γ·‖x − y‖²) is the most widely used. It implicitly maps to infinite-dimensional space, making it remarkably flexible. The parameter γ controls bandwidth: small γ gives high-variance (wiggly) boundaries; large γ produces simpler, smoother fits. String kernels and graph kernels extend the framework to structured data.</p>
   <div class="s-chips">
     <span class="s-chip">Linear: K(x,y) = ⟨x,y⟩</span>
     <span class="s-chip">Polynomial: (⟨x,y⟩+c)ᵈ</span>
     <span class="s-chip">RBF: exp(−γ‖x−y‖²)</span>
     <span class="s-chip">Sigmoid: tanh(κ⟨x,y⟩+θ)</span>
-  </div>`,
+  </div>
+        </div>
 
-  // 04 Mercer
-  `<p>Not all symmetric functions are valid kernels. Mercer's theorem states: a symmetric function K is a valid kernel if and only if it is positive semi-definite. This means for any finite set of points x₁,...,xₙ, the Gram matrix G with entries Gᵢⱼ = K(xᵢ, xⱼ) has all non-negative eigenvalues.</p>
+        <div class="section-block" data-section="3">
+          <div class="s-num"><span>04</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2>Mercer's Theorem &amp; <em>Validity</em></h2>
+          <p>Not all symmetric functions are valid kernels. Mercer's theorem states: a symmetric function K is a valid kernel if and only if it is positive semi-definite. This means for any finite set of points x₁,...,xₙ, the Gram matrix G with entries Gᵢⱼ = K(xᵢ, xⱼ) has all non-negative eigenvalues.</p>
   <p>Mercer's theorem guarantees the existence of a feature space and feature map φ such that K(x, y) = ⟨φ(x), φ(y)⟩. This is the theoretical foundation: valid kernels are precisely those that correspond to some (possibly infinite-dimensional) Hilbert space. New kernels can be constructed from old ones: sums, products, and compositions of valid kernels yield valid kernels.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">PSD</div><div class="sl">Gram Matrix</div></div>
     <div class="st"><div class="sv">λᵢ ≥ 0</div><div class="sl">All Eigenvalues</div></div>
     <div class="st"><div class="sv">Σ + K</div><div class="sl">Valid Combo</div></div>
     <div class="st"><div class="sv">K₁·K₂</div><div class="sl">Valid Product</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 05 SVM
-  `<p>Support Vector Machines are the canonical kernel method. The SVM finds the maximum-margin hyperplane that separates two classes. In the dual form, the optimization depends only on inner products K(xᵢ, xⱼ) between training points, never on φ explicitly.</p>
+        <div class="section-block" data-section="4">
+          <div class="s-num"><span>05</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Kernel</em> SVM</h2>
+          <p>Support Vector Machines are the canonical kernel method. The SVM finds the maximum-margin hyperplane that separates two classes. In the dual form, the optimization depends only on inner products K(xᵢ, xⱼ) between training points, never on φ explicitly.</p>
   <p>The soft-margin SVM allows misclassification via slack variables, controlled by regularization parameter C. The decision boundary is a weighted combination of kernel evaluations at support vectors: f(x) = Σᵢ αᵢ·yᵢ·K(xᵢ, x) + b. Support vectors are the critical points near the boundary; in many cases, only a small fraction are nonzero, enabling efficient prediction.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">α, b</div><div class="sl">Dual Variables</div></div>
     <div class="st"><div class="sv">max-margin</div><div class="sl">Objective</div></div>
     <div class="st"><div class="sv">f(x)=ΣαᵢyᵢK</div><div class="sl">Decision Rule</div></div>
     <div class="st"><div class="sv">O(n³)</div><div class="sl">Training Cost</div></div>
-  </div>`,
+  </div>
+        </div>
 
-  // 06 Beyond
-  `<p>The kernel trick applies to any algorithm relying solely on inner products. <strong>Kernel PCA</strong> performs principal component analysis in feature space, extracting nonlinear components. <strong>Kernel ridge regression</strong> applies ridge regression post-φ, achieving flexible nonlinear regression with closed-form solutions.</p>
+        <div class="section-block" data-section="5">
+          <div class="s-num"><span>06</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Beyond</em> SVMs</h2>
+          <p>The kernel trick applies to any algorithm relying solely on inner products. <strong>Kernel PCA</strong> performs principal component analysis in feature space, extracting nonlinear components. <strong>Kernel ridge regression</strong> applies ridge regression post-φ, achieving flexible nonlinear regression with closed-form solutions.</p>
   <p><strong>Gaussian Processes</strong> treat K as a covariance function, enabling probabilistic inference with automatic uncertainty quantification. <strong>Kernel k-means</strong> and kernel CCA extend classical methods to nonlinear settings. These generalizations demonstrate the kernel trick's universality: it's not specific to SVMs but a general framework for nonlinear learning.</p>
   <div class="s-chips">
     <span class="s-chip">Kernel PCA</span>
@@ -428,23 +470,38 @@ const summaries = [
     <span class="s-chip">Gaussian Processes</span>
     <span class="s-chip">Kernel k-Means</span>
     <span class="s-chip">Kernel CCA</span>
-  </div>`,
+  </div>
+        </div>
 
-  // 07 Limitations
-  `<p>Kernel methods' greatest strength becomes a limitation at scale. Computing and storing the n×n Gram matrix costs O(n²) memory; inverting it costs O(n³) time. For datasets with millions of points, this is prohibitive. Modern alternatives include random Fourier features (approximating kernels via random projections) and neural networks.</p>
+        <div class="section-block" data-section="6">
+          <div class="s-num"><span>07</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Limitations</em> &amp; Modern Context</h2>
+          <p>Kernel methods' greatest strength becomes a limitation at scale. Computing and storing the n×n Gram matrix costs O(n²) memory; inverting it costs O(n³) time. For datasets with millions of points, this is prohibitive. Modern alternatives include random Fourier features (approximating kernels via random projections) and neural networks.</p>
   <p>Recent theory reveals a deep connection: neural tangent kernels (NTKs) link infinitely-wide neural networks to kernel methods. Deep learning succeeds by implicitly discovering useful feature maps. The future likely combines both: kernels for interpretability and theory, deep learning for scale and flexibility. Kernels remain indispensable for structured data, small-to-medium problems, and domains requiring uncertainty quantification.</p>
   <div class="s-stat">
     <div class="st"><div class="sv">O(n²)</div><div class="sl">Memory</div></div>
     <div class="st"><div class="sv">O(n³)</div><div class="sl">Inversion</div></div>
     <div class="st"><div class="sv">RFF</div><div class="sl">Approximation</div></div>
     <div class="st"><div class="sv">NTK</div><div class="sl">Deep ↔ Kernels</div></div>
-  </div>`,
-  `<p>References and sources for further study on the topics covered in this deep dive.</p>`
-];
+  </div>
+        </div>
 
-const details = [
-  // 01 Feature Map Detail
-  `<div class="detail-header">
+        <div class="section-block" data-section="7">
+          <div class="s-num"><span>08</span><button class="s-detail-btn"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg></button></div>
+          <h2><em>Sources</em> & References</h2>
+          <p>References and sources for further study on the topics covered in this deep dive.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right closed" id="right">
+    <div class="right-topbar"><span class="sticky-title" id="right-sticky-title"></span></div>
+    <div class="right-inner" id="right-inner">
+
+      <div class="detail" id="detail-0">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 01 — Details</div>
     <h2>The <em>Feature</em> Map Idea</h2>
   </div>
@@ -454,10 +511,11 @@ const details = [
   <p>Generalizing: if data is not linearly separable in ℝᵈ, map it to ℝᴰ with D > d via a nonlinear φ. Many classical nonlinear methods follow this pattern—training a linear classifier in φ-space.</p>
   <h3>The Computational Problem</h3>
   <p>The cost of this approach: you must compute φ(xᵢ) for every training point and every test point. If the feature space is high-dimensional (or infinite), this becomes prohibitive. For polynomial features of degree d in d input dimensions, the feature space size is O(dᵈ)—exponential. Storing and working with these features is infeasible for realistic problems.</p>
-  <p>Enter the kernel trick: it avoids this computation entirely by working implicitly in feature space.</p>`,
+  <p>Enter the kernel trick: it avoids this computation entirely by working implicitly in feature space.</p>
+      </div>
 
-  // 02 Kernel Trick Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-1">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 02 — Details</div>
     <h2>The <em>Kernel</em> Trick</h2>
   </div>
@@ -465,10 +523,11 @@ const details = [
   <h3>Worked Example: Polynomial Kernel</h3>
   <p>Consider the polynomial kernel K(x, y) = (⟨x, y⟩ + c)ᵈ. This kernel implicitly computes inner products in a feature space of all monomials up to degree d. For d=2, c=0, and x, y ∈ ℝ², the expansion is: K(x,y) = (x₁y₁ + x₂y₂)² = x₁²y₁² + x₂²y₂² + 2x₁y₁x₂y₂. This corresponds to the 3D feature map φ(x) = (x₁², √2·x₁x₂, x₂²). The kernel evaluates the inner product in this lifted space in O(d) time without materializing φ.</p>
   <h3>RBF Kernel and Infinite Dimensions</h3>
-  <p>The Gaussian (RBF) kernel K(x, y) = exp(−γ‖x − y‖²) implicitly maps to infinite-dimensional space. Despite this, the kernel evaluation takes only O(d) time. The expansion K(x, y) = Σₖ (γᵏ/k!) · Pk(x, y), where Pk involves high-order polynomial terms. This is why RBF kernels are so powerful—they harness infinite complexity without computation cost.</p>`,
+  <p>The Gaussian (RBF) kernel K(x, y) = exp(−γ‖x − y‖²) implicitly maps to infinite-dimensional space. Despite this, the kernel evaluation takes only O(d) time. The expansion K(x, y) = Σₖ (γᵏ/k!) · Pk(x, y), where Pk involves high-order polynomial terms. This is why RBF kernels are so powerful—they harness infinite complexity without computation cost.</p>
+      </div>
 
-  // 03 Common Kernels Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-2">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 03 — Details</div>
     <h2><em>Common</em> Kernels</h2>
   </div>
@@ -482,10 +541,11 @@ const details = [
   <h3>Sigmoid Kernel</h3>
   <p>K(x, y) = tanh(κ·⟨x, y⟩ + θ). Resembles a neural network activation. Not always positive semi-definite, so use with caution (though often works in practice).</p>
   <h3>Kernels on Structured Data</h3>
-  <p>String kernels count common substrings between sequences. Graph kernels measure structural similarity. Kernel methods extend naturally to any domain where you can define a sensible notion of similarity K(x, y).</p>`,
+  <p>String kernels count common substrings between sequences. Graph kernels measure structural similarity. Kernel methods extend naturally to any domain where you can define a sensible notion of similarity K(x, y).</p>
+      </div>
 
-  // 04 Mercer Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-3">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 04 — Details</div>
     <h2><em>Mercer's</em> Theorem &amp; Validity</h2>
   </div>
@@ -495,10 +555,11 @@ const details = [
   <h3>Positive Semi-Definiteness Test</h3>
   <p>Compute the Gram matrix G with Gᵢⱼ = K(xᵢ, xⱼ). If all eigenvalues are non-negative, K is valid. This provides a practical check for candidate kernels. Note: if K fails this test on a finite sample, it's not a valid kernel.</p>
   <h3>Building New Kernels</h3>
-  <p>If K₁ and K₂ are valid kernels, so are: K₁ + K₂, α·K₁ (α > 0), K₁·K₂, and K₁ ∘ K₂ (composition). This allows designing problem-specific kernels by combining simpler, validated kernels. For example, kernel sum K = K_linear + K_RBF creates a hybrid capturing both linear and nonlinear structures.</p>`,
+  <p>If K₁ and K₂ are valid kernels, so are: K₁ + K₂, α·K₁ (α > 0), K₁·K₂, and K₁ ∘ K₂ (composition). This allows designing problem-specific kernels by combining simpler, validated kernels. For example, kernel sum K = K_linear + K_RBF creates a hybrid capturing both linear and nonlinear structures.</p>
+      </div>
 
-  // 05 SVM Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-4">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 05 — Details</div>
     <h2><em>Kernel</em> SVM</h2>
   </div>
@@ -508,10 +569,11 @@ const details = [
   <h3>Decision Boundary and Support Vectors</h3>
   <p>The decision function is f(x) = Σᵢ αᵢ·yᵢ·K(xᵢ,x) + b. Typically, only a subset of αᵢ are nonzero; these correspond to support vectors—the critical points near or on the boundary. For large datasets, the number of support vectors is often much smaller than n, enabling efficient prediction despite O(n) evaluation in principle.</p>
   <h3>Hyperparameter Tuning</h3>
-  <p>The regularization parameter C controls the trade-off between margin and misclassification. Small C: wider margin, more errors. Large C: narrow margin, fewer errors. Kernel-specific parameters (e.g., γ for RBF) also require tuning via cross-validation. Grid search or Bayesian optimization is standard.</p>`,
+  <p>The regularization parameter C controls the trade-off between margin and misclassification. Small C: wider margin, more errors. Large C: narrow margin, fewer errors. Kernel-specific parameters (e.g., γ for RBF) also require tuning via cross-validation. Grid search or Bayesian optimization is standard.</p>
+      </div>
 
-  // 06 Beyond Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-5">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 06 — Details</div>
     <h2><em>Beyond</em> SVMs</h2>
   </div>
@@ -523,10 +585,11 @@ const details = [
   <h3>Gaussian Processes</h3>
   <p>A Gaussian Process defines a prior over functions via a covariance kernel K. Given data, the posterior distribution provides both predictions and uncertainty estimates. The kernel encodes assumptions about function smoothness and structure. GPs are particularly valuable in Bayesian optimization and active learning.</p>
   <h3>Kernel k-Means</h3>
-  <p>Replace the Euclidean distance in k-means with kernel-induced distance: d²ₖ(x, y) = K(x,x) + K(y,y) − 2K(x,y). This enables nonlinear clustering where tight circular clusters in input space become separable in feature space.</p>`,
+  <p>Replace the Euclidean distance in k-means with kernel-induced distance: d²ₖ(x, y) = K(x,x) + K(y,y) − 2K(x,y). This enables nonlinear clustering where tight circular clusters in input space become separable in feature space.</p>
+      </div>
 
-  // 07 Limitations Detail
-  `<div class="detail-header">
+      <div class="detail" id="detail-6">
+        <div class="detail-header">
     <div class="num"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="10" height="10" rx="1.5"/><line x1="3.5" y1="4" x2="8.5" y2="4"/><line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="3.5" y1="8" x2="6.5" y2="8"/></svg>Section 07 — Details</div>
     <h2><em>Limitations</em> &amp; Modern Context</h2>
   </div>
@@ -540,8 +603,11 @@ const details = [
   <h3>Neural Tangent Kernels and Deep Learning</h3>
   <p>Recent theory (Jacot et al., 2019) reveals that infinitely-wide neural networks in lazy training regime behave as kernel machines with the Neural Tangent Kernel (NTK). This deep learning ↔ kernel connection is profound: it explains why deep networks generalize and suggests kernels aren't obsolete, but rather kernels and neural networks are two perspectives on the same phenomenon.</p>
   <h3>When Kernels Remain Essential</h3>
-  <p>Kernels excel on structured data (strings, graphs, molecules) where hand-crafted kernels encode domain knowledge. They provide uncertainty estimates naturally (via Gaussian Processes). They're invaluable for small-to-medium datasets where generalization matters more than computational speed. For theoreticians, kernels offer a clean, interpretable framework for nonlinear learning.</p>`,
-  `<div class="detail-header"><div class="num">08 · Sources</div><h2><em>Sources</em> & References</h2></div>
+  <p>Kernels excel on structured data (strings, graphs, molecules) where hand-crafted kernels encode domain knowledge. They provide uncertainty estimates naturally (via Gaussian Processes). They're invaluable for small-to-medium datasets where generalization matters more than computational speed. For theoreticians, kernels offer a clean, interpretable framework for nonlinear learning.</p>
+      </div>
+
+      <div class="detail" id="detail-7">
+        <div class="detail-header"><div class="num">08 · Sources</div><h2><em>Sources</em> & References</h2></div>
 <h3>Foundational Papers & Textbooks</h3>
 <p><a href="https://www.kernelmethods.org/" target="_blank">Scholkopf & Smola — Learning with Kernels</a> — Comprehensive monograph on kernel methods theory and applications.</p>
 <p><a href="https://cs229.stanford.edu/" target="_blank">Stanford CS229 — Lecture Notes on Kernel Methods</a> — Official course materials covering kernels, Mercer's theorem, and kernel machines.</p>
@@ -552,225 +618,116 @@ const details = [
 <h3>Kernel Design & Applications</h3>
 <p><a href="https://en.wikipedia.org/wiki/Support_vector_machine" target="_blank">Wikipedia: Support Vector Machines</a> — Practical application of kernel methods to classification and regression.</p>
 <p><a href="https://en.wikipedia.org/wiki/Polynomial_kernel" target="_blank">Wikipedia: Polynomial Kernel</a> — Specific coverage of polynomial kernels and their feature space interpretations.
-`
-];
 
-// Build UI
-function initUI() {
-  const shell = document.createElement('div');
-  shell.className = 'shell';
-
-  // Sidebar
-  const sidebar = document.createElement('div');
-  sidebar.className = 'sidebar';
-  sidebar.innerHTML = `
-    <div class="sidebar-head">
-      <div class="sidebar-logo">K<em>M</em></div>
-    </div>
-    <div class="sidebar-nav" id="sidebar-nav"></div>
-  `;
-
-  const nav = sidebar.querySelector('#sidebar-nav');
-  sections.forEach((s, i) => {
-    const item = document.createElement('div');
-    item.className = 'sidebar-item' + (i === 0 ? ' active' : '');
-    item.setAttribute('data-label', s.short);
-    item.innerHTML = `<span class="sidebar-num">${s.num}</span><span class="sidebar-label">${s.short}</span>`;
-    item.onclick = () => showSection(i);
-    nav.appendChild(item);
-  });
-
-  // Sidebar hover tooltip
-  const sidebarTip = document.createElement('div');
-  sidebarTip.className = 'sidebar-tooltip';
-  document.body.appendChild(sidebarTip);
-  const sidebarEl = sidebar;
-  let tipActive = false;
-  nav.addEventListener('mouseleave', () => {
-    tipActive = false;
-    sidebarTip.classList.remove('visible');
-  });
-  nav.addEventListener('mousemove', (e) => {
-    if (!document.body.classList.contains('detail-open')) {
-      if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-      return;
-    }
-    const item = e.target.closest('.sidebar-item');
-    if (!item) {
-      if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
-      return;
-    }
-    const rect = item.getBoundingClientRect();
-    const sRight = sidebarEl.getBoundingClientRect().right;
-    sidebarTip.textContent = item.getAttribute('data-label');
-    sidebarTip.style.left = (sRight - 1) + 'px';
-    sidebarTip.style.top = rect.top + 'px';
-    sidebarTip.style.height = rect.height + 'px';
-    if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
-  });
-
-  // Main area
-  const main = document.createElement('div');
-  main.className = 'main';
-
-  // Header
-  const mainHead = document.createElement('div');
-  mainHead.className = 'main-head';
-  mainHead.innerHTML = `
-    <div class="main-head-inner">
-      <div class="hero-badge"><span class="dot"></span>SCPD ML Course</div>
-      <div class="hero-title">Kernel <em>Methods</em></div>
-      <div class="masthead-rule"></div>
-      <div class="masthead-sub">
-        <span>The Kernel Trick &amp; Beyond · Seven Sections</span>
       </div>
     </div>
-  `;
+  </div>
+</div>
 
-  // Scroll area
-  const mainScroll = document.createElement('div');
-  mainScroll.className = 'main-scroll';
-  mainScroll.innerHTML = '<div class="main-scroll-inner" id="main-scroll-inner"></div>';
+<div class="sidebar-tooltip" id="sidebar-tooltip"></div>
+<script>
 
-  const scrollInner = mainScroll.querySelector('#main-scroll-inner');
-  sections.forEach((s, i) => {
-    const block = document.createElement('div');
-    block.className = 'section-block' + (i === 0 ? '' : ' hidden');
-    block.style.display = i === 0 ? 'block' : 'none';
-    block.id = `section-${i}`;
-    block.innerHTML = `
-      <div class="s-num">
-        <span>Section ${s.num}</span>
-        <button class="s-detail-btn" data-idx="${i}">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-            <path d="M10 4l2 2m0 0l2 2m-2-2l-2 2m2-2l2-2" class="icon-open"/>
-            <path d="M6 12l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2" class="icon-close" style="display:none"/>
-          </svg>
-        </button>
-      </div>
-      <h2>${s.title}</h2>
-      <div class="s-content">${summaries[i]}</div>
-    `;
-    scrollInner.appendChild(block);
-  });
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('theme-btn').onclick = () => {
+  const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+};
 
-  main.appendChild(mainHead);
-  main.appendChild(mainScroll);
+// Sidebar navigation
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sectionBlocks = document.querySelectorAll('.section-block');
+const mainScroll = document.getElementById('main-scroll');
 
-  // Right panel
-  const right = document.createElement('div');
-  right.className = 'right closed';
-  right.innerHTML = `
-    <div class="right-topbar">
-      <div class="sticky-title" id="sticky-title"></div>
-    </div>
-    <div class="right-inner" id="right-inner"></div>
-  `;
-
-  sections.forEach((s, i) => {
-    const detailEl = document.createElement('div');
-    detailEl.className = 'detail';
-    detailEl.id = `detail-${i}`;
-    detailEl.style.display = i === 0 ? 'block' : 'none';
-    detailEl.innerHTML = details[i];
-    right.querySelector('#right-inner').appendChild(detailEl);
-  });
-
-  shell.appendChild(sidebar);
-  shell.appendChild(main);
-  shell.appendChild(right);
-  document.body.appendChild(shell);
-
-  // Controls
-  const ctrlGroup = document.createElement('div');
-  ctrlGroup.className = 'ctrl-group';
-  ctrlGroup.innerHTML = `
-    <button class="ctrl-btn theme-btn" onclick="toggleTheme()"></button>
-    <button class="ctrl-btn detail-btn" onclick="toggleDetail()">
-      <svg class="icon-open" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="12" height="12" rx="2"/><line x1="3" y1="9" x2="15" y2="9"/><line x1="9" y1="3" x2="9" y2="15"/>
-      </svg>
-      <svg class="icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="3" x2="15" y2="15"/><line x1="15" y1="3" x2="3" y2="15"/>
-      </svg>
-    </button>
-  `;
-  document.body.appendChild(ctrlGroup);
-
-  // Event handlers
-  document.addEventListener('click', (e) => {
-    const detailBtn = e.target.closest('.s-detail-btn');
-    if (detailBtn) {
-      const idx = parseInt(detailBtn.dataset.idx);
-      showDetail(idx);
-      e.stopPropagation();
-    }
-  });
-
-  mainScroll.addEventListener('scroll', () => {
-    const isCompact = mainScroll.scrollTop > 20;
-    mainHead.classList.toggle('compact', isCompact);
-  });
-
-  right.addEventListener('scroll', () => {
-    const rightTopbar = right.querySelector('.right-topbar');
-    const sticky = right.querySelector('.sticky-title');
-    if (right.scrollTop > 10) {
-      rightTopbar.classList.add('scrolled');
-      sticky.classList.add('visible');
-    } else {
-      rightTopbar.classList.remove('scrolled');
-      sticky.classList.remove('visible');
-    }
-  });
+function scrollToSection(idx) {
+  if (sectionBlocks[idx]) sectionBlocks[idx].scrollIntoView({behavior:'smooth',block:'start'});
 }
+sidebarItems.forEach((item, idx) => { item.onclick = () => scrollToSection(idx); });
 
-function showSection(idx) {
-  document.querySelectorAll('.section-block').forEach((el, i) => {
-    el.style.display = i === idx ? 'block' : 'none';
-  });
-  document.querySelectorAll('.detail').forEach((el, i) => {
-    el.style.display = i === idx ? 'block' : 'none';
-  });
-  document.querySelectorAll('.sidebar-item').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
-  });
-  document.getElementById('sticky-title').textContent = sections[idx].title.replace(/<[^>]*>/g, '');
-  closeDetail();
-}
-
-function showDetail(idx) {
-  document.body.classList.add('detail-open');
-  document.querySelector('.right').classList.remove('closed');
-  showSection(idx);
-}
-
-function closeDetail() {
-  document.body.classList.remove('detail-open');
-  document.querySelector('.right').classList.add('closed');
-}
-
-function toggleDetail() {
-  const isOpen = document.body.classList.contains('detail-open');
-  if (isOpen) closeDetail();
-  else {
-    const idx = Array.from(document.querySelectorAll('.sidebar-item')).findIndex(e => e.classList.contains('active'));
-    showDetail(idx);
+// Sidebar tooltip (detail-open mode)
+const sidebarTip = document.getElementById('sidebar-tooltip');
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarNav = document.getElementById('sidebar-nav');
+let tipActive = false;
+sidebarNav.addEventListener('mouseleave', () => { tipActive = false; sidebarTip.classList.remove('visible'); });
+sidebarNav.addEventListener('mousemove', (e) => {
+  if (!document.body.classList.contains('detail-open')) {
+    if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); }
+    return;
   }
-}
-
-function toggleTheme() {
-  const theme = document.body.dataset.theme === 'light' ? 'dark' : 'light';
-  document.body.dataset.theme = theme;
-  localStorage.setItem('kernel-theme', theme);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  initUI();
-  const saved = localStorage.getItem('kernel-theme') || 'light';
-  document.body.dataset.theme = saved;
+  const item = e.target.closest('.sidebar-item');
+  if (!item) { if (tipActive) { tipActive = false; sidebarTip.classList.remove('visible'); } return; }
+  const rect = item.getBoundingClientRect();
+  const sRight = sidebarEl.getBoundingClientRect().right;
+  sidebarTip.textContent = item.getAttribute('data-label');
+  sidebarTip.style.left = (sRight - 1) + 'px';
+  sidebarTip.style.top = rect.top + 'px';
+  sidebarTip.style.height = rect.height + 'px';
+  if (!tipActive) { tipActive = true; sidebarTip.classList.add('visible'); }
 });
-</script>
 
+// Detail panel
+let lastDetailIdx = 0;
+const rightPanel = document.getElementById('right');
+const stickyTitle = document.getElementById('right-sticky-title');
+
+function openDetail(idx) {
+  lastDetailIdx = idx;
+  document.querySelectorAll('.detail').forEach(d => d.style.display = 'none');
+  document.getElementById('detail-' + idx).style.display = 'block';
+  rightPanel.classList.remove('closed');
+  document.body.classList.add('detail-open');
+  rightPanel.scrollTop = 0;
+  stickyTitle.classList.remove('visible');
+}
+function closeRight() {
+  rightPanel.classList.add('closed');
+  document.body.classList.remove('detail-open');
+}
+
+// Detail buttons in section blocks
+document.querySelectorAll('.s-detail-btn').forEach((btn, idx) => { btn.onclick = () => openDetail(idx); });
+
+// Toggle detail button
+document.getElementById('detail-btn').onclick = () => {
+  if (document.body.classList.contains('detail-open')) closeRight();
+  else openDetail(lastDetailIdx);
+};
+
+// Compact header + scroll spy
+mainScroll.addEventListener('scroll', () => {
+  document.querySelector('.main-head').classList.toggle('compact', mainScroll.scrollTop > 40);
+  let activeIdx = 0;
+  sectionBlocks.forEach((b, i) => {
+    if (b.getBoundingClientRect().top < mainScroll.getBoundingClientRect().top + 120) activeIdx = i;
+  });
+  sidebarItems.forEach((item, i) => item.classList.toggle('active', i === activeIdx));
+});
+
+// Sticky header in right panel
+rightPanel.addEventListener('scroll', () => {
+  const activeDetail = rightPanel.querySelector('.detail[style*="display: block"], .detail[style*="display:block"]');
+  if (!activeDetail) return;
+  const h2 = activeDetail.querySelector('.detail-header h2') || activeDetail.querySelector('h2');
+  if (!h2) return;
+  const rect = h2.getBoundingClientRect();
+  const panelRect = rightPanel.getBoundingClientRect();
+  const topbar = document.querySelector('.right-topbar');
+  if (rect.bottom < panelRect.top + 56) {
+    stickyTitle.textContent = h2.textContent;
+    stickyTitle.classList.add('visible');
+    topbar.classList.add('scrolled');
+  } else {
+    stickyTitle.classList.remove('visible');
+    topbar.classList.remove('scrolled');
+  }
+});
+
+// ESC closes detail panel
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRight(); });
+
+</script>
 </body>
 </html>
