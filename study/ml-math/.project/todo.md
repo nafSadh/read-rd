@@ -1,23 +1,20 @@
-# TODO — Mathematics for Machine Learning
+# TODO — MML Study
 
-## Status
+## Chapters
 
-| Chapter | Notes | Deep Dive | Status |
-|---------|-------|-----------|--------|
-| C2: Linear Algebra | — | — | planned |
-| C3: Analytic Geometry | — | — | planned |
-| C4: Matrix Decompositions | — | — | planned |
-| C5: Vector Calculus | — | — | planned |
-| C6: Probability & Distributions | — | — | planned |
-| C7: Continuous Optimization | — | — | planned |
-| C8: When Models Meet Data | — | — | planned |
-| C9: Linear Regression | — | — | planned |
-| C10: PCA | — | — | planned |
-| C11: GMMs | — | — | planned |
-| C12: SVMs | — | — | planned |
+| Ch | Topic | Notes | Page | Notebook |
+|----|-------|-------|------|----------|
+| C2 | Linear Algebra | — | — | — |
+| C3 | Analytic Geometry | — | — | — |
+| C4 | Matrix Decompositions | — | — | — |
+| C5 | Vector Calculus | — | — | — |
+| C6 | Probability & Distributions | — | — | — |
+| C7 | Continuous Optimization | — | — | — |
+| C8 | When Models Meet Data | — | — | — |
+| C9 | Linear Regression | — | — | — |
+| C10 | PCA | — | — | — |
+| C11 | GMMs | — | — | — |
+| C12 | SVMs | — | — | — |
 
-## Up Next
-- [ ] Study C2: Linear Algebra — read chapter, write notes/02-linear-algebra.md, build c2-linear-algebra.dd.html
-
-## Completed
-- [x] Project initialized (index.html, .project/, notes/, literature-collection.md)
+## Next
+- [ ] C2: Linear Algebra
