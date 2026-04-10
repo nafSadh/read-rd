@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematics for Machine Learning — Deisenroth, Faisal, Ong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 60px 24px 80px; }
+
+    /* Header */
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle { font-size: 15px; color: var(--dim); margin-bottom: 40px; font-family: var(--serif); font-style: italic; }
+    .theme-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--dim);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      padding: 6px 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--mono); font-size: 12px; color: var(--dim);
+      letter-spacing: 0.5px; margin-bottom: 32px; line-height: 1.8;
+    }
+    .meta strong { color: var(--text); }
+    .meta a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .meta a:hover { color: var(--accent); border-color: var(--accent); }
+
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+
+    /* Section list */
+    .section-list { list-style: none; }
+    .section-item {
+      border: 1px solid var(--border); padding: 20px 24px;
+      margin-bottom: 12px; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .section-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .section-num {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      color: var(--accent); min-width: 32px; padding-top: 3px;
+    }
+    .section-body { flex: 1; }
+    .section-title {
+      font-size: 17px; font-weight: 500; color: var(--bright);
+      margin-bottom: 4px; letter-spacing: 0.3px;
+    }
+    .section-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .section-desc { font-size: 14px; color: var(--dim); line-height: 1.5; margin-bottom: 8px; }
+    .section-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .section-links a {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim);
+      text-decoration: none; border-bottom: 1px dotted var(--border);
+      transition: all 0.2s; padding-bottom: 1px;
+    }
+    .section-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .section-links .wip { color: var(--border); border-bottom-color: transparent; cursor: default; }
+    .status {
+      display: inline-block; font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px;
+      border: 1px solid; margin-left: 8px;
+    }
+    .status.done { border-color: #2e6e3e; color: #2e6e3e; }
+    .status.wip { border-color: #8a6e1e; color: #8a6e1e; }
+    .status.planned { border-color: var(--border); color: var(--dim); }
+
+    /* Part label */
+    .part-label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim);
+      margin: 24px 0 12px; padding: 4px 0; border-left: 2px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    /* Resources */
+    .resource-list { list-style: none; }
+    .resource-item {
+      padding: 10px 0; border-bottom: 1px solid var(--bg3);
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .resource-item:last-child { border-bottom: none; }
+    .resource-label { font-family: var(--mono); font-size: 11px; color: var(--dim); min-width: 80px; }
+    .resource-item a { color: var(--text); text-decoration: none; font-size: 14px; border-bottom: 1px dotted var(--border); }
+    .resource-item a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.6;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> TEXTBOOK STUDY &middot; APRIL 2026</div>
+    <div class="header-row">
+      <div>
+        <h1>Mathematics for <em>Machine Learning</em></h1>
+        <div class="subtitle">Deisenroth, Faisal &amp; Ong &mdash; chapter-by-chapter study with interactive deep-dives.</div>
+      </div>
+      <button class="theme-btn" onclick="(function(){var t=document.documentElement;t.setAttribute('data-theme',t.getAttribute('data-theme')==='dark'?'light':'dark')})()">&#9680; theme</button>
+    </div>
+    <div class="rule"></div>
+
+    <div class="meta">
+      <p>A free, open-access textbook covering the mathematical foundations of ML and their application to four core algorithms. Each chapter is studied through an interactive deep-dive: key definitions, worked examples, geometric intuition, and connections to the ML application chapters.</p>
+      <p style="margin-top:10px">
+        <a href="literature-collection.md">Literature Collection</a> &middot;
+        <a href=".project/methodology.md">Methodology</a> &middot;
+        <a href=".project/changelog.md">Changelog</a> &middot;
+        <a href=".project/todo.md">TODO</a> &middot;
+        <a href="https://github.com/mml-book/mml-book.github.io" target="_blank">Book GitHub &rarr;</a>
+      </p>
+    </div>
+
+    <!-- Part I -->
+    <h2>Part I &mdash; Mathematical Foundations</h2>
+    <div class="part-label">Chapters 2&ndash;7 &middot; Core math tools for ML</div>
+
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">C2</div>
+        <div class="section-body">
+          <div class="section-title"><em>Linear</em> Algebra <span class="status planned">planned</span></div>
+          <div class="section-desc">Vectors, matrices, linear independence, basis, rank, linear mappings. The algebraic backbone underlying every ML algorithm.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C3</div>
+        <div class="section-body">
+          <div class="section-title"><em>Analytic</em> Geometry <span class="status planned">planned</span></div>
+          <div class="section-desc">Norms, inner products, angles, orthogonality, projections, rotations. Geometric interpretation of the algebra from Ch 2.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C4</div>
+        <div class="section-body">
+          <div class="section-title">Matrix <em>Decompositions</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Determinants, eigenvalues &amp; eigenvectors, Cholesky, diagonalization, SVD. The factorizations that make PCA and linear regression tractable.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C5</div>
+        <div class="section-body">
+          <div class="section-title"><em>Vector</em> Calculus <span class="status planned">planned</span></div>
+          <div class="section-desc">Derivatives, partial derivatives, Jacobians, Hessians, gradients, backpropagation. The machinery behind gradient-based learning.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C6</div>
+        <div class="section-body">
+          <div class="section-title">Probability &amp; <em>Distributions</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Probability spaces, random variables, Gaussian &amp; exponential families, conjugate priors, change of variables. Foundation for Bayesian ML and density estimation.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C7</div>
+        <div class="section-body">
+          <div class="section-title">Continuous <em>Optimization</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Gradient descent, constrained optimization, Lagrangians, KKT conditions, convexity. The engine that trains every ML model.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+
+    <!-- Part II -->
+    <h2>Part II &mdash; Central ML Problems</h2>
+    <div class="part-label">Chapters 8&ndash;12 &middot; Applying the math to four algorithms</div>
+
+    <ul class="section-list">
+      <li class="section-item">
+        <div class="section-num">C8</div>
+        <div class="section-body">
+          <div class="section-title">When <em>Models</em> Meet Data <span class="status planned">planned</span></div>
+          <div class="section-desc">Empirical risk minimization, maximum likelihood estimation, Bayesian inference, probabilistic graphical models, directed &amp; undirected models.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C9</div>
+        <div class="section-body">
+          <div class="section-title"><em>Linear</em> Regression <span class="status planned">planned</span></div>
+          <div class="section-desc">Maximum likelihood, MAP estimation, Bayesian linear regression, evidence maximization, Gaussian process connection.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C10</div>
+        <div class="section-body">
+          <div class="section-title">Dimensionality Reduction with <em>PCA</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Maximum variance formulation, projection perspective, eigenvector solution, low-rank approximation via SVD, latent variable interpretation.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C11</div>
+        <div class="section-body">
+          <div class="section-title">Density Estimation with <em>GMMs</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Gaussian mixture models, EM algorithm, convergence, latent variable models, relation to k-means.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="section-item">
+        <div class="section-num">C12</div>
+        <div class="section-body">
+          <div class="section-title">Classification with <em>SVMs</em> <span class="status planned">planned</span></div>
+          <div class="section-desc">Hard and soft margin SVMs, Lagrangian duality, KKT conditions, kernel trick, numerical solvers, dual problem.</div>
+          <div class="section-links">
+            <a class="wip">Deep Dive (pending)</a>
+            <a class="wip">Notes (pending)</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="rule"></div>
+
+    <!-- Resources -->
+    <h2>Resources</h2>
+    <ul class="resource-list">
+      <li class="resource-item">
+        <span class="resource-label">book pdf</span>
+        <a href="https://mml-book.github.io/book/mml-book.pdf" target="_blank">mml-book.github.io/book/mml-book.pdf &rarr;</a>
+      </li>
+      <li class="resource-item">
+        <span class="resource-label">github</span>
+        <a href="https://github.com/mml-book/mml-book.github.io" target="_blank">mml-book/mml-book.github.io &rarr;</a>
+      </li>
+      <li class="resource-item">
+        <span class="resource-label">exercises</span>
+        <a href="https://github.com/mml-book/mml-book.github.io/tree/master/exercises" target="_blank">exercises/ on GitHub &rarr;</a>
+      </li>
+      <li class="resource-item">
+        <span class="resource-label">solutions</span>
+        <a href="https://github.com/mml-book/mml-book.github.io/tree/master/solutions_numerical_exercises" target="_blank">solutions_numerical_exercises/ on GitHub &rarr;</a>
+      </li>
+      <li class="resource-item">
+        <span class="resource-label">lit collection</span>
+        <a href="literature-collection.md">literature-collection.md</a>
+      </li>
+    </ul>
+
+    <div class="footer">
+      <p><a href="../../index.html">&larr; read:rd</a> &middot; <a href="../../courses/scpd-ml/">ML Coursework (SCPD)</a> &middot; Textbook: <em>Mathematics for Machine Learning</em>, Deisenroth, Faisal &amp; Ong (Cambridge University Press, 2020). Free PDF at <a href="https://mml-book.github.io" target="_blank">mml-book.github.io</a>.</p>
+    </div>
+  </div>
+  <script>
+    // Persist theme
+    (function(){
+      var saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+    })();
+    document.querySelector('.theme-btn').addEventListener('click', function(){
+      var t = document.documentElement.getAttribute('data-theme');
+      localStorage.setItem('theme', t);
+    });
+  </script>
+</body>
+</html>
