@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Regression — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3; --bg2:#ffffff; --bg3:#f2efe8; --bg4:#ede9e0;
+  --border:#d6d0c4; --border-hi:#bfb8a8;
+  --text:#363b48; --dim:#65707a; --bright:#141a1e;
+  --accent:#7c3aed; --accent2:#9b5cf6; --accent-soft:#7c3aed10; --accent-mid:#7c3aed20;
+  --green:#2e6e3e; --green-soft:#2e6e3e12; --amber:#8a6e1e; --amber-soft:#8a6e1e12;
+  --red:#8b2020; --red-soft:#8b202012; --cyan:#2e6ab4; --cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06; --grad2:#2e6ab404;
+  --sidebar-w: 220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18; --bg2:#0f1322; --bg3:#151b30; --bg4:#1a2240;
+  --border:#1c2440; --border-hi:#283558;
+  --text:#8490aa; --dim:#546080; --bright:#dce0ec;
+  --accent:#9b7aed; --accent2:#b598ff; --accent-soft:#9b7aed0c; --accent-mid:#9b7aed18;
+  --green:#4ee8a8; --green-soft:#4ee8a810; --amber:#e8c870; --amber-soft:#e8c87010;
+  --red:#e87090; --red-soft:#e8709010; --cyan:#4ee8d0; --cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06; --grad2:#4ee8d004;
+  --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;min-height:100vh;
+  transition:background .4s,color .3s;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),
+    radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);
+  transition:background 1s;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:10;
+  transition:background .4s;
+}
+.sidebar-head {
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); text-decoration:none;
+  display:flex; align-items:center; gap:6px; margin-bottom:12px;
+  transition:color .2s;
+}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:2px;
+}
+.sidebar-title {
+  font-family:var(--serif); font-size:17px; color:var(--bright);
+  line-height:1.3;
+}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav {
+  flex:1; overflow-y:auto; padding:12px 0;
+}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item {
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 16px; cursor:pointer; transition:all .15s;
+  font-size:13px; color:var(--dim); text-decoration:none; border:none; background:none;
+  width:100%; text-align:left;
+}
+.nav-item:hover{color:var(--text); background:var(--accent-soft)}
+.nav-item.active{color:var(--accent); background:var(--accent-soft)}
+.nav-item .num{
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  color:var(--accent); opacity:.7; flex-shrink:0;
+}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{
+  padding:12px 16px; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.theme-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--dim); font-size:14px; width:28px; height:28px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Main ─── */
+main {
+  flex:1; overflow-y:auto;
+  padding:40px max(48px, calc((100% - 820px) / 2)) 80px;
+  position:relative; z-index:1;
+}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.page-header {
+  margin-bottom:40px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.page-badge {
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title {
+  font-family:var(--sans); font-size:34px; font-weight:500;
+  color:var(--bright); letter-spacing:.3px; line-height:1.2; margin-bottom:8px;
+}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta {
+  margin-top:16px; display:flex; gap:20px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.5px;
+}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+
+/* ─── Sections ─── */
+section {
+  margin-bottom:48px; scroll-margin-top:24px;
+}
+.section-header {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.sec-num {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  color:var(--accent); letter-spacing:1px; flex-shrink:0;
+}
+.section-title {
+  font-family:var(--serif); font-size:24px; color:var(--bright);
+  font-weight:400; transition:color .2s;
+}
+.section-lead {
+  font-size:15px; line-height:1.7; color:var(--text);
+  margin-bottom:20px;
+}
+.section-lead strong{color:var(--bright);font-weight:600}
+
+/* ─── Formula cards ─── */
+.formula-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.formula-card {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:16px 18px; transition:border-color .2s;
+}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+}
+.formula-expr {
+  font-family:var(--serif); font-size:18px; color:var(--bright);
+  line-height:1.4; margin-bottom:6px;
+}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+
+/* ─── Callout boxes ─── */
+.callout {
+  padding:16px 20px; border-left:3px solid var(--accent);
+  background:var(--accent-soft); margin:20px 0; font-size:14px; line-height:1.7;
+}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:.8;
+}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.red{color:var(--red)}
+.callout-title.accent{color:var(--accent)}
+
+/* ─── Expandable details ─── */
+.expand {
+  border:1px solid var(--border); margin-top:16px;
+  transition:border-color .2s;
+}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary {
+  padding:12px 16px; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); list-style:none;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:color .2s;
+  user-select:none;
+}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body {
+  padding:20px 20px 16px;
+  font-size:14px; line-height:1.75; color:var(--text);
+}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+
+/* ─── Tables ─── */
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.data-table code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);padding:1px 5px}
+
+/* ─── SVG diagrams ─── */
+.diagram {
+  margin:24px 0; padding:24px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.diagram-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); align-self:flex-start;
+}
+.diagram svg{max-width:100%;height:auto}
+
+/* ─── Connection chips ─── */
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
+  padding:3px 10px;border:1px solid var(--border);color:var(--dim);
+  background:var(--bg3);transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── Ladder bar ─── */
+.ladder{
+  display:flex; align-items:stretch; gap:0;
+  margin:20px 0; border:1px solid var(--border);
+  overflow:hidden;
+}
+.ladder-step{
+  flex:1; padding:12px 10px; text-align:center;
+  border-right:1px solid var(--border); position:relative;
+  font-size:12px; line-height:1.4;
+}
+.ladder-step:last-child{border-right:none}
+.ladder-step .step-label{
+  font-family:var(--mono); font-size:9px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:4px;
+}
+.ladder-step .step-name{font-weight:600;color:var(--bright);font-size:13px}
+.ladder-step .step-add{font-size:11px;color:var(--dim);margin-top:3px}
+.ladder-step.hi{background:var(--accent-soft)}
+.ladder-arrow{
+  display:flex; align-items:center; padding:0 4px;
+  color:var(--accent); font-size:14px; flex-shrink:0;
+}
+
+/* ─── KaTeX tweaks ─── */
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* ─── Responsive ─── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  main{padding:24px 20px 60px}
+  .formula-grid{grid-template-columns:1fr}
+  .ladder{flex-direction:column}
+  .ladder-step{border-right:none;border-bottom:1px solid var(--border)}
+  .ladder-step:last-child{border-bottom:none}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title">Linear <em>Regression</em></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s9-1" class="nav-item"><span class="num">9.1</span>Problem Setup</a>
+    <a href="#s9-2" class="nav-item"><span class="num">9.2</span>MLE (Least Squares)</a>
+    <a href="#s9-3" class="nav-item"><span class="num">9.3</span>MAP (Ridge)</a>
+    <a href="#s9-4" class="nav-item"><span class="num">9.4</span>Bayesian Regression</a>
+    <a href="#s9-5" class="nav-item"><span class="num">9.5</span>Feature Maps &amp; Kernels</a>
+    <a href="#s9-6" class="nav-item"><span class="num">9.6</span>Evidence Maximization</a>
+    <a href="#ref" class="nav-item"><span class="num">&#8862;</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 289–315</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">&#9680;</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART III</div>
+    <h1 class="page-title">Linear <em>Regression</em></h1>
+    <p class="page-sub">The proving ground for probabilistic machine learning. Starting from a simple noise model, the chapter builds from MLE (least squares) to MAP (ridge) to full Bayesian inference — each step adding one more ingredient of uncertainty, culminating in a predictive distribution over outputs and a natural connection to Gaussian processes.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong &mdash; Ch 9 (pp 289&ndash;315)</span>
+      <a href="notes/linear-regression.md">Raw notes &#8599;</a>
+      <a href="http://www.gaussianprocess.org/gpml/" target="_blank">Rasmussen &amp; Williams (GP) &#8599;</a>
+    </div>
+  </div>
+
+  <!-- ─── Estimator Ladder ─── -->
+  <div class="ladder">
+    <div class="ladder-step">
+      <div class="step-label">§9.2</div>
+      <div class="step-name">MLE</div>
+      <div class="step-add">Gaussian noise</div>
+    </div>
+    <div class="ladder-arrow">&#8594;</div>
+    <div class="ladder-step">
+      <div class="step-label">§9.3</div>
+      <div class="step-name">MAP</div>
+      <div class="step-add">+ Gaussian prior</div>
+    </div>
+    <div class="ladder-arrow">&#8594;</div>
+    <div class="ladder-step hi">
+      <div class="step-label">§9.4</div>
+      <div class="step-name">Bayesian</div>
+      <div class="step-add">+ full posterior</div>
+    </div>
+    <div class="ladder-arrow">&#8594;</div>
+    <div class="ladder-step">
+      <div class="step-label">§9.5</div>
+      <div class="step-name">Features / GP</div>
+      <div class="step-add">+ nonlinear maps</div>
+    </div>
+    <div class="ladder-arrow">&#8594;</div>
+    <div class="ladder-step">
+      <div class="step-label">§9.6</div>
+      <div class="step-name">Evidence Max</div>
+      <div class="step-add">+ learn hyperparams</div>
+    </div>
+  </div>
+
+  <!-- ─── §9.1 Problem Setup ─── -->
+  <section id="s9-1">
+    <div class="section-header">
+      <span class="sec-num">§9.1</span>
+      <h2 class="section-title">Problem Setup</h2>
+    </div>
+    <p class="section-lead">
+      The generative model assumes each observation is a <strong>noisy linear function</strong> of its input.
+      The design matrix $\mathbf{X}$ stacks all inputs into a convenient matrix form, and the i.i.d.
+      Gaussian noise assumption turns the entire likelihood into a tractable Gaussian.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Scalar noise model</div>
+        <div class="formula-expr">$y_n = \mathbf{x}_n^\top \boldsymbol{\theta} + \varepsilon_n$</div>
+        <div class="formula-note"><strong>&theta;</strong> &isin; &#8477;<sup>D</sup> are weights; <strong>&epsilon;<sub>n</sub> ~ N(0, &sigma;&sup2;)</strong> is i.i.d. Gaussian noise with known variance.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Observation likelihood</div>
+        <div class="formula-expr">$p(y_n \mid \mathbf{x}_n, \boldsymbol{\theta}) = \mathcal{N}(y_n \mid \mathbf{x}_n^\top\boldsymbol{\theta},\, \sigma^2)$</div>
+        <div class="formula-note">The mean is the linear predictor; &sigma;&sup2; is irreducible aleatoric noise.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Design matrix form</div>
+        <div class="formula-expr">$\mathbf{y} = \mathbf{X}\boldsymbol{\theta} + \boldsymbol{\varepsilon},\quad \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I})$</div>
+        <div class="formula-note"><strong>X</strong> &isin; &#8477;<sup>N&times;D</sup> (row n = x<sub>n</sub><sup>&top;</sup>); <strong>y</strong> &isin; &#8477;<sup>N</sup> (entry n = y<sub>n</sub>).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Full likelihood</div>
+        <div class="formula-expr">$p(\mathbf{y} \mid \mathbf{X}, \boldsymbol{\theta}) = \mathcal{N}(\mathbf{y} \mid \mathbf{X}\boldsymbol{\theta},\, \sigma^2 \mathbf{I})$</div>
+        <div class="formula-note">Multivariate Gaussian with mean vector <strong>X&theta;</strong> and diagonal covariance. Independence of &epsilon;<sub>n</sub> gives the product form.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Four assumptions</div>
+      <strong>Linearity:</strong> the signal is truly $\mathbf{x}^\top\boldsymbol{\theta}$ (no interaction unless features are expanded).<br>
+      <strong>Homoscedastic noise:</strong> $\sigma^2$ is the same for every observation.<br>
+      <strong>Independence:</strong> the $\varepsilon_n$ are i.i.d. across observations.<br>
+      <strong>Gaussian noise:</strong> not Student-<em>t</em>, not Laplace. When these hold, MLE is optimal. When they fail, estimates can be biased or inefficient.
+    </div>
+
+    <details class="expand">
+      <summary>Scalar vs. matrix form — unpacking the notation</summary>
+      <div class="expand-body">
+        <p>The scalar equation $y_n = \mathbf{x}_n^\top\boldsymbol{\theta} + \varepsilon_n$ says: the $n$-th output is a dot product of the $n$-th input row with the weight vector, plus noise.</p>
+        <p>Stacking $N$ such equations into matrix form gives $\mathbf{y} = \mathbf{X}\boldsymbol{\theta} + \boldsymbol{\varepsilon}$, where $\mathbf{X}$ is the design matrix. Because the noise vector $\boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2\mathbf{I})$ (off-diagonal zeros = independence), the joint density factors into a product:</p>
+        $$p(\mathbf{y} \mid \mathbf{X}, \boldsymbol{\theta}) = \prod_{n=1}^N \mathcal{N}(y_n \mid \mathbf{x}_n^\top\boldsymbol{\theta}, \sigma^2)$$
+        <p>The covariance matrix $\sigma^2\mathbf{I}$ is diagonal precisely because observations are independent. This structure is what makes the log-likelihood a simple sum of squared residuals.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §9.2 MLE ─── -->
+  <section id="s9-2">
+    <div class="section-header">
+      <span class="sec-num">§9.2</span>
+      <h2 class="section-title">Maximum Likelihood Estimation</h2>
+    </div>
+    <p class="section-lead">
+      Maximizing the log-likelihood over $\boldsymbol{\theta}$ reduces to <strong>minimizing the sum of squared residuals</strong> — least squares. The MLE solution is the orthogonal projection of $\mathbf{y}$ onto the column space of $\mathbf{X}$, captured by the normal equations.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Log-likelihood</div>
+        <div class="formula-expr">$\ell(\boldsymbol{\theta}) = -\tfrac{N}{2}\log(2\pi\sigma^2) - \tfrac{1}{2\sigma^2}\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2$</div>
+        <div class="formula-note">The first term is constant in &theta;. Maximizing &ell; = minimizing the residual sum of squares $\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Normal equations</div>
+        <div class="formula-expr">$\mathbf{X}^\top\mathbf{X}\,\boldsymbol{\theta} = \mathbf{X}^\top\mathbf{y}$</div>
+        <div class="formula-note">Set $\partial\ell/\partial\boldsymbol{\theta} = \mathbf{0}$. The name "normal" refers to the residual being <em>normal (perpendicular)</em> to col(<strong>X</strong>).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MLE solution</div>
+        <div class="formula-expr">$\hat{\boldsymbol{\theta}}_\mathrm{ML} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y} = \mathbf{X}^+\mathbf{y}$</div>
+        <div class="formula-note">Exists iff $\mathbf{X}^\top\mathbf{X}$ is invertible (X has full column rank D). $\mathbf{X}^+ = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top$ is the Moore&ndash;Penrose pseudoinverse.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MLE for noise variance</div>
+        <div class="formula-expr">$\hat{\sigma}^2_\mathrm{ML} = \tfrac{1}{N}\|\mathbf{y} - \mathbf{X}\hat{\boldsymbol{\theta}}_\mathrm{ML}\|^2$</div>
+        <div class="formula-note">Average squared residual. Biased; the unbiased estimator divides by $N - D$. Plug-in after solving for $\hat{\boldsymbol{\theta}}_\mathrm{ML}$.</div>
+      </div>
+    </div>
+
+    <!-- Geometric projection SVG -->
+    <div class="diagram">
+      <div class="diagram-title">Geometric interpretation: y projected onto col(X)</div>
+      <svg width="540" height="280" viewBox="0 0 540 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Column space plane (parallelogram) -->
+        <polygon points="60,230 260,200 420,110 220,140"
+          fill="var(--accent)" fill-opacity=".07"
+          stroke="var(--accent)" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <!-- Plane label -->
+        <text x="115" y="200" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10" opacity=".7">col(X)</text>
+        <text x="100" y="213" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" opacity=".5">(column space of X)</text>
+
+        <!-- Origin -->
+        <circle cx="240" cy="175" r="3" fill="currentColor" opacity=".4"/>
+        <text x="226" y="188" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">O</text>
+
+        <!-- y vector (goes up and to the side — out of plane) -->
+        <line x1="240" y1="175" x2="340" y2="62"
+          stroke="var(--green)" stroke-width="2.5"/>
+        <polygon points="336,62 344,55 341,65" fill="var(--green)"/>
+        <text x="348" y="60" fill="var(--green)" font-family="IBM Plex Mono" font-size="13" font-weight="600">y</text>
+
+        <!-- y-hat vector (projection onto plane) -->
+        <line x1="240" y1="175" x2="350" y2="145"
+          stroke="var(--accent)" stroke-width="2.5"/>
+        <polygon points="346,141 354,138 350,148" fill="var(--accent)"/>
+        <text x="358" y="143" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11" font-weight="600">ŷ = Xθ_ML</text>
+
+        <!-- Residual vector (y - y-hat), perpendicular -->
+        <line x1="350" y1="145" x2="340" y2="62"
+          stroke="var(--red)" stroke-width="1.8" stroke-dasharray="4,3"/>
+        <polygon points="337,68 344,58 344,68" fill="var(--red)"/>
+        <text x="360" y="100" fill="var(--red)" font-family="IBM Plex Mono" font-size="11">y − ŷ</text>
+        <text x="355" y="113" fill="var(--red)" font-family="IBM Plex Mono" font-size="9" opacity=".7">(residual)</text>
+
+        <!-- Right-angle mark (perpendicularity) -->
+        <polyline points="342,149 346,140 356,143"
+          stroke="var(--red)" stroke-width="1.2" fill="none" opacity=".6"/>
+
+        <!-- Hat matrix label -->
+        <text x="60" y="50" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">P_X = X(XᵀX)⁻¹Xᵀ</text>
+        <text x="60" y="65" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">(hat / projection matrix)</text>
+        <text x="60" y="80" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">P_X² = P_X  (idempotent)</text>
+        <text x="60" y="95" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">P_X y = ŷ</text>
+
+        <!-- Data points scattered in col(X) plane -->
+        <circle cx="170" cy="178" r="3.5" fill="currentColor" opacity=".25"/>
+        <circle cx="290" cy="162" r="3.5" fill="currentColor" opacity=".25"/>
+        <circle cx="330" cy="170" r="3.5" fill="currentColor" opacity=".25"/>
+        <circle cx="200" cy="155" r="3.5" fill="currentColor" opacity=".25"/>
+
+        <!-- Key -->
+        <rect x="15" y="240" width="510" height="28" rx="2" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".1"/>
+        <line x1="28" y1="255" x2="55" y2="255" stroke="var(--green)" stroke-width="2"/>
+        <text x="60" y="258" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">y (observations)</text>
+        <line x1="155" y1="255" x2="182" y2="255" stroke="var(--accent)" stroke-width="2"/>
+        <text x="187" y="258" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">ŷ = X&theta;_ML (projection)</text>
+        <line x1="335" y1="255" x2="362" y2="255" stroke="var(--red)" stroke-width="1.8" stroke-dasharray="4,3"/>
+        <text x="367" y="258" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">residual ⊥ col(X)</text>
+      </svg>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">MLE = Ordinary Least Squares</div>
+      The probabilistic model (Gaussian noise) gives a clean theoretical justification for a classic algorithm. The residual vector $\mathbf{y} - \hat{\mathbf{y}}$ is orthogonal to every column of $\mathbf{X}$ — this is why the normal equations are called "normal": the residual is <em>normal</em> (perpendicular) to the column space. The hat matrix $P_\mathbf{X} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top$ is symmetric and idempotent ($P^2 = P$), exactly the properties of a projection matrix.
+    </div>
+
+    <details class="expand">
+      <summary>Deriving the normal equations step by step</summary>
+      <div class="expand-body">
+        <p>Expand the least-squares objective $L(\boldsymbol{\theta}) = (\mathbf{y} - \mathbf{X}\boldsymbol{\theta})^\top(\mathbf{y} - \mathbf{X}\boldsymbol{\theta})$:</p>
+        $$L(\boldsymbol{\theta}) = \mathbf{y}^\top\mathbf{y} - 2\boldsymbol{\theta}^\top\mathbf{X}^\top\mathbf{y} + \boldsymbol{\theta}^\top\mathbf{X}^\top\mathbf{X}\boldsymbol{\theta}$$
+        <p>Differentiate with respect to $\boldsymbol{\theta}$ (using matrix calculus from C5):</p>
+        $$\frac{\partial L}{\partial\boldsymbol{\theta}} = -2\mathbf{X}^\top\mathbf{y} + 2\mathbf{X}^\top\mathbf{X}\boldsymbol{\theta} = \mathbf{0}$$
+        <p>This gives the <strong>normal equations</strong> $\mathbf{X}^\top\mathbf{X}\boldsymbol{\theta} = \mathbf{X}^\top\mathbf{y}$, and solving (when $\mathbf{X}^\top\mathbf{X}$ is invertible) yields $\hat{\boldsymbol{\theta}}_\mathrm{ML} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}$.</p>
+        <p><strong>When is $\mathbf{X}^\top\mathbf{X}$ invertible?</strong> If and only if $\mathbf{X}$ has full column rank $D$. If $N < D$ (fewer samples than features) or columns are linearly dependent, $\mathbf{X}^\top\mathbf{X}$ is singular and the MLE is not unique — infinitely many $\boldsymbol{\theta}$ minimize $L$. MAP and Bayesian methods regularize this regime.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §9.3 MAP ─── -->
+  <section id="s9-3">
+    <div class="section-header">
+      <span class="sec-num">§9.3</span>
+      <h2 class="section-title">MAP Estimation — Ridge Regression</h2>
+    </div>
+    <p class="section-lead">
+      When $\mathbf{X}^\top\mathbf{X}$ is singular or ill-conditioned, the MLE is unstable.
+      Placing a <strong>Gaussian prior</strong> on $\boldsymbol{\theta}$ shrinks estimates toward zero
+      and regularizes the problem — arriving at ridge regression with a principled interpretation.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Isotropic Gaussian prior</div>
+        <div class="formula-expr">$p(\boldsymbol{\theta}) = \mathcal{N}(\boldsymbol{\theta} \mid \mathbf{0},\, b^2\mathbf{I})$</div>
+        <div class="formula-note">Larger $b^2$ &rarr; weaker regularization. As $b^2 \to \infty$, MAP &rarr; MLE (prior becomes uninformative).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MAP objective</div>
+        <div class="formula-expr">$L_\mathrm{MAP}(\boldsymbol{\theta}) = \|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2 + \lambda\|\boldsymbol{\theta}\|^2$</div>
+        <div class="formula-note">Ridge (L2) regularization with $\lambda = \sigma^2/b^2$. Minimizing this &hArr; maximizing $\log p(\boldsymbol{\theta} \mid \mathbf{X}, \mathbf{y})$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MAP solution</div>
+        <div class="formula-expr">$\hat{\boldsymbol{\theta}}_\mathrm{MAP} = \left(\mathbf{X}^\top\mathbf{X} + \tfrac{\sigma^2}{b^2}\mathbf{I}\right)^{-1}\!\mathbf{X}^\top\mathbf{y}$</div>
+        <div class="formula-note">The added $\lambda\mathbf{I}$ shifts all eigenvalues up by $\lambda > 0$, making the matrix <em>always</em> positive definite and invertible.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Always exists (&#955; &gt; 0)</div>
+        <div class="formula-expr">$\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I} \succ 0$</div>
+        <div class="formula-note">$\mathbf{X}^\top\mathbf{X}$ is PSD; adding $\lambda\mathbf{I}$ makes it PD. Works even when $N &lt; D$ or columns of $\mathbf{X}$ are linearly dependent.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Probabilistic justification for ridge regression</div>
+      Ridge regression was originally proposed as a computational trick to stabilize ill-conditioned normal equations. The MAP derivation gives it a principled probabilistic foundation: the L2 penalty $\lambda\|\boldsymbol{\theta}\|^2$ is exactly the negative log of a zero-mean Gaussian prior $\mathcal{N}(\mathbf{0}, b^2\mathbf{I})$ with $\lambda = \sigma^2/b^2$. The regularization strength encodes the prior-to-noise ratio.
+    </div>
+
+    <details class="expand">
+      <summary>Bias-variance tradeoff — what ridge buys and costs</summary>
+      <div class="expand-body">
+        <p><strong>MLE:</strong> unbiased, but high variance when $\mathbf{X}^\top\mathbf{X}$ is ill-conditioned (small eigenvalues magnify noise).</p>
+        <p><strong>MAP/Ridge:</strong> introduces bias — estimates are shrunk toward zero — but variance is reduced. The total prediction error is bias<sup>2</sup> + variance. The optimal $\lambda$ minimizes the sum.</p>
+        <p>An important contrast: L2 (Gaussian prior) shrinks all coefficients proportionally but never makes them exactly zero. L1 (Lasso, Laplace prior) creates sparsity because its gradient has a discontinuity at zero. Ridge selects nothing; Lasso selects variables.</p>
+        <ul>
+          <li>Too small $\lambda$: high variance, overfitting (close to MLE)</li>
+          <li>Too large $\lambda$: high bias, underfitting (all $\theta_j \approx 0$)</li>
+          <li>Optimal $\lambda$: selected via cross-validation or evidence maximization (§9.6)</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §9.4 Bayesian Linear Regression ─── -->
+  <section id="s9-4">
+    <div class="section-header">
+      <span class="sec-num">§9.4</span>
+      <h2 class="section-title">Bayesian Linear Regression</h2>
+    </div>
+    <p class="section-lead">
+      MAP collapses the posterior to a single point. Bayesian linear regression keeps the full posterior
+      distribution over $\boldsymbol{\theta}$, propagating that uncertainty into a <strong>predictive distribution</strong>
+      over outputs — not just a point estimate, but calibrated confidence.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Conjugate prior</div>
+        <div class="formula-expr">$p(\boldsymbol{\theta}) = \mathcal{N}(\boldsymbol{\theta} \mid \mathbf{m}_0,\, \mathbf{S}_0)$</div>
+        <div class="formula-note">Gaussian prior is conjugate to Gaussian likelihood: the posterior is also Gaussian. Everything stays tractable.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Posterior covariance</div>
+        <div class="formula-expr">$\mathbf{S}_N^{-1} = \mathbf{S}_0^{-1} + \sigma^{-2}\mathbf{X}^\top\mathbf{X}$</div>
+        <div class="formula-note"><strong>Precision</strong> = prior precision + data precision. More data &rarr; larger $\sigma^{-2}\mathbf{X}^\top\mathbf{X}$ &rarr; tighter posterior (smaller $\mathbf{S}_N$).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Posterior mean</div>
+        <div class="formula-expr">$\mathbf{m}_N = \mathbf{S}_N\!\left(\mathbf{S}_0^{-1}\mathbf{m}_0 + \sigma^{-2}\mathbf{X}^\top\mathbf{y}\right)$</div>
+        <div class="formula-note">Precision-weighted average of prior information and data information. As $N \to \infty$, data overwhelms prior and $\mathbf{m}_N \to \hat{\boldsymbol{\theta}}_\mathrm{ML}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Predictive distribution</div>
+        <div class="formula-expr">$p(y_* \mid \mathbf{x}_*, \mathbf{X}, \mathbf{y}) = \mathcal{N}(y_* \mid \mathbf{m}_N^\top\mathbf{x}_*,\; \mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_* + \sigma^2)$</div>
+        <div class="formula-note">Obtained by marginalizing out $\boldsymbol{\theta}$. Predictive variance = epistemic ($\mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_*$) + aleatoric ($\sigma^2$).</div>
+      </div>
+    </div>
+
+    <!-- Posterior evolution SVG -->
+    <div class="diagram">
+      <div class="diagram-title">Posterior evolution as data arrives (1D parameter space)</div>
+      <svg width="560" height="200" viewBox="0 0 560 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes for each panel -->
+        <!-- Panel 1: Prior -->
+        <text x="85" y="18" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".6">Prior  p(θ)</text>
+        <line x1="20" y1="160" x2="155" y2="160" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+        <line x1="87" y1="165" x2="87" y2="25" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <!-- Prior: wide Gaussian -->
+        <path d="M 22,158 C 30,158 42,140 55,110 C 65,85 72,50 87,30 C 102,50 109,85 119,110 C 132,140 145,158 155,158"
+          stroke="var(--dim)" stroke-width="2" fill="var(--accent)" fill-opacity=".08"/>
+        <text x="87" y="175" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">θ</text>
+        <text x="87" y="188" text-anchor="middle" fill="var(--dim)" font-family="IBM Plex Mono" font-size="9" opacity=".7">wide, uncertain</text>
+
+        <!-- Arrow 1→2 -->
+        <line x1="165" y1="100" x2="188" y2="100" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5"/>
+        <polygon points="188,96 196,100 188,104" fill="currentColor" fill-opacity=".3"/>
+        <text x="180" y="90" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">N=3</text>
+
+        <!-- Panel 2: Posterior after 3 points -->
+        <text x="280" y="18" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".6">Posterior  N = 3</text>
+        <line x1="200" y1="160" x2="360" y2="160" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+        <line x1="280" y1="165" x2="280" y2="25" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <!-- Data points (small ticks on x-axis) -->
+        <line x1="253" y1="158" x2="253" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="272" y1="158" x2="272" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="296" y1="158" x2="296" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <!-- Posterior after 3: narrower Gaussian, shifted -->
+        <path d="M 215,157 C 228,157 248,145 258,120 C 267,98 272,60 282,35 C 292,60 298,98 307,120 C 317,145 337,157 348,157"
+          stroke="var(--cyan)" stroke-width="2" fill="var(--cyan)" fill-opacity=".1"/>
+        <text x="280" y="175" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">θ</text>
+        <text x="280" y="188" text-anchor="middle" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".8">narrower</text>
+
+        <!-- Arrow 2→3 -->
+        <line x1="368" y1="100" x2="390" y2="100" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5"/>
+        <polygon points="390,96 398,100 390,104" fill="currentColor" fill-opacity=".3"/>
+        <text x="382" y="90" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">N=10</text>
+
+        <!-- Panel 3: Posterior after 10 points -->
+        <text x="478" y="18" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".6">Posterior  N = 10</text>
+        <line x1="405" y1="160" x2="548" y2="160" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+        <line x1="478" y1="165" x2="478" y2="25" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <!-- Data point ticks -->
+        <line x1="448" y1="158" x2="448" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="457" y1="158" x2="457" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="464" y1="158" x2="464" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="472" y1="158" x2="472" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="479" y1="158" x2="479" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="486" y1="158" x2="486" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="493" y1="158" x2="493" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="500" y1="158" x2="500" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="507" y1="158" x2="507" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="515" y1="158" x2="515" y2="165" stroke="var(--green)" stroke-width="1.5"/>
+        <!-- Sharp posterior -->
+        <path d="M 415,158 C 440,158 458,155 465,138 C 470,125 474,80 479,28 C 484,80 488,125 493,138 C 500,155 518,158 543,158"
+          stroke="var(--accent)" stroke-width="2.5" fill="var(--accent)" fill-opacity=".13"/>
+        <!-- True theta marker -->
+        <line x1="479" y1="18" x2="479" y2="155" stroke="var(--green)" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+        <text x="487" y="40" fill="var(--green)" font-family="IBM Plex Mono" font-size="9" opacity=".7">θ*</text>
+        <text x="478" y="175" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">θ</text>
+        <text x="478" y="188" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9">peaked near truth</text>
+      </svg>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">The key payoff: predictive variance decomposition</div>
+      The predictive variance $\mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_* + \sigma^2$ splits into two terms:<br><br>
+      <strong>Epistemic uncertainty</strong> $\mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_*$: uncertainty about $\boldsymbol{\theta}$. Shrinks with more data. Large for test points $\mathbf{x}_*$ far from training distribution (out-of-distribution inputs correctly flagged as high uncertainty).<br><br>
+      <strong>Aleatoric uncertainty</strong> $\sigma^2$: irreducible observation noise. Cannot be reduced by collecting more data.
+    </div>
+
+    <details class="expand">
+      <summary>Sequential (online) Bayesian updating</summary>
+      <div class="expand-body">
+        <p>One elegant property of Bayesian linear regression is that the posterior can be updated <strong>incrementally</strong>: process data in batches, using the current posterior as the next prior.</p>
+        <ul>
+          <li>Initialize with prior $(\mathbf{m}_0, \mathbf{S}_0)$.</li>
+          <li>See batch 1: compute posterior $(\mathbf{m}_1, \mathbf{S}_1)$.</li>
+          <li>Use $(\mathbf{m}_1, \mathbf{S}_1)$ as the new prior; see batch 2: compute $(\mathbf{m}_2, \mathbf{S}_2)$.</li>
+          <li>Repeat. The final posterior is the same regardless of how data is batched.</li>
+        </ul>
+        <p>This is exactly the Kalman filter update rule in disguise — Bayesian linear regression <em>is</em> a Kalman filter for static parameters. The commutativity follows directly from the conjugate Gaussian algebra: the posterior depends on $\sum_n \mathbf{x}_n\mathbf{x}_n^\top$ and $\sum_n \mathbf{x}_n y_n$, which are order-independent sufficient statistics.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>MAP is the mean of the posterior — not just the mode</summary>
+      <div class="expand-body">
+        <p>When the prior is $\mathcal{N}(\mathbf{0}, b^2\mathbf{I})$ and the posterior is Gaussian, the posterior mean equals the posterior mode (Gaussians are symmetric). So:</p>
+        $$\mathbf{m}_N = \mathbf{S}_N\bigl(\mathbf{S}_0^{-1}\cdot\mathbf{0} + \sigma^{-2}\mathbf{X}^\top\mathbf{y}\bigr) = (\mathbf{X}^\top\mathbf{X} + \tfrac{\sigma^2}{b^2}\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y} = \hat{\boldsymbol{\theta}}_\mathrm{MAP}$$
+        <p>MAP is therefore a special case of Bayesian linear regression: it takes the full posterior but only reports its mean, discarding the uncertainty quantified by $\mathbf{S}_N$. The predictive mean is identical; the predictive variance is not.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §9.5 Feature Maps & Kernels ─── -->
+  <section id="s9-5">
+    <div class="section-header">
+      <span class="sec-num">§9.5</span>
+      <h2 class="section-title">Feature Maps &amp; the Kernel Trick</h2>
+    </div>
+    <p class="section-lead">
+      Raw inputs may not be linearly related to outputs. A <strong>feature map</strong> $\phi(\mathbf{x})$ lifts inputs into a higher-dimensional space where linear regression applies. Replacing explicit feature vectors with inner products $k(\mathbf{x}, \mathbf{x}') = \phi(\mathbf{x})^\top\phi(\mathbf{x}')$ yields the kernel form — the bridge to Gaussian processes.
+    </p>
+
+    <!-- Linear vs feature map SVG -->
+    <div class="diagram">
+      <div class="diagram-title">Linear basis vs. feature-map basis on the same scatter plot</div>
+      <svg width="540" height="210" viewBox="0 0 540 210" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left panel: Linear fit -->
+        <text x="130" y="16" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".6">Linear fit  f(x) = θ₀ + θ₁x</text>
+        <!-- Axes -->
+        <line x1="30" y1="175" x2="240" y2="175" stroke="currentColor" stroke-opacity=".25" stroke-width="1"/>
+        <line x1="30" y1="20" x2="30" y2="175" stroke="currentColor" stroke-opacity=".25" stroke-width="1"/>
+        <text x="130" y="193" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">x</text>
+        <text x="18" y="100" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">y</text>
+        <!-- Scatter data (curved relationship) -->
+        <circle cx="50"  cy="165" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="70"  cy="140" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="90"  cy="110" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="110" cy="90"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="130" cy="80"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="150" cy="88"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="170" cy="108" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="190" cy="138" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="210" cy="162" r="4" fill="currentColor" opacity=".3"/>
+        <!-- Linear fit line (poor) -->
+        <line x1="35" y1="165" x2="230" y2="130" stroke="var(--dim)" stroke-width="2" stroke-dasharray="5,3" opacity=".6"/>
+        <text x="130" y="200" text-anchor="middle" fill="var(--dim)" font-family="IBM Plex Mono" font-size="9" opacity=".7">poor fit (linear basis)</text>
+
+        <!-- Divider -->
+        <line x1="268" y1="10" x2="268" y2="185" stroke="currentColor" stroke-opacity=".1" stroke-width="1"/>
+
+        <!-- Right panel: Feature-map fit -->
+        <text x="400" y="16" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".6">Feature map  &phi;(x) = [1, x, x²]</text>
+        <!-- Axes -->
+        <line x1="296" y1="175" x2="510" y2="175" stroke="currentColor" stroke-opacity=".25" stroke-width="1"/>
+        <line x1="296" y1="20" x2="296" y2="175" stroke="currentColor" stroke-opacity=".25" stroke-width="1"/>
+        <text x="400" y="193" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">x</text>
+        <text x="284" y="100" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">y</text>
+        <!-- Same scatter data -->
+        <circle cx="316"  cy="165" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="336"  cy="140" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="356"  cy="110" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="376" cy="90"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="396" cy="80"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="416" cy="88"  r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="436" cy="108" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="456" cy="138" r="4" fill="currentColor" opacity=".3"/>
+        <circle cx="476" cy="162" r="4" fill="currentColor" opacity=".3"/>
+        <!-- Quadratic fit curve (good) -->
+        <path d="M 300,168 C 316,156 336,120 356,98 C 376,78 396,72 416,78 C 436,90 456,120 476,152 C 486,162 498,170 508,172"
+          stroke="var(--accent)" stroke-width="2.5" fill="none"/>
+        <text x="400" y="200" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9">good fit (quadratic features)</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Feature design matrix</div>
+        <div class="formula-expr">$\boldsymbol{\Phi} \in \mathbb{R}^{N \times K},\quad \Phi_{nk} = \phi_k(\mathbf{x}_n)$</div>
+        <div class="formula-note">All §9.4 formulas carry over with $\mathbf{X} \to \boldsymbol{\Phi}$, $D \to K$. The model is nonlinear in $\mathbf{x}$ but still linear in $\boldsymbol{\theta}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Kernel function</div>
+        <div class="formula-expr">$k(\mathbf{x}, \mathbf{x}') = \phi(\mathbf{x})^\top\phi(\mathbf{x}')$</div>
+        <div class="formula-note">Inner product in feature space. Allows working with infinite-dimensional $\phi$ implicitly, as long as $k$ is computable. Any positive definite $k$ is valid (Mercer's theorem).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Kernel (GP) predictive mean</div>
+        <div class="formula-expr">$\mathbb{E}[y_* \mid \cdot] = \mathbf{k}_*^\top(\mathbf{K} + \sigma^2\mathbf{I})^{-1}\mathbf{y}$</div>
+        <div class="formula-note">$\mathbf{k}_* \in \mathbb{R}^N$ with entries $k(\mathbf{x}_*, \mathbf{x}_n)$; $\mathbf{K} \in \mathbb{R}^{N\times N}$ with $K_{nm} = k(\mathbf{x}_n, \mathbf{x}_m)$. Only $N \times N$ inversion needed.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Kernel (GP) predictive variance</div>
+        <div class="formula-expr">$\mathrm{Var}[y_* \mid \cdot] = k(\mathbf{x}_*, \mathbf{x}_*) - \mathbf{k}_*^\top(\mathbf{K} + \sigma^2\mathbf{I})^{-1}\mathbf{k}_* + \sigma^2$</div>
+        <div class="formula-note">Prior variance minus the reduction from data, plus noise. These are the exact Gaussian process regression equations.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Primal-dual duality</div>
+      There are two equivalent representations of the same predictor:<br><br>
+      <strong>Primal (feature) form:</strong> $f(\mathbf{x}) = \phi(\mathbf{x})^\top\boldsymbol{\theta}$ — learn $\boldsymbol{\theta}$ in $K$-dimensional space, solve a $K \times K$ system.<br>
+      <strong>Dual (kernel) form:</strong> $f(\mathbf{x}) = \mathbf{k}_*^\top(\mathbf{K} + \sigma^2\mathbf{I})^{-1}\mathbf{y}$ — work directly with data, solve an $N \times N$ system.<br><br>
+      Use the primal when $K \ll N$; use the dual when $K \gg N$ or $K = \infty$ (RBF kernel).
+    </div>
+
+    <details class="expand">
+      <summary>Gaussian process connection — the infinite-dimensional limit</summary>
+      <div class="expand-body">
+        <p>A Gaussian process (GP) defines a distribution over <em>functions</em> directly via a kernel, without specifying $\phi$ explicitly. Mercer's theorem guarantees that any valid (positive definite) kernel $k$ corresponds to some (possibly infinite-dimensional) feature map $\phi$.</p>
+        <p>Bayesian linear regression with feature map $\phi$ and isotropic prior $\mathcal{N}(\mathbf{0}, \alpha^{-1}\mathbf{I})$ is mathematically equivalent to GP regression with kernel $k(\mathbf{x}, \mathbf{x}') = \phi(\mathbf{x})^\top\phi(\mathbf{x}') / \alpha$.</p>
+        <p>GP regression is the limiting case as $K \to \infty$. The RBF (squared exponential) kernel $k(\mathbf{x}, \mathbf{x}') = \exp(-\|\mathbf{x} - \mathbf{x}'\|^2 / 2\ell^2)$ corresponds to an infinite-dimensional polynomial feature map. Only the kernel form is tractable for such kernels.</p>
+        <p><strong>C12 connection:</strong> Chapter 12 develops GP regression as a first-class probabilistic model, defining the prior directly on functions via $k$ without reference to any finite $\phi$.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §9.6 Evidence Maximization ─── -->
+  <section id="s9-6">
+    <div class="section-header">
+      <span class="sec-num">§9.6</span>
+      <h2 class="section-title">Evidence Maximization (Type II MLE)</h2>
+    </div>
+    <p class="section-lead">
+      Bayesian linear regression still requires hyperparameters $\alpha$ (prior precision) and $\sigma^2$ (noise variance).
+      Rather than hand-tuning them, they can be learned by maximizing the <strong>marginal likelihood</strong>
+      (evidence) — integrating out $\boldsymbol{\theta}$ so the optimization is over hyperparameters only.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Marginal likelihood (evidence)</div>
+        <div class="formula-expr">$p(\mathbf{y} \mid \mathbf{X}, \alpha, \sigma^2) = \int p(\mathbf{y} \mid \mathbf{X}, \boldsymbol{\theta}, \sigma^2)\, p(\boldsymbol{\theta} \mid \alpha)\, d\boldsymbol{\theta}$</div>
+        <div class="formula-note">Integrating out &theta; automatically balances fit vs. complexity (Occam's razor). Tractable because both factors are Gaussian.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Effective parameters</div>
+        <div class="formula-expr">$\gamma = \sum_{i=1}^D \frac{\lambda_i}{\alpha\sigma^2 + \lambda_i}$</div>
+        <div class="formula-note">$\lambda_i$ are eigenvalues of $\mathbf{X}^\top\mathbf{X}$. $\gamma \in [0, D]$: number of parameters "determined by data" rather than pinned by the prior.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Optimal prior precision</div>
+        <div class="formula-expr">$\alpha^* = \frac{\gamma}{\mathbf{m}_N^\top\mathbf{m}_N}$</div>
+        <div class="formula-note">Re-estimated from the posterior mean $\mathbf{m}_N$ (which itself depends on $\alpha$). Requires iterating to convergence.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Optimal noise variance</div>
+        <div class="formula-expr">${\sigma^2}^* = \frac{\|\mathbf{y} - \mathbf{X}\mathbf{m}_N\|^2}{N - \gamma}$</div>
+        <div class="formula-note">Residual variance normalized by <em>effective</em> degrees of freedom $N - \gamma$ (not $N - D$). Accounts for parameters effectively learned from data.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Why the marginal likelihood avoids overfitting</div>
+      Integrating out $\boldsymbol{\theta}$ imposes an automatic complexity penalty. A hyperparameter configuration that allows too much flexibility (small $\alpha$, small $\sigma^2$) lets $\boldsymbol{\theta}$ fit well — but the evidence averages over the <em>entire prior distribution</em> of $\boldsymbol{\theta}$, and most of them overfit. The evidence is low because only a tiny fraction of $\boldsymbol{\theta}$ values give a good fit. Jointly maximizing $p(\mathbf{y} | \mathbf{X}, \boldsymbol{\theta})$ over both $\boldsymbol{\theta}$ and $(\alpha, \sigma^2)$ would degenerate: setting $\alpha = 0$ and $\sigma^2 \to 0$ gives infinite likelihood for $N \geq D$.
+    </div>
+
+    <details class="expand">
+      <summary>Iterative update algorithm</summary>
+      <div class="expand-body">
+        <p>Because $\mathbf{m}_N$ depends on $\alpha$ and $\sigma^2$, the optimality conditions are implicit. The algorithm iterates:</p>
+        <ul>
+          <li><strong>Initialize</strong> $\alpha$, $\sigma^2$ (e.g., $\alpha = 1$, $\sigma^2 = 1$).</li>
+          <li><strong>E-step:</strong> compute $\mathbf{m}_N = \mathbf{S}_N(\sigma^{-2}\mathbf{X}^\top\mathbf{y})$ and $\mathbf{S}_N^{-1} = \alpha\mathbf{I} + \sigma^{-2}\mathbf{X}^\top\mathbf{X}$.</li>
+          <li><strong>Compute $\gamma$:</strong> from eigenvalues $\lambda_i$ of $\mathbf{X}^\top\mathbf{X}$, compute $\gamma = \sum_i \lambda_i / (\alpha\sigma^2 + \lambda_i)$.</li>
+          <li><strong>M-step:</strong> update $\alpha^* = \gamma / (\mathbf{m}_N^\top\mathbf{m}_N)$ and ${\sigma^2}^* = \|\mathbf{y} - \mathbf{X}\mathbf{m}_N\|^2 / (N - \gamma)$.</li>
+          <li><strong>Repeat</strong> until convergence.</li>
+        </ul>
+        <p>This is a special case of the EM algorithm: $\boldsymbol{\theta}$ is the latent variable, $(\alpha, \sigma^2)$ are the parameters. The E-step computes the posterior over $\boldsymbol{\theta}$; the M-step maximizes the expected complete-data log-likelihood, yielding the update formulas above.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Evidence lower bound (ELBO) and variational inference preview</summary>
+      <div class="expand-body">
+        <p>By Jensen's inequality, for any distribution $q(\boldsymbol{\theta})$:</p>
+        $$\log p(\mathbf{y} \mid \mathbf{X}) \geq \mathbb{E}_q[\log p(\mathbf{y} \mid \mathbf{X}, \boldsymbol{\theta})] - \mathrm{KL}\bigl(q(\boldsymbol{\theta}) \,\|\, p(\boldsymbol{\theta})\bigr)$$
+        <p>The right side is the <strong>ELBO</strong> (evidence lower bound). When $q$ is chosen to be the exact posterior $p(\boldsymbol{\theta} | \mathbf{X}, \mathbf{y})$ — as in §9.4, where the posterior is tractable — the ELBO equals the log evidence exactly (KL = 0 means $q$ equals $p$).</p>
+        <p>For models where the exact posterior is intractable, variational inference optimizes the ELBO over a family of approximate distributions $q$. This foundational idea generalizes C9 to arbitrary latent variable models, including GMMs (C11), VAEs, and modern deep generative models.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">&#8862;</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Noise model</td>
+          <td>$y_n = \mathbf{x}_n^\top\boldsymbol{\theta} + \varepsilon_n,\; \varepsilon_n \sim \mathcal{N}(0, \sigma^2)$</td>
+          <td>i.i.d. Gaussian, homoscedastic</td>
+        </tr>
+        <tr>
+          <td>Normal equations</td>
+          <td>$\mathbf{X}^\top\mathbf{X}\,\boldsymbol{\theta} = \mathbf{X}^\top\mathbf{y}$</td>
+          <td>Necessary &amp; sufficient for MLE when X full column rank</td>
+        </tr>
+        <tr>
+          <td>MLE solution</td>
+          <td>$\hat{\boldsymbol{\theta}}_\mathrm{ML} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y} = \mathbf{X}^+\mathbf{y}$</td>
+          <td>Pseudoinverse; least-squares solution; requires rank D</td>
+        </tr>
+        <tr>
+          <td>Hat matrix</td>
+          <td>$P_\mathbf{X} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top$</td>
+          <td>Projects $\mathbf{y}$ onto col($\mathbf{X}$); symmetric &amp; idempotent</td>
+        </tr>
+        <tr>
+          <td>MAP solution</td>
+          <td>$\hat{\boldsymbol{\theta}}_\mathrm{MAP} = (\mathbf{X}^\top\mathbf{X} + \tfrac{\sigma^2}{b^2}\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}$</td>
+          <td>Ridge regression; always exists for $\lambda = \sigma^2/b^2 > 0$</td>
+        </tr>
+        <tr>
+          <td>Posterior precision</td>
+          <td>$\mathbf{S}_N^{-1} = \mathbf{S}_0^{-1} + \sigma^{-2}\mathbf{X}^\top\mathbf{X}$</td>
+          <td>Prior precision + data precision; tightens with more data</td>
+        </tr>
+        <tr>
+          <td>Posterior mean</td>
+          <td>$\mathbf{m}_N = \mathbf{S}_N\!\left(\mathbf{S}_0^{-1}\mathbf{m}_0 + \sigma^{-2}\mathbf{X}^\top\mathbf{y}\right)$</td>
+          <td>Precision-weighted average; equals MAP when prior is $\mathcal{N}(\mathbf{0}, b^2\mathbf{I})$</td>
+        </tr>
+        <tr>
+          <td>Predictive mean</td>
+          <td>$\mathbb{E}[y_* \mid \mathbf{x}_*] = \mathbf{m}_N^\top\mathbf{x}_*$</td>
+          <td>Posterior mean prediction (same as MAP point prediction)</td>
+        </tr>
+        <tr>
+          <td>Predictive variance</td>
+          <td>$\mathrm{Var}[y_* \mid \mathbf{x}_*] = \mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_* + \sigma^2$</td>
+          <td>Epistemic ($\mathbf{x}_*^\top\mathbf{S}_N\mathbf{x}_*$) + aleatoric ($\sigma^2$)</td>
+        </tr>
+        <tr>
+          <td>Kernel function</td>
+          <td>$k(\mathbf{x}, \mathbf{x}') = \phi(\mathbf{x})^\top\phi(\mathbf{x}')$</td>
+          <td>Inner product in feature space; any PD function is valid</td>
+        </tr>
+        <tr>
+          <td>GP predictive mean</td>
+          <td>$\mathbf{k}_*^\top(\mathbf{K} + \sigma^2\mathbf{I})^{-1}\mathbf{y}$</td>
+          <td>Kernel form; $N \times N$ inversion (vs. $K \times K$ in primal)</td>
+        </tr>
+        <tr>
+          <td>GP predictive var</td>
+          <td>$k(\mathbf{x}_*, \mathbf{x}_*) - \mathbf{k}_*^\top(\mathbf{K} + \sigma^2\mathbf{I})^{-1}\mathbf{k}_* + \sigma^2$</td>
+          <td>Prior variance minus data reduction plus noise</td>
+        </tr>
+        <tr>
+          <td>Effective params</td>
+          <td>$\gamma = \sum_i \lambda_i / (\alpha\sigma^2 + \lambda_i)$</td>
+          <td>$\gamma \in [0, D]$; data-determined parameters</td>
+        </tr>
+        <tr>
+          <td>Optimal $\alpha^*$</td>
+          <td>$\alpha^* = \gamma / (\mathbf{m}_N^\top\mathbf{m}_N)$</td>
+          <td>Evidence maximization; iterate with ${\sigma^2}^*$</td>
+        </tr>
+        <tr>
+          <td>Optimal ${\sigma^2}^*$</td>
+          <td>${\sigma^2}^* = \|\mathbf{y} - \mathbf{X}\mathbf{m}_N\|^2 / (N - \gamma)$</td>
+          <td>Normalized by effective degrees of freedom</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to other chapters</div>
+      <div class="chip-row">
+        <span class="chip">C4: Pseudoinverse X&sup;+; SVD for stable solution; Cholesky for S_N</span>
+        <span class="chip">C6: Gaussian conditioning formulas; product of Gaussians; KL divergence</span>
+        <span class="chip">C7: Matrix calculus &#8706;L/&#8706;&theta;; gradient of quadratic forms</span>
+        <span class="chip">C8: MLE/MAP framework; bias-variance tradeoff; Bayesian model comparison</span>
+        <span class="chip">C10: PCA eigendecomposition mirrors X&sup;TX structure in C9</span>
+        <span class="chip">C11: EM algorithm for GMMs uses same pattern as §9.6 evidence max</span>
+        <span class="chip">C12: Gaussian processes = Bayesian LR in kernel dual, K &rarr; &#8734;</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+// Theme
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+
+// KaTeX
+renderMathInElement(document.body, {
+  delimiters: [
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError: false,
+  trust: true,
+});
+
+// Active sidebar nav on scroll
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){
+    if(s.offsetTop - 80 <= scrollY) active = s.id;
+  });
+  navItems.forEach(function(n){
+    var href = n.getAttribute('href').slice(1);
+    n.classList.toggle('active', href === active);
+  });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

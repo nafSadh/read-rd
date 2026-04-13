@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Algebra — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3; --bg2:#ffffff; --bg3:#f2efe8; --bg4:#ede9e0;
+  --border:#d6d0c4; --border-hi:#bfb8a8;
+  --text:#363b48; --dim:#65707a; --bright:#141a1e;
+  --accent:#7c3aed; --accent2:#9b5cf6; --accent-soft:#7c3aed10; --accent-mid:#7c3aed20;
+  --green:#2e6e3e; --green-soft:#2e6e3e12; --amber:#8a6e1e; --amber-soft:#8a6e1e12;
+  --red:#8b2020; --red-soft:#8b202012; --cyan:#2e6ab4; --cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06; --grad2:#2e6ab404;
+  --sidebar-w: 220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18; --bg2:#0f1322; --bg3:#151b30; --bg4:#1a2240;
+  --border:#1c2440; --border-hi:#283558;
+  --text:#8490aa; --dim:#546080; --bright:#dce0ec;
+  --accent:#9b7aed; --accent2:#b598ff; --accent-soft:#9b7aed0c; --accent-mid:#9b7aed18;
+  --green:#4ee8a8; --green-soft:#4ee8a810; --amber:#e8c870; --amber-soft:#e8c87010;
+  --red:#e87090; --red-soft:#e8709010; --cyan:#4ee8d0; --cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06; --grad2:#4ee8d004;
+  --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;min-height:100vh;
+  transition:background .4s,color .3s;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),
+    radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);
+  transition:background 1s;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:10;
+  transition:background .4s;
+}
+.sidebar-head {
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); text-decoration:none;
+  display:flex; align-items:center; gap:6px; margin-bottom:12px;
+  transition:color .2s;
+}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:2px;
+}
+.sidebar-title {
+  font-family:var(--serif); font-size:17px; color:var(--bright);
+  line-height:1.3;
+}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav {
+  flex:1; overflow-y:auto; padding:12px 0;
+}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item {
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 16px; cursor:pointer; transition:all .15s;
+  font-size:13px; color:var(--dim); text-decoration:none; border:none; background:none;
+  width:100%; text-align:left;
+}
+.nav-item:hover{color:var(--text); background:var(--accent-soft)}
+.nav-item.active{color:var(--accent); background:var(--accent-soft)}
+.nav-item .num{
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  color:var(--accent); opacity:.7; flex-shrink:0;
+}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{
+  padding:12px 16px; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.theme-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--dim); font-size:14px; width:28px; height:28px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Main ─── */
+main {
+  flex:1; overflow-y:auto;
+  padding:40px max(48px, calc((100% - 820px) / 2)) 80px;
+  position:relative; z-index:1;
+}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.page-header {
+  margin-bottom:40px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.page-badge {
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title {
+  font-family:var(--sans); font-size:34px; font-weight:500;
+  color:var(--bright); letter-spacing:.3px; line-height:1.2; margin-bottom:8px;
+}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta {
+  margin-top:16px; display:flex; gap:20px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.5px;
+}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+
+/* ─── Sections ─── */
+section {
+  margin-bottom:48px; scroll-margin-top:24px;
+}
+.section-header {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px; cursor:pointer;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.section-header:hover .section-title{color:var(--accent)}
+.sec-num {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  color:var(--accent); letter-spacing:1px; flex-shrink:0;
+}
+.section-title {
+  font-family:var(--serif); font-size:24px; color:var(--bright);
+  font-weight:400; transition:color .2s;
+}
+.section-lead {
+  font-size:15px; line-height:1.7; color:var(--text);
+  margin-bottom:20px;
+}
+.section-lead strong{color:var(--bright);font-weight:600}
+
+/* ─── Formula cards ─── */
+.formula-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.formula-card {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:16px 18px; transition:border-color .2s;
+}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+}
+.formula-expr {
+  font-family:var(--serif); font-size:18px; color:var(--bright);
+  line-height:1.4; margin-bottom:6px;
+}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+
+/* ─── Callout boxes ─── */
+.callout {
+  padding:16px 20px; border-left:3px solid var(--accent);
+  background:var(--accent-soft); margin:20px 0; font-size:14px; line-height:1.7;
+}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:.8;
+}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.red{color:var(--red)}
+.callout-title.accent{color:var(--accent)}
+
+/* ─── Expandable details ─── */
+.expand {
+  border:1px solid var(--border); margin-top:16px;
+  transition:border-color .2s;
+}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary {
+  padding:12px 16px; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); list-style:none;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:color .2s;
+  user-select:none;
+}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body {
+  padding:20px 20px 16px;
+  font-size:14px; line-height:1.75; color:var(--text);
+}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+
+/* ─── Tables ─── */
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.data-table code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);padding:1px 5px}
+
+/* ─── SVG diagrams ─── */
+.diagram {
+  margin:24px 0; padding:24px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.diagram-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); align-self:flex-start;
+}
+.diagram svg{max-width:100%;height:auto}
+
+/* ─── Connection chips ─── */
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
+  padding:3px 10px;border:1px solid var(--border);color:var(--dim);
+  background:var(--bg3);transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── KaTeX tweaks ─── */
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* ─── Responsive ─── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  main{padding:24px 20px 60px}
+  .formula-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title"><em>Linear</em> Algebra</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s2-1" class="nav-item"><span class="num">2.1</span>What is a Vector?</a>
+    <a href="#s2-2" class="nav-item"><span class="num">2.2</span>Linear Systems</a>
+    <a href="#s2-3" class="nav-item"><span class="num">2.3</span>Matrices</a>
+    <a href="#s2-4" class="nav-item"><span class="num">2.4</span>Gaussian Elimination</a>
+    <a href="#s2-5" class="nav-item"><span class="num">2.5</span>Vector Spaces</a>
+    <a href="#s2-6" class="nav-item"><span class="num">2.6</span>Linear Independence</a>
+    <a href="#s2-7" class="nav-item"><span class="num">2.7</span>Basis &amp; Rank</a>
+    <a href="#s2-8" class="nav-item"><span class="num">2.8</span>Linear Mappings</a>
+    <a href="#s2-9" class="nav-item"><span class="num">2.9</span>Change of Basis</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 17–69</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART I</div>
+    <h1 class="page-title"><em>Linear</em> Algebra</h1>
+    <p class="page-sub">The algebraic backbone of ML. Everything from PCA to neural network training traces back to vectors, matrices, and the maps between them.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 2 (pp 17–69)</span>
+      <a href="notes/linear-algebra.md">Raw notes ↗</a>
+      <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" target="_blank">3B1B ↗</a>
+      <a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/" target="_blank">MIT 18.06 ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §2.1 What is a Vector? ─── -->
+  <section id="s2-1">
+    <div class="section-header">
+      <span class="sec-num">§2.1</span>
+      <h2 class="section-title">What is a Vector?</h2>
+    </div>
+    <p class="section-lead">
+      MML opens with a question most courses skip: what counts as a vector?
+      The answer is anything you can <strong>add together and scale</strong>.
+      This abstract view makes the same math work across geometry, polynomials, audio signals, and numerical arrays.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Definition (informal)</div>
+        <div class="formula-expr">A vector is an element of a vector space.</div>
+        <div class="formula-note">Four concrete examples: geometric arrows, polynomials, audio signals, tuples in $\mathbb{R}^n$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">The two operations</div>
+        <div class="formula-expr">$\mathbf{x} + \mathbf{y}$ &nbsp; and &nbsp; $\lambda \mathbf{x}$</div>
+        <div class="formula-note">Addition and scalar multiplication — if these are defined and well-behaved, you have a vector space.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Key insight</div>
+      The power of linear algebra is that the <em>same theorems</em> apply to all these different objects.
+      Proving something for abstract vectors proves it for polynomials, signals, matrices — everything at once.
+    </div>
+  </section>
+
+  <!-- ─── §2.2 Linear Systems ─── -->
+  <section id="s2-2">
+    <div class="section-header">
+      <span class="sec-num">§2.2</span>
+      <h2 class="section-title">Linear Systems (Ax = b)</h2>
+    </div>
+    <p class="section-lead">
+      The motivating problem of the entire chapter. Given a matrix $A$ and vector $b$,
+      find all $\mathbf{x}$ such that $A\mathbf{x} = \mathbf{b}$.
+      There are exactly <strong>three possible outcomes</strong> — no fourth option exists.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">Three outcomes for Ax = b</div>
+      <svg width="560" height="80" viewBox="0 0 560 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="20" width="160" height="44" rx="4" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".25"/>
+        <text x="90" y="38" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="11" opacity=".5">NO SOLUTION</text>
+        <text x="90" y="55" text-anchor="middle" fill="currentColor" font-family="EB Garamond" font-size="13">lines don't intersect</text>
+        <rect x="200" y="20" width="160" height="44" rx="4" fill="var(--accent)" fill-opacity=".08" stroke="var(--accent)" stroke-opacity=".4"/>
+        <text x="280" y="38" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11">UNIQUE SOLUTION</text>
+        <text x="280" y="55" text-anchor="middle" fill="currentColor" font-family="EB Garamond" font-size="13">lines cross at a point</text>
+        <rect x="390" y="20" width="160" height="44" rx="4" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".25"/>
+        <text x="470" y="38" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="11" opacity=".5">∞ SOLUTIONS</text>
+        <text x="470" y="55" text-anchor="middle" fill="currentColor" font-family="EB Garamond" font-size="13">lines overlap</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Compact notation</div>
+        <div class="formula-expr">$A\mathbf{x} = \mathbf{b}$</div>
+        <div class="formula-note">$A \in \mathbb{R}^{m \times n}$, $\mathbf{x} \in \mathbb{R}^n$, $\mathbf{b} \in \mathbb{R}^m$. Each row is one equation, each column of $A$ is a variable's coefficients.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Column view</div>
+        <div class="formula-expr">$\mathbf{b} = x_1 \mathbf{a}_1 + \cdots + x_n \mathbf{a}_n$</div>
+        <div class="formula-note">Solving $A\mathbf{x} = \mathbf{b}$ asks: "is $\mathbf{b}$ a linear combination of $A$'s columns?" This connects directly to the column space.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §2.3 Matrices ─── -->
+  <section id="s2-3">
+    <div class="section-header">
+      <span class="sec-num">§2.3</span>
+      <h2 class="section-title">Matrices &amp; Operations</h2>
+    </div>
+    <p class="section-lead">
+      Matrices are three things simultaneously: compact notation for systems of equations,
+      collections of column vectors, and <strong>representations of linear transformations</strong>.
+      The third view is the most powerful.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Matrix multiplication</div>
+        <div class="formula-expr">$(AB)_{ij} = \sum_k A_{ik}B_{kj}$</div>
+        <div class="formula-note">Row $i$ of $A$ dotted with column $j$ of $B$. Dimensions: $(n \times k)(k \times m) = (n \times m)$. Neighboring dimensions must match.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Inverse</div>
+        <div class="formula-expr">$AA^{-1} = I = A^{-1}A$</div>
+        <div class="formula-note">Only exists for square matrices with $\det(A) \neq 0$. Key trap: $(AB)^{-1} = B^{-1}A^{-1}$ (reversed order!).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Transpose</div>
+        <div class="formula-expr">$(A^\top)_{ij} = A_{ji}$</div>
+        <div class="formula-note">Flip rows and columns. $(AB)^\top = B^\top A^\top$ (also reversed!). Symmetric matrix: $A = A^\top$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Non-commutativity</div>
+        <div class="formula-expr">$AB \neq BA$ in general</div>
+        <div class="formula-note">Rotating then shearing $\neq$ shearing then rotating. But $(AB)C = A(BC)$ — associativity always holds.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Common traps</div>
+      $(A+B)^{-1} \neq A^{-1} + B^{-1}$ &nbsp;·&nbsp;
+      $(AB)^{-1} = B^{-1}A^{-1}$ &nbsp;·&nbsp;
+      $(AB)^\top = B^\top A^\top$ &nbsp;·&nbsp;
+      Matrix multiply is NOT elementwise.
+    </div>
+
+    <details class="expand">
+      <summary>2×2 inverse formula &amp; Hadamard product</summary>
+      <div class="expand-body">
+        <p><strong>2×2 shortcut:</strong> For $A = \begin{pmatrix}a & b \\ c & d\end{pmatrix}$,
+        $$A^{-1} = \frac{1}{ad-bc}\begin{pmatrix}d & -b \\ -c & a\end{pmatrix}$$
+        Swap the diagonal, negate the off-diagonal, divide by the determinant.</p>
+        <p><strong>Hadamard (element-wise) product:</strong> $(A \odot B)_{ij} = A_{ij}B_{ij}$.
+        Common in code (NumPy's <code>*</code>), but not standard mathematical matrix multiplication.
+        These two are completely different operations.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §2.4 Gaussian Elimination ─── -->
+  <section id="s2-4">
+    <div class="section-header">
+      <span class="sec-num">§2.4</span>
+      <h2 class="section-title">Gaussian Elimination</h2>
+    </div>
+    <p class="section-lead">
+      The workhorse algorithm. Three <em>elementary row operations</em> preserve the solution set
+      while transforming the matrix into a triangular "staircase" form (REF), from which solutions can be read off.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">3 Elementary Operations</div>
+        <div class="formula-expr">Swap · Scale · Add rows</div>
+        <div class="formula-note">These preserve the solution set. The goal is Row Echelon Form (REF): leading 1s in a staircase pattern, zeros below pivots.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Solution structure</div>
+        <div class="formula-expr">$\mathbf{x} = \mathbf{x}_{\text{particular}} + \mathbf{x}_{\text{null}}$</div>
+        <div class="formula-note">General solution = one particular solution + the entire null space. Pivot columns = basic variables; non-pivot = free variables.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Computing A⁻¹</div>
+        <div class="formula-expr">$[A | I] \xrightarrow{\text{row ops}} [I | A^{-1}]$</div>
+        <div class="formula-note">Augment with the identity, row-reduce until $A$ becomes $I$. What's on the right is $A^{-1}$.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>The minus-1 trick for finding the null space</summary>
+      <div class="expand-body">
+        <p>After reducing to RREF, extend the matrix to $n \times n$ by inserting rows with $-1$ on the diagonal wherever a pivot is missing. The columns corresponding to those $-1$ entries give you the null space basis directly — no extra solving required.</p>
+        <p>Example: if a $3 \times 4$ RREF has pivots in columns 1 and 3, extend to $4 \times 4$ by adding a row with $-1$ in column 2 and another with $-1$ in column 4. Columns 2 and 4 of the extended matrix span the null space.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §2.5 Vector Spaces ─── -->
+  <section id="s2-5">
+    <div class="section-header">
+      <span class="sec-num">§2.5</span>
+      <h2 class="section-title">Vector Spaces &amp; Subspaces</h2>
+    </div>
+    <p class="section-lead">
+      The formal framework. A <strong>vector space</strong> is a set $V$ with addition and scalar multiplication
+      satisfying eight axioms. A <strong>subspace</strong> is a subset that is itself a vector space —
+      and there's a simple three-part test.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Subspace test</div>
+        <div class="formula-expr">$U \subseteq V$ is a subspace if...</div>
+        <div class="formula-note">
+          (1) $\mathbf{0} \in U$ &nbsp;·&nbsp;
+          (2) $\mathbf{x}, \mathbf{y} \in U \Rightarrow \mathbf{x}+\mathbf{y} \in U$ &nbsp;·&nbsp;
+          (3) $\mathbf{x} \in U, \lambda \in \mathbb{R} \Rightarrow \lambda\mathbf{x} \in U$
+        </div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Key examples</div>
+        <div class="formula-expr">$\ker(A) = \{\mathbf{x} : A\mathbf{x} = \mathbf{0}\}$</div>
+        <div class="formula-note">The null space is always a subspace. The solution set of $A\mathbf{x} = \mathbf{b}$ (with $\mathbf{b} \neq \mathbf{0}$) is NOT a subspace (no zero vector).</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Group → Vector Space hierarchy</div>
+      Group: $(\mathcal{G}, \otimes)$ with closure, associativity, identity, inverse.
+      Abelian = commutative. Vector space = two groups sharing a set, linked by distributivity.
+      $GL(n, \mathbb{R})$ = all invertible $n \times n$ matrices under multiplication — a group but NOT a vector space.
+    </div>
+  </section>
+
+  <!-- ─── §2.6 Linear Independence ─── -->
+  <section id="s2-6">
+    <div class="section-header">
+      <span class="sec-num">§2.6</span>
+      <h2 class="section-title">Linear Independence</h2>
+    </div>
+    <p class="section-lead">
+      A set of vectors is <strong>linearly independent</strong> if none can be written as a combination of the others —
+      no vector is "redundant information." This is the key criterion for a basis.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Definition</div>
+        <div class="formula-expr">$\lambda_1\mathbf{v}_1 + \cdots + \lambda_k\mathbf{v}_k = \mathbf{0}$</div>
+        <div class="formula-note">Linearly independent if the ONLY solution is $\lambda_1 = \cdots = \lambda_k = 0$. If a non-trivial solution exists, the vectors are dependent.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">How to test</div>
+        <div class="formula-expr">Write as columns, row-reduce</div>
+        <div class="formula-note">Non-pivot columns = dependent vectors. In $\mathbb{R}^n$, at most $n$ vectors can be linearly independent.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>Geographic intuition (MML's example)</summary>
+      <div class="expand-body">
+        <p>MML uses travel directions: the vector from Nairobi to Kampala and the vector from Kampala to Kigali are linearly independent — knowing one tells you nothing about the other. But the direct Nairobi→Kigali vector is dependent: it's the sum of the first two, hence "redundant."</p>
+        <p>In ML: if two features in your dataset are perfectly correlated, one is redundant — the data lives on a lower-dimensional subspace. PCA (Ch 10) formalizes this.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §2.7 Basis & Rank ─── -->
+  <section id="s2-7">
+    <div class="section-header">
+      <span class="sec-num">§2.7</span>
+      <h2 class="section-title">Basis &amp; Rank</h2>
+    </div>
+    <p class="section-lead">
+      A <strong>basis</strong> is the minimal set of vectors that spans a space — equivalently, the maximal linearly independent set.
+      Every vector in the space has a <em>unique</em> representation in terms of a given basis.
+      The <strong>rank</strong> of a matrix is the dimension of its column space.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Basis properties</div>
+        <div class="formula-expr">Minimal spanning = maximal independent</div>
+        <div class="formula-note">Dimension = number of basis vectors. Not the size of the vectors! $\text{span}\{[0,1]^\top\}$ is 1D even though vectors live in $\mathbb{R}^2$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Rank</div>
+        <div class="formula-expr">$\text{rk}(A) = \text{rk}(A^\top)$</div>
+        <div class="formula-note">Row rank = column rank (always). Full rank: $\text{rk}(A) = \min(m,n)$ — all columns (or rows) are linearly independent.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Standard basis of $\mathbb{R}^3$</div>
+        <div class="formula-expr">$\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3$</div>
+        <div class="formula-note">$\mathbf{e}_1=[1,0,0]^\top$, etc. Any other basis works — the standard basis is just the most convenient default.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §2.8 Linear Mappings ─── -->
+  <section id="s2-8">
+    <div class="section-header">
+      <span class="sec-num">§2.8</span>
+      <h2 class="section-title">Linear Mappings</h2>
+    </div>
+    <p class="section-lead">
+      A linear mapping $\Phi: V \to W$ preserves addition and scaling.
+      Every matrix is a linear mapping; every linear mapping between finite-dimensional spaces is a matrix.
+      The <strong>rank-nullity theorem</strong> is one of the most beautiful results in linear algebra.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Linearity condition</div>
+        <div class="formula-expr">$\Phi(\lambda\mathbf{x} + \psi\mathbf{y}) = \lambda\Phi(\mathbf{x}) + \psi\Phi(\mathbf{y})$</div>
+        <div class="formula-note">3B1B's visual test: if gridlines stay parallel and evenly spaced after transformation, it's linear.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Image (range)</div>
+        <div class="formula-expr">$\text{im}(\Phi) = \{\Phi(\mathbf{x}) : \mathbf{x} \in V\}$</div>
+        <div class="formula-note">All outputs the mapping can produce. Equals the column space of the transformation matrix.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Kernel (null space)</div>
+        <div class="formula-expr">$\ker(\Phi) = \{\mathbf{x} \in V : \Phi(\mathbf{x}) = \mathbf{0}\}$</div>
+        <div class="formula-note">All inputs that get "squished to zero." If $\ker(\Phi) \neq \{\mathbf{0}\}$, the mapping is not injective — information is lost.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Rank-Nullity Theorem</div>
+        <div class="formula-expr">$\text{rk}(A) + \dim(\ker(A)) = n$</div>
+        <div class="formula-note">Rank tells you the dimension of the output; nullity tells you what's lost. They always sum to the input dimension $n$.</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">Linear mapping: image and kernel</div>
+      <svg width="520" height="140" viewBox="0 0 520 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Input space V -->
+        <ellipse cx="130" cy="70" rx="110" ry="55" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".2" stroke-width="1.5"/>
+        <text x="130" y="22" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="currentColor" opacity=".6">V (input)</text>
+        <!-- Kernel region -->
+        <ellipse cx="90" cy="80" rx="55" ry="28" fill="var(--accent)" fill-opacity=".07" stroke="var(--accent)" stroke-opacity=".3" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="90" y="77" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" opacity=".8">ker(Φ)</text>
+        <text x="90" y="91" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".5">null space</text>
+        <!-- Row space region -->
+        <text x="178" y="70" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="currentColor" opacity=".7">row</text>
+        <text x="178" y="86" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="currentColor" opacity=".7">space</text>
+        <!-- Arrow -->
+        <path d="M248 70 L272 70" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="260" y="60" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--accent)">Φ</text>
+        <!-- Output space W -->
+        <ellipse cx="390" cy="70" rx="110" ry="55" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".2" stroke-width="1.5"/>
+        <text x="390" y="22" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="currentColor" opacity=".6">W (output)</text>
+        <!-- Zero vector -->
+        <circle cx="340" cy="80" r="6" fill="var(--accent)" fill-opacity=".3" stroke="var(--accent)" stroke-opacity=".6"/>
+        <text x="340" y="100" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" opacity=".8">0</text>
+        <!-- Image region -->
+        <ellipse cx="420" cy="65" rx="60" ry="30" fill="var(--green)" fill-opacity=".07" stroke="var(--green)" stroke-opacity=".3" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="420" y="62" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--green)" opacity=".8">im(Φ)</text>
+        <text x="420" y="76" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".5">column space</text>
+        <!-- Arrow from ker to 0 -->
+        <path d="M118 72 Q230 100 332 78" stroke="var(--accent)" stroke-opacity=".3" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+        <!-- Arrowhead marker -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="currentColor" opacity=".5"/>
+          </marker>
+        </defs>
+      </svg>
+      <p style="font-size:13px;color:var(--dim);font-family:var(--serif);font-style:italic;text-align:center">
+        ker(Φ) maps entirely to <strong>0</strong>. The rest of $V$ maps onto im(Φ).
+        Rank-nullity: dim(ker) + dim(im) = dim(V).
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">Rank-nullity intuition</div>
+      If $A$ is $3 \times 3$ with rank 2, it squishes 3D space onto a 2D plane.
+      The lost dimension is the 1D null space — the direction that gets flattened.
+      rank + nullity = 3 always.
+    </div>
+
+    <details class="expand">
+      <summary>Taxonomy of linear mappings</summary>
+      <div class="expand-body">
+        <ul>
+          <li><strong>Injective (one-to-one):</strong> different inputs → different outputs. Equivalent to $\ker(\Phi) = \{\mathbf{0}\}$.</li>
+          <li><strong>Surjective (onto):</strong> every output is reachable. Equivalent to $\text{im}(\Phi) = W$.</li>
+          <li><strong>Bijective:</strong> both injective and surjective → invertible.</li>
+          <li><strong>Isomorphism:</strong> bijective linear map. $V \cong W$ iff they have the same dimension.</li>
+          <li><strong>Endomorphism:</strong> $\Phi: V \to V$ (same space in and out).</li>
+          <li><strong>Automorphism:</strong> bijective endomorphism. Invertible $n \times n$ matrices are automorphisms of $\mathbb{R}^n$.</li>
+        </ul>
+        <p style="margin-top:12px"><strong>Transformation matrix:</strong> columns of $A_\Phi$ are the images of the basis vectors: $A_\Phi = [\Phi(\mathbf{b}_1) \mid \cdots \mid \Phi(\mathbf{b}_n)]$.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §2.9 Change of Basis & Affine ─── -->
+  <section id="s2-9">
+    <div class="section-header">
+      <span class="sec-num">§2.9</span>
+      <h2 class="section-title">Change of Basis &amp; Affine Spaces</h2>
+    </div>
+    <p class="section-lead">
+      The same linear mapping looks different in different bases. Finding the basis that makes
+      a matrix simple (diagonal) is what eigendecomposition achieves in Ch 4.
+      Affine spaces are vector subspaces shifted away from the origin — they appear everywhere in regression and SVMs.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Basis change formula</div>
+        <div class="formula-expr">$\tilde{A}_\Phi = T^{-1} A_\Phi S$</div>
+        <div class="formula-note">$S$ = basis change for $V$, $T$ = basis change for $W$. The mapping itself doesn't change — only its representation does.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Affine subspace</div>
+        <div class="formula-expr">$L = \mathbf{x}_0 + U$</div>
+        <div class="formula-note">A subspace $U$ shifted by offset $\mathbf{x}_0$. Solution set of $A\mathbf{x} = \mathbf{b}$ (with $\mathbf{b} \neq 0$) is an affine subspace. Hyperplanes are affine subspaces of codimension 1.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Why this matters</div>
+      Eigendecomposition (Ch 4) finds the basis where $A$ is diagonal — the "right" coordinate system
+      for the matrix. This is the key idea behind PCA, Markov chains, and spectral methods.
+    </div>
+  </section>
+
+  <!-- ─── Key Formulas Reference ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula / Rule</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Matrix product</td><td>$(n{\times}k)(k{\times}m) = (n{\times}m)$</td><td>Neighboring dimensions must match</td></tr>
+        <tr><td>Inverse (product)</td><td>$(AB)^{-1} = B^{-1}A^{-1}$</td><td>Order reverses!</td></tr>
+        <tr><td>Transpose (product)</td><td>$(AB)^\top = B^\top A^\top$</td><td>Order reverses!</td></tr>
+        <tr><td>Symmetric</td><td>$A = A^\top$</td><td>Square matrices only</td></tr>
+        <tr><td>Rank-nullity</td><td>$\text{rk}(A) + \dim(\ker(A)) = n$</td><td>$n$ = number of columns</td></tr>
+        <tr><td>Row rank = col rank</td><td>$\text{rk}(A) = \text{rk}(A^\top)$</td><td>Always true</td></tr>
+        <tr><td>Basis change</td><td>$\tilde{A} = T^{-1}AS$</td><td>$S$, $T$ are change-of-basis matrices</td></tr>
+        <tr><td>Affine subspace</td><td>$L = \mathbf{x}_0 + U$</td><td>Solution set of inhomogeneous system</td></tr>
+        <tr><td>Null space projection</td><td>$[A|\mathbf{0}] \to \text{RREF} \to$ null space</td><td>Minus-1 trick for quick basis</td></tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to later chapters</div>
+      <div class="chip-row">
+        <span class="chip">C3: Projections (use rank, null space)</span>
+        <span class="chip">C4: SVD/Eigendecomp (diagonalize via basis change)</span>
+        <span class="chip">C5: Jacobians (matrices of partial derivatives)</span>
+        <span class="chip">C9: Normal equations (A⊤A)⁻¹A⊤b</span>
+        <span class="chip">C10: PCA (rank ≈ intrinsic dimension)</span>
+        <span class="chip">C12: SVM hyperplanes (affine subspaces)</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+// Theme
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+
+// KaTeX
+renderMathInElement(document.body, {
+  delimiters: [
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError: false,
+  trust: true,
+});
+
+// Active sidebar nav on scroll
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){
+    if(s.offsetTop - 80 <= scrollY) active = s.id;
+  });
+  navItems.forEach(function(n){
+    var href = n.getAttribute('href').slice(1);
+    n.classList.toggle('active', href === active);
+  });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

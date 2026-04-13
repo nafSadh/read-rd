@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuous Optimization — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--bg4:#ede9e0;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b5cf6;--accent-soft:#7c3aed10;--accent-mid:#7c3aed20;
+  --green:#2e6e3e;--green-soft:#2e6e3e12;--amber:#8a6e1e;--amber-soft:#8a6e1e12;
+  --red:#8b2020;--red-soft:#8b202012;--cyan:#2e6ab4;--cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06;--grad2:#2e6ab404;
+  --sidebar-w:220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--bg4:#1a2240;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --green:#4ee8a8;--green-soft:#4ee8a810;--amber:#e8c870;--amber-soft:#e8c87010;
+  --red:#e87090;--red-soft:#e8709010;--cyan:#4ee8d0;--cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;transition:background .4s,color .3s}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);transition:background 1s}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;position:sticky;top:0;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;z-index:10;transition:background .4s}
+.sidebar-head{padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-back{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;display:flex;align-items:center;gap:6px;margin-bottom:12px;transition:color .2s}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.sidebar-title{font-family:var(--serif);font-size:17px;color:var(--bright);line-height:1.3}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item{display:flex;align-items:baseline;gap:8px;padding:6px 16px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--dim);text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--accent-soft)}
+.nav-item.active{color:var(--accent);background:var(--accent-soft)}
+.nav-item .num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--accent);opacity:.7;flex-shrink:0}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.theme-btn{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;width:28px;height:28px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+main{flex:1;overflow-y:auto;padding:40px max(48px,calc((100% - 820px)/2)) 80px;position:relative;z-index:1}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title{font-family:var(--sans);font-size:34px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.2;margin-bottom:8px}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta{margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.5px}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+section{margin-bottom:48px;scroll-margin-top:24px}
+.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1px;flex-shrink:0}
+.section-title{font-family:var(--serif);font-size:24px;color:var(--bright);font-weight:400}
+.section-lead{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:20px}
+.section-lead strong{color:var(--bright);font-weight:600}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.formula-card{background:var(--bg2);border:1px solid var(--border);padding:16px 18px;transition:border-color .2s}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.formula-expr{font-family:var(--serif);font-size:18px;color:var(--bright);line-height:1.4;margin-bottom:6px}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+.callout{padding:16px 20px;border-left:3px solid var(--accent);background:var(--accent-soft);margin:20px 0;font-size:14px;line-height:1.7}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.accent{color:var(--accent)}
+.callout-title.red{color:var(--red)}
+.expand{border:1px solid var(--border);margin-top:16px;transition:border-color .2s}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary{padding:12px 16px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);list-style:none;display:flex;align-items:center;justify-content:space-between;transition:color .2s;user-select:none}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body{padding:20px 20px 16px;font-size:14px;line-height:1.75;color:var(--text)}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body ol{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.diagram{margin:24px 0;padding:24px;background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px}
+.diagram-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);align-self:flex-start}
+.diagram svg{max-width:100%;height:auto}
+.diagram-caption{font-size:13px;color:var(--dim);font-family:var(--serif);font-style:italic;text-align:center}
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.5px;padding:3px 10px;border:1px solid var(--border);color:var(--dim);background:var(--bg3);transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.kkt-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.kkt-table th{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:10px 14px;border-bottom:2px solid var(--border);text-align:left}
+.kkt-table td{padding:12px 14px;border-bottom:1px solid var(--bg3);line-height:1.6;vertical-align:top}
+.kkt-table tr:last-child td{border-bottom:none}
+.kkt-table td:first-child{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green);white-space:nowrap}
+.kkt-table td:nth-child(2){font-family:var(--serif);font-size:15px;color:var(--bright)}
+.kkt-table td:nth-child(3){font-size:13px;color:var(--dim)}
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+@media(max-width:700px){.sidebar{display:none}main{padding:24px 20px 60px}.formula-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title"><em>Continuous</em> Optimization</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s7-1" class="nav-item"><span class="num">7.1</span>Gradient Descent ⭐</a>
+    <a href="#s7-2" class="nav-item"><span class="num">7.2</span>Lagrange &amp; KKT ⭐</a>
+    <a href="#s7-3" class="nav-item"><span class="num">7.3</span>Convex Optimization</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 225–247</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART II</div>
+    <h1 class="page-title"><em>Continuous</em> Optimization</h1>
+    <p class="page-sub">The engine of machine learning. Every model trains by solving an optimization problem — this chapter provides the vocabulary, the algorithms, and the geometric intuition behind what happens when you press "train."</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 7 (pp 225–247)</span>
+      <a href="notes/continuous-optimization.md">Raw notes ↗</a>
+      <a href="https://distill.pub/2017/momentum/" target="_blank">Distill: Momentum ↗</a>
+      <a href="https://web.stanford.edu/~boyd/cvxbook/" target="_blank">Boyd &amp; Vandenberghe ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §7.1 Gradient Descent ─── -->
+  <section id="s7-1">
+    <div class="section-header">
+      <span class="sec-num">§7.1 ⭐</span>
+      <h2 class="section-title">Optimization Using Gradient Descent</h2>
+    </div>
+    <p class="section-lead">
+      The goal: find $\mathbf{x}^* = \arg\min_{\mathbf{x}} f(\mathbf{x})$ without solving $\nabla f = 0$ analytically.
+      <strong>Gradient descent</strong> takes iterative steps in the direction of steepest descent — opposite the gradient —
+      converging to a local minimum. The learning rate $\alpha$ controls step size; too large diverges, too small stalls.
+    </p>
+
+    <!-- SVG: 2D loss surface with GD path -->
+    <div class="diagram">
+      <div class="diagram-title">Loss surface with gradient descent path</div>
+      <svg width="520" height="300" viewBox="0 0 520 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowGD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrowMin" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--green)"/>
+          </marker>
+          <!-- radial gradient for bowl shading -->
+          <radialGradient id="bowlGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.13"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Background -->
+        <rect width="520" height="300" fill="var(--bg3)" rx="2"/>
+
+        <!-- Contour ellipses (loss surface bowl) centred at (280, 190) -->
+        <ellipse cx="280" cy="190" rx="190" ry="80" fill="var(--accent)" fill-opacity=".04" stroke="var(--accent)" stroke-opacity=".12" stroke-width="1"/>
+        <ellipse cx="280" cy="190" rx="145" ry="60" fill="var(--accent)" fill-opacity=".05" stroke="var(--accent)" stroke-opacity=".16" stroke-width="1"/>
+        <ellipse cx="280" cy="190" rx="100" ry="42" fill="var(--accent)" fill-opacity=".07" stroke="var(--accent)" stroke-opacity=".22" stroke-width="1"/>
+        <ellipse cx="280" cy="190" rx="62" ry="26" fill="var(--accent)" fill-opacity=".09" stroke="var(--accent)" stroke-opacity=".30" stroke-width="1.5"/>
+        <ellipse cx="280" cy="190" rx="30" ry="13" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-opacity=".40" stroke-width="1.5"/>
+        <ellipse cx="280" cy="190" rx="10" ry="5" fill="var(--accent)" fill-opacity=".30" stroke="var(--accent)" stroke-opacity=".60" stroke-width="1"/>
+
+        <!-- Contour labels -->
+        <text x="476" y="193" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".5">f = 5</text>
+        <text x="430" y="193" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".5">4</text>
+        <text x="384" y="193" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".5">3</text>
+        <text x="343" y="193" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".5">2</text>
+        <text x="310" y="193" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".5">1</text>
+
+        <!-- GD path: starts top-left, spirals toward minimum -->
+        <!-- Step 0 → 1 -->
+        <line x1="110" y1="130" x2="178" y2="148" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowGD)"/>
+        <!-- Step 1 → 2 -->
+        <line x1="178" y1="148" x2="222" y2="162" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowGD)"/>
+        <!-- Step 2 → 3 -->
+        <line x1="222" y1="162" x2="248" y2="170" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowGD)"/>
+        <!-- Step 3 → 4 -->
+        <line x1="248" y1="170" x2="263" y2="177" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowGD)"/>
+        <!-- Step 4 → 5 (near minimum) -->
+        <line x1="263" y1="177" x2="273" y2="183" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowGD)"/>
+        <!-- Step 5 → minimum -->
+        <line x1="273" y1="183" x2="278" y2="188" stroke="var(--green)" stroke-width="1.8" marker-end="url(#arrowMin)"/>
+
+        <!-- Start point -->
+        <circle cx="110" cy="130" r="5" fill="var(--amber)" fill-opacity=".8"/>
+        <text x="90" y="120" font-family="IBM Plex Mono" font-size="11" fill="var(--amber)">x₀</text>
+
+        <!-- Intermediate points -->
+        <circle cx="178" cy="148" r="3.5" fill="var(--accent)" fill-opacity=".6"/>
+        <circle cx="222" cy="162" r="3" fill="var(--accent)" fill-opacity=".6"/>
+        <circle cx="248" cy="170" r="2.5" fill="var(--accent)" fill-opacity=".6"/>
+        <circle cx="263" cy="177" r="2" fill="var(--accent)" fill-opacity=".6"/>
+
+        <!-- Minimum point -->
+        <circle cx="280" cy="190" r="6" fill="var(--green)" fill-opacity=".85"/>
+        <circle cx="280" cy="190" r="10" fill="none" stroke="var(--green)" stroke-opacity=".35" stroke-width="1.5"/>
+        <text x="290" y="207" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">x*</text>
+
+        <!-- Step annotations -->
+        <text x="118" y="142" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">−α∇f</text>
+
+        <!-- Axis labels -->
+        <text x="490" y="275" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">x₁</text>
+        <text x="20" y="30" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">x₂</text>
+        <line x1="30" y1="270" x2="500" y2="270" stroke="currentColor" stroke-opacity=".1" stroke-width="1"/>
+        <line x1="30" y1="270" x2="30" y2="20" stroke="currentColor" stroke-opacity=".1" stroke-width="1"/>
+      </svg>
+      <p class="diagram-caption">Each arrow is one GD step $\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\nabla f(\mathbf{x}_t)$, always perpendicular to the contour lines.</p>
+    </div>
+
+    <!-- Formula cards -->
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">GD Update Rule</div>
+        <div class="formula-expr">$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\,\nabla f(\mathbf{x}_t)$</div>
+        <div class="formula-note">$\alpha > 0$ is the <strong>learning rate</strong>. The gradient $\nabla f$ points uphill; we step opposite. At the minimum $\nabla f(\mathbf{x}^*) = \mathbf{0}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Momentum Update</div>
+        <div class="formula-expr">$\mathbf{v}_t = \beta\,\mathbf{v}_{t-1} + \nabla f(\mathbf{x}_t)$</div>
+        <div class="formula-note">$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\,\mathbf{v}_t$. <strong>$\beta \in [0,1)$</strong>, typically 0.9. Accumulates velocity — damps oscillations in ravines, accelerates in consistent directions.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Adam Update (simplified)</div>
+        <div class="formula-expr">$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\,\dfrac{\hat{m}_t}{\sqrt{\hat{v}_t} + \varepsilon}$</div>
+        <div class="formula-note">$\hat{m}_t$ = bias-corrected mean gradient, $\hat{v}_t$ = bias-corrected mean squared gradient. Defaults: $\beta_1=0.9$, $\beta_2=0.999$, $\varepsilon=10^{-8}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Learning Rate Effects</div>
+        <div class="formula-expr">$\alpha \ll 1/L$ · $\alpha \approx 1/L$ · $\alpha \gg 1/L$</div>
+        <div class="formula-note"><strong>Too small:</strong> very slow convergence. <strong>Just right</strong> ($\alpha < 1/L$, $L$ = Lipschitz const.): guaranteed convergence. <strong>Too large:</strong> overshoots, may diverge.</div>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Variant</th>
+          <th>Data per step</th>
+          <th>Gradient quality</th>
+          <th>Use case</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Batch GD</td>
+          <td>Full dataset</td>
+          <td>Exact $\nabla f$</td>
+          <td>Convex problems, small datasets</td>
+        </tr>
+        <tr>
+          <td>SGD</td>
+          <td>1 sample</td>
+          <td>Noisy estimate</td>
+          <td>Online learning, very large $n$</td>
+        </tr>
+        <tr>
+          <td>Mini-batch SGD</td>
+          <td>$k$ samples</td>
+          <td>Moderate noise</td>
+          <td>Standard deep learning training</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Mini-batch noise as a feature</div>
+      The gradient noise from using a subset is not purely harmful — it helps escape sharp local minima that generalize
+      poorly, and tends to find flatter minima that generalize better (Hochreiter &amp; Schmidhuber 1997; Keskar et al. 2017).
+      This is one reason SGD-trained models sometimes outperform fully deterministic optimizers on test sets.
+    </div>
+
+    <!-- Adam expandable -->
+    <details class="expand">
+      <summary>Adam: what each term does</summary>
+      <div class="expand-body">
+        <p>Adam (Kingma &amp; Ba, 2015) combines momentum with per-parameter adaptive learning rates. Full update equations:</p>
+        $$m_t = \beta_1 m_{t-1} + (1 - \beta_1)\, g_t \quad\text{(1st moment: exp. moving avg. of gradients)}$$
+        $$v_t = \beta_2 v_{t-1} + (1 - \beta_2)\, g_t^2 \quad\text{(2nd moment: exp. moving avg. of squared gradients)}$$
+        $$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t} \quad\text{(bias correction)}$$
+        $$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\,\frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \varepsilon}$$
+        <p><strong>What $\hat{m}_t$ does:</strong> acts as momentum — a running average of recent gradient directions. Parameters with consistently positive gradients receive consistently positive updates.</p>
+        <p><strong>What $\hat{v}_t$ does:</strong> estimates per-parameter gradient variance. Dividing by $\sqrt{\hat{v}_t}$ shrinks the effective learning rate for parameters with large or erratic gradients, and enlarges it for parameters with small, consistent gradients. This is the "adaptive" part.</p>
+        <p><strong>Why bias correction matters:</strong> Both $m_0$ and $v_0$ are initialized at zero. Without correction, early estimates are biased toward zero, making early steps too small. The $(1 - \beta^t)$ denominator removes this bias.</p>
+        <p><strong>Practical note:</strong> Adam typically reaches a good solution quickly. For convex problems or when final accuracy matters, switching to SGD with momentum for fine-tuning can outperform Adam (Wilson et al., 2017). Adam is sensitive to the choice of $\varepsilon$ and can diverge on some convex problems (Reddi et al., 2018 — fixed by AMSGrad).</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Convergence and the loss landscape</summary>
+      <div class="expand-body">
+        <p><strong>Convex functions:</strong> a single global minimum. GD always converges for $\alpha < 1/L$. Rate: $O(1/t)$ for convex, $O(1/t^2)$ with Nesterov acceleration, $O(e^{-mt})$ for strongly convex.</p>
+        <p><strong>Non-convex (neural networks):</strong> many local minima, saddle points, plateaus. No guarantee of finding the global minimum.</p>
+        <ul>
+          <li>Saddle points (not local minima) are the main obstacle in high dimensions — GD can stall near them.</li>
+          <li>Large neural networks empirically have many near-equivalent local minima (Goodfellow et al. 2015).</li>
+          <li>The condition number $\kappa = L/m$ of the Hessian controls convergence speed — ill-conditioned problems (large $\kappa$) converge slowly. Momentum and adaptive methods implicitly reduce $\kappa$.</li>
+        </ul>
+        <p><strong>Connection to Taylor expansion (C5 §5.8):</strong> the GD update rule is derived by minimizing the first-order Taylor approximation of $f$ at $\mathbf{x}_t$, subject to a trust-region constraint on step size.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §7.2 KKT ─── -->
+  <section id="s7-2">
+    <div class="section-header">
+      <span class="sec-num">§7.2 ⭐</span>
+      <h2 class="section-title">Constrained Optimization &amp; KKT Conditions</h2>
+    </div>
+    <p class="section-lead">
+      When the minimum must lie in a feasible region, unconstrained GD may step outside it.
+      <strong>Lagrange multipliers</strong> reformulate constrained problems into unconstrained ones;
+      the <strong>KKT conditions</strong> extend this to inequality constraints and
+      are necessary (and under convexity, sufficient) for global optimality.
+    </p>
+
+    <!-- SVG: constrained optimization geometry -->
+    <div class="diagram">
+      <div class="diagram-title">Constrained optimum: level curves of f tangent to constraint g(x) = 0</div>
+      <svg width="520" height="310" viewBox="0 0 520 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowF" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrowG" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="var(--cyan)"/>
+          </marker>
+        </defs>
+
+        <rect width="520" height="310" fill="var(--bg3)" rx="2"/>
+
+        <!-- Contour ellipses of f (objective) centred at (310, 180) — unconstrained min -->
+        <ellipse cx="310" cy="180" rx="175" ry="95" fill="none" stroke="var(--accent)" stroke-opacity=".13" stroke-width="1"/>
+        <ellipse cx="310" cy="180" rx="135" ry="72" fill="none" stroke="var(--accent)" stroke-opacity=".18" stroke-width="1"/>
+        <ellipse cx="310" cy="180" rx="95" ry="50" fill="none" stroke="var(--accent)" stroke-opacity=".25" stroke-width="1.2"/>
+        <ellipse cx="310" cy="180" rx="58" ry="30" fill="none" stroke="var(--accent)" stroke-opacity=".35" stroke-width="1.2"/>
+        <ellipse cx="310" cy="180" rx="22" ry="12" fill="var(--accent)" fill-opacity=".12" stroke="var(--accent)" stroke-opacity=".50" stroke-width="1.5"/>
+
+        <!-- Unconstrained minimum (dashed cross) -->
+        <circle cx="310" cy="180" r="5" fill="var(--accent)" fill-opacity=".35"/>
+        <text x="318" y="178" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)" fill-opacity=".6">unconstrained min</text>
+
+        <!-- Constraint curve g(x) = 0: a smooth arc from (50,260) to (240,60) -->
+        <path d="M50,265 C80,220 100,160 140,120 C175,84 205,62 240,52" stroke="var(--cyan)" stroke-width="2.2" stroke-dasharray="none"/>
+        <text x="44" y="280" font-family="IBM Plex Mono" font-size="11" fill="var(--cyan)">g(x) = 0</text>
+
+        <!-- Feasible region label (left of constraint) -->
+        <text x="52" y="155" font-family="EB Garamond" font-size="13" fill="var(--cyan)" fill-opacity=".7" font-style="italic">feasible</text>
+        <text x="52" y="170" font-family="EB Garamond" font-size="13" fill="var(--cyan)" fill-opacity=".7" font-style="italic">region</text>
+
+        <!-- Constrained optimum: where constraint curve is tangent to a level curve of f -->
+        <!-- Level curve tangency around (168, 112) -->
+        <ellipse cx="310" cy="180" rx="167" ry="90" fill="none" stroke="var(--accent)" stroke-opacity=".20" stroke-width="1"/>
+        <!-- Tangency point on the constraint curve -->
+        <circle cx="168" cy="112" r="7" fill="var(--green)" fill-opacity=".85"/>
+        <circle cx="168" cy="112" r="12" fill="none" stroke="var(--green)" stroke-opacity=".35" stroke-width="1.5"/>
+        <text x="175" y="108" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">x* (constrained)</text>
+
+        <!-- ∇f arrow at x* (pointing toward unconstrained min, roughly SE) -->
+        <line x1="168" y1="112" x2="210" y2="135" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrowF)"/>
+        <text x="214" y="132" font-family="EB Garamond" font-size="14" fill="var(--accent)" font-style="italic">∇f</text>
+
+        <!-- ∇g arrow at x* (perpendicular to constraint, pointing inward/SE, parallel to ∇f) -->
+        <line x1="168" y1="112" x2="204" y2="130" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowG)"/>
+        <text x="192" y="148" font-family="EB Garamond" font-size="14" fill="var(--cyan)" font-style="italic">∇g</text>
+
+        <!-- Parallelism label -->
+        <text x="228" y="152" font-family="IBM Plex Mono" font-size="10" fill="var(--dim)">∇f = −λ∇g</text>
+        <text x="228" y="164" font-family="IBM Plex Mono" font-size="10" fill="var(--dim)">(parallel at x*)</text>
+
+        <!-- Feasible direction annotation -->
+        <path d="M148,112 C138,95 145,82 155,75" stroke="var(--green)" stroke-width="1.2" stroke-dasharray="3,3"/>
+        <text x="100" y="78" font-family="EB Garamond" font-size="12" fill="var(--green)" font-style="italic">constraint curve</text>
+
+        <!-- f label near contours -->
+        <text x="410" y="155" font-family="EB Garamond" font-size="14" fill="var(--accent)" fill-opacity=".5" font-style="italic">f contours</text>
+      </svg>
+      <p class="diagram-caption">At $\mathbf{x}^*$, the level sets of $f$ and $g$ are tangent: $\nabla f + \lambda\nabla g = 0$. Moving along the constraint cannot decrease $f$ — we are at the constrained optimum.</p>
+    </div>
+
+    <!-- Lagrangian formula cards -->
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Lagrangian (equality constraints)</div>
+        <div class="formula-expr">$\mathcal{L}(\mathbf{x}, \boldsymbol{\lambda}) = f(\mathbf{x}) + \sum_i \lambda_i g_i(\mathbf{x})$</div>
+        <div class="formula-note">Setting $\partial\mathcal{L}/\partial\mathbf{x} = 0$ and $\partial\mathcal{L}/\partial\boldsymbol{\lambda} = 0$ recovers both the optimality condition and the constraints simultaneously.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Lagrangian (equality + inequality)</div>
+        <div class="formula-expr">$\mathcal{L}(\mathbf{x},\boldsymbol{\lambda},\boldsymbol{\mu}) = f(\mathbf{x}) + \boldsymbol{\lambda}^\top\mathbf{g}(\mathbf{x}) + \boldsymbol{\mu}^\top\mathbf{h}(\mathbf{x})$</div>
+        <div class="formula-note">$g_i(\mathbf{x}) = 0$ are equality constraints; $h_j(\mathbf{x}) \leq 0$ are inequality constraints. $\boldsymbol{\lambda}$ unrestricted; $\boldsymbol{\mu} \geq 0$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Geometric interpretation</div>
+        <div class="formula-expr">$\nabla f(\mathbf{x}^*) = -\lambda\,\nabla g(\mathbf{x}^*)$</div>
+        <div class="formula-note">$\lambda$ is the "exchange rate" between f and g. The level curves of f and g are <strong>tangent</strong> at the optimum — no feasible direction can reduce f.</div>
+      </div>
+    </div>
+
+    <!-- KKT conditions table -->
+    <h3 style="font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin:24px 0 10px">KKT Conditions at the Optimum x*</h3>
+    <table class="kkt-table">
+      <thead>
+        <tr>
+          <th>Condition</th>
+          <th>Formula</th>
+          <th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Stationarity</td>
+          <td>$\nabla_{\mathbf{x}}\mathcal{L} = 0$</td>
+          <td>Gradient of $f$ is a linear combination of constraint gradients. The "direction of descent" from $f$ is blocked by the constraint normals.</td>
+        </tr>
+        <tr>
+          <td>Primal feasibility (eq.)</td>
+          <td>$g_i(\mathbf{x}^*) = 0$</td>
+          <td>All equality constraints are satisfied at the optimum. Enforced by differentiating $\mathcal{L}$ w.r.t. $\lambda_i$.</td>
+        </tr>
+        <tr>
+          <td>Primal feasibility (ineq.)</td>
+          <td>$h_j(\mathbf{x}^*) \leq 0$</td>
+          <td>All inequality constraints are satisfied — the solution lies in the feasible region.</td>
+        </tr>
+        <tr>
+          <td>Dual feasibility</td>
+          <td>$\mu_j \geq 0$</td>
+          <td>Multipliers for inequality constraints must be non-negative. This prevents the constraint from "pulling" in the wrong direction.</td>
+        </tr>
+        <tr>
+          <td>Complementary slackness</td>
+          <td>$\mu_j h_j(\mathbf{x}^*) = 0$</td>
+          <td>At least one of $\{\mu_j,\, h_j(\mathbf{x}^*)\}$ must be zero. An inactive constraint ($h_j < 0$) has $\mu_j = 0$; an active constraint ($h_j = 0$) may have $\mu_j > 0$.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="expand">
+      <summary>Complementary slackness — unpacked</summary>
+      <div class="expand-body">
+        <p>The condition $\mu_j h_j(\mathbf{x}^*) = 0$ has an elegant interpretation. There are exactly two cases:</p>
+        <ul>
+          <li><strong>Inactive constraint:</strong> $h_j(\mathbf{x}^*) < 0$ strictly. The constraint is not "biting" — the optimum lies in the interior of the feasible region with respect to this constraint. Therefore $\mu_j = 0$: the constraint exerts no force on the solution. It could be removed without changing $\mathbf{x}^*$.</li>
+          <li><strong>Active constraint:</strong> $h_j(\mathbf{x}^*) = 0$. The optimum lies on the boundary of the feasible region. Here $\mu_j \geq 0$ may be nonzero — the constraint is "pushing back" against the unconstrained descent direction of $f$.</li>
+        </ul>
+        <p>The name "complementary" reflects that the pair $(\mu_j, h_j(\mathbf{x}^*))$ always has at least one component equal to zero — they complement each other's zeros.</p>
+        <p><strong>Why $\mu_j \geq 0$ (not just $\mu_j \neq 0$)?</strong> Because the inequality constraint only blocks movement in one direction. A negative $\mu_j$ would flip the sign and pull the solution outside the feasible region — physically impossible.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Primal and dual problems</summary>
+      <div class="expand-body">
+        <p>The Lagrangian produces two related problems:</p>
+        $$\text{Primal:}\quad \min_{\mathbf{x}}\; \max_{\boldsymbol{\lambda},\,\boldsymbol{\mu} \geq 0}\; \mathcal{L}(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\mu})$$
+        $$\text{Dual:}\quad \max_{\boldsymbol{\lambda},\,\boldsymbol{\mu} \geq 0}\; \min_{\mathbf{x}}\; \mathcal{L}(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\mu})$$
+        <p>The dual is <strong>always concave</strong> (easy to maximize), even if the primal is non-convex. This is because $\min_\mathbf{x} \mathcal{L}$ is a pointwise infimum of linear (affine) functions of $(\boldsymbol{\lambda}, \boldsymbol{\mu})$, and the infimum of affines is concave.</p>
+        <p><strong>Weak duality:</strong> dual optimal $\leq$ primal optimal (always holds — dual provides a lower bound).</p>
+        <p><strong>Strong duality:</strong> dual optimal = primal optimal. Holds when the problem is convex and <em>Slater's condition</em> is satisfied: there exists a strictly feasible point $\tilde{\mathbf{x}}$ with $h_j(\tilde{\mathbf{x}}) < 0$ for all $j$. Under strong duality, solving the (often easier) dual is equivalent to solving the primal.</p>
+        <p><strong>Connection to Ch 12 (SVMs):</strong> The SVM dual problem is a concave QP with simple box constraints — much easier to solve than the primal. Strong duality holds because the SVM objective is convex QP with linear constraints (Slater's condition trivially satisfied). The dual reveals that the solution depends only on inner products $\mathbf{x}_i^\top\mathbf{x}_j$ — the kernel trick operates on this.</p>
+      </div>
+    </details>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Connection to SVMs (Ch 12)</div>
+      Support vector machines solve a convex QP with linear inequality constraints (margin conditions).
+      The KKT conditions reveal that <strong>only support vectors</strong> — training points where the margin constraint
+      is active ($h_j(\mathbf{x}^*) = 0$) — have nonzero multipliers $\mu_j > 0$. All other training points satisfy
+      $\mu_j = 0$ and do not affect the decision boundary. This is why SVMs are sparse: the solution is
+      defined entirely by a small subset of training examples. The dual problem replaces the weight vector
+      with a sum over support vectors weighted by their $\mu_j$, making the kernel trick possible.
+    </div>
+
+    <details class="expand">
+      <summary>Worked example: Lagrange multipliers for unit-norm maximization</summary>
+      <div class="expand-body">
+        <p>Problem: maximize $\mathbf{x}^\top\mathbf{y}$ subject to $\|\mathbf{x}\|^2 = 1$.</p>
+        <p>Form the Lagrangian with equality constraint $g(\mathbf{x}) = \|\mathbf{x}\|^2 - 1 = 0$:</p>
+        $$\mathcal{L}(\mathbf{x}, \lambda) = \mathbf{x}^\top\mathbf{y} - \lambda(\|\mathbf{x}\|^2 - 1)$$
+        <p>Stationarity: $\nabla_\mathbf{x}\mathcal{L} = \mathbf{y} - 2\lambda\mathbf{x} = \mathbf{0}$, so $\mathbf{x} = \mathbf{y}/(2\lambda)$.</p>
+        <p>Primal feasibility: $\|\mathbf{x}\|^2 = 1$ forces $\|\mathbf{y}\|^2/(4\lambda^2) = 1$, so $\lambda = \|\mathbf{y}\|/2$.</p>
+        <p>Therefore $\mathbf{x}^* = \mathbf{y}/\|\mathbf{y}\|$ — the unit vector in the direction of $\mathbf{y}$.</p>
+        <p><strong>Geometric sense:</strong> the maximum of the dot product on the unit sphere is achieved in the direction of $\mathbf{y}$. The multiplier $\lambda = \|\mathbf{y}\|/2$ measures how much the objective value would increase per unit relaxation of the norm constraint.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §7.3 Convex Optimization ─── -->
+  <section id="s7-3">
+    <div class="section-header">
+      <span class="sec-num">§7.3</span>
+      <h2 class="section-title">Convex Optimization</h2>
+    </div>
+    <p class="section-lead">
+      Convexity is the gold standard for optimization: when $f$ is convex, gradient descent provably finds the
+      <strong>global minimum</strong>. Most "clean" ML problems (linear regression, logistic regression, SVMs)
+      are convex. Neural networks are not — but convex intuition still shapes how practitioners think about them.
+    </p>
+
+    <div class="callout green">
+      <div class="callout-title green">Why convexity matters</div>
+      For a convex function $f$ on a convex set $C$: <strong>any local minimum is the global minimum.</strong>
+      Gradient descent with a sufficiently small step size $\alpha < 1/L$ is guaranteed to converge to it.
+      No gradient noise, saddle points, or restarts needed — a single run suffices.
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Convex Set</div>
+        <div class="formula-expr">$\theta\mathbf{x} + (1-\theta)\mathbf{y} \in C$</div>
+        <div class="formula-note">For all $\mathbf{x}, \mathbf{y} \in C$ and $\theta \in [0,1]$. The line segment between any two points stays in the set. Examples: halfspaces, balls, polyhedra, PSD cone.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Convex Function (definition)</div>
+        <div class="formula-expr">$f(\theta\mathbf{x} + (1-\theta)\mathbf{y}) \leq \theta f(\mathbf{x}) + (1-\theta)f(\mathbf{y})$</div>
+        <div class="formula-note">For all $\mathbf{x}, \mathbf{y}$ in the domain and $\theta \in [0,1]$. The function lies <strong>below any chord</strong> connecting two points on its graph.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Second-Order Condition</div>
+        <div class="formula-expr">$\nabla^2 f(\mathbf{x}) \succeq 0 \quad \forall\, \mathbf{x}$</div>
+        <div class="formula-note">If $f$ is twice differentiable: $f$ is convex iff the Hessian is <strong>positive semidefinite</strong> everywhere. Strictly convex: $H \succ 0$. Links directly to C4 eigenvalues and C5 §5.7.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Jensen's Inequality</div>
+        <div class="formula-expr">$f\!\left(\mathbb{E}[X]\right) \leq \mathbb{E}[f(X)]$</div>
+        <div class="formula-note">For convex $f$: the function of the average is at most the average of the function. Derives the EM lower bound, proves $\text{KL}(p \| q) \geq 0$, and underlies the ELBO in variational inference (C6).</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>Common convex functions and preservation rules</summary>
+      <div class="expand-body">
+        <p><strong>Common convex functions:</strong></p>
+        <ul>
+          <li>$f(\mathbf{x}) = \mathbf{a}^\top\mathbf{x} + b$ — linear (also concave)</li>
+          <li>$f(\mathbf{x}) = \|\mathbf{x}\|^2$ — strictly convex</li>
+          <li>$f(x) = e^x$, $f(x) = -\ln x$ on $\mathbb{R}_{++}$</li>
+          <li>$f(x) = x\ln x$ on $\mathbb{R}_+$ (negative entropy)</li>
+          <li>$f(\mathbf{x}) = \max(x_1, \ldots, x_n)$ — convex but not differentiable</li>
+          <li>$f(\mathbf{x}) = \ln\sum_i e^{x_i}$ (log-sum-exp) — smooth approximation to max</li>
+          <li>$f(\mathbf{x}) = \mathbf{x}^\top A\mathbf{x}$ for symmetric $A$ — convex iff $A \succeq 0$</li>
+        </ul>
+        <p><strong>Operations that preserve convexity:</strong></p>
+        <ul>
+          <li>Nonneg. linear combination: $\alpha f + \beta g$ for $\alpha, \beta \geq 0$</li>
+          <li>Pointwise max of convex functions: $h(\mathbf{x}) = \max\{f(\mathbf{x}), g(\mathbf{x})\}$</li>
+          <li>Composition with affine function: $f(A\mathbf{x} + \mathbf{b})$</li>
+          <li>Intersection of convex sets is convex</li>
+        </ul>
+        <p><strong>Non-convex sets (why discrete optimization is hard):</strong> annuli, non-convex polygons, $\{0,1\}^n$ (integer feasibility set). Integer programming adds combinatorial difficulty on top of continuous optimization.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Strongly convex functions and convergence rates</summary>
+      <div class="expand-body">
+        <p>$f$ is <strong>strongly convex</strong> with parameter $m > 0$ if:</p>
+        $$f(\mathbf{y}) \geq f(\mathbf{x}) + \nabla f(\mathbf{x})^\top(\mathbf{y} - \mathbf{x}) + \frac{m}{2}\|\mathbf{y} - \mathbf{x}\|^2$$
+        <p>Strong convexity means the function curves upward at least as fast as a quadratic with coefficient $m$. It implies a <strong>unique</strong> global minimum.</p>
+        <p><strong>Convergence rates for GD:</strong></p>
+        <ul>
+          <li>Convex: $O(1/t)$ in function value</li>
+          <li>Strongly convex ($m > 0$): linear convergence $O(e^{-mt})$ — exponentially fast</li>
+          <li>Nesterov acceleration: $O(1/t^2)$ for convex — optimal for first-order methods</li>
+        </ul>
+        <p><strong>Condition number:</strong> $\kappa = L/m$ (ratio of Lipschitz constant $L$ to strong-convexity constant $m$). Large $\kappa$ means the loss surface is much steeper in some directions than others — GD converges slowly. This is the same ill-conditioning as a large eigenvalue spread in the Hessian (C5 §5.7). Momentum and preconditioning (AdaGrad, RMSProp) implicitly reduce the effective $\kappa$.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">↗</span>
+      <h2 class="section-title">Key Formulas</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Formula</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GD step</td>
+          <td>$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\nabla f(\mathbf{x}_t)$</td>
+          <td>Derived from 1st-order Taylor; step opposite gradient</td>
+        </tr>
+        <tr>
+          <td>Momentum</td>
+          <td>$\mathbf{v}_t = \beta\mathbf{v}_{t-1} + \nabla f$; $\;\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\mathbf{v}_t$</td>
+          <td>$\beta \approx 0.9$; damps oscillations</td>
+        </tr>
+        <tr>
+          <td>Adam</td>
+          <td>$\mathbf{x}_{t+1} = \mathbf{x}_t - \alpha\hat{m}_t/(\sqrt{\hat{v}_t}+\varepsilon)$</td>
+          <td>$\beta_1{=}0.9$, $\beta_2{=}0.999$, $\varepsilon{=}10^{-8}$</td>
+        </tr>
+        <tr>
+          <td>Lagrangian (eq.)</td>
+          <td>$\mathcal{L}(\mathbf{x},\boldsymbol{\lambda}) = f(\mathbf{x}) + \boldsymbol{\lambda}^\top\mathbf{g}(\mathbf{x})$</td>
+          <td>KKT: $\nabla_\mathbf{x}\mathcal{L}=0$ and $\mathbf{g}=0$</td>
+        </tr>
+        <tr>
+          <td>Lagrangian (ineq.)</td>
+          <td>$\mathcal{L}(\mathbf{x},\boldsymbol{\lambda},\boldsymbol{\mu}) = f + \boldsymbol{\lambda}^\top\mathbf{g} + \boldsymbol{\mu}^\top\mathbf{h}$</td>
+          <td>$\boldsymbol{\mu} \geq 0$</td>
+        </tr>
+        <tr>
+          <td>KKT stationarity</td>
+          <td>$\nabla_\mathbf{x}\mathcal{L} = 0$</td>
+          <td>Necessary for optimality</td>
+        </tr>
+        <tr>
+          <td>Complementary slackness</td>
+          <td>$\mu_j h_j(\mathbf{x}^*) = 0,\; \mu_j \geq 0$</td>
+          <td>Inactive constraints have $\mu_j = 0$</td>
+        </tr>
+        <tr>
+          <td>Convex set</td>
+          <td>$\theta\mathbf{x} + (1{-}\theta)\mathbf{y} \in C$ for $\theta\in[0,1]$</td>
+          <td>Line segment stays inside</td>
+        </tr>
+        <tr>
+          <td>Convex function</td>
+          <td>$f(\theta\mathbf{x}+(1{-}\theta)\mathbf{y}) \leq \theta f(\mathbf{x})+(1{-}\theta)f(\mathbf{y})$</td>
+          <td>Below any chord</td>
+        </tr>
+        <tr>
+          <td>2nd-order condition</td>
+          <td>$\nabla^2 f(\mathbf{x}) \succeq 0$ everywhere</td>
+          <td>Hessian PSD $\Leftrightarrow$ convex</td>
+        </tr>
+        <tr>
+          <td>Jensen's inequality</td>
+          <td>$f(\mathbb{E}[X]) \leq \mathbb{E}[f(X)]$</td>
+          <td>For convex $f$; fuels EM and KL $\geq 0$</td>
+        </tr>
+        <tr>
+          <td>Newton step</td>
+          <td>$\mathbf{x} \leftarrow \mathbf{x} - [\nabla^2 f(\mathbf{x})]^{-1}\nabla f(\mathbf{x})$</td>
+          <td>2nd-order method; quadratic convergence near minimum</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to other chapters</div>
+      <div class="chip-row">
+        <span class="chip">C5: gradients fuel GD (∂f/∂x is §7.1's engine)</span>
+        <span class="chip">C4: Hessians — H ⪰ 0 defines convexity</span>
+        <span class="chip">C5 §5.8: Taylor expansion → GD update derivation</span>
+        <span class="chip">C6: Jensen's inequality → EM lower bound (ELBO)</span>
+        <span class="chip">C6: KL divergence ≥ 0 via Jensen</span>
+        <span class="chip">C12: SVMs are convex QPs solved via KKT dual</span>
+        <span class="chip">C12: support vectors ↔ active KKT constraints (μⱼ > 0)</span>
+        <span class="chip">C9: least-squares → convex quadratic, unique global min</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+renderMathInElement(document.body, {
+  delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError:false,
+  trust:true,
+});
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){ if(s.offsetTop-80<=scrollY) active=s.id; });
+  navItems.forEach(function(n){ n.classList.toggle('active',n.getAttribute('href').slice(1)===active); });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

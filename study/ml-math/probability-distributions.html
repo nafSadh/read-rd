@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Probability &amp; Distributions — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--bg4:#ede9e0;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b5cf6;--accent-soft:#7c3aed10;--accent-mid:#7c3aed20;
+  --green:#2e6e3e;--green-soft:#2e6e3e12;--amber:#8a6e1e;--amber-soft:#8a6e1e12;
+  --red:#8b2020;--red-soft:#8b202012;--cyan:#2e6ab4;--cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06;--grad2:#2e6ab404;
+  --sidebar-w:220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--bg4:#1a2240;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --green:#4ee8a8;--green-soft:#4ee8a810;--amber:#e8c870;--amber-soft:#e8c87010;
+  --red:#e87090;--red-soft:#e8709010;--cyan:#4ee8d0;--cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;transition:background .4s,color .3s}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);transition:background 1s}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;position:sticky;top:0;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;z-index:10;transition:background .4s}
+.sidebar-head{padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-back{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;display:flex;align-items:center;gap:6px;margin-bottom:12px;transition:color .2s}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.sidebar-title{font-family:var(--serif);font-size:17px;color:var(--bright);line-height:1.3}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item{display:flex;align-items:baseline;gap:8px;padding:6px 16px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--dim);text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--accent-soft)}
+.nav-item.active{color:var(--accent);background:var(--accent-soft)}
+.nav-item .num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--accent);opacity:.7;flex-shrink:0}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.theme-btn{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;width:28px;height:28px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+main{flex:1;overflow-y:auto;padding:40px max(48px,calc((100% - 820px)/2)) 80px;position:relative;z-index:1}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title{font-family:var(--sans);font-size:34px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.2;margin-bottom:8px}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta{margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.5px}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+section{margin-bottom:48px;scroll-margin-top:24px}
+.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1px;flex-shrink:0}
+.section-title{font-family:var(--serif);font-size:24px;color:var(--bright);font-weight:400}
+.section-lead{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:20px}
+.section-lead strong{color:var(--bright);font-weight:600}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.formula-card{background:var(--bg2);border:1px solid var(--border);padding:16px 18px;transition:border-color .2s}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.formula-expr{font-family:var(--serif);font-size:18px;color:var(--bright);line-height:1.4;margin-bottom:6px}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+.callout{padding:16px 20px;border-left:3px solid var(--accent);background:var(--accent-soft);margin:20px 0;font-size:14px;line-height:1.7}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.accent{color:var(--accent)}
+.callout-title.red{color:var(--red)}
+.expand{border:1px solid var(--border);margin-top:16px;transition:border-color .2s}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary{padding:12px 16px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);list-style:none;display:flex;align-items:center;justify-content:space-between;transition:color .2s;user-select:none}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body{padding:20px 20px 16px;font-size:14px;line-height:1.75;color:var(--text)}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent)}
+.diagram{margin:24px 0;padding:24px;background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px}
+.diagram-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);align-self:flex-start}
+.diagram svg{max-width:100%;height:auto}
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.5px;padding:3px 10px;border:1px solid var(--border);color:var(--dim);background:var(--bg3);transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.arc-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:20px 0}
+.arc-step{background:var(--bg2);border:1px solid var(--border);padding:12px 14px;font-size:13px;line-height:1.5}
+.arc-step .arc-n{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:600;letter-spacing:1px;margin-bottom:4px}
+.arc-step .arc-label{color:var(--bright);font-weight:500;margin-bottom:2px}
+.arc-step .arc-desc{color:var(--dim);font-size:12px}
+@media(max-width:700px){.sidebar{display:none}main{padding:24px 20px 60px}.formula-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title"><em>Probability</em> &amp; Distributions</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s6-1" class="nav-item"><span class="num">6.1</span>Probability Space</a>
+    <a href="#s6-2" class="nav-item"><span class="num">6.2</span>PMF, PDF &amp; CDF</a>
+    <a href="#s6-3" class="nav-item"><span class="num">6.3</span>Bayes' Theorem ⭐</a>
+    <a href="#s6-4" class="nav-item"><span class="num">6.4</span>Summary Statistics</a>
+    <a href="#s6-5" class="nav-item"><span class="num">6.5</span>The Gaussian ⭐⭐</a>
+    <a href="#s6-6" class="nav-item"><span class="num">6.6</span>Conjugate Priors</a>
+    <a href="#s6-7" class="nav-item"><span class="num">6.7</span>Change of Variables</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 172–222</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART II FOUNDATIONS</div>
+    <h1 class="page-title"><em>Probability</em> &amp; Distributions</h1>
+    <p class="page-sub">Probability is the language of uncertainty. This chapter builds the grammar: from sample spaces and Kolmogorov axioms up to the multivariate Gaussian — the distribution that pervades every corner of Part II.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 6 (pp 172–222)</span>
+      <a href="notes/probability-distributions.md">Raw notes ↗</a>
+      <a href="https://seeing-theory.brown.edu/" target="_blank">Seeing Theory ↗</a>
+      <a href="https://www.youtube.com/watch?v=HZGCoVF3YvM" target="_blank">StatQuest: Bayes ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── Chapter arc ─── -->
+  <div class="arc-overview">
+    <div class="arc-step">
+      <div class="arc-n">6.1</div>
+      <div class="arc-label">Probability Space</div>
+      <div class="arc-desc">Kolmogorov axioms, (Ω, A, P)</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.2</div>
+      <div class="arc-label">PMF, PDF, CDF</div>
+      <div class="arc-desc">Discrete vs. continuous</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.3</div>
+      <div class="arc-label">Bayes' Theorem ⭐</div>
+      <div class="arc-desc">Sum + product rule engine</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.4</div>
+      <div class="arc-label">Summary Statistics</div>
+      <div class="arc-desc">Mean, variance, covariance</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.5</div>
+      <div class="arc-label">The Gaussian ⭐⭐</div>
+      <div class="arc-desc">Marginals, conditionals, affine</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.6</div>
+      <div class="arc-label">Conjugate Priors</div>
+      <div class="arc-desc">Exponential family, Beta-Bin</div>
+    </div>
+    <div class="arc-step">
+      <div class="arc-n">6.7</div>
+      <div class="arc-label">Change of Variables</div>
+      <div class="arc-desc">Jacobian, inverse transform</div>
+    </div>
+  </div>
+
+  <!-- ─── §6.1 Probability Space ─── -->
+  <section id="s6-1">
+    <div class="section-header">
+      <span class="sec-num">§6.1</span>
+      <h2 class="section-title">Construction of a Probability Space</h2>
+    </div>
+    <p class="section-lead">
+      Probability theory rests on a triple $(\Omega, \mathcal{A}, P)$.
+      Three Kolmogorov axioms define what "probability" must mean, and everything else follows — including
+      the rules that power Bayesian ML. The formal setup matters because in Part II the "experiment" is
+      often the choice of <strong>model parameters over a continuous space</strong> $\Omega = \mathbb{R}^d$.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Sample space Ω</div>
+        <div class="formula-expr">All possible outcomes</div>
+        <div class="formula-note">Discrete (coin flips, word counts) or continuous (temperatures, model parameters $\theta \in \mathbb{R}^d$).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Event space A (σ-algebra)</div>
+        <div class="formula-expr">Subsets of Ω we can assign probability to</div>
+        <div class="formula-note">Must be closed under complements and countable unions. The technicality: on continuous $\Omega$, not every subset admits a sensible probability measure.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Probability measure P</div>
+        <div class="formula-expr">$P: \mathcal{A} \to [0,1]$</div>
+        <div class="formula-note"><strong>K1:</strong> $P(A)\geq 0$ &nbsp; <strong>K2:</strong> $P(\Omega)=1$ &nbsp; <strong>K3:</strong> $P\!\bigl(\bigcup_i A_i\bigr) = \sum_i P(A_i)$ for disjoint $A_i$.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">What follows from the axioms</div>
+      From the three axioms alone: $P(\emptyset)=0$, $P(A^c) = 1-P(A)$, and $P(A\cup B) = P(A)+P(B)-P(A\cap B)$.
+      No additional assumptions — the entire edifice of probability follows deductively.
+    </div>
+  </section>
+
+  <!-- ─── §6.2 PMF, PDF, CDF ─── -->
+  <section id="s6-2">
+    <div class="section-header">
+      <span class="sec-num">§6.2</span>
+      <h2 class="section-title">Discrete and Continuous Probabilities</h2>
+    </div>
+    <p class="section-lead">
+      A <strong>random variable</strong> $X: \Omega \to T$ maps outcomes to a target space $T$ (usually $T = \mathbb{R}$).
+      Whether $T$ is discrete or continuous determines the representation: PMF vs. PDF. The CDF unifies both.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">PMF (discrete)</div>
+        <div class="formula-expr">$p(x) = P(X = x) \geq 0,\quad \sum_x p(x) = 1$</div>
+        <div class="formula-note"><strong>Example:</strong> Bernoulli($\mu$): $p(1)=\mu$, $p(0)=1-\mu$. Models a biased coin flip.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">PDF (continuous)</div>
+        <div class="formula-expr">$P(a \leq X \leq b) = \int_a^b p(x)\,dx,\quad \int p(x)\,dx=1$</div>
+        <div class="formula-note"><strong>Critical:</strong> $p(x)$ is NOT a probability — it is a density. It can exceed 1. $P(X=x)=0$ for any specific point.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">CDF (both cases)</div>
+        <div class="formula-expr">$F_X(x) = P(X \leq x) = \int_{-\infty}^x p(t)\,dt$</div>
+        <div class="formula-note">Always maps $\mathbb{R}\to[0,1]$, monotone non-decreasing, right-continuous. For continuous $X$: $p(x) = dF/dx$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Marginal (sum rule)</div>
+        <div class="formula-expr">$p(x) = \int p(x,y)\,dy$</div>
+        <div class="formula-note">For the discrete case replace $\int$ with $\sum$. Marginalizing = summing over all the ways $y$ could have been.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Density vs. probability</div>
+      $p(x)$ is a density, not a probability. Asking "what is the probability that $X = 1.5$?" yields 0 for any continuous distribution.
+      Only intervals $P(a \leq X \leq b)$ have positive probability. This distinction matters whenever you compare log-likelihoods across different distributions.
+    </div>
+  </section>
+
+  <!-- ─── §6.3 Bayes' Theorem ─── -->
+  <section id="s6-3">
+    <div class="section-header">
+      <span class="sec-num">§6.3</span>
+      <h2 class="section-title">Bayes' Theorem ⭐</h2>
+    </div>
+    <p class="section-lead">
+      Three rules — conditional probability, product rule, sum rule — are the entire engine of probabilistic reasoning.
+      Combining them yields <strong>Bayes' theorem</strong>: the mechanism for updating beliefs on evidence.
+      All of Bayesian ML is an application of this single equation.
+    </p>
+
+    <!-- Bayes diagram -->
+    <div class="diagram">
+      <div class="diagram-title">The four quantities in Bayes' theorem</div>
+      <svg width="560" height="200" viewBox="0 0 560 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--green)"/>
+          </marker>
+          <marker id="arrC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--cyan)"/>
+          </marker>
+          <marker id="arrA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--amber)"/>
+          </marker>
+        </defs>
+
+        <!-- Prior box -->
+        <rect x="10" y="60" width="120" height="56" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="70" y="83" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--accent)" font-weight="600">p(x)</text>
+        <text x="70" y="99" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="var(--accent)">Prior</text>
+        <text x="70" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--dim)">belief before data</text>
+
+        <!-- Likelihood box -->
+        <rect x="10" y="140" width="120" height="56" rx="2" fill="var(--green-soft)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="70" y="163" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--green)" font-weight="600">p(y | x)</text>
+        <text x="70" y="179" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="var(--green)">Likelihood</text>
+        <text x="70" y="192" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--dim)">prob. of data given x</text>
+
+        <!-- Evidence box -->
+        <rect x="220" y="140" width="120" height="56" rx="2" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.5"/>
+        <text x="280" y="163" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--amber)" font-weight="600">p(y)</text>
+        <text x="280" y="179" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="var(--amber)">Evidence</text>
+        <text x="280" y="192" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--dim)">normalizing constant</text>
+
+        <!-- Posterior box -->
+        <rect x="430" y="60" width="120" height="56" rx="2" fill="var(--cyan-soft)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="490" y="83" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--cyan)" font-weight="600">p(x | y)</text>
+        <text x="490" y="99" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="var(--cyan)">Posterior</text>
+        <text x="490" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--dim)">updated belief</text>
+
+        <!-- Arrow: prior + likelihood → posterior -->
+        <line x1="135" y1="88" x2="425" y2="88" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+        <text x="280" y="82" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--accent)">× likelihood / evidence</text>
+
+        <!-- Arrow: likelihood → evidence (sum rule) -->
+        <line x1="135" y1="168" x2="215" y2="168" stroke="var(--green)" stroke-width="1.5" marker-end="url(#arrG)"/>
+        <text x="175" y="162" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--green)">∫dx</text>
+
+        <!-- Bayes equation below -->
+        <rect x="150" y="8" width="260" height="36" rx="2" fill="var(--bg3)" stroke="var(--border)" stroke-width="1"/>
+        <text x="280" y="22" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--dim)" letter-spacing="1">BAYES' THEOREM</text>
+        <text x="280" y="38" text-anchor="middle" font-family="EB Garamond" font-size="15" fill="var(--bright)">posterior ∝ likelihood × prior</text>
+      </svg>
+      <p style="font-size:13px;color:var(--dim);font-family:var(--serif);font-style:italic;text-align:center">
+        The evidence $p(y) = \int p(y|x)\,p(x)\,dx$ is the normalizing constant. Many algorithms work with
+        unnormalized posteriors and handle it separately.
+      </p>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Conditional probability</div>
+        <div class="formula-expr">$P(A \mid B) = \dfrac{P(A \cap B)}{P(B)}$</div>
+        <div class="formula-note">Restrict the universe to event $B$, then renormalize. Requires $P(B) > 0$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Product rule (chain rule)</div>
+        <div class="formula-expr">$p(x, y) = p(y \mid x)\,p(x) = p(x \mid y)\,p(y)$</div>
+        <div class="formula-note">Chains to $n$ variables: $p(x_1,\ldots,x_n) = p(x_1)\prod_{k=2}^n p(x_k \mid x_1,\ldots,x_{k-1})$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Sum rule (marginalization)</div>
+        <div class="formula-expr">$p(x) = \int p(x,y)\,dy = \int p(x \mid y)\,p(y)\,dy$</div>
+        <div class="formula-note">Also written $p(x) = \mathbb{E}_y[p(x \mid y)]$ — marginalizing equals averaging over $y$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Bayes' theorem</div>
+        <div class="formula-expr">$p(x \mid y) = \dfrac{p(y \mid x)\,p(x)}{p(y)}$</div>
+        <div class="formula-note">$p(y) = \int p(y|x)\,p(x)\,dx$ is the evidence. In ML: $x\to\theta$ (parameters), $y\to\mathcal{D}$ (data).</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Why Bayes' theorem is central to ML</div>
+      In supervised learning, $x$ plays the role of model parameters $\theta$ and $y$ the role of data $\mathcal{D}$.
+      Bayes gives the mechanism for Bayesian inference:
+      $p(\theta \mid \mathcal{D}) \propto p(\mathcal{D} \mid \theta)\,p(\theta)$.
+      All of Ch 9 (Bayesian linear regression) uses this directly. The evidence $p(\mathcal{D})$ is often intractable,
+      motivating variational inference and MCMC.
+    </div>
+  </section>
+
+  <!-- ─── §6.4 Summary Statistics ─── -->
+  <section id="s6-4">
+    <div class="section-header">
+      <span class="sec-num">§6.4</span>
+      <h2 class="section-title">Summary Statistics and Independence</h2>
+    </div>
+    <p class="section-lead">
+      Rather than working with full distributions, compact descriptions suffice in many settings.
+      The <strong>covariance matrix</strong> $\Sigma$ is the central object — it is always symmetric
+      and positive semi-definite, directly linking this chapter to the SPD matrices of C3 and the
+      eigendecomposition of C4.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Expected value</div>
+        <div class="formula-expr">$\mathbb{E}_X[g(X)] = \int g(x)\,p(x)\,dx$</div>
+        <div class="formula-note"><strong>Linearity (always):</strong> $\mathbb{E}[\alpha X + \beta Y] = \alpha\mathbb{E}[X] + \beta\mathbb{E}[Y]$ — no independence required.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Variance</div>
+        <div class="formula-expr">$\mathrm{Var}[X] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$</div>
+        <div class="formula-note"><strong>Affine:</strong> $\mathrm{Var}[aX+b] = a^2\mathrm{Var}[X]$ — shifts don't change spread.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Covariance (two scalars)</div>
+        <div class="formula-expr">$\mathrm{Cov}[X,Y] = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$</div>
+        <div class="formula-note">Positive: tend to move together. Negative: opposite. Zero: no <em>linear</em> relationship (nonlinear dependence may still exist).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Covariance matrix</div>
+        <div class="formula-expr">$\Sigma = \mathrm{Cov}[\mathbf{X}] = \mathbb{E}[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top]$</div>
+        <div class="formula-note">Entry $\Sigma_{ij} = \mathrm{Cov}[X_i, X_j]$. Diagonal = individual variances. Always symmetric and PSD (variance is non-negative).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Affine transform — mean</div>
+        <div class="formula-expr">$\mathbb{E}[A\mathbf{X}+\mathbf{b}] = A\boldsymbol{\mu} + \mathbf{b}$</div>
+        <div class="formula-note">By linearity of expectation.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Affine transform — covariance</div>
+        <div class="formula-expr">$\mathrm{Cov}[A\mathbf{X}+\mathbf{b}] = A\Sigma A^\top$</div>
+        <div class="formula-note">This formula appears everywhere: every linear layer propagates uncertainty as $A\Sigma A^\top$. Connects to C4 (eigendecomp) and C9 (predictive variance).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Correlation</div>
+        <div class="formula-expr">$\rho(X,Y) = \dfrac{\mathrm{Cov}[X,Y]}{\sqrt{\mathrm{Var}[X]\,\mathrm{Var}[Y]}} \in [-1,1]$</div>
+        <div class="formula-note">The bound follows from Cauchy-Schwarz (C3). $\pm 1$ = perfect linear relationship; 0 = uncorrelated (not necessarily independent).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Independence</div>
+        <div class="formula-expr">$X \perp\!\!\!\perp Y \iff p(x,y)=p(x)\,p(y)$</div>
+        <div class="formula-note">Implies $\mathrm{Cov}[X,Y]=0$, but NOT vice versa. Exception: for joint Gaussians, zero correlation implies independence.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Uncorrelated ≠ independent (in general)</div>
+      Correlation captures only linear dependence. $X \sim \text{Uniform}[-1,1]$, $Y = X^2$:
+      $\mathrm{Cov}[X,Y] = 0$ but $Y$ is completely determined by $X$.
+      Independence is strictly stronger — it eliminates <em>all</em> statistical dependence.
+      The Gaussian is the only common distribution where zero correlation suffices for independence.
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Covariance matrix = SPD matrix</div>
+      $\Sigma$ is always <strong>symmetric positive semi-definite</strong>.
+      The eigendecomposition of $\Sigma$ (Ch 4) reveals the geometry of the distribution:
+      eigenvectors give the principal axes, eigenvalues give the spread along each axis.
+      This is the foundation of PCA (Ch 10).
+    </div>
+  </section>
+
+  <!-- ─── §6.5 Gaussian ─── -->
+  <section id="s6-5">
+    <div class="section-header">
+      <span class="sec-num">§6.5</span>
+      <h2 class="section-title">The Gaussian Distribution ⭐⭐</h2>
+    </div>
+    <p class="section-lead">
+      The most important distribution in machine learning.
+      Four reasons: (1) <strong>Central Limit Theorem</strong> — averages converge to Gaussian;
+      (2) <strong>Maximum entropy</strong> — Gaussian maximizes entropy for given mean and variance;
+      (3) <strong>Tractability</strong> — sums, marginals, conditionals of Gaussians are all Gaussian;
+      (4) <strong>Conjugacy</strong> — Gaussian prior × Gaussian likelihood = Gaussian posterior.
+    </p>
+
+    <!-- 2D Gaussian ellipse diagram -->
+    <div class="diagram">
+      <div class="diagram-title">2D Gaussian — contours of constant density (Mahalanobis ellipsoids)</div>
+      <svg width="460" height="260" viewBox="0 0 460 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrV" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrV2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--green)"/>
+          </marker>
+          <marker id="arrDim" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--dim)"/>
+          </marker>
+        </defs>
+
+        <!-- Axis lines -->
+        <line x1="50" y1="130" x2="410" y2="130" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>
+        <line x1="230" y1="20" x2="230" y2="240" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>
+        <text x="415" y="134" font-family="IBM Plex Mono" font-size="11" fill="currentColor" opacity=".35">x₁</text>
+        <text x="233" y="18" font-family="IBM Plex Mono" font-size="11" fill="currentColor" opacity=".35">x₂</text>
+
+        <!-- Concentric ellipses (tilted ~30°) — outermost to innermost -->
+        <!-- 3σ ellipse -->
+        <ellipse cx="230" cy="130" rx="140" ry="80" fill="var(--accent)" fill-opacity=".03" stroke="var(--accent)" stroke-opacity=".18" stroke-width="1" transform="rotate(-28 230 130)"/>
+        <!-- 2σ ellipse -->
+        <ellipse cx="230" cy="130" rx="93" ry="53" fill="var(--accent)" fill-opacity=".05" stroke="var(--accent)" stroke-opacity=".32" stroke-width="1.2" transform="rotate(-28 230 130)"/>
+        <!-- 1σ ellipse -->
+        <ellipse cx="230" cy="130" rx="47" ry="27" fill="var(--accent)" fill-opacity=".10" stroke="var(--accent)" stroke-opacity=".65" stroke-width="1.5" transform="rotate(-28 230 130)"/>
+
+        <!-- Density labels -->
+        <text x="360" y="95" font-family="IBM Plex Mono" font-size="9" fill="var(--accent)" opacity=".5">3σ</text>
+        <text x="318" y="105" font-family="IBM Plex Mono" font-size="9" fill="var(--accent)" opacity=".65">2σ</text>
+        <text x="278" y="115" font-family="IBM Plex Mono" font-size="9" fill="var(--accent)" opacity=".9">1σ</text>
+
+        <!-- Eigenvector 1 (principal axis, aligned with tilt) -->
+        <line x1="230" y1="130" x2="353" y2="68" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrV)"/>
+        <text x="358" y="64" font-family="IBM Plex Mono" font-size="11" fill="var(--accent)">v₁</text>
+        <text x="290" y="86" font-family="IBM Plex Mono" font-size="9" fill="var(--accent)" opacity=".7">√λ₁</text>
+
+        <!-- Eigenvector 2 (perpendicular) -->
+        <line x1="230" y1="130" x2="195" y2="56" stroke="var(--green)" stroke-width="2" marker-end="url(#arrV2)"/>
+        <text x="182" y="50" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">v₂</text>
+        <text x="199" y="88" font-family="IBM Plex Mono" font-size="9" fill="var(--green)" opacity=".7">√λ₂</text>
+
+        <!-- Mean point -->
+        <circle cx="230" cy="130" r="5" fill="var(--bright)" fill-opacity=".7"/>
+        <text x="238" y="146" font-family="IBM Plex Mono" font-size="10" fill="var(--bright)" opacity=".7">μ</text>
+
+        <!-- Mahalanobis distance label -->
+        <text x="60" y="220" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">contours: (x−μ)ᵀΣ⁻¹(x−μ) = const</text>
+        <text x="60" y="240" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">Σ = PΛPᵀ &nbsp;— eigenvectors give axes, √eigenvalues give radii</text>
+      </svg>
+      <p style="font-size:13px;color:var(--dim);font-family:var(--serif);font-style:italic;text-align:center">
+        Eigenvectors $\mathbf{v}_1, \mathbf{v}_2$ of $\Sigma$ are the axes of the ellipsoid.
+        Eigenvalues $\lambda_1 \geq \lambda_2$ give the squared semi-axis lengths.
+        Larger $\lambda$ = more spread in that direction.
+      </p>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Univariate Gaussian</div>
+        <div class="formula-expr">$\mathcal{N}(x \mid \mu, \sigma^2) = \dfrac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\dfrac{(x-\mu)^2}{2\sigma^2}\right)$</div>
+        <div class="formula-note"><strong>68-95-99.7 rule:</strong> ~68%/95%/99.7% of mass within $\pm1/\pm2/\pm3\sigma$. Standardize: $Z=(X-\mu)/\sigma \sim \mathcal{N}(0,1)$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Multivariate Gaussian ⭐⭐</div>
+        <div class="formula-expr">$\mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}, \Sigma) = \dfrac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}}\exp\!\left(-\tfrac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^\top\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})\right)$</div>
+        <div class="formula-note">$|\Sigma|^{1/2}$ in the normalizer: larger $\Sigma$ = more spread = lower peak. Exponent is the <strong>squared Mahalanobis distance</strong> from $\mathbf{x}$ to $\boldsymbol{\mu}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Marginal distribution</div>
+        <div class="formula-expr">$p(\mathbf{x}_a) = \mathcal{N}(\mathbf{x}_a \mid \boldsymbol{\mu}_a,\, \Sigma_{aa})$</div>
+        <div class="formula-note">Partition $\mathbf{X}=(\mathbf{X}_a,\mathbf{X}_b)$. Just read off the diagonal block. Marginalizing a Gaussian = dropping unwanted dimensions.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Conditional mean</div>
+        <div class="formula-expr">$\boldsymbol{\mu}_{a|b} = \boldsymbol{\mu}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mathbf{x}_b - \boldsymbol{\mu}_b)$</div>
+        <div class="formula-note">Start at $\boldsymbol{\mu}_a$, correct by how far $\mathbf{x}_b$ deviates from its mean. $\Sigma_{ab}\Sigma_{bb}^{-1}$ is the regression coefficient of $a$ on $b$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Conditional covariance (Schur complement)</div>
+        <div class="formula-expr">$\Sigma_{a|b} = \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}$</div>
+        <div class="formula-note">Prior variance minus a PSD correction. Conditioning always <em>reduces</em> variance. $\Sigma_{a|b}$ does <strong>not</strong> depend on $\mathbf{x}_b$ — unique to the Gaussian.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Affine transform rule</div>
+        <div class="formula-expr">$\mathbf{Y} = A\mathbf{X}+\mathbf{b} \;\Rightarrow\; \mathbf{Y}\sim\mathcal{N}(A\boldsymbol{\mu}+\mathbf{b},\; A\Sigma A^\top)$</div>
+        <div class="formula-note">Linear operations (projection, rotation, scaling) preserve the Gaussian family. Enables exact inference in linear-Gaussian models.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">For joint Gaussians: uncorrelated = independent (unique property)</div>
+      If $\mathbf{X}$ is jointly Gaussian and $\mathrm{Cov}[X_i, X_j]=0$, then $X_i \perp\!\!\!\perp X_j$.
+      This holds <em>only</em> for the Gaussian — because it is fully characterized by first and second moments.
+      In all other distributions, zero correlation does not imply independence.
+    </div>
+
+    <details class="expand">
+      <summary>Product of two Gaussians (precision update)</summary>
+      <div class="expand-body">
+        <p>When Bayes' theorem has a Gaussian likelihood and a Gaussian prior, the product of two Gaussian densities is itself (proportional to) a Gaussian:</p>
+        $$\mathcal{N}(x \mid \mu_1,\sigma_1^2)\cdot\mathcal{N}(x \mid \mu_2,\sigma_2^2) \;\propto\; \mathcal{N}(x \mid \mu,\sigma^2)$$
+        <p>where the parameters of the product follow a <strong>precision update</strong>:</p>
+        $$\underbrace{\frac{1}{\sigma^2}}_{\text{posterior precision}} = \underbrace{\frac{1}{\sigma_1^2}}_{\tau_1} + \underbrace{\frac{1}{\sigma_2^2}}_{\tau_2}, \qquad \mu = \sigma^2\!\left(\frac{\mu_1}{\sigma_1^2} + \frac{\mu_2}{\sigma_2^2}\right)$$
+        <p>In precision notation $\tau_i = 1/\sigma_i^2$:</p>
+        $$\tau = \tau_1 + \tau_2, \qquad \mu = \frac{\tau_1\mu_1 + \tau_2\mu_2}{\tau_1+\tau_2}$$
+        <p><strong>Intuition:</strong> Two independent Gaussian measurements of the same quantity combine so that (a) precisions add — the result is always tighter than either alone, and (b) the combined mean is a precision-weighted average pulled toward the more precise measurement. This is the foundation of the Kalman filter.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Why Gaussian conditionals are Gaussian</summary>
+      <div class="expand-body">
+        <p>The key insight is that the joint Gaussian density can be written in terms of the quadratic form $(\mathbf{x}-\boldsymbol{\mu})^\top\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})$. Partitioning the precision matrix $\Lambda = \Sigma^{-1}$ and completing the square in $\mathbf{x}_a$ shows that:</p>
+        <ul>
+          <li>The exponent is quadratic in $\mathbf{x}_a$ (given fixed $\mathbf{x}_b$), so the conditional is Gaussian.</li>
+          <li>The linear coefficient gives the conditional mean formula $\boldsymbol{\mu}_{a|b}$.</li>
+          <li>The quadratic coefficient gives the conditional covariance $\Sigma_{a|b}$.</li>
+          <li>Since $\Sigma_{a|b}$ does not involve $\mathbf{x}_b$, the conditional variance is the same everywhere — the Gaussian is the only common distribution with this property.</li>
+        </ul>
+        <p>This "completing the square" argument is the workhorse of Gaussian process inference and Bayesian linear regression (Ch 9): conditioning on data always yields a closed-form Gaussian posterior.</p>
+      </div>
+    </details>
+
+    <!-- Part II usage table -->
+    <table class="data-table" style="margin-top:20px">
+      <thead><tr><th>Chapter</th><th>Where the Gaussian appears</th></tr></thead>
+      <tbody>
+        <tr><td>Ch 8</td><td>Joint distributions over latent + observed variables in probabilistic models</td></tr>
+        <tr><td>Ch 9</td><td>Gaussian prior on weights, Gaussian noise model, closed-form posterior — Bayesian linear regression</td></tr>
+        <tr><td>Ch 10</td><td>Gaussian assumption justifies maximum-likelihood in PCA derivation</td></tr>
+        <tr><td>Ch 11</td><td>Gaussian Mixture Models (GMMs) — EM algorithm over Gaussian components</td></tr>
+        <tr><td>Ch 12</td><td>Gaussian class-conditional densities in Linear Discriminant Analysis (LDA)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── §6.6 Conjugate Priors ─── -->
+  <section id="s6-6">
+    <div class="section-header">
+      <span class="sec-num">§6.6</span>
+      <h2 class="section-title">Conjugate Priors &amp; the Exponential Family</h2>
+    </div>
+    <p class="section-lead">
+      In Bayesian inference, computing the posterior $p(\theta \mid \mathbf{x}) \propto p(\mathbf{x} \mid \theta)\,p(\theta)$
+      generally requires a difficult normalizing integral. <strong>Conjugate priors</strong> sidestep this:
+      they are chosen so the posterior has the <em>same functional form</em> as the prior — just with updated parameters.
+      The <strong>exponential family</strong> is the systematic framework for finding conjugate pairs.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Exponential family</div>
+        <div class="formula-expr">$p(\mathbf{x} \mid \boldsymbol{\eta}) = h(\mathbf{x})\exp\!\bigl(\boldsymbol{\eta}^\top\boldsymbol{\phi}(\mathbf{x}) - A(\boldsymbol{\eta})\bigr)$</div>
+        <div class="formula-note"><strong>$\boldsymbol{\eta}$:</strong> natural parameters &nbsp; <strong>$\boldsymbol{\phi}(\mathbf{x})$:</strong> sufficient statistics &nbsp; <strong>$A(\boldsymbol{\eta})$:</strong> log-partition function (normalizer). Members: Gaussian, Bernoulli, Binomial, Poisson, Gamma, Beta, Dirichlet.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Log-partition function</div>
+        <div class="formula-expr">$A(\boldsymbol{\eta}) = \log\!\int h(\mathbf{x})\exp(\boldsymbol{\eta}^\top\boldsymbol{\phi}(\mathbf{x}))\,d\mathbf{x}$</div>
+        <div class="formula-note">$\nabla_\eta A = \mathbb{E}[\boldsymbol{\phi}(X)]$ (mean of sufficient stats). $\nabla^2_\eta A = \mathrm{Cov}[\boldsymbol{\phi}(X)]$ (always PSD, so $A$ is convex).</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Beta-Binomial update rule</div>
+      <p style="margin-bottom:10px">
+        <strong>Prior:</strong> $\mu \sim \mathrm{Beta}(\alpha, \beta)$ where $\alpha-1$ acts as "prior successes" and $\beta-1$ as "prior failures."
+      </p>
+      <p style="margin-bottom:10px">
+        <strong>Likelihood:</strong> $x \sim \mathrm{Bin}(n, \mu)$ — $x$ successes in $n$ trials.
+      </p>
+      <p style="margin-bottom:10px">
+        <strong>Posterior:</strong> $\mu \mid x \sim \mathrm{Beta}(\alpha + x,\; \beta + n - x)$
+      </p>
+      <p>
+        <strong>Update rule:</strong> just increment the counts —
+        $\alpha_{\text{new}} = \alpha + x$, $\beta_{\text{new}} = \beta + (n-x)$.
+        As $n\to\infty$, the data overwhelms the prior.
+        Posterior mean: $\mathbb{E}[\mu \mid x] = (\alpha+x)/(\alpha+\beta+n)$ — weighted average of prior mean and MLE.
+      </p>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Gaussian-Gaussian conjugacy (precision update)</div>
+      <p style="margin-bottom:8px">
+        <strong>Prior:</strong> $\mu \sim \mathcal{N}(\mu_0, \sigma_0^2)$ &nbsp;&nbsp; <strong>Likelihood:</strong> $x \mid \mu \sim \mathcal{N}(\mu, \sigma^2)$ with $\sigma^2$ known.
+      </p>
+      <p style="margin-bottom:8px">
+        <strong>Posterior after $n$ iid observations (sample mean $\bar{x}$):</strong>
+        $\mu \mid \mathbf{x} \sim \mathcal{N}(\mu_n, \sigma_n^2)$
+      </p>
+      $$\frac{1}{\sigma_n^2} = \frac{1}{\sigma_0^2} + \frac{n}{\sigma^2} \qquad (\text{precisions add})$$
+      $$\mu_n = \sigma_n^2\!\left(\frac{\mu_0}{\sigma_0^2} + \frac{n\bar{x}}{\sigma^2}\right) \qquad (\text{precision-weighted mean})$$
+      <p>As $n\to\infty$: posterior mean $\to\bar{x}$ (MLE), posterior variance $\to 0$ (certainty).</p>
+    </div>
+
+    <details class="expand">
+      <summary>Sufficient statistics and MLE in the exponential family</summary>
+      <div class="expand-body">
+        <p>In the exponential family, the MLE of $\boldsymbol{\eta}$ satisfies the <strong>moment-matching</strong> condition:</p>
+        $$\nabla_\eta A(\hat{\boldsymbol{\eta}}) = \frac{1}{n}\sum_{i=1}^n \boldsymbol{\phi}(\mathbf{x}_i)$$
+        <p>That is, fit the model so the expected sufficient statistics equal the empirical sufficient statistics.</p>
+        <ul>
+          <li><strong>Gaussian:</strong> sufficient statistics are $x$ and $x^2$; matching gives sample mean and variance.</li>
+          <li><strong>Bernoulli / logistic regression:</strong> sufficient statistic is $\mathbf{x}$ (the feature vector); the moment-matching condition gives the standard logistic regression gradient equation.</li>
+        </ul>
+        <p><strong>Why A(η) being convex matters:</strong> Maximum likelihood in the exponential family is always a convex optimization problem (Hessian = covariance matrix, always PSD). Connects directly to convex optimization (Ch 7).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §6.7 Change of Variables ─── -->
+  <section id="s6-7">
+    <div class="section-header">
+      <span class="sec-num">§6.7</span>
+      <h2 class="section-title">Change of Variables &amp; Inverse Transform</h2>
+    </div>
+    <p class="section-lead">
+      If $Y = g(X)$ is a transformation of a random variable, what is the density of $Y$?
+      The <strong>change-of-variables formula</strong> answers this, with a Jacobian correction
+      that accounts for how the transformation stretches or squishes probability mass.
+      This connects directly to the determinant of C2 and the Jacobian of C5.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Univariate change of variables</div>
+        <div class="formula-expr">$p_Y(y) = p_X\!\bigl(g^{-1}(y)\bigr)\cdot\left|\dfrac{d}{dy}g^{-1}(y)\right|$</div>
+        <div class="formula-note"><strong>Intuition:</strong> probability mass is conserved. If the transformation stretches a region by 2×, the density must halve.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Multivariate change of variables</div>
+        <div class="formula-expr">$p_Y(\mathbf{y}) = p_X\!\bigl(g^{-1}(\mathbf{y})\bigr)\cdot\bigl|\det J_{g^{-1}}(\mathbf{y})\bigr|$</div>
+        <div class="formula-note">$J_{g^{-1}}$ is the Jacobian matrix: $(J)_{ij} = \partial[g^{-1}(\mathbf{y})]_i/\partial y_j$. The determinant measures $d$-dimensional volume stretching — same as $\det(A)$ from C2.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Inverse transform sampling</div>
+        <div class="formula-expr">Draw $U\sim\mathrm{Unif}[0,1]$, return $X = F_X^{-1}(U)$</div>
+        <div class="formula-note">Works because $P(F_X^{-1}(U)\leq x) = P(U\leq F_X(x)) = F_X(x)$. Limitation: requires $F_X^{-1}$ in closed form (not possible for the Gaussian).</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Connection to normalizing flows</div>
+      §6.7 is the foundation for <strong>normalizing flows</strong> — deep generative models that chain
+      invertible transformations to map a simple base distribution (usually $\mathcal{N}(0, I)$) into a
+      complex one. Each step applies the change-of-variables formula to track the density.
+      The Jacobian determinant must be cheap to compute — motivating coupling-layer and autoregressive architectures.
+    </div>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Conditional prob.</td><td>$P(A \mid B) = P(A\cap B)/P(B)$</td><td>Requires $P(B)>0$</td></tr>
+        <tr><td>Product rule</td><td>$p(x,y) = p(y\mid x)\,p(x)$</td><td>Also: $= p(x\mid y)\,p(y)$</td></tr>
+        <tr><td>Sum rule</td><td>$p(x) = \int p(x,y)\,dy$</td><td>Marginalize by integrating out</td></tr>
+        <tr><td>Bayes' theorem</td><td>$p(x\mid y) = p(y\mid x)\,p(x)/p(y)$</td><td>posterior ∝ likelihood × prior</td></tr>
+        <tr><td>Expected value</td><td>$\mathbb{E}[g(X)] = \int g(x)\,p(x)\,dx$</td><td>Linearity holds always</td></tr>
+        <tr><td>Variance</td><td>$\mathrm{Var}[X] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$</td><td>$\mathrm{Var}[aX+b]=a^2\mathrm{Var}[X]$</td></tr>
+        <tr><td>Covariance</td><td>$\mathrm{Cov}[X,Y] = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$</td><td>Zero does not imply independence</td></tr>
+        <tr><td>Covariance matrix</td><td>$\Sigma = \mathbb{E}[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top]$</td><td>Always symmetric PSD</td></tr>
+        <tr><td>Affine mean</td><td>$\mathbb{E}[A\mathbf{X}+\mathbf{b}] = A\boldsymbol{\mu}+\mathbf{b}$</td><td>Linearity of expectation</td></tr>
+        <tr><td>Affine covariance</td><td>$\mathrm{Cov}[A\mathbf{X}+\mathbf{b}] = A\Sigma A^\top$</td><td>Used everywhere in Part II</td></tr>
+        <tr><td>Univariate Gaussian</td><td>$\mathcal{N}(x\mid\mu,\sigma^2) = (2\pi\sigma^2)^{-1/2}\exp(-(x-\mu)^2/2\sigma^2)$</td><td>68-95-99.7 rule</td></tr>
+        <tr><td>Multivariate Gaussian</td><td>$\mathcal{N}(\mathbf{x}\mid\boldsymbol{\mu},\Sigma) = (2\pi)^{-d/2}|\Sigma|^{-1/2}\exp(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^\top\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu}))$</td><td>Requires $\Sigma$ SPD</td></tr>
+        <tr><td>Gaussian marginal</td><td>$p(\mathbf{x}_a) = \mathcal{N}(\mathbf{x}_a\mid\boldsymbol{\mu}_a,\Sigma_{aa})$</td><td>Just read the diagonal block</td></tr>
+        <tr><td>Conditional mean</td><td>$\boldsymbol{\mu}_{a|b} = \boldsymbol{\mu}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mathbf{x}_b-\boldsymbol{\mu}_b)$</td><td>Regression-type correction</td></tr>
+        <tr><td>Conditional cov (Schur)</td><td>$\Sigma_{a|b} = \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}$</td><td>Does not depend on $\mathbf{x}_b$</td></tr>
+        <tr><td>Precision update</td><td>$1/\sigma^2 = 1/\sigma_1^2 + 1/\sigma_2^2$</td><td>Product of two Gaussians</td></tr>
+        <tr><td>Exponential family</td><td>$p(\mathbf{x}\mid\boldsymbol{\eta}) = h(\mathbf{x})\exp(\boldsymbol{\eta}^\top\boldsymbol{\phi}(\mathbf{x}) - A(\boldsymbol{\eta}))$</td><td>$A$ convex; $\nabla A = \mathbb{E}[\boldsymbol{\phi}]$</td></tr>
+        <tr><td>Beta-Binomial update</td><td>$\mathrm{Beta}(\alpha,\beta) + x/n \to \mathrm{Beta}(\alpha+x,\beta+n-x)$</td><td>Count update rule</td></tr>
+        <tr><td>Gaussian precision update</td><td>$1/\sigma_n^2 = 1/\sigma_0^2 + n/\sigma^2$</td><td>Bayesian update with $n$ obs.</td></tr>
+        <tr><td>Change of variables</td><td>$p_Y(\mathbf{y}) = p_X(g^{-1}(\mathbf{y}))\,|\det J_{g^{-1}}(\mathbf{y})|$</td><td>Mass is conserved under transformation</td></tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to other chapters</div>
+      <div class="chip-row">
+        <span class="chip">C2 / C3: SPD matrices = covariance matrices</span>
+        <span class="chip">C3: Cauchy-Schwarz bounds correlation</span>
+        <span class="chip">C4: eigendecomp of Σ gives Gaussian geometry</span>
+        <span class="chip">C5: Jacobian appears in change of variables</span>
+        <span class="chip">C8: graphical models = conditional independence</span>
+        <span class="chip">C9: Bayesian regression = Gaussian-Gaussian conjugacy</span>
+        <span class="chip">C10: probabilistic PCA uses Gaussian</span>
+        <span class="chip">C11: GMMs = mixture of Gaussians (EM)</span>
+        <span class="chip">C12: LDA = Gaussian class-conditionals</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+renderMathInElement(document.body, {
+  delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError:false,
+  trust:true,
+});
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){ if(s.offsetTop-80<=scrollY) active=s.id; });
+  navItems.forEach(function(n){ n.classList.toggle('active',n.getAttribute('href').slice(1)===active); });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

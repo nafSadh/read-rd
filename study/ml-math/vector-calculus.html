@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vector Calculus — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--bg4:#ede9e0;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b5cf6;--accent-soft:#7c3aed10;--accent-mid:#7c3aed20;
+  --green:#2e6e3e;--green-soft:#2e6e3e12;--amber:#8a6e1e;--amber-soft:#8a6e1e12;
+  --red:#8b2020;--red-soft:#8b202012;--cyan:#2e6ab4;--cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06;--grad2:#2e6ab404;
+  --sidebar-w:220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--bg4:#1a2240;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --green:#4ee8a8;--green-soft:#4ee8a810;--amber:#e8c870;--amber-soft:#e8c87010;
+  --red:#e87090;--red-soft:#e8709010;--cyan:#4ee8d0;--cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;transition:background .4s,color .3s}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);transition:background 1s}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;position:sticky;top:0;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;z-index:10;transition:background .4s}
+.sidebar-head{padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-back{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;display:flex;align-items:center;gap:6px;margin-bottom:12px;transition:color .2s}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.sidebar-title{font-family:var(--serif);font-size:17px;color:var(--bright);line-height:1.3}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item{display:flex;align-items:baseline;gap:8px;padding:6px 16px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--dim);text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--accent-soft)}
+.nav-item.active{color:var(--accent);background:var(--accent-soft)}
+.nav-item .num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--accent);opacity:.7;flex-shrink:0}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.theme-btn{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;width:28px;height:28px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+main{flex:1;overflow-y:auto;padding:40px max(48px,calc((100% - 820px)/2)) 80px;position:relative;z-index:1}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title{font-family:var(--sans);font-size:34px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.2;margin-bottom:8px}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta{margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.5px}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+section{margin-bottom:48px;scroll-margin-top:24px}
+.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1px;flex-shrink:0}
+.section-title{font-family:var(--serif);font-size:24px;color:var(--bright);font-weight:400}
+.section-lead{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:20px}
+.section-lead strong{color:var(--bright);font-weight:600}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.formula-card{background:var(--bg2);border:1px solid var(--border);padding:16px 18px;transition:border-color .2s}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.formula-expr{font-family:var(--serif);font-size:18px;color:var(--bright);line-height:1.4;margin-bottom:6px}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+.callout{padding:16px 20px;border-left:3px solid var(--accent);background:var(--accent-soft);margin:20px 0;font-size:14px;line-height:1.7}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.accent{color:var(--accent)}
+.callout-title.red{color:var(--red)}
+.expand{border:1px solid var(--border);margin-top:16px;transition:border-color .2s}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary{padding:12px 16px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);list-style:none;display:flex;align-items:center;justify-content:space-between;transition:color .2s;user-select:none}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body{padding:20px 20px 16px;font-size:14px;line-height:1.75;color:var(--text)}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.diagram{margin:24px 0;padding:24px;background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px}
+.diagram-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);align-self:flex-start}
+.diagram svg{max-width:100%;height:auto}
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.5px;padding:3px 10px;border:1px solid var(--border);color:var(--dim);background:var(--bg3);transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.mode-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);margin:20px 0}
+.mode-col{padding:16px 18px}
+.mode-col+.mode-col{border-left:1px solid var(--border)}
+.mode-col-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.mode-col-title{font-family:var(--serif);font-size:17px;color:var(--bright);margin-bottom:6px}
+.mode-col ul{list-style:none;font-size:13px;color:var(--text);line-height:1.8}
+.mode-col ul li::before{content:'→ ';color:var(--accent);opacity:.6}
+.mode-col.winner{background:var(--accent-soft)}
+.mode-col.winner .mode-col-label{color:var(--accent)}
+@media(max-width:700px){.sidebar{display:none}main{padding:24px 20px 60px}.formula-grid{grid-template-columns:1fr}.mode-compare{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title"><em>Vector</em> Calculus</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s5-1" class="nav-item"><span class="num">5.1</span>Univariate Deriv.</a>
+    <a href="#s5-2" class="nav-item"><span class="num">5.2</span>Partial Deriv. &amp; Gradients</a>
+    <a href="#s5-3" class="nav-item"><span class="num">5.3</span>Jacobians</a>
+    <a href="#s5-4" class="nav-item"><span class="num">5.4</span>Matrix Gradients</a>
+    <a href="#s5-5" class="nav-item"><span class="num">5.5</span>Useful Identities</a>
+    <a href="#s5-6" class="nav-item"><span class="num">5.6</span>Backpropagation ⭐</a>
+    <a href="#s5-7" class="nav-item"><span class="num">5.7</span>Hessians</a>
+    <a href="#s5-8" class="nav-item"><span class="num">5.8</span>Taylor Series</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 139–170</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART I</div>
+    <h1 class="page-title"><em>Vector</em> Calculus</h1>
+    <p class="page-sub">Differentiation as linear approximation. Partial derivatives, Jacobians, matrix gradients, and backpropagation — all unified by the idea that a derivative is the best linear map approximating a function locally.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 5 (pp 139–170)</span>
+      <a href="notes/vector-calculus.md">Raw notes ↗</a>
+      <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" target="_blank">3B1B Essence of Calculus ↗</a>
+      <a href="https://explained.ai/matrix-calculus/" target="_blank">Matrix Calculus Reference ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §5.1 Univariate Derivatives ─── -->
+  <section id="s5-1">
+    <div class="section-header">
+      <span class="sec-num">§5.1</span>
+      <h2 class="section-title">Differentiation of Univariate Functions</h2>
+    </div>
+    <p class="section-lead">
+      A derivative answers: <strong>what is the best linear approximation to $f$ near this point?</strong>
+      The limit definition captures slope as the infinitesimal rise-over-run, but the geometric meaning
+      is a tangent line — the unique linear function that agrees with $f$ at $x$ to first order.
+      Everything in this chapter generalizes this one idea.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Limit definition</div>
+        <div class="formula-expr">$f'(x) = \lim_{h \to 0} \dfrac{f(x+h) - f(x)}{h}$</div>
+        <div class="formula-note">Slope of the tangent line at $x$. If $f'(x) > 0$, $f$ is increasing; $f'(x) < 0$, decreasing.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Chain rule (univariate)</div>
+        <div class="formula-expr">$(g \circ f)'(x) = g'(f(x)) \cdot f'(x)$</div>
+        <div class="formula-note"><strong>The most important rule.</strong> In the multivariate setting it becomes a product of Jacobian matrices — the engine of backpropagation.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Product rule</div>
+        <div class="formula-expr">$(fg)' = f'g + fg'$</div>
+        <div class="formula-note">Quotient rule follows: $(f/g)' = (f'g - fg')/g^2$.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>Standard derivatives to know</summary>
+      <div class="expand-body">
+        <table class="data-table">
+          <thead><tr><th>Function $f(x)$</th><th>Derivative $f'(x)$</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>$x^n$</td><td>$nx^{n-1}$</td><td>Power rule; works for any $n \in \mathbb{R}$</td></tr>
+            <tr><td>$\exp(x)$</td><td>$\exp(x)$</td><td>Only function equal to its own derivative</td></tr>
+            <tr><td>$\ln(x)$</td><td>$1/x$</td><td>Appears everywhere in log-likelihoods</td></tr>
+            <tr><td>$\sin(x)$</td><td>$\cos(x)$</td><td>Rotate 90°: sin→cos→−sin→−cos→sin</td></tr>
+            <tr><td>$\cos(x)$</td><td>$-\sin(x)$</td><td></td></tr>
+          </tbody>
+        </table>
+        <p>The Taylor series (§5.8) shows <em>why</em> these derivatives have these forms — each derivative is the coefficient of the linear term in the local polynomial expansion.</p>
+      </div>
+    </details>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">The thread connecting this chapter</div>
+      Every concept ahead — partial derivatives, gradients, Jacobians, backprop — is the univariate
+      derivative generalized to higher dimensions. The derivative is always asking the same question:
+      what linear map best approximates this function here?
+    </div>
+  </section>
+
+  <!-- ─── §5.2 Partial Derivatives & Gradients ─── -->
+  <section id="s5-2">
+    <div class="section-header">
+      <span class="sec-num">§5.2</span>
+      <h2 class="section-title">Partial Differentiation and Gradients</h2>
+    </div>
+    <p class="section-lead">
+      For $f : \mathbb{R}^n \to \mathbb{R}$, differentiation must handle multiple inputs simultaneously.
+      The <strong>partial derivative</strong> $\partial f / \partial x_i$ isolates one input at a time.
+      The <strong>gradient</strong> $\nabla_{\mathbf{x}} f$ collects all partials into a single object —
+      and in MML, that object is a <em>row vector</em>.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Partial derivative</div>
+        <div class="formula-expr">$\dfrac{\partial f}{\partial x_i} = \lim_{h \to 0} \dfrac{f(\mathbf{x} + h\mathbf{e}_i) - f(\mathbf{x})}{h}$</div>
+        <div class="formula-note">Hold all other inputs fixed; differentiate only $x_i$. $\mathbf{e}_i$ is the $i$-th standard basis vector.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Gradient — MML convention</div>
+        <div class="formula-expr">$\nabla_{\mathbf{x}} f = \left[\frac{\partial f}{\partial x_1},\; \frac{\partial f}{\partial x_2},\; \ldots,\; \frac{\partial f}{\partial x_n}\right] \in \mathbb{R}^{1 \times n}$</div>
+        <div class="formula-note"><strong>Row vector!</strong> MML defines the gradient as a row vector. Many texts use a column vector — the convention matters when composing Jacobians.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Schwarz's theorem</div>
+        <div class="formula-expr">$\dfrac{\partial^2 f}{\partial x_i \partial x_j} = \dfrac{\partial^2 f}{\partial x_j \partial x_i}$</div>
+        <div class="formula-note">Mixed partials commute when $f$ is twice continuously differentiable. Guarantees the Hessian (§5.7) is symmetric.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Gradient of squared norm</div>
+        <div class="formula-expr">$\nabla_{\mathbf{x}} \|\mathbf{x}\|^2 = 2\mathbf{x}^\top$</div>
+        <div class="formula-note">The prototype calculation: $\|\mathbf{x}\|^2 = \sum_i x_i^2$, so $\partial/\partial x_i = 2x_i$. Result is a row vector.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Direction of steepest ascent</div>
+      The gradient $\nabla f$ points in the direction of <strong>steepest ascent</strong> at a point.
+      Its magnitude $\|\nabla f\|$ gives the rate of increase in that direction.
+      Gradient descent moves <em>opposite</em> to the gradient — this is the entire algorithm: $\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f(\mathbf{x})^\top$.
+    </div>
+
+    <details class="expand">
+      <summary>Multivariate differentiation rules</summary>
+      <div class="expand-body">
+        <p>The sum and product rules carry over directly:</p>
+        <ul>
+          <li><strong>Sum:</strong> $\nabla(f + g) = \nabla f + \nabla g$</li>
+          <li><strong>Product:</strong> $\nabla(fg) = g\,\nabla f + f\,\nabla g$</li>
+          <li><strong>Chain rule:</strong> For $h(\mathbf{x}) = f(g(\mathbf{x}))$, use Jacobians — see §5.3.</li>
+        </ul>
+        <p>Example — for a linear function $f(\mathbf{x}) = \mathbf{a}^\top \mathbf{x}$:</p>
+        $$\nabla_{\mathbf{x}} (\mathbf{a}^\top \mathbf{x}) = \mathbf{a}^\top \quad (\text{a row vector})$$
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §5.3 Jacobians ─── -->
+  <section id="s5-3">
+    <div class="section-header">
+      <span class="sec-num">§5.3</span>
+      <h2 class="section-title">Gradients of Vector-Valued Functions (Jacobians)</h2>
+    </div>
+    <p class="section-lead">
+      When $f : \mathbb{R}^n \to \mathbb{R}^m$ outputs a <em>vector</em>, the derivative is no longer
+      a single row vector. It becomes the <strong>Jacobian matrix</strong> $J \in \mathbb{R}^{m \times n}$
+      — the matrix that best linearly approximates $f$ near a point. Each row is the gradient of one output;
+      each column shows how all outputs respond to one input.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">Jacobian as a linear map between two spaces</div>
+      <svg width="500" height="180" viewBox="0 0 500 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left oval: domain R^n -->
+        <ellipse cx="110" cy="90" rx="75" ry="60" fill="var(--accent)" fill-opacity=".06" stroke="var(--accent)" stroke-opacity=".4" stroke-width="1.5"/>
+        <text x="110" y="82" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--accent)" font-weight="600">ℝⁿ</text>
+        <text x="110" y="100" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="currentColor" opacity=".5">input x</text>
+        <!-- Right oval: codomain R^m -->
+        <ellipse cx="390" cy="90" rx="75" ry="60" fill="var(--green)" fill-opacity=".06" stroke="var(--green)" stroke-opacity=".4" stroke-width="1.5"/>
+        <text x="390" y="82" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--green)" font-weight="600">ℝᵐ</text>
+        <text x="390" y="100" text-anchor="middle" font-family="EB Garamond" font-size="13" fill="currentColor" opacity=".5">output f(x)</text>
+        <!-- Arrow -->
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--dim)" opacity=".7"/>
+          </marker>
+        </defs>
+        <line x1="190" y1="90" x2="312" y2="90" stroke="var(--dim)" stroke-opacity=".7" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <!-- Jacobian label on arrow -->
+        <rect x="217" y="68" width="68" height="22" rx="3" fill="var(--bg2)" stroke="var(--border)" stroke-width="1"/>
+        <text x="251" y="83" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--accent)" font-weight="600">J ∈ ℝᵐˣⁿ</text>
+        <!-- Dimension note -->
+        <text x="110" y="165" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".4">n inputs</text>
+        <text x="390" y="165" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".4">m outputs</text>
+        <!-- Jacobian structure hint -->
+        <text x="251" y="140" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".5">J_ij = ∂fᵢ/∂xⱼ</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Jacobian matrix</div>
+        <div class="formula-expr">$J = \dfrac{\partial \mathbf{f}}{\partial \mathbf{x}} \in \mathbb{R}^{m \times n}, \quad J_{ij} = \dfrac{\partial f_i}{\partial x_j}$</div>
+        <div class="formula-note">$m$ rows (one per output), $n$ columns (one per input). Row $i$ = gradient of $f_i$. Column $j$ = sensitivity of all outputs to $x_j$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Chain rule (vector form)</div>
+        <div class="formula-expr">$\dfrac{\partial \mathbf{z}}{\partial \mathbf{x}} = \underbrace{\dfrac{\partial \mathbf{z}}{\partial \mathbf{y}}}_{p \times m} \underbrace{\dfrac{\partial \mathbf{y}}{\partial \mathbf{x}}}_{m \times n}$</div>
+        <div class="formula-note">Matrix multiplication of Jacobians. Shapes: result is $p \times n$. <strong>This is backpropagation</strong>, traversed right to left.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Linearization</div>
+        <div class="formula-expr">$\mathbf{f}(\mathbf{x}_0 + \Delta\mathbf{x}) \approx \mathbf{f}(\mathbf{x}_0) + J(\mathbf{x}_0)\,\Delta\mathbf{x}$</div>
+        <div class="formula-note">The Jacobian <em>is</em> the linear map that locally approximates $\mathbf{f}$. First-order Taylor expansion for vector functions.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">Dimension tracking is everything</div>
+      If $\mathbf{y} \in \mathbb{R}^m$ and $\mathbf{x} \in \mathbb{R}^n$, then $\partial\mathbf{y}/\partial\mathbf{x} \in \mathbb{R}^{m \times n}$.
+      Always check shapes before multiplying Jacobians — a mismatch means you have the wrong convention or a transposed term.
+      In ML: if the loss is scalar and parameters are a vector of length $n$, the gradient is $(1 \times n)$.
+    </div>
+
+    <details class="expand">
+      <summary>Example: neural network layer Jacobian</summary>
+      <div class="expand-body">
+        <p>For a layer $\mathbf{y} = \sigma(W\mathbf{x} + \mathbf{b})$ where $\sigma$ acts elementwise, $\mathbf{y} \in \mathbb{R}^m$, $\mathbf{x} \in \mathbb{R}^n$:</p>
+        $$\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \underbrace{J_\sigma(W\mathbf{x}+\mathbf{b})}_{m \times m} \cdot \underbrace{W}_{m \times n} \in \mathbb{R}^{m \times n}$$
+        <p>$J_\sigma$ is <strong>diagonal</strong> (elementwise activation): $J_\sigma = \operatorname{diag}(\sigma'(W\mathbf{x}+\mathbf{b}))$. This is why pointwise activations are computationally cheap to differentiate.</p>
+        <p>The gradient with respect to $W$ is needed for parameter updates: $\partial L/\partial W = (\partial L/\partial \mathbf{y}) \cdot \partial \mathbf{y}/\partial W$, which involves a Kronecker product structure — handled automatically by AD frameworks.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §5.4 Matrix Gradients ─── -->
+  <section id="s5-4">
+    <div class="section-header">
+      <span class="sec-num">§5.4</span>
+      <h2 class="section-title">Gradients of Matrices</h2>
+    </div>
+    <p class="section-lead">
+      When the input or output is a <em>matrix</em>, the gradient inherits the same shape.
+      For $f : \mathbb{R}^{m \times n} \to \mathbb{R}$ (a scalar function of a matrix, like a loss
+      w.r.t. weight matrix $W$), the gradient is also an $m \times n$ matrix — one entry per parameter.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Gradient w.r.t. matrix</div>
+        <div class="formula-expr">$\left(\dfrac{\partial f}{\partial A}\right)_{ij} = \dfrac{\partial f}{\partial A_{ij}}$</div>
+        <div class="formula-note">Same shape as $A$. Differentiate $f$ w.r.t. each entry independently; pack the results back into a matrix.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Useful matrix identities</div>
+        <div class="formula-expr">$\dfrac{\partial}{\partial X}[\mathbf{a}^\top X \mathbf{b}] = \mathbf{a}\mathbf{b}^\top$</div>
+        <div class="formula-note">Also: $\partial\,\mathrm{tr}(AXB) / \partial X = A^\top B^\top$. These appear when differentiating quadratic losses w.r.t. weight matrices.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Vectorization (vec operator)</div>
+        <div class="formula-expr">$\operatorname{vec}(A) \in \mathbb{R}^{mn}$</div>
+        <div class="formula-note">Stack columns of $A$ into one long vector. Converts matrix calculus into standard vector Jacobians — used when notationally consistent bookkeeping is needed.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Why this matters for ML</div>
+      Every weight matrix $W$ in a neural network is differentiated via $\partial L / \partial W$.
+      The result is a matrix of the same shape — used directly in gradient descent.
+      Understanding this gradient as "same shape as the parameter" is the foundation of
+      parameter update rules: $W \leftarrow W - \eta\,(\partial L / \partial W)$.
+    </div>
+  </section>
+
+  <!-- ─── §5.5 Useful Identities ─── -->
+  <section id="s5-5">
+    <div class="section-header">
+      <span class="sec-num">§5.5</span>
+      <h2 class="section-title">Useful Identities for Computing Gradients</h2>
+    </div>
+    <p class="section-lead">
+      A reference collection of frequently needed matrix-calculus results. Derivation strategy:
+      write out element-by-element, take one partial, read off the pattern, pack into matrix form,
+      check dimensions. The log-determinant identity is especially important for Gaussian models.
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Expression</th><th>Gradient (w.r.t.)</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>$\mathbf{a}^\top \mathbf{x}$</td><td>$\mathbf{a}^\top$ (row) w.r.t. $\mathbf{x}$</td><td>Linear; gradient is constant</td></tr>
+        <tr><td>$\mathbf{x}^\top B \mathbf{x}$</td><td>$\mathbf{x}^\top(B + B^\top)$ w.r.t. $\mathbf{x}$</td><td>Bilinear form</td></tr>
+        <tr><td>$\mathbf{x}^\top B \mathbf{x}$ ($B$ sym.)</td><td>$2\mathbf{x}^\top$ w.r.t. $\mathbf{x}$</td><td>$B + B^\top = 2B$ when symmetric</td></tr>
+        <tr><td>$\|\mathbf{x}\|^2$</td><td>$2\mathbf{x}^\top$ w.r.t. $\mathbf{x}$</td><td>Special case of above, $B = I$</td></tr>
+        <tr><td>$\mathrm{tr}(AB)$</td><td>$B^\top$ w.r.t. $A$</td><td>Trace gradient; used in PCA derivations</td></tr>
+        <tr><td>$\det(A)$</td><td>$\det(A) \cdot A^{-\top}$ w.r.t. $A$</td><td>Jacobi's formula</td></tr>
+        <tr><td>$\ln \det A$</td><td>$A^{-\top}$ w.r.t. $A$</td><td>Appears in MLE for Gaussians (Ch 6)</td></tr>
+      </tbody>
+    </table>
+
+    <details class="expand">
+      <summary>Why is the log-det gradient A⁻ᵀ?</summary>
+      <div class="expand-body">
+        <p><strong>Jacobi's formula</strong> states $\mathrm{d}\det(A) = \det(A)\,\mathrm{tr}(A^{-1}\,\mathrm{d}A)$, so $\partial\det(A)/\partial A_{ij} = \det(A)\,(A^{-1})_{ji}$, giving $\partial\det(A)/\partial A = \det(A)\cdot A^{-\top}$.</p>
+        <p>Taking the log: $\partial\ln\det(A)/\partial A = (1/\det(A)) \cdot \det(A) \cdot A^{-\top} = A^{-\top}$.</p>
+        <p>In maximum-likelihood estimation for a Gaussian with covariance $\Sigma$, the log-likelihood contains $-\tfrac{1}{2}\ln\det(\Sigma)$. Differentiating w.r.t. $\Sigma$ gives $-\tfrac{1}{2}\Sigma^{-\top} = -\tfrac{1}{2}\Sigma^{-1}$ (symmetric $\Sigma$). This is the gradient that drives the MLE update for the covariance.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §5.6 Backpropagation ⭐ ─── -->
+  <section id="s5-6">
+    <div class="section-header">
+      <span class="sec-num">§5.6</span>
+      <h2 class="section-title">Backpropagation and Automatic Differentiation ⭐</h2>
+    </div>
+    <p class="section-lead">
+      The most important section for ML practitioners. Backpropagation is not a special algorithm —
+      it is the <strong>chain rule applied to Jacobians, traversed in reverse order</strong> through a
+      computation graph. Two passes: forward (compute values), backward (accumulate gradients). This
+      enables exact, efficient gradient computation through networks with millions of parameters.
+    </p>
+
+    <!-- Computation Graph SVG -->
+    <div class="diagram">
+      <div class="diagram-title">Computation graph — forward values and backward gradients</div>
+      <svg width="560" height="220" viewBox="0 0 560 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="fwd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--green)" opacity=".8"/>
+          </marker>
+          <marker id="bwd" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+            <polygon points="8 0, 0 3, 8 6" fill="var(--red)" opacity=".8"/>
+          </marker>
+        </defs>
+
+        <!-- Node x -->
+        <circle cx="90" cy="110" r="38" fill="var(--bg2)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="90" y="104" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="var(--accent)">x</text>
+        <text x="90" y="122" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".55">input</text>
+
+        <!-- Node y (intermediate) -->
+        <circle cx="280" cy="110" r="38" fill="var(--bg3)" stroke="var(--border-hi)" stroke-width="1.5"/>
+        <text x="280" y="100" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="var(--bright)">y = f(x)</text>
+        <text x="280" y="117" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".55">intermediate</text>
+
+        <!-- Node L (loss) -->
+        <circle cx="470" cy="110" r="38" fill="var(--bg2)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="470" y="104" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="var(--green)">L = g(y)</text>
+        <text x="470" y="122" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".55">loss (scalar)</text>
+
+        <!-- Forward arrows (green, top) -->
+        <path d="M 129 96 Q 200 70 241 96" stroke="var(--green)" stroke-opacity=".7" stroke-width="1.5" fill="none" marker-end="url(#fwd)"/>
+        <path d="M 319 96 Q 390 70 431 96" stroke="var(--green)" stroke-opacity=".7" stroke-width="1.5" fill="none" marker-end="url(#fwd)"/>
+
+        <!-- Forward labels -->
+        <text x="185" y="68" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--green)" opacity=".9">forward</text>
+        <text x="375" y="68" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--green)" opacity=".9">forward</text>
+
+        <!-- Backward arrows (red, bottom) -->
+        <path d="M 431 124 Q 390 155 319 124" stroke="var(--red)" stroke-opacity=".7" stroke-width="1.5" fill="none" marker-end="url(#bwd)"/>
+        <path d="M 241 124 Q 200 155 129 124" stroke="var(--red)" stroke-opacity=".7" stroke-width="1.5" fill="none" marker-end="url(#bwd)"/>
+
+        <!-- Backward labels -->
+        <text x="375" y="170" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--red)" opacity=".9">∂L/∂y · ∂y/∂x</text>
+        <text x="185" y="170" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--red)" opacity=".9">∂L/∂x</text>
+
+        <!-- Gradient annotations at nodes -->
+        <text x="470" y="198" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="var(--red)" opacity=".8">∂L/∂L = 1</text>
+        <text x="280" y="198" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="var(--red)" opacity=".8">∂L/∂y = g'(y)</text>
+        <text x="90" y="198" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="var(--red)" opacity=".8">∂L/∂x = g'(y)·f'(x)</text>
+
+        <!-- Legend -->
+        <line x1="20" y1="20" x2="45" y2="20" stroke="var(--green)" stroke-opacity=".7" stroke-width="1.5"/>
+        <text x="50" y="24" font-family="IBM Plex Mono" font-size="10" fill="var(--green)" opacity=".8">forward pass</text>
+        <line x1="20" y1="36" x2="45" y2="36" stroke="var(--red)" stroke-opacity=".7" stroke-width="1.5"/>
+        <text x="50" y="40" font-family="IBM Plex Mono" font-size="10" fill="var(--red)" opacity=".8">backward pass</text>
+      </svg>
+    </div>
+
+    <!-- Forward vs Reverse comparison -->
+    <div class="mode-compare">
+      <div class="mode-col">
+        <div class="mode-col-label">Forward mode AD</div>
+        <div class="mode-col-title">Input → Output</div>
+        <ul>
+          <li>Propagates $\partial y_j / \partial x_i$ forward</li>
+          <li>One sweep per <em>input</em> variable</li>
+          <li>Cost: $O(n)$ for $n$ inputs</li>
+          <li>Best when few inputs, many outputs</li>
+          <li>Primitive: jvp (Jacobian-vector product)</li>
+        </ul>
+      </div>
+      <div class="mode-col winner">
+        <div class="mode-col-label">Reverse mode AD (Backprop)</div>
+        <div class="mode-col-title">Output → Input ⭐</div>
+        <ul>
+          <li>Propagates $\partial L / \partial x_i$ backward</li>
+          <li>One sweep per <em>output</em> variable</li>
+          <li>Cost: $O(m)$ for $m$ outputs</li>
+          <li>Best when few outputs, many inputs</li>
+          <li>Primitive: vjp (vector-Jacobian product)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-title red">Why reverse mode wins for ML</div>
+      Neural networks have <strong>one scalar loss</strong> ($m = 1$) and <strong>millions of parameters</strong> ($n \approx 10^6$–$10^9$).
+      Forward mode would require $n$ separate sweeps — one per parameter.
+      Reverse mode requires only <strong>one backward sweep</strong> regardless of $n$.
+      This single asymmetry is why backpropagation is the foundation of all deep learning training.
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">VJP — the reverse-mode primitive</div>
+        <div class="formula-expr">$\mathbf{v}^\top J_f(\mathbf{x}) \in \mathbb{R}^{1 \times n}$</div>
+        <div class="formula-note">Vector-Jacobian product: upstream gradient $\mathbf{v}^\top$ times local Jacobian $J_f$. Avoids materializing the full $m \times n$ matrix — each operation contributes only this compact product.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Reverse accumulation (backprop)</div>
+        <div class="formula-expr">$\dfrac{\partial L}{\partial \mathbf{y}_i} = \dfrac{\partial L}{\partial \mathbf{y}_{i+1}} \cdot \dfrac{\partial \mathbf{y}_{i+1}}{\partial \mathbf{y}_i}$</div>
+        <div class="formula-note">Chain rule applied layer by layer, right to left. Each step multiplies the running gradient by a local Jacobian. This is <em>all</em> backprop is.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>Example: one linear layer backward pass</summary>
+      <div class="expand-body">
+        <p>For $\mathbf{y} = W\mathbf{x} + \mathbf{b}$ with loss $L = \tfrac{1}{2}\|\mathbf{y} - \mathbf{t}\|^2$:</p>
+        <p><strong>Forward pass:</strong> compute $\mathbf{y}$, store $\mathbf{x}$ and $\mathbf{y}$.</p>
+        <p><strong>Backward pass:</strong></p>
+        <ul>
+          <li>$\partial L / \partial \mathbf{y} = (\mathbf{y} - \mathbf{t})^\top \quad [1 \times m]$</li>
+          <li>$\partial L / \partial W = (\mathbf{y} - \mathbf{t})\mathbf{x}^\top \quad [m \times n]$ — used to update $W$</li>
+          <li>$\partial L / \partial \mathbf{b} = (\mathbf{y} - \mathbf{t}) \quad [m \times 1]$ — used to update $\mathbf{b}$</li>
+          <li>$\partial L / \partial \mathbf{x} = W^\top(\mathbf{y} - \mathbf{t}) \quad [n \times 1]$ — passed to previous layer</li>
+        </ul>
+        <p>Each gradient has exactly the shape of the quantity it differentiates. Frameworks compute these automatically from the forward computation graph.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>AD vs. other differentiation methods</summary>
+      <div class="expand-body">
+        <table class="data-table">
+          <thead><tr><th>Method</th><th>Mechanism</th><th>Problem</th></tr></thead>
+          <tbody>
+            <tr><td>Symbolic</td><td>Algebraically differentiates expressions</td><td>Expression size explodes; impractical for large graphs</td></tr>
+            <tr><td>Numerical</td><td>Finite differences: $[f(x+h)-f(x)]/h$</td><td>Truncation error; $O(n)$ evaluations per gradient</td></tr>
+            <tr><td>Automatic (AD)</td><td>Tracks derivatives through actual computation</td><td>Exact + efficient; basis of PyTorch, JAX, TensorFlow</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Tape / Wengert list:</strong> modern AD systems record all operations during the forward pass (building a "tape"), then replay them in reverse during the backward pass. The user only writes forward code; the backward pass is generated automatically.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §5.7 Hessians ─── -->
+  <section id="s5-7">
+    <div class="section-header">
+      <span class="sec-num">§5.7</span>
+      <h2 class="section-title">Higher-Order Derivatives: Hessians</h2>
+    </div>
+    <p class="section-lead">
+      The gradient tells you slope. The <strong>Hessian</strong> tells you <em>curvature</em> — how
+      the slope is changing. For $f : \mathbb{R}^n \to \mathbb{R}$, the Hessian is an $n \times n$
+      symmetric matrix whose eigenvalues describe the shape of the loss landscape around any point.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Hessian matrix</div>
+        <div class="formula-expr">$H_{ij} = \dfrac{\partial^2 f}{\partial x_i \partial x_j}, \quad H \in \mathbb{R}^{n \times n}$</div>
+        <div class="formula-note">By Schwarz's theorem, $H$ is <strong>symmetric</strong>. Also written $\nabla^2 f$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Definiteness and critical points</div>
+        <div class="formula-expr">$H \succ 0 \Rightarrow$ local min &nbsp; $H \prec 0 \Rightarrow$ local max</div>
+        <div class="formula-note">At a critical point ($\nabla f = 0$): PD Hessian → minimum; ND → maximum; indefinite (mixed eigenvalues) → saddle point.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Newton's method (2nd order)</div>
+        <div class="formula-expr">$\mathbf{x}_{t+1} = \mathbf{x}_t - H^{-1}\nabla f(\mathbf{x}_t)$</div>
+        <div class="formula-note">Quadratic convergence near the optimum vs. linear for gradient descent. Cost: $O(n^3)$ to invert $H$ — prohibitive for $n \sim 10^6$. Quasi-Newton (L-BFGS) approximates $H^{-1}$ cheaply.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">The loss landscape and conditioning</div>
+      The Hessian's eigenvalues describe curvature in each direction. A large ratio
+      $\lambda_{\max}(H) / \lambda_{\min}(H)$ (ill-conditioned $H$) means the loss surface is steep in some
+      directions and very flat in others. Gradient descent oscillates in steep directions and crawls
+      in flat ones — this is part of why learning rate tuning and adaptive optimizers (Adam, RMSProp)
+      matter: they implicitly normalize for Hessian conditioning.
+    </div>
+  </section>
+
+  <!-- ─── §5.8 Taylor Series ─── -->
+  <section id="s5-8">
+    <div class="section-header">
+      <span class="sec-num">§5.8</span>
+      <h2 class="section-title">Linearization and Multivariate Taylor Series</h2>
+    </div>
+    <p class="section-lead">
+      The Taylor expansion gives a <em>polynomial approximation</em> to $f$ around any point $\mathbf{x}_0$.
+      The first-order term is exactly the gradient (linear approximation); the second-order term
+      adds the Hessian (quadratic approximation). Optimization algorithms differ in how many
+      terms they use.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Univariate Taylor series</div>
+        <div class="formula-expr">$f(x) = \sum_{k=0}^{K} \dfrac{f^{(k)}(x_0)}{k!}(x-x_0)^k + \text{rem.}$</div>
+        <div class="formula-note">$k=0$: constant. $k=1$: linear. $k=2$: quadratic. Derivatives are the coefficients.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Multivariate Taylor (2nd order)</div>
+        <div class="formula-expr">$f(\mathbf{x}) \approx f(\mathbf{x}_0) + \nabla f(\mathbf{x}_0)(\mathbf{x}-\mathbf{x}_0) + \tfrac{1}{2}(\mathbf{x}-\mathbf{x}_0)^\top H(\mathbf{x}_0)(\mathbf{x}-\mathbf{x}_0)$</div>
+        <div class="formula-note">$\nabla f$ is a row vector; $H$ is $n \times n$ symmetric; $(\mathbf{x}-\mathbf{x}_0)$ is a column vector. Shapes work out to a scalar.</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Order</th><th>Approximation</th><th>Used in</th></tr></thead>
+      <tbody>
+        <tr><td>0th</td><td>$f(\mathbf{x}_0)$ — constant</td><td>Baseline; no gradient info</td></tr>
+        <tr><td>1st</td><td>$f(\mathbf{x}_0) + \nabla f \cdot \Delta\mathbf{x}$ — linear</td><td>Gradient descent, linearization</td></tr>
+        <tr><td>2nd</td><td>$+\,\tfrac{1}{2}\Delta\mathbf{x}^\top H\,\Delta\mathbf{x}$ — quadratic</td><td>Newton's method, Laplace approximation</td></tr>
+        <tr><td>Higher</td><td>Polynomial in $\Delta\mathbf{x}$</td><td>Rarely used in practice</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <div class="callout-title green">Linearization = Jacobian</div>
+      The first-order Taylor expansion $\mathbf{f}(\mathbf{x}_0 + \Delta\mathbf{x}) \approx \mathbf{f}(\mathbf{x}_0) + J(\mathbf{x}_0)\,\Delta\mathbf{x}$
+      makes precise the definition of the derivative as a linear map. The Jacobian <em>is</em> the
+      linearization operator. This unifies §5.1–5.3 into one statement.
+    </div>
+
+    <details class="expand">
+      <summary>Why optimizers differ: 1st vs 2nd order</summary>
+      <div class="expand-body">
+        <p><strong>Gradient descent</strong> uses only the 1st-order term: step size $\eta$ is chosen manually (the learning rate). It cannot "see" curvature — it treats all directions equally, which causes oscillation in ill-conditioned landscapes.</p>
+        <p><strong>Newton's method</strong> minimizes the 2nd-order Taylor approximation exactly, yielding the step $-H^{-1}\nabla f$. This accounts for curvature: it takes large steps in flat directions and small steps in curved ones. Quadratic convergence near the optimum.</p>
+        <p><strong>Momentum / Adam</strong>: approximate the second-order correction cheaply using running averages of gradients and squared gradients. Adam's denominator $\sqrt{\hat{v}_t} + \epsilon$ implicitly scales by $\approx \sqrt{H_{ii}}$ for diagonal entries — a diagonal Hessian approximation.</p>
+        <p><strong>L-BFGS</strong>: a quasi-Newton method that builds a low-rank approximation to $H^{-1}$ from gradient history, without ever forming the full matrix. Used when exact Hessians are too expensive.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">↗</span>
+      <h2 class="section-title">Key Formulas Quick Reference</h2>
+    </div>
+    <p class="section-lead">
+      The core results from Chapter 5 in one place. Row-vector convention for gradients throughout
+      (MML convention).
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Chain rule</td>
+          <td>$(g \circ f)'(x) = g'(f(x)) \cdot f'(x)$</td>
+          <td>Univariate; generalizes to Jacobian product</td>
+        </tr>
+        <tr>
+          <td>Gradient</td>
+          <td>$\nabla_{\mathbf{x}} f = \left[\frac{\partial f}{\partial x_1}, \ldots, \frac{\partial f}{\partial x_n}\right] \in \mathbb{R}^{1 \times n}$</td>
+          <td><strong>Row vector</strong> — MML convention</td>
+        </tr>
+        <tr>
+          <td>Jacobian shape</td>
+          <td>$J = \partial\mathbf{f}/\partial\mathbf{x} \in \mathbb{R}^{m \times n}$</td>
+          <td>$f: \mathbb{R}^n \to \mathbb{R}^m$; row per output, col per input</td>
+        </tr>
+        <tr>
+          <td>Vector chain rule</td>
+          <td>$\partial\mathbf{z}/\partial\mathbf{x} = J_g \cdot J_f$</td>
+          <td>Matrix multiplication; shapes must match</td>
+        </tr>
+        <tr>
+          <td>$\nabla\|\mathbf{x}\|^2$</td>
+          <td>$2\mathbf{x}^\top$</td>
+          <td>Row vector; used in regression gradient</td>
+        </tr>
+        <tr>
+          <td>$\nabla(\mathbf{x}^\top B\mathbf{x})$, $B$ sym.</td>
+          <td>$2\mathbf{x}^\top B$</td>
+          <td>Quadratic form gradient</td>
+        </tr>
+        <tr>
+          <td>$\nabla_A \ln\det A$</td>
+          <td>$A^{-\top}$</td>
+          <td>Key for Gaussian MLE (Ch 6)</td>
+        </tr>
+        <tr>
+          <td>Newton step</td>
+          <td>$\mathbf{x} \leftarrow \mathbf{x} - H^{-1}\nabla f(\mathbf{x})^\top$</td>
+          <td>Quadratic convergence; $O(n^3)$ cost</td>
+        </tr>
+        <tr>
+          <td>2nd-order Taylor</td>
+          <td>$f(\mathbf{x}_0) + \nabla f\,\Delta\mathbf{x} + \tfrac{1}{2}\Delta\mathbf{x}^\top H\,\Delta\mathbf{x}$</td>
+          <td>Foundation of Newton's method</td>
+        </tr>
+        <tr>
+          <td>VJP (reverse-mode)</td>
+          <td>$\mathbf{v}^\top J_f(\mathbf{x}) \in \mathbb{R}^{1 \times n}$</td>
+          <td>Core primitive of backpropagation / AD</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to other chapters</div>
+      <div class="chip-row">
+        <span class="chip">C2: Jacobians are linear maps (derivative IS a linear map)</span>
+        <span class="chip">C4: SVD of Jacobian — singular values = local scaling factors</span>
+        <span class="chip">C6: Gradient of log-likelihood, log-det gradient for Gaussians</span>
+        <span class="chip">C7: Gradient descent, convexity, Hessian second-order condition</span>
+        <span class="chip">C9: Normal equations gradient, MLE/MAP optimization</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+renderMathInElement(document.body, {
+  delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError:false,
+  trust:true,
+});
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){ if(s.offsetTop-80<=scrollY) active=s.id; });
+  navItems.forEach(function(n){ n.classList.toggle('active',n.getAttribute('href').slice(1)===active); });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

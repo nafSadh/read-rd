@@ -4,19 +4,18 @@
 
 | Ch | Topic | Notes | Page | Notebook |
 |----|-------|-------|------|----------|
-| C2 | Linear Algebra | done | pp 23–75 | — |
-| C3 | Analytic Geometry | done | pp 71–95 | — |
-| C4 | Matrix Decompositions | — | — | — |
-| C5 | Vector Calculus | — | — | — |
-| C6 | Probability & Distributions | — | — | — |
-| C7 | Continuous Optimization | — | — | — |
-| C8 | When Models Meet Data | — | — | — |
-| C9 | Linear Regression | — | — | — |
-| C10 | PCA | — | — | — |
-| C11 | GMMs | — | — | — |
-| C12 | SVMs | — | — | — |
+| C2 | Linear Algebra | done | done | — |
+| C3 | Analytic Geometry | done | done | — |
+| C4 | Matrix Decompositions | done | done | — |
+| C5 | Vector Calculus | done | done | — |
+| C6 | Probability & Distributions | done | done | — |
+| C7 | Continuous Optimization | done | done | — |
+| C8 | When Models Meet Data | done | done | — |
+| C9 | Linear Regression | done | done | — |
+| C10 | PCA | done | done | — |
+| C11 | GMMs | done | done | — |
+| C12 | SVMs | done | done | — |
 
 ## Next
-- [x] C2: Linear Algebra
-- [x] C3: Analytic Geometry
-- [ ] C4: Matrix Decompositions
+- [ ] Fill `notes/00-synthesis.md` recurring themes + open questions
+- [ ] Colab notebooks (stretch goal)

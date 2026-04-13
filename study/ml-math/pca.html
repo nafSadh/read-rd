@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Principal Component Analysis — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3; --bg2:#ffffff; --bg3:#f2efe8; --bg4:#ede9e0;
+  --border:#d6d0c4; --border-hi:#bfb8a8;
+  --text:#363b48; --dim:#65707a; --bright:#141a1e;
+  --accent:#7c3aed; --accent2:#9b5cf6; --accent-soft:#7c3aed10; --accent-mid:#7c3aed20;
+  --green:#2e6e3e; --green-soft:#2e6e3e12; --amber:#8a6e1e; --amber-soft:#8a6e1e12;
+  --red:#8b2020; --red-soft:#8b202012; --cyan:#2e6ab4; --cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06; --grad2:#2e6ab404;
+  --sidebar-w: 220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18; --bg2:#0f1322; --bg3:#151b30; --bg4:#1a2240;
+  --border:#1c2440; --border-hi:#283558;
+  --text:#8490aa; --dim:#546080; --bright:#dce0ec;
+  --accent:#9b7aed; --accent2:#b598ff; --accent-soft:#9b7aed0c; --accent-mid:#9b7aed18;
+  --green:#4ee8a8; --green-soft:#4ee8a810; --amber:#e8c870; --amber-soft:#e8c87010;
+  --red:#e87090; --red-soft:#e8709010; --cyan:#4ee8d0; --cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06; --grad2:#4ee8d004;
+  --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;min-height:100vh;
+  transition:background .4s,color .3s;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),
+    radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);
+  transition:background 1s;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:10;
+  transition:background .4s;
+}
+.sidebar-head {
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); text-decoration:none;
+  display:flex; align-items:center; gap:6px; margin-bottom:12px;
+  transition:color .2s;
+}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:2px;
+}
+.sidebar-title {
+  font-family:var(--serif); font-size:17px; color:var(--bright);
+  line-height:1.3;
+}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav {
+  flex:1; overflow-y:auto; padding:12px 0;
+}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item {
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 16px; cursor:pointer; transition:all .15s;
+  font-size:13px; color:var(--dim); text-decoration:none; border:none; background:none;
+  width:100%; text-align:left;
+}
+.nav-item:hover{color:var(--text); background:var(--accent-soft)}
+.nav-item.active{color:var(--accent); background:var(--accent-soft)}
+.nav-item .num{
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  color:var(--accent); opacity:.7; flex-shrink:0;
+}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{
+  padding:12px 16px; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.theme-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--dim); font-size:14px; width:28px; height:28px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Main ─── */
+main {
+  flex:1; overflow-y:auto;
+  padding:40px max(48px, calc((100% - 820px) / 2)) 80px;
+  position:relative; z-index:1;
+}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.page-header {
+  margin-bottom:40px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.page-badge {
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title {
+  font-family:var(--sans); font-size:34px; font-weight:500;
+  color:var(--bright); letter-spacing:.3px; line-height:1.2; margin-bottom:8px;
+}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta {
+  margin-top:16px; display:flex; gap:20px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.5px;
+}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+
+/* ─── Sections ─── */
+section {
+  margin-bottom:48px; scroll-margin-top:24px;
+}
+.section-header {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px; cursor:pointer;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.section-header:hover .section-title{color:var(--accent)}
+.sec-num {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  color:var(--accent); letter-spacing:1px; flex-shrink:0;
+}
+.section-title {
+  font-family:var(--serif); font-size:24px; color:var(--bright);
+  font-weight:400; transition:color .2s;
+}
+.section-lead {
+  font-size:15px; line-height:1.7; color:var(--text);
+  margin-bottom:20px;
+}
+.section-lead strong{color:var(--bright);font-weight:600}
+
+/* ─── Formula cards ─── */
+.formula-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.formula-card {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:16px 18px; transition:border-color .2s;
+}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+}
+.formula-expr {
+  font-family:var(--serif); font-size:18px; color:var(--bright);
+  line-height:1.4; margin-bottom:6px;
+}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+
+/* ─── Callout boxes ─── */
+.callout {
+  padding:16px 20px; border-left:3px solid var(--accent);
+  background:var(--accent-soft); margin:20px 0; font-size:14px; line-height:1.7;
+}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:.8;
+}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.red{color:var(--red)}
+.callout-title.accent{color:var(--accent)}
+
+/* ─── Expandable details ─── */
+.expand {
+  border:1px solid var(--border); margin-top:16px;
+  transition:border-color .2s;
+}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary {
+  padding:12px 16px; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); list-style:none;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:color .2s;
+  user-select:none;
+}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body {
+  padding:20px 20px 16px;
+  font-size:14px; line-height:1.75; color:var(--text);
+}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+
+/* ─── Tables ─── */
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.data-table code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);padding:1px 5px}
+
+/* ─── SVG diagrams ─── */
+.diagram {
+  margin:24px 0; padding:24px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.diagram-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); align-self:flex-start;
+}
+.diagram svg{max-width:100%;height:auto}
+
+/* ─── Connection chips ─── */
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
+  padding:3px 10px;border:1px solid var(--border);color:var(--dim);
+  background:var(--bg3);transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── Algorithm steps ─── */
+.algo-steps{counter-reset:step;margin:16px 0}
+.algo-step{
+  display:flex;gap:14px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid var(--bg3);
+}
+.algo-step:last-child{border-bottom:none}
+.algo-step::before{
+  counter-increment:step;content:counter(step);
+  font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);
+  min-width:20px;padding-top:2px;opacity:.8;
+}
+.algo-step-body{font-size:14px;line-height:1.65}
+.algo-step-body strong{color:var(--bright)}
+.algo-step-body .katex{font-size:.98em}
+
+/* ─── KaTeX tweaks ─── */
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* ─── Responsive ─── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  main{padding:24px 20px 60px}
+  .formula-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title">Principal Component <em>Analysis</em></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s10-1" class="nav-item"><span class="num">10.1</span>Problem Formulation</a>
+    <a href="#s10-2" class="nav-item"><span class="num">10.2</span>Maximum Variance</a>
+    <a href="#s10-3" class="nav-item"><span class="num">10.3</span>Projection &amp; Reconstruction</a>
+    <a href="#s10-4" class="nav-item"><span class="num">10.4</span>Algorithm</a>
+    <a href="#s10-5" class="nav-item"><span class="num">10.5</span>High-Dim PCA</a>
+    <a href="#s10-6" class="nav-item"><span class="num">10.6</span>Explained Variance</a>
+    <a href="#s10-7" class="nav-item"><span class="num">10.7</span>Probabilistic PCA</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 317–343</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART III</div>
+    <h1 class="page-title">Principal Component <em>Analysis</em></h1>
+    <p class="page-sub">Given high-dimensional data, what lower-dimensional representation loses the least information? The answer is always the same: project onto the eigenvectors of the data covariance matrix. This chapter derives that answer from two complementary angles — maximize variance; minimize reconstruction error — and shows that the SVD from C4 makes everything computable.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 10 (pp 317–343)</span>
+      <a href="notes/pca.md">Raw notes ↗</a>
+      <a href="https://www.youtube.com/watch?v=FgakZw6K1QQ" target="_blank">StatQuest: PCA Step-by-Step ↗</a>
+      <a href="https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html" target="_blank">VanderPlas: PCA in Depth ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §10.1 Problem Formulation ─── -->
+  <section id="s10-1">
+    <div class="section-header">
+      <span class="sec-num">§10.1</span>
+      <h2 class="section-title">Problem Formulation</h2>
+    </div>
+    <p class="section-lead">
+      PCA is a <strong>dimensionality reduction</strong> method: given $N$ data points in $\mathbb{R}^D$,
+      find a $M$-dimensional linear subspace ($M \ll D$) that preserves as much structure as possible.
+      The first step is always centering — shifting the data so its mean is zero.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Data matrix</div>
+        <div class="formula-expr">$X \in \mathbb{R}^{N \times D}$</div>
+        <div class="formula-note"><strong>N</strong> data points, <strong>D</strong> features. Row $n$ is data point $\mathbf{x}_n \in \mathbb{R}^D$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Centering</div>
+        <div class="formula-expr">$\tilde{\mathbf{x}}_n = \mathbf{x}_n - \boldsymbol{\mu}$</div>
+        <div class="formula-note">Sample mean $\boldsymbol{\mu} = \frac{1}{N}\sum_n \mathbf{x}_n$. Centered matrix $\tilde{X}$ has zero-mean columns. All subsequent analysis assumes centered data.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Orthonormal basis</div>
+        <div class="formula-expr">$B = [\mathbf{b}_1 | \cdots | \mathbf{b}_M] \in \mathbb{R}^{D \times M}$</div>
+        <div class="formula-note">Represents the target $M$-dimensional subspace $U \subset \mathbb{R}^D$. Columns satisfy $\mathbf{b}_i^\top \mathbf{b}_j = \delta_{ij}$, so $B^\top B = I_M$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Two criteria (same answer)</div>
+        <div class="formula-expr">maximize variance &ensp;<em>or</em>&ensp; minimize error</div>
+        <div class="formula-note">§10.2: maximize projected variance. §10.3: minimize squared reconstruction error. Both yield the top-$M$ eigenvectors of $S$ — this is a theorem, not a coincidence.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Chapter roadmap</div>
+      §10.2 and §10.3 each derive the same answer from different starting points.
+      §10.4 gives the algorithm. §10.5 handles $N &lt; D$ via the SVD.
+      §10.6 covers model selection (how many components to keep). §10.7 adds a probabilistic generative model.
+    </div>
+  </section>
+
+  <!-- ─── §10.2 Maximum Variance ─── -->
+  <section id="s10-2">
+    <div class="section-header">
+      <span class="sec-num">§10.2</span>
+      <h2 class="section-title">Maximum Variance Perspective</h2>
+    </div>
+    <p class="section-lead">
+      Project the centered data onto a unit vector $\mathbf{b}$. The variance of the projected scalars is
+      $\mathbf{b}^\top S \mathbf{b}$, where $S$ is the data covariance matrix.
+      Maximizing this subject to $\|\mathbf{b}\| = 1$ is a <strong>constrained optimization problem
+      whose solution is the leading eigenvector of $S$</strong>.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">PC1 captures maximum spread; PC2 is orthogonal with smaller variance</div>
+      <svg width="540" height="300" viewBox="0 0 540 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background axes (faint) -->
+        <line x1="60" y1="150" x2="480" y2="150" stroke="currentColor" stroke-opacity=".10" stroke-width="1"/>
+        <line x1="270" y1="20" x2="270" y2="280" stroke="currentColor" stroke-opacity=".10" stroke-width="1"/>
+
+        <!-- Scatter data — elliptical cloud tilted ~35 degrees -->
+        <!-- Generated from a PCA-style distribution with PC1 along ~(-0.82, -0.57) (lower-right direction) -->
+        <!-- Points roughly along an elongated ellipse -->
+        <circle cx="190" cy="195" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="210" cy="185" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="230" cy="175" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="205" cy="200" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="250" cy="165" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="220" cy="188" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="240" cy="172" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="260" cy="158" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="275" cy="150" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="290" cy="140" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="310" cy="128" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="325" cy="120" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="340" cy="112" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="295" cy="135" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="315" cy="122" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="265" cy="155" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="355" cy="105" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <circle cx="370" cy="95" r="3" fill="var(--accent)" fill-opacity=".45"/>
+        <!-- A few off-axis points to make it look like a real scatter cloud -->
+        <circle cx="225" cy="165" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="248" cy="178" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="270" cy="140" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="295" cy="152" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="315" cy="110" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="340" cy="125" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="300" cy="162" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="255" cy="142" r="3" fill="var(--accent)" fill-opacity=".35"/>
+        <circle cx="350" cy="120" r="3" fill="var(--accent)" fill-opacity=".30"/>
+        <circle cx="370" cy="108" r="3" fill="var(--accent)" fill-opacity=".30"/>
+        <circle cx="215" cy="178" r="3" fill="var(--accent)" fill-opacity=".30"/>
+
+        <!-- PC1 axis — direction of maximum variance (tilted ~-35 deg from horizontal) -->
+        <!-- Arrow from lower-left to upper-right through cloud center ~(280,150) -->
+        <line x1="148" y1="215" x2="415" y2="82"
+              stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="415,82 406,88 410,78" fill="var(--cyan)"/>
+        <text x="420" y="80" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="12" font-weight="600">PC1</text>
+        <text x="420" y="93" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".7">λ₁ (large)</text>
+
+        <!-- Variance extent bracket along PC1 — two tick marks perpendicular to PC1 -->
+        <!-- PC1 direction unit vector: (267,-133)/|...| ≈ (0.896,-0.447) -->
+        <!-- perpendicular: (0.447, 0.896) -->
+        <!-- Show extent: small ticks at two projected extremes -->
+        <line x1="163" y1="207" x2="163" y2="225" stroke="var(--cyan)" stroke-opacity=".4" stroke-width="1.5" transform="rotate(-27, 163, 216)"/>
+        <line x1="400" y1="75" x2="400" y2="93" stroke="var(--cyan)" stroke-opacity=".4" stroke-width="1.5" transform="rotate(-27, 400, 84)"/>
+
+        <!-- PC2 axis — orthogonal to PC1 (perpendicular direction) -->
+        <!-- PC2 is rotated 90 deg from PC1: direction (133, 267)/|...| ≈ (0.447, 0.896) -->
+        <!-- Center at cloud centroid ~(282, 150) -->
+        <line x1="252" y1="88" x2="312" y2="208"
+              stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,3"/>
+        <polygon points="312,208 305,200 315,202" fill="var(--green)"/>
+        <text x="316" y="218" fill="var(--green)" font-family="IBM Plex Mono" font-size="12" font-weight="600">PC2</text>
+        <text x="316" y="231" fill="var(--green)" font-family="IBM Plex Mono" font-size="9" opacity=".7">λ₂ (small)</text>
+
+        <!-- Variance extent bracket along PC2 — smaller range than PC1 -->
+        <line x1="258" y1="98" x2="274" y2="98" stroke="var(--green)" stroke-opacity=".4" stroke-width="1.5" transform="rotate(63, 266, 98)"/>
+        <line x1="303" y1="198" x2="319" y2="198" stroke="var(--green)" stroke-opacity=".4" stroke-width="1.5" transform="rotate(63, 311, 198)"/>
+
+        <!-- Centroid marker -->
+        <circle cx="282" cy="150" r="4" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5"/>
+        <line x1="278" y1="150" x2="286" y2="150" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <line x1="282" y1="146" x2="282" y2="154" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+
+        <!-- Labels for variance comparison -->
+        <rect x="30" y="240" width="230" height="44" rx="3" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".10"/>
+        <text x="40" y="257" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="10">Var along PC1 = λ₁  (large spread)</text>
+        <text x="40" y="275" fill="var(--green)" font-family="IBM Plex Mono" font-size="10">Var along PC2 = λ₂  (small spread)</text>
+
+        <rect x="310" y="240" width="210" height="44" rx="3" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".10"/>
+        <text x="320" y="257" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">maximize: bᵀSb s.t. ‖b‖=1</text>
+        <text x="320" y="275" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10">solution: Sb = λb  (eigenvector)</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Sample covariance matrix</div>
+        <div class="formula-expr">$S = \dfrac{1}{N}\tilde{X}^\top \tilde{X} \in \mathbb{R}^{D \times D}$</div>
+        <div class="formula-note">Symmetric, positive semidefinite. Entry $(i,j)$ = sample covariance of features $i$ and $j$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Projected variance</div>
+        <div class="formula-expr">$\text{Var}(\mathbf{b}) = \mathbf{b}^\top S \mathbf{b}$</div>
+        <div class="formula-note">Variance of the scalars $z_n = \mathbf{b}^\top \tilde{\mathbf{x}}_n$ for a unit vector $\mathbf{b}$. This is the objective to maximize.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Lagrangian</div>
+        <div class="formula-expr">$\mathcal{L}(\mathbf{b},\lambda) = \mathbf{b}^\top S\mathbf{b} - \lambda(\mathbf{b}^\top\mathbf{b} - 1)$</div>
+        <div class="formula-note">Constrained maximization. Setting $\partial\mathcal{L}/\partial\mathbf{b} = 0$ gives $S\mathbf{b} = \lambda\mathbf{b}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Eigenvector condition</div>
+        <div class="formula-expr">$S\mathbf{b} = \lambda \mathbf{b}$</div>
+        <div class="formula-note"><strong>First PC:</strong> eigenvector of $S$ for $\lambda_1$ (largest eigenvalue). Optimal variance = $\lambda_1$. Subsequent PCs use the next largest eigenvalues.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Total variance identity</div>
+      $\text{tr}(S) = \lambda_1 + \lambda_2 + \cdots + \lambda_D$ = total variance of the data.
+      This follows because $\text{tr}(S)$ equals both the sum of diagonal entries (feature variances)
+      and the sum of eigenvalues (C4 §4.1). Keeping $M$ components captures variance $\lambda_1 + \cdots + \lambda_M$
+      out of a total $\text{tr}(S)$.
+    </div>
+
+    <details class="expand">
+      <summary>Subsequent principal components — why orthogonality is automatic</summary>
+      <div class="expand-body">
+        <p>The $m$-th principal component $\mathbf{b}_m$ is the eigenvector of $S$ corresponding to the $m$-th largest eigenvalue $\lambda_m$, subject to orthogonality with $\mathbf{b}_1, \ldots, \mathbf{b}_{m-1}$.</p>
+        <p>The Lagrangian approach generalizes straightforwardly. However, the orthogonality constraint is already satisfied automatically: by the <strong>spectral theorem</strong> (C4 §4.2), eigenvectors of a symmetric matrix for <em>distinct</em> eigenvalues are always orthogonal. When eigenvalues are repeated (degenerate), any orthonormal basis of the eigenspace is equally valid — PCA is non-unique in that case.</p>
+        <p><strong>Consequence:</strong> The matrix $B = [\mathbf{b}_1 | \cdots | \mathbf{b}_M]$ formed from the top-$M$ eigenvectors automatically satisfies $B^\top B = I_M$ — no Gram-Schmidt needed if the eigenvalues are distinct.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §10.3 Projection & Reconstruction ─── -->
+  <section id="s10-3">
+    <div class="section-header">
+      <span class="sec-num">§10.3</span>
+      <h2 class="section-title">Projection &amp; Reconstruction Perspective</h2>
+    </div>
+    <p class="section-lead">
+      Alternatively: find the subspace $B$ that minimizes the average <strong>squared reconstruction error</strong>
+      $\|\tilde{\mathbf{x}}_n - \hat{\tilde{\mathbf{x}}}_n\|^2$. The reconstruction is the orthogonal projection back
+      onto the subspace. Minimizing error gives <em>exactly the same eigenvectors</em> as maximizing variance —
+      the two objectives are complementary by design.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">Projection onto subspace B and the perpendicular reconstruction error</div>
+      <svg width="520" height="260" viewBox="0 0 520 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Subspace (a line/plane represented as a tilted line in 2D) -->
+        <!-- Subspace direction: roughly along (cos30, sin30) ≈ (0.866, 0.5) -->
+        <!-- Line through center (260, 155), length ~380 -->
+        <line x1="60" y1="248" x2="460" y2="58"
+              stroke="var(--accent)" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+        <text x="462" y="55" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11" opacity=".7">subspace span(B)</text>
+
+        <!-- Hatching to shade the subspace (thin parallel lines above the main line) -->
+        <!-- A few faint lines parallel to the subspace to indicate a plane -->
+        <line x1="70" y1="238" x2="470" y2="48" stroke="var(--accent)" stroke-opacity=".08" stroke-width="1"/>
+        <line x1="50" y1="258" x2="450" y2="68" stroke="var(--accent)" stroke-opacity=".08" stroke-width="1"/>
+
+        <!-- Data point x in R^D (above the subspace) -->
+        <!-- x at (220, 80) -->
+        <circle cx="220" cy="80" r="5" fill="var(--cyan)"/>
+        <text x="228" y="76" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="13" font-weight="600">x̃</text>
+        <text x="228" y="90" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".6">(data point in ℝᴰ)</text>
+
+        <!-- Projection x̃_hat onto the subspace -->
+        <!-- Project (220,80) onto line through (260,155) with direction (0.866,−0.5) -->
+        <!-- Direction vector d = (0.866, -0.5); point on line: (260,155) -->
+        <!-- t = d · (x - p) = 0.866*(220-260) + (-0.5)*(80-155) = 0.866*(-40) + (-0.5)*(-75) = -34.64 + 37.5 = 2.86 -->
+        <!-- projection = p + t*d = (260 + 2.86*0.866, 155 + 2.86*(-0.5)) = (262.5, 153.6) ≈ (263, 154) -->
+        <circle cx="263" cy="154" r="5" fill="var(--green)"/>
+        <text x="270" y="150" fill="var(--green)" font-family="IBM Plex Mono" font-size="13" font-weight="600">x̃̂</text>
+        <text x="270" y="163" fill="var(--green)" font-family="IBM Plex Mono" font-size="9" opacity=".6">= BBᵀx̃  (reconstruction)</text>
+
+        <!-- Dashed line from x to projection (reconstruction error vector) -->
+        <line x1="220" y1="80" x2="263" y2="154"
+              stroke="var(--red)" stroke-width="1.8" stroke-dasharray="5,3" stroke-linecap="round"/>
+
+        <!-- Right-angle mark at the projection foot -->
+        <!-- The right angle is between the error vector and the subspace -->
+        <!-- Subspace direction: (0.866, -0.5); error direction: (263-220, 154-80) = (43,74), normalized: (0.502, 0.864) -->
+        <!-- Small square at (263,154): move along subspace direction by 8 px, then along error direction by 8 px -->
+        <polyline points="271,150 278,162 270,166"
+                  stroke="var(--red)" stroke-opacity=".5" stroke-width="1.2" fill="none"/>
+
+        <!-- Coordinates (z = B^T x̃) arrow -->
+        <line x1="220" y1="80" x2="263" y2="154" stroke="none"/>
+        <!-- Projection arrow along subspace showing z -->
+        <line x1="260" y1="150" x2="300" y2="131"
+              stroke="var(--green)" stroke-opacity=".5" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="305" y="128" fill="var(--green)" font-family="IBM Plex Mono" font-size="10" opacity=".7">z = Bᵀx̃  (scores ∈ ℝᴹ)</text>
+
+        <!-- Error label -->
+        <text x="230" y="122" fill="var(--red)" font-family="IBM Plex Mono" font-size="11" font-weight="600">x̃ − x̃̂</text>
+        <text x="228" y="135" fill="var(--red)" font-family="IBM Plex Mono" font-size="9" opacity=".7">reconstruction error</text>
+        <text x="228" y="147" fill="var(--red)" font-family="IBM Plex Mono" font-size="9" opacity=".7">⊥ subspace</text>
+
+        <!-- Labels summary box -->
+        <rect x="28" y="14" width="190" height="62" rx="3" fill="currentColor" fill-opacity=".03" stroke="currentColor" stroke-opacity=".10"/>
+        <text x="38" y="32" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="10">x̃  — original data point</text>
+        <text x="38" y="48" fill="var(--green)" font-family="IBM Plex Mono" font-size="10">x̃̂ = BBᵀx̃ — reconstruction</text>
+        <text x="38" y="64" fill="var(--red)" font-family="IBM Plex Mono" font-size="10">x̃−x̃̂ — error (perpendicular)</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Projection scores</div>
+        <div class="formula-expr">$\mathbf{z}_n = B^\top \tilde{\mathbf{x}}_n \in \mathbb{R}^M$</div>
+        <div class="formula-note">Coordinates of $\tilde{\mathbf{x}}_n$ in the reduced $M$-dimensional space. Score matrix $Z = \tilde{X}B \in \mathbb{R}^{N \times M}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Reconstruction</div>
+        <div class="formula-expr">$\hat{\tilde{\mathbf{x}}}_n = B\mathbf{z}_n = BB^\top \tilde{\mathbf{x}}_n$</div>
+        <div class="formula-note">$BB^\top$ is the orthogonal projection matrix onto $\text{col}(B)$. Reconstruction lives in $\mathbb{R}^D$ but is constrained to the subspace.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Average reconstruction error</div>
+        <div class="formula-expr">$J = \dfrac{1}{N}\sum_n \|\tilde{\mathbf{x}}_n - \hat{\tilde{\mathbf{x}}}_n\|^2$</div>
+        <div class="formula-note">The quantity to minimize over $B$ (subject to $B^\top B = I_M$).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Minimum error formula</div>
+        <div class="formula-expr">$J_{\min} = \displaystyle\sum_{i=M+1}^{D} \lambda_i$</div>
+        <div class="formula-note">Sum of the <em>discarded</em> eigenvalues. Minimizing $J$ is equivalent to maximizing $\sum_{i=1}^M \lambda_i$ — same as §10.2.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">Equivalence theorem</div>
+      Because $\text{tr}(S) = \sum_i \lambda_i$ is fixed, minimizing $J = \sum_{i>M}\lambda_i$ is
+      identical to maximizing $\sum_{i\leq M}\lambda_i$. The maximum-variance and minimum-reconstruction-error
+      perspectives are <strong>two sides of the same identity</strong>. Both solutions: choose $B$ = top-$M$ eigenvectors of $S$.
+    </div>
+
+    <details class="expand">
+      <summary>Deriving J = sum of discarded eigenvalues</summary>
+      <div class="expand-body">
+        <p>Start with $J = \frac{1}{N}\sum_n \|\tilde{\mathbf{x}}_n - BB^\top\tilde{\mathbf{x}}_n\|^2 = \frac{1}{N}\sum_n \|(I - BB^\top)\tilde{\mathbf{x}}_n\|^2$.</p>
+        <p>Expanding using the spectral decomposition $S = U\Lambda U^\top$ and the constraint $B^\top B = I_M$ (with $B$ chosen from columns of $U$), one obtains:</p>
+        $$J = \text{tr}(S) - \text{tr}(B^\top S B) = \sum_{i=1}^D \lambda_i - \sum_{i=1}^M \lambda_i = \sum_{i=M+1}^D \lambda_i.$$
+        <p>Minimizing $J$ over all orthonormal $B$ means keeping the $M$ eigenvectors with the <strong>largest</strong> $\lambda_i$, discarding the rest.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §10.4 Algorithm ─── -->
+  <section id="s10-4">
+    <div class="section-header">
+      <span class="sec-num">§10.4</span>
+      <h2 class="section-title">Eigendecomposition Algorithm</h2>
+    </div>
+    <p class="section-lead">
+      The standard PCA algorithm: compute the covariance matrix $S$, eigendecompose it,
+      and project the data onto the top $M$ eigenvectors. The projected scores are automatically
+      <strong>uncorrelated</strong> — PCA decorrelates the data.
+    </p>
+
+    <div class="algo-steps">
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Center the data</strong> &ensp; $\tilde{X} = X - \mathbf{1}\boldsymbol{\mu}^\top$ &ensp; (subtract sample mean $\boldsymbol{\mu}$ from each row). All subsequent steps use $\tilde{X}$.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Compute covariance</strong> &ensp; $S = \frac{1}{N}\tilde{X}^\top\tilde{X} \in \mathbb{R}^{D\times D}$. Symmetric positive semidefinite.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Eigendecompose</strong> &ensp; $S = U\Lambda U^\top$, with $U = [\mathbf{u}_1|\cdots|\mathbf{u}_D]$ orthogonal and $\Lambda = \text{diag}(\lambda_1,\ldots,\lambda_D)$, $\lambda_1 \geq \cdots \geq \lambda_D \geq 0$.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Select top $M$</strong> &ensp; $U_M = U[:,\,1{:}M] \in \mathbb{R}^{D\times M}$ &ensp; (first $M$ columns = principal components).</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Project</strong> &ensp; $Z = \tilde{X}\,U_M \in \mathbb{R}^{N\times M}$ &ensp; (score matrix; row $n$ = coordinates of data point $n$ in the new space).</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-step-body"><strong>Reconstruct (optional)</strong> &ensp; $\hat{\tilde{X}} = Z\,U_M^\top \in \mathbb{R}^{N\times D}$ &ensp; (approximation of centered data in original space).</div>
+      </div>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Score matrix</div>
+        <div class="formula-expr">$Z = \tilde{X}\,U_M \in \mathbb{R}^{N \times M}$</div>
+        <div class="formula-note">Row $n$ of $Z$ gives the $M$-dimensional representation of data point $n$. Each column is one "principal component score".</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Covariance of scores</div>
+        <div class="formula-expr">$\text{Cov}(Z) = U_M^\top S\, U_M = \Lambda_M$</div>
+        <div class="formula-note">$\Lambda_M = \text{diag}(\lambda_1,\ldots,\lambda_M)$. The score covariance is <strong>diagonal</strong>: PCA decorrelates the data. Variance along PC $i$ equals exactly $\lambda_i$.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Why scores are uncorrelated</div>
+      $\text{Cov}(Z) = \frac{1}{N}Z^\top Z = \frac{1}{N}(\tilde{X}U_M)^\top(\tilde{X}U_M) = U_M^\top\,S\,U_M = U_M^\top(U\Lambda U^\top)U_M = \Lambda_M.$
+      The off-diagonal entries of $\Lambda_M$ are zero — different principal component scores have zero sample covariance.
+    </div>
+
+    <details class="expand">
+      <summary>Connection to the spectral theorem (C4 §4.2)</summary>
+      <div class="expand-body">
+        <p>$S = U\Lambda U^\top$ is exactly the spectral decomposition of a symmetric positive semidefinite matrix. The spectral theorem guarantees:
+        <ul>
+          <li>All eigenvalues $\lambda_i$ are real and non-negative.</li>
+          <li>Eigenvectors for distinct eigenvalues are orthogonal; $U$ can always be chosen orthogonal.</li>
+          <li>The decomposition always exists — no "diagonalizability" condition needed beyond symmetry.</li>
+        </ul>
+        </p>
+        <p>This is why $S$ is always tractable for PCA: symmetric matrices are the best-behaved class (C4 §4.7).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §10.5 High-Dim PCA ─── -->
+  <section id="s10-5">
+    <div class="section-header">
+      <span class="sec-num">§10.5</span>
+      <h2 class="section-title">PCA in High Dimensions</h2>
+    </div>
+    <p class="section-lead">
+      When $N \ll D$ (e.g., 200 patients, 20,000 genes), computing $S \in \mathbb{R}^{D \times D}$
+      is infeasible. The key insight: instead compute $C = \frac{1}{N}\tilde{X}\tilde{X}^\top \in \mathbb{R}^{N\times N}$,
+      which shares all nonzero eigenvalues with $S$. Equivalently — and most elegantly — apply the
+      <strong>SVD directly to $\tilde{X}$</strong>.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Small Gram matrix</div>
+        <div class="formula-expr">$C = \dfrac{1}{N}\tilde{X}\tilde{X}^\top \in \mathbb{R}^{N \times N}$</div>
+        <div class="formula-note">Tractable when $N \ll D$. Nonzero eigenvalues of $C$ = nonzero eigenvalues of $S$ (same $A^\top A$ / $AA^\top$ relationship as in C4 §4.5).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Recovering PCs from eigenvectors of C</div>
+        <div class="formula-expr">$\mathbf{u} = \dfrac{1}{\sqrt{N\lambda}}\tilde{X}^\top\mathbf{v}$</div>
+        <div class="formula-note">If $C\mathbf{v} = \lambda\mathbf{v}$ ($\mathbf{v} \in \mathbb{R}^N$, $\lambda \neq 0$), then $\mathbf{u}$ is the corresponding eigenvector of $S$ normalized to unit length. $\|\tilde{X}^\top\mathbf{v}\| = \sqrt{N\lambda}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">SVD of data matrix</div>
+        <div class="formula-expr">$\tilde{X} = U\Sigma V^\top$</div>
+        <div class="formula-note">Always applicable. Columns of $V$ are the principal components. Singular values relate to eigenvalues: $\lambda_i = \sigma_i^2/N$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Eigenvalues from SVD</div>
+        <div class="formula-expr">$\lambda_i = \sigma_i^2 / N$</div>
+        <div class="formula-note">Because $S = \frac{1}{N}\tilde{X}^\top\tilde{X} = V(\Sigma^\top\Sigma/N)V^\top$. The singular values of $\tilde{X}$ encode all spectral information about $S$.</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Approach</th><th>Matrix</th><th>Size</th><th>Principal components</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Standard ($D \leq N$)</td><td>$S = \tilde{X}^\top\tilde{X}/N$</td><td>$D \times D$</td><td>Columns of $U$ from eigendecomp of $S$</td></tr>
+        <tr><td>High-dim ($N &lt; D$)</td><td>$C = \tilde{X}\tilde{X}^\top/N$</td><td>$N \times N$</td><td>$\tilde{X}^\top\mathbf{v}/\|\tilde{X}^\top\mathbf{v}\|$ (from eigenvectors $\mathbf{v}$ of $C$)</td></tr>
+        <tr><td>SVD (always preferred)</td><td>$\tilde{X} = U\Sigma V^\top$</td><td>$N \times D$</td><td>Columns of $V$ directly</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">PCA = truncated SVD of the data matrix</div>
+      The SVD route subsumes both the standard and high-dimensional cases.
+      In practice, numerical libraries compute the thin SVD of $\tilde{X}$ and return the first $M$ right singular vectors as the principal components —
+      this is the same result as eigendecomposing $S$, but numerically more stable and often faster (especially via randomized SVD, $O(NDM)$).
+    </div>
+
+    <details class="expand">
+      <summary>Computational cost comparison</summary>
+      <div class="expand-body">
+        <ul>
+          <li><strong>Eigendecomp of $S$:</strong> Form $S$ costs $O(ND^2)$; eigendecomp costs $O(D^3)$. Total: $O(D^2(N+D))$. Infeasible when $D \approx 20000$.</li>
+          <li><strong>Eigendecomp of $C$:</strong> Form $C$ costs $O(N^2D)$; eigendecomp costs $O(N^3)$. Total: $O(N^2(D+N))$. Preferred when $N \ll D$.</li>
+          <li><strong>Full SVD of $\tilde{X}$:</strong> $O(\min(N,D) \cdot ND)$.</li>
+          <li><strong>Randomized SVD (top $M$):</strong> $O(NDM)$ via Halko et al. (2011). The preferred algorithm in practice for large, sparse data.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §10.6 Explained Variance ─── -->
+  <section id="s10-6">
+    <div class="section-header">
+      <span class="sec-num">§10.6</span>
+      <h2 class="section-title">Explained Variance &amp; Model Selection</h2>
+    </div>
+    <p class="section-lead">
+      After running PCA, the question becomes: <strong>how many components $M$ to keep?</strong>
+      The explained variance ratio gives a principled answer: keep enough components to capture
+      a target fraction (e.g. 95%) of the total variance. The scree plot visualizes the eigenvalue spectrum.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Explained variance ratio</div>
+        <div class="formula-expr">$\text{EVR}(M) = \dfrac{\sum_{i=1}^M \lambda_i}{\sum_{i=1}^D \lambda_i}$</div>
+        <div class="formula-note">Fraction of total variance captured by $M$ components. Equivalently $(\sigma_1^2+\cdots+\sigma_M^2)/\|\tilde{X}\|_F^2$ using singular values.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Frobenius reconstruction error</div>
+        <div class="formula-expr">$\|\tilde{X} - \hat{\tilde{X}}\|_F^2 = \displaystyle\sum_{i=M+1}^D \sigma_i^2$</div>
+        <div class="formula-note">Sum of squared discarded singular values. Eckart-Young theorem (C4 §4.6): this is the minimum possible error for any rank-$M$ approximation.</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">Scree plot — eigenvalue spectrum with elbow after PC2–PC3</div>
+      <svg width="520" height="260" viewBox="0 0 520 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes -->
+        <line x1="70" y1="200" x2="490" y2="200" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5"/>
+        <line x1="70" y1="20" x2="70" y2="205" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5"/>
+        <!-- Y axis label -->
+        <text x="12" y="115" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5" transform="rotate(-90, 12, 115)">Explained variance %</text>
+        <!-- X axis label -->
+        <text x="270" y="230" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".5">Principal Component</text>
+
+        <!-- Y axis ticks: 0%, 20%, 40%, 60%, 80% -->
+        <line x1="65" y1="200" x2="70" y2="200" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="58" y="203" text-anchor="end" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">0</text>
+        <line x1="65" y1="164" x2="70" y2="164" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="58" y="167" text-anchor="end" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">20</text>
+        <line x1="65" y1="128" x2="70" y2="128" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="58" y="131" text-anchor="end" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">40</text>
+        <line x1="65" y1="92" x2="70" y2="92" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="58" y="95" text-anchor="end" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">60</text>
+        <line x1="65" y1="56" x2="70" y2="56" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="58" y="59" text-anchor="end" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">80</text>
+
+        <!-- Grid lines (faint) -->
+        <line x1="70" y1="164" x2="490" y2="164" stroke="currentColor" stroke-opacity=".05" stroke-width="1"/>
+        <line x1="70" y1="128" x2="490" y2="128" stroke="currentColor" stroke-opacity=".05" stroke-width="1"/>
+        <line x1="70" y1="92" x2="490" y2="92" stroke="currentColor" stroke-opacity=".05" stroke-width="1"/>
+        <line x1="70" y1="56" x2="490" y2="56" stroke="currentColor" stroke-opacity=".05" stroke-width="1"/>
+
+        <!-- Bar data: eigenvalues as percentage of total (roughly: 52%, 27%, 11%, 5%, 3%, 1.5%, 0.5%) -->
+        <!-- Bar width 42px, gap 10px, starting at x=80 -->
+        <!-- Heights: 52*1.8=93.6→94px, 27*1.8=48.6→49, 11*1.8=19.8→20, 5*1.8=9, 3*1.8=5.4→5, 1.5*1.8=2.7→3, 0.5*1.8=0.9→1 -->
+
+        <!-- PC1 bar: 52% → height 94 -->
+        <rect x="82" y="106" width="48" height="94" fill="var(--accent)" fill-opacity=".75" rx="2"/>
+        <text x="106" y="103" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" font-weight="600">52%</text>
+        <text x="106" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC1</text>
+
+        <!-- PC2 bar: 27% → height 49 -->
+        <rect x="142" y="151" width="48" height="49" fill="var(--accent)" fill-opacity=".60" rx="2"/>
+        <text x="166" y="148" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" font-weight="600">27%</text>
+        <text x="166" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC2</text>
+
+        <!-- PC3 bar: 11% → height 20 (elbow region) -->
+        <rect x="202" y="180" width="48" height="20" fill="var(--accent)" fill-opacity=".40" rx="2"/>
+        <text x="226" y="177" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".6">11%</text>
+        <text x="226" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC3</text>
+
+        <!-- Elbow annotation -->
+        <line x1="248" y1="168" x2="210" y2="182" stroke="var(--amber)" stroke-width="1" stroke-opacity=".7" stroke-dasharray="3,2"/>
+        <text x="252" y="165" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9">elbow</text>
+
+        <!-- PC4 bar: 5% → height 9 -->
+        <rect x="262" y="191" width="48" height="9" fill="currentColor" fill-opacity=".15" rx="2"/>
+        <text x="286" y="188" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".45">5%</text>
+        <text x="286" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC4</text>
+
+        <!-- PC5 bar: 3% → height 5 -->
+        <rect x="322" y="195" width="48" height="5" fill="currentColor" fill-opacity=".12" rx="2"/>
+        <text x="346" y="192" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">3%</text>
+        <text x="346" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC5</text>
+
+        <!-- PC6 bar: 1.5% → height 3 -->
+        <rect x="382" y="197" width="48" height="3" fill="currentColor" fill-opacity=".10" rx="2"/>
+        <text x="406" y="194" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".35">1.5%</text>
+        <text x="406" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC6</text>
+
+        <!-- PC7 bar: 0.5% → height 1 -->
+        <rect x="442" y="199" width="48" height="1" fill="currentColor" fill-opacity=".08" rx="2"/>
+        <text x="466" y="194" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".30">0.5%</text>
+        <text x="466" y="215" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">PC7</text>
+
+        <!-- Cumulative annotation: 52+27=79% after PC2 -->
+        <line x1="190" y1="65" x2="190" y2="200" stroke="var(--green)" stroke-opacity=".25" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="192" y="78" fill="var(--green)" font-family="IBM Plex Mono" font-size="9">79% cumulative</text>
+        <text x="192" y="90" fill="var(--green)" font-family="IBM Plex Mono" font-size="9">after PC1+PC2</text>
+      </svg>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Practical selection rules</div>
+      <strong>Elbow method:</strong> keep PCs up to the "elbow" — where the eigenvalue curve flattens.
+      Above, that is after PC2–PC3.<br>
+      <strong>Threshold method:</strong> keep the smallest $M$ such that $\text{EVR}(M) \geq 0.95$ (or some target).<br>
+      <strong>Likelihood method (PPCA):</strong> use cross-validated marginal likelihood — see §10.7.
+    </div>
+
+    <details class="expand">
+      <summary>Compression ratio and practical considerations</summary>
+      <div class="expand-body">
+        <p><strong>Original storage:</strong> $N \times D$ floats. <strong>After PCA to $M$ components:</strong> store $U_M$ ($D \times M$) + $Z$ ($N \times M$) + $\boldsymbol{\mu}$ ($D$) = $M(N+D) + D$ floats.</p>
+        <p>When $N$ and $D$ are large and $M$ is small, the compression ratio $ND / (M(N+D)+D)$ can be substantial.</p>
+        <p><strong>Always center; optionally standardize.</strong> Without centering, the first PC often points toward the data centroid rather than capturing variance structure. Standardizing (dividing each feature by its standard deviation) switches from the covariance matrix to the correlation matrix — appropriate when features have very different units or scales.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §10.7 Probabilistic PCA ─── -->
+  <section id="s10-7">
+    <div class="section-header">
+      <span class="sec-num">§10.7</span>
+      <h2 class="section-title">Probabilistic PCA</h2>
+    </div>
+    <p class="section-lead">
+      Classical PCA is a computational recipe. Probabilistic PCA (PPCA) recasts it as a
+      <strong>latent-variable generative model</strong>: observed data $\mathbf{x}$ arises from a
+      low-dimensional Gaussian latent code $\mathbf{z}$ passed through a linear map plus isotropic noise.
+      Classical PCA emerges as the noiseless limit $\sigma^2 \to 0$.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Latent prior</div>
+        <div class="formula-expr">$\mathbf{z} \sim \mathcal{N}(\mathbf{0},\, I_M)$</div>
+        <div class="formula-note">$M$-dimensional standard Gaussian. The latent code lives in the compressed space.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Likelihood (observation model)</div>
+        <div class="formula-expr">$\mathbf{x} \mid \mathbf{z} \sim \mathcal{N}(W\mathbf{z} + \boldsymbol{\mu},\; \sigma^2 I_D)$</div>
+        <div class="formula-note">$W \in \mathbb{R}^{D\times M}$ is the loading matrix. $\sigma^2 > 0$ is isotropic observation noise.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Marginal distribution of x</div>
+        <div class="formula-expr">$\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu},\; WW^\top + \sigma^2 I_D)$</div>
+        <div class="formula-note">Obtained by marginalizing out $\mathbf{z}$. Covariance is a <strong>rank-$M$ matrix plus scaled identity</strong> — structured, low-rank plus noise.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Posterior of z given x</div>
+        <div class="formula-expr">$\mathbf{z} \mid \mathbf{x} \sim \mathcal{N}(M^{-1}W^\top(\mathbf{x}-\boldsymbol{\mu}),\; \sigma^2 M^{-1})$</div>
+        <div class="formula-note">$M = W^\top W + \sigma^2 I_M$. Posterior mean is the "encoded" representation of $\mathbf{x}$. Fully tractable — Gaussian in, Gaussian out.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">MLE solution — connection to classical PCA</div>
+      Maximizing the marginal log-likelihood over $W$ and $\sigma^2$ yields:
+      $$W_{\text{ML}} = U_M (\Lambda_M - \sigma^2 I)^{1/2} R$$
+      where $U_M$ = top-$M$ eigenvectors of $S$, $\Lambda_M = \text{diag}(\lambda_1,\ldots,\lambda_M)$,
+      and $R$ is any orthogonal rotation (free parameter — PPCA is rotation-invariant in latent space).
+      As $\sigma^2 \to 0$: $W_{\text{ML}} \to U_M \Lambda_M^{1/2}$ — classical PCA.
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">MLE for noise variance</div>
+        <div class="formula-expr">$\sigma^2_{\text{ML}} = \dfrac{1}{D-M}\displaystyle\sum_{i=M+1}^{D}\lambda_i$</div>
+        <div class="formula-note">Average of the <em>discarded</em> eigenvalues. A large $\sigma^2_{\text{ML}}$ signals that the dropped directions contain significant variance — $M$ may be too small.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Factor analysis comparison</div>
+        <div class="formula-expr">$\Psi = \text{diag}(\psi_1,\ldots,\psi_D)$ (per-feature noise)</div>
+        <div class="formula-note">Factor analysis relaxes $\sigma^2 I$ to a full diagonal $\Psi$. This breaks the clean eigenvector solution; FA must be solved by EM. Use FA when features have genuinely different noise levels.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>EM algorithm for PPCA</summary>
+      <div class="expand-body">
+        <p>When data is incomplete (missing entries), EM is preferred over the closed-form eigendecomp route.</p>
+        <p><strong>E-step:</strong> Compute the posterior mean and covariance of $\mathbf{z}_n$ given the <em>observed</em> entries of $\mathbf{x}_n$. This handles missing data naturally — the model infers the latent code from whatever features are available.</p>
+        <p><strong>M-step:</strong> Update $W$ and $\sigma^2$ to maximize the expected log-likelihood computed in the E-step.</p>
+        <p>EM converges to the same MLE solution as the eigendecomposition route (Tipping &amp; Bishop, 1999). Its advantage is flexibility with incomplete data, not superior speed for fully observed data.</p>
+      </div>
+    </details>
+
+    <div class="connections">
+      <div class="connections-label">Cross-chapter connections</div>
+      <div class="chip-row">
+        <span class="chip">C4 — SVD of X̃ = PCA; eigendecomp of S; Eckart-Young theorem</span>
+        <span class="chip">C2 — projections: x̃̂ = BBᵀx̃ is an orthogonal projection</span>
+        <span class="chip">C3 — orthonormal basis B; Gram-Schmidt; basis change</span>
+        <span class="chip">C6 — Gaussian latent variable model; marginal/posterior both Gaussian</span>
+        <span class="chip">C7 — constrained optimization: Lagrangian for maximum variance</span>
+        <span class="chip">C5 — matrix gradients: ∂L/∂b = 0 uses matrix calculus from C5</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Centered data</td><td>$\tilde{\mathbf{x}}_n = \mathbf{x}_n - \boldsymbol{\mu}$</td><td>Always center first; $\boldsymbol{\mu} = \frac{1}{N}\sum_n \mathbf{x}_n$</td></tr>
+        <tr><td>Covariance matrix</td><td>$S = \frac{1}{N}\tilde{X}^\top\tilde{X}$</td><td>$D\times D$, symmetric PSD; entry $(i,j)$ = cov(feature $i$, feature $j$)</td></tr>
+        <tr><td>Variance along $\mathbf{b}$</td><td>$\text{Var} = \mathbf{b}^\top S\mathbf{b}$</td><td>$\mathbf{b}$ unit vector; this is the objective function in §10.2</td></tr>
+        <tr><td>Eigenvector condition</td><td>$S\mathbf{b} = \lambda\mathbf{b}$</td><td>From $\partial\mathcal{L}/\partial\mathbf{b} = 0$; $\mathbf{b}$ = PC direction, $\lambda$ = variance captured</td></tr>
+        <tr><td>Total variance</td><td>$\text{tr}(S) = \sum_i \lambda_i$</td><td>Sum of all eigenvalues = total data variance</td></tr>
+        <tr><td>Score matrix</td><td>$Z = \tilde{X}\,U_M \in \mathbb{R}^{N\times M}$</td><td>Row $n$ = $M$-dimensional representation of data point $n$</td></tr>
+        <tr><td>Reconstruction</td><td>$\hat{\tilde{\mathbf{x}}} = BB^\top\tilde{\mathbf{x}}$</td><td>$BB^\top$ = orthogonal projection matrix onto $\text{col}(B)$</td></tr>
+        <tr><td>Reconstruction error</td><td>$J = \sum_{i=M+1}^{D} \lambda_i$</td><td>Sum of discarded eigenvalues; minimizing $J$ = maximizing kept variance</td></tr>
+        <tr><td>SVD of data</td><td>$\tilde{X} = U\Sigma V^\top$</td><td>Columns of $V$ = principal components; $\lambda_i = \sigma_i^2/N$</td></tr>
+        <tr><td>High-dim matrix</td><td>$C = \frac{1}{N}\tilde{X}\tilde{X}^\top \in \mathbb{R}^{N\times N}$</td><td>Use when $N \ll D$; same nonzero eigenvalues as $S$</td></tr>
+        <tr><td>Explained variance ratio</td><td>$\text{EVR}(M) = \frac{\sum_{i\leq M}\sigma_i^2}{\|\tilde{X}\|_F^2}$</td><td>Fraction of total variance; $\|\tilde{X}\|_F^2 = \sum_i \sigma_i^2$</td></tr>
+        <tr><td>Frobenius error</td><td>$\|\tilde{X} - \hat{\tilde{X}}\|_F^2 = \sum_{i>M}\sigma_i^2$</td><td>Eckart-Young theorem: optimal rank-$M$ approximation</td></tr>
+        <tr><td>PPCA marginal</td><td>$\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu},\; WW^\top + \sigma^2 I_D)$</td><td>Generative model; classical PCA is the $\sigma^2\to 0$ limit</td></tr>
+        <tr><td>PPCA noise MLE</td><td>$\sigma^2_{\text{ML}} = \frac{1}{D-M}\sum_{i>M}\lambda_i$</td><td>Average discarded variance; large value → $M$ too small</td></tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Chapter connections</div>
+      <div class="chip-row">
+        <span class="chip">C4 §4.5 — SVD: V = principal components; σᵢ²/N = eigenvalues of S</span>
+        <span class="chip">C4 §4.6 — Eckart-Young: PCA is optimal low-rank approx in Frobenius norm</span>
+        <span class="chip">C4 §4.2 — spectral theorem: S symmetric → real λ, orthogonal eigenvectors</span>
+        <span class="chip">C2 §2.7 — basis change: PCA changes basis to eigenvectors; null space = discarded directions</span>
+        <span class="chip">C3 §3.8 — orthogonal projection: x̃̂ = BBᵀx̃; Gram-Schmidt for orthonormal B</span>
+        <span class="chip">C6 §6.5 — covariance matrix S; multivariate Gaussians in PPCA</span>
+        <span class="chip">C5 §5.2 — matrix gradients: Lagrangian stationarity ∂L/∂b = 0</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+// Theme
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+
+// KaTeX
+renderMathInElement(document.body, {
+  delimiters: [
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError: false,
+  trust: true,
+});
+
+// Active sidebar nav on scroll
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){
+    if(s.offsetTop - 80 <= scrollY) active = s.id;
+  });
+  navItems.forEach(function(n){
+    var href = n.getAttribute('href').slice(1);
+    n.classList.toggle('active', href === active);
+  });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

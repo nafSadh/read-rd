@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>When Models Meet Data — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3; --bg2:#ffffff; --bg3:#f2efe8; --bg4:#ede9e0;
+  --border:#d6d0c4; --border-hi:#bfb8a8;
+  --text:#363b48; --dim:#65707a; --bright:#141a1e;
+  --accent:#7c3aed; --accent2:#9b5cf6; --accent-soft:#7c3aed10; --accent-mid:#7c3aed20;
+  --green:#2e6e3e; --green-soft:#2e6e3e12; --amber:#8a6e1e; --amber-soft:#8a6e1e12;
+  --red:#8b2020; --red-soft:#8b202012; --cyan:#2e6ab4; --cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06; --grad2:#2e6ab404;
+  --sidebar-w: 220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18; --bg2:#0f1322; --bg3:#151b30; --bg4:#1a2240;
+  --border:#1c2440; --border-hi:#283558;
+  --text:#8490aa; --dim:#546080; --bright:#dce0ec;
+  --accent:#9b7aed; --accent2:#b598ff; --accent-soft:#9b7aed0c; --accent-mid:#9b7aed18;
+  --green:#4ee8a8; --green-soft:#4ee8a810; --amber:#e8c870; --amber-soft:#e8c87010;
+  --red:#e87090; --red-soft:#e8709010; --cyan:#4ee8d0; --cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06; --grad2:#4ee8d004;
+  --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;min-height:100vh;
+  transition:background .4s,color .3s;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),
+    radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);
+  transition:background 1s;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:10;
+  transition:background .4s;
+}
+.sidebar-head {
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); text-decoration:none;
+  display:flex; align-items:center; gap:6px; margin-bottom:12px;
+  transition:color .2s;
+}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:2px;
+}
+.sidebar-title {
+  font-family:var(--serif); font-size:17px; color:var(--bright);
+  line-height:1.3;
+}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav {
+  flex:1; overflow-y:auto; padding:12px 0;
+}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item {
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 16px; cursor:pointer; transition:all .15s;
+  font-size:13px; color:var(--dim); text-decoration:none; border:none; background:none;
+  width:100%; text-align:left;
+}
+.nav-item:hover{color:var(--text); background:var(--accent-soft)}
+.nav-item.active{color:var(--accent); background:var(--accent-soft)}
+.nav-item .num{
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  color:var(--accent); opacity:.7; flex-shrink:0;
+}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{
+  padding:12px 16px; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.theme-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--dim); font-size:14px; width:28px; height:28px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Main ─── */
+main {
+  flex:1; overflow-y:auto;
+  padding:40px max(48px, calc((100% - 820px) / 2)) 80px;
+  position:relative; z-index:1;
+}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.page-header {
+  margin-bottom:40px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.page-badge {
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title {
+  font-family:var(--sans); font-size:34px; font-weight:500;
+  color:var(--bright); letter-spacing:.3px; line-height:1.2; margin-bottom:8px;
+}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta {
+  margin-top:16px; display:flex; gap:20px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.5px;
+}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+
+/* ─── Sections ─── */
+section {
+  margin-bottom:48px; scroll-margin-top:24px;
+}
+.section-header {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px; cursor:pointer;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.section-header:hover .section-title{color:var(--accent)}
+.sec-num {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  color:var(--accent); letter-spacing:1px; flex-shrink:0;
+}
+.section-title {
+  font-family:var(--serif); font-size:24px; color:var(--bright);
+  font-weight:400; transition:color .2s;
+}
+.section-lead {
+  font-size:15px; line-height:1.7; color:var(--text);
+  margin-bottom:20px;
+}
+.section-lead strong{color:var(--bright);font-weight:600}
+
+/* ─── Formula cards ─── */
+.formula-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.formula-card {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:16px 18px; transition:border-color .2s;
+}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+}
+.formula-expr {
+  font-family:var(--serif); font-size:18px; color:var(--bright);
+  line-height:1.4; margin-bottom:6px;
+}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+
+/* ─── Callout boxes ─── */
+.callout {
+  padding:16px 20px; border-left:3px solid var(--accent);
+  background:var(--accent-soft); margin:20px 0; font-size:14px; line-height:1.7;
+}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:.8;
+}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.red{color:var(--red)}
+.callout-title.accent{color:var(--accent)}
+
+/* ─── Expandable details ─── */
+.expand {
+  border:1px solid var(--border); margin-top:16px;
+  transition:border-color .2s;
+}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary {
+  padding:12px 16px; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); list-style:none;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:color .2s;
+  user-select:none;
+}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body {
+  padding:20px 20px 16px;
+  font-size:14px; line-height:1.75; color:var(--text);
+}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+
+/* ─── Tables ─── */
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.data-table code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);padding:1px 5px}
+
+/* ─── SVG diagrams ─── */
+.diagram {
+  margin:24px 0; padding:24px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.diagram-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); align-self:flex-start;
+}
+.diagram svg{max-width:100%;height:auto}
+
+/* ─── Connection chips ─── */
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
+  padding:3px 10px;border:1px solid var(--border);color:var(--dim);
+  background:var(--bg3);transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── KaTeX tweaks ─── */
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* ─── Responsive ─── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  main{padding:24px 20px 60px}
+  .formula-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title">When Models <em>Meet Data</em></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s8-1" class="nav-item"><span class="num">8.1</span>Data, Models &amp; Learning</a>
+    <a href="#s8-2" class="nav-item"><span class="num">8.2</span>Empirical Risk Min.</a>
+    <a href="#s8-3" class="nav-item"><span class="num">8.3</span>Parameter Est. (MLE)</a>
+    <a href="#s8-4" class="nav-item"><span class="num">8.4</span>Probabilistic Inference</a>
+    <a href="#s8-5" class="nav-item"><span class="num">8.5</span>Graphical Models</a>
+    <a href="#s8-6" class="nav-item"><span class="num">8.6</span>Model Selection</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 251–288</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART II</div>
+    <h1 class="page-title">When Models <em>Meet Data</em></h1>
+    <p class="page-sub">Data is observed; models are assumed; parameters are learned. This chapter builds the complete pipeline from raw observations to principled decisions — and probability is the unifying thread through every step.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 8 (pp 251–288)</span>
+      <a href="notes/models-data.md">Raw notes ↗</a>
+      <a href="https://www.youtube.com/watch?v=HZGCoVF3YvM" target="_blank">3B1B: Bayes theorem ↗</a>
+      <a href="https://seeing-theory.brown.edu/bayesian-inference/" target="_blank">Seeing Theory ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §8.1 Data, Models, and Learning ─── -->
+  <section id="s8-1">
+    <div class="section-header">
+      <span class="sec-num">§8.1</span>
+      <h2 class="section-title">Data, Models, and Learning</h2>
+    </div>
+    <p class="section-lead">
+      Every supervised learning problem rests on three pillars: <strong>data</strong> (observed samples),
+      a <strong>model</strong> (parameterized hypothesis about the data-generating process), and a
+      <strong>learning algorithm</strong> (the criterion and procedure for fitting the model).
+      The gap between model and reality is the fundamental source of all difficulty in ML.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Training Set</div>
+        <div class="formula-expr">$\mathcal{D} = \{(\mathbf{x}_1,y_1),\ldots,(\mathbf{x}_N,y_N)\}$</div>
+        <div class="formula-note">$\mathbf{x}_i \in \mathbb{R}^D$ is the feature vector, $y_i$ is the target. Assumed i.i.d. from unknown $p^*(\mathbf{x},y)$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Parameterized Model</div>
+        <div class="formula-expr">$p(y \mid \mathbf{x}, \boldsymbol{\theta})$</div>
+        <div class="formula-note">A family of distributions indexed by $\boldsymbol{\theta} \in \Theta$. Different families (linear, neural net, GP) impose different structural assumptions.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Expected (True) Risk</div>
+        <div class="formula-expr">$R(\boldsymbol{\theta}) = \mathbb{E}_{(\mathbf{x},y)\sim p^*}\!\bigl[\ell(f(\mathbf{x},\boldsymbol{\theta}),y)\bigr]$</div>
+        <div class="formula-note">The ideal objective — but $p^*$ is unknown, so this cannot be computed directly.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Empirical Risk</div>
+        <div class="formula-expr">$R_\text{emp}(\boldsymbol{\theta}) = \tfrac{1}{N}\sum_{i=1}^N \ell\!\bigl(f(\mathbf{x}_i,\boldsymbol{\theta}),y_i\bigr)$</div>
+        <div class="formula-note">The computable proxy for true risk. Learning = minimizing $R_\text{emp}$.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">The model is not the truth</div>
+      A model is a useful fiction that compresses data into parameters. The entire discipline of statistics and ML is about navigating the gap between the fiction (model) and the real world ($p^*$).
+    </div>
+
+    <details class="expand">
+      <summary>Common loss functions</summary>
+      <div class="expand-body">
+        <p>The choice of loss function determines what "fitting well" means:</p>
+        <ul>
+          <li><strong>Squared loss:</strong> $\ell(\hat{y},y) = (\hat{y}-y)^2$ — penalizes large errors quadratically; used in regression</li>
+          <li><strong>Absolute loss:</strong> $\ell(\hat{y},y) = |\hat{y}-y|$ — robust to outliers; leads to median regression</li>
+          <li><strong>Binary cross-entropy:</strong> $\ell(\hat{y},y) = -[y\log\hat{y} + (1-y)\log(1-\hat{y})]$ — for binary classification</li>
+          <li><strong>0-1 loss:</strong> $\ell(\hat{y},y) = \mathbf{1}[\hat{y}\neq y]$ — counts misclassifications; non-differentiable, so rarely optimized directly</li>
+        </ul>
+        <p>Each loss corresponds to an implicit assumption about the noise model in the data-generating process. Squared loss corresponds to Gaussian noise; cross-entropy to Bernoulli outcomes.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §8.2 Empirical Risk Minimization ─── -->
+  <section id="s8-2">
+    <div class="section-header">
+      <span class="sec-num">§8.2</span>
+      <h2 class="section-title">Empirical Risk Minimization</h2>
+    </div>
+    <p class="section-lead">
+      <strong>ERM</strong> is the formal statement of supervised learning: find the parameters that minimize
+      average loss on the training set. Most learning algorithms — least squares, logistic regression,
+      SVMs — are special cases of ERM. The central challenge is that minimizing training loss does not
+      guarantee good generalization to unseen data.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">ERM</div>
+        <div class="formula-expr">$\boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}}{\arg\min}\; R_\text{emp}(\boldsymbol{\theta})$</div>
+        <div class="formula-note">The defining equation of supervised learning.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Regularized ERM</div>
+        <div class="formula-expr">$\boldsymbol{\theta}^* = \underset{\boldsymbol{\theta}}{\arg\min}\;\bigl[R_\text{emp}(\boldsymbol{\theta}) + \lambda\,\Omega(\boldsymbol{\theta})\bigr]$</div>
+        <div class="formula-note">$\Omega(\boldsymbol{\theta}) = \|\boldsymbol{\theta}\|^2$ gives ridge; $\|\boldsymbol{\theta}\|_1$ gives lasso. $\lambda\geq 0$ controls strength.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Generalization Gap</div>
+        <div class="formula-expr">$\text{gap} = R(\boldsymbol{\theta}) - R_\text{emp}(\boldsymbol{\theta})$</div>
+        <div class="formula-note">How much better the model looks on training data than on new data. Large gap = overfitting.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Bias–Variance Decomposition</div>
+        <div class="formula-expr">$\mathbb{E}_\mathcal{D}[(y-\hat{f})^2] = \text{Bias}^2 + \text{Var} + \sigma^2$</div>
+        <div class="formula-note">Test error decomposes into systematic error, sensitivity to training set, and irreducible noise.</div>
+      </div>
+    </div>
+
+    <!-- Bias-Variance SVG Diagram -->
+    <div class="diagram">
+      <div class="diagram-title">Bias–Variance Tradeoff: decomposing test error vs. model complexity</div>
+      <svg width="580" height="240" viewBox="0 0 580 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes -->
+        <line x1="60" y1="20" x2="60" y2="195" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+        <line x1="60" y1="195" x2="545" y2="195" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+        <!-- Y-axis label -->
+        <text x="14" y="112" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".55" transform="rotate(-90,14,112)">Test Error</text>
+        <!-- X-axis label -->
+        <text x="302" y="218" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".55">Model Complexity →</text>
+
+        <!-- Tick marks -->
+        <line x1="60" y1="195" x2="60" y2="200" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <line x1="545" y1="195" x2="545" y2="200" stroke="currentColor" stroke-opacity=".3" stroke-width="1"/>
+        <text x="60" y="210" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">low</text>
+        <text x="545" y="210" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">high</text>
+
+        <!-- Bias² curve — decreasing convex from top-left to bottom-right -->
+        <!-- Points: (60,175) (120,155) (180,120) (240,90) (300,68) (360,52) (420,42) (480,36) (545,32) -->
+        <path d="M60,175 C100,160 150,130 220,95 C290,62 360,45 480,35 C510,33 530,32 545,31"
+              stroke="var(--cyan)" stroke-width="2" stroke-opacity=".8" fill="none" stroke-dasharray="5,3"/>
+
+        <!-- Variance curve — increasing from bottom-left to top-right -->
+        <!-- Points: (60,30) (120,32) (180,38) (240,50) (300,68) (360,95) (420,130) (480,162) (545,185) -->
+        <path d="M60,32 C100,32 140,34 200,42 C260,52 300,68 360,100 C400,122 450,152 490,172 C515,182 530,187 545,190"
+              stroke="var(--green)" stroke-width="2" stroke-opacity=".8" fill="none" stroke-dasharray="5,3"/>
+
+        <!-- Total error curve — U-shape -->
+        <!-- Sum of bias² + variance + noise floor (~20px) -->
+        <path d="M60,178 C90,160 130,138 180,118 C230,98 275,90 302,92 C330,95 360,108 400,130 C440,152 490,175 545,193"
+              stroke="var(--accent)" stroke-width="2.5" stroke-opacity=".9" fill="none"/>
+
+        <!-- Noise floor (horizontal dashed line) -->
+        <line x1="60" y1="175" x2="545" y2="175" stroke="currentColor" stroke-opacity=".18" stroke-width="1" stroke-dasharray="3,4"/>
+        <text x="548" y="178" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">noise²</text>
+
+        <!-- Optimal complexity marker -->
+        <line x1="302" y1="92" x2="302" y2="195" stroke="var(--accent)" stroke-opacity=".3" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="302" y="188" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" opacity=".7">optimal</text>
+
+        <!-- Legend -->
+        <line x1="80" y1="35" x2="108" y2="35" stroke="var(--accent)" stroke-width="2.5" stroke-opacity=".9"/>
+        <text x="114" y="39" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">Total error (Bias² + Var + noise²)</text>
+        <line x1="80" y1="52" x2="108" y2="52" stroke="var(--cyan)" stroke-width="2" stroke-opacity=".8" stroke-dasharray="5,3"/>
+        <text x="114" y="56" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">Bias² (decreases with complexity)</text>
+        <line x1="80" y1="69" x2="108" y2="69" stroke="var(--green)" stroke-width="2" stroke-opacity=".8" stroke-dasharray="5,3"/>
+        <text x="114" y="73" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">Variance (increases with complexity)</text>
+
+        <!-- Region labels -->
+        <text x="130" y="155" text-anchor="middle" fill="var(--cyan)" font-family="EB Garamond" font-size="13" opacity=".8" font-style="italic">underfitting</text>
+        <text x="450" y="155" text-anchor="middle" fill="var(--green)" font-family="EB Garamond" font-size="13" opacity=".8" font-style="italic">overfitting</text>
+      </svg>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">The bias-variance tradeoff in practice</div>
+      Increasing model complexity (more parameters, higher polynomial degree, fewer regularization) decreases bias but increases variance. The noise² floor is irreducible — no model can beat Bayes error. The goal of regularization, cross-validation, and early stopping is to locate the optimal complexity without needing to see test data.
+    </div>
+
+    <details class="expand">
+      <summary>Worked example: polynomial regression</summary>
+      <div class="expand-body">
+        <p>Fit degree-$d$ polynomials to $N=10$ points drawn from $y = \sin(x) + \varepsilon$:</p>
+        <ul>
+          <li><strong>$d=1$ (linear):</strong> high bias, low variance — the curve cannot capture the sinusoidal shape. Underfits.</li>
+          <li><strong>$d=9$ (degree-9 polynomial):</strong> zero training error but wild oscillations at test points. Overfits.</li>
+          <li><strong>$d=3$ (cubic):</strong> reasonable approximation — balances bias and variance well.</li>
+        </ul>
+        <p>The lesson: the right complexity is not always "more is better." With only $N=10$ points, a degree-9 polynomial has nearly as many parameters as data points and will memorize noise.</p>
+        <p><strong>Controls for the tradeoff:</strong> regularization (penalize $\|\boldsymbol{\theta}\|^2$); cross-validation to choose $\lambda$ or $d$; early stopping; data augmentation (increases effective $N$); ensemble methods (bagging reduces variance).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §8.3 Parameter Estimation — MLE ─── -->
+  <section id="s8-3">
+    <div class="section-header">
+      <span class="sec-num">§8.3</span>
+      <h2 class="section-title">Parameter Estimation — Maximum Likelihood</h2>
+    </div>
+    <p class="section-lead">
+      MLE answers: given observed data $\mathcal{D}$, which parameter value $\boldsymbol{\theta}$ makes
+      the data most probable? It is the frequentist workhorse — and it is provably equivalent to ERM
+      with the negative log-likelihood as the loss function.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Likelihood Function</div>
+        <div class="formula-expr">$L(\boldsymbol{\theta}\mid\mathcal{D}) = \prod_{i=1}^N p(x_i\mid\boldsymbol{\theta})$</div>
+        <div class="formula-note">A function of $\boldsymbol{\theta}$ for fixed $\mathcal{D}$. Not a probability distribution over $\boldsymbol{\theta}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Log-Likelihood (NLL form)</div>
+        <div class="formula-expr">$\ell(\boldsymbol{\theta}) = \sum_{i=1}^N \log p(x_i\mid\boldsymbol{\theta})$</div>
+        <div class="formula-note">Product becomes sum — numerically stable, and gradients of sums are sums of gradients.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MLE</div>
+        <div class="formula-expr">$\boldsymbol{\theta}_\text{MLE} = \underset{\boldsymbol{\theta}}{\arg\max}\sum_{i=1}^N \log p(x_i\mid\boldsymbol{\theta})$</div>
+        <div class="formula-note">Equivalent to ERM with NLL loss: $\arg\min_\theta\bigl[-\tfrac{1}{N}\sum\log p(x_i|\theta)\bigr]$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Gaussian MLE (univariate)</div>
+        <div class="formula-expr">$\mu_\text{MLE} = \tfrac{1}{N}\sum x_i,\quad \sigma^2_\text{MLE} = \tfrac{1}{N}\sum(x_i-\mu_\text{MLE})^2$</div>
+        <div class="formula-note">$\mu_\text{MLE}$ is the sample mean (unbiased). $\sigma^2_\text{MLE}$ divides by $N$ — it is biased downward.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">MLE = ERM with NLL loss — the bridge between optimization and probability</div>
+      $$\boldsymbol{\theta}_\text{MLE} = \underset{\boldsymbol{\theta}}{\arg\min}\left[-\frac{1}{N}\sum_{i=1}^N \log p(x_i\mid\boldsymbol{\theta})\right]$$
+      This shows MLE is simply ERM where the loss is the negative log-likelihood. Under Gaussian noise, NLL becomes squared loss, so MLE gives ordinary least squares. This is why Chapter 9 (linear regression) begins exactly where this chapter ends.
+    </div>
+
+    <details class="expand">
+      <summary>Gaussian log-likelihood derivation</summary>
+      <div class="expand-body">
+        <p>Assume $x_i \sim \mathcal{N}(\mu, \sigma^2)$ i.i.d. The log-likelihood is:</p>
+        $$\log L(\mu,\sigma^2\mid\mathcal{D}) = -\frac{N}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^N(x_i-\mu)^2$$
+        <p>Setting $\partial/\partial\mu = 0$ gives $\mu_\text{MLE} = \frac{1}{N}\sum x_i$. Setting $\partial/\partial\sigma^2 = 0$ gives $\sigma^2_\text{MLE} = \frac{1}{N}\sum(x_i - \mu_\text{MLE})^2$.</p>
+        <p><strong>Why is $\sigma^2_\text{MLE}$ biased?</strong> MLE uses $\mu_\text{MLE}$ computed from the same data, which already "absorbs" some variance. The true residuals $(x_i - \mu_\text{true})$ would be larger on average. The unbiased estimator (Bessel's correction) divides by $N-1$, not $N$.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Properties of MLE</summary>
+      <div class="expand-body">
+        <ul>
+          <li><strong>Consistency:</strong> $\hat{\boldsymbol{\theta}}_\text{MLE} \to \boldsymbol{\theta}_\text{true}$ as $N\to\infty$ (under regularity conditions)</li>
+          <li><strong>Asymptotic normality:</strong> $\sqrt{N}(\hat{\boldsymbol{\theta}}_\text{MLE}-\boldsymbol{\theta}_\text{true}) \xrightarrow{d} \mathcal{N}(0,\mathcal{I}(\boldsymbol{\theta}_\text{true})^{-1})$ where $\mathcal{I}$ is the Fisher information matrix</li>
+          <li><strong>Efficiency:</strong> Achieves the Cramér-Rao lower bound asymptotically — no unbiased estimator has lower variance in the limit</li>
+          <li><strong>Invariance:</strong> If $\hat{\boldsymbol{\theta}}$ maximizes $L(\boldsymbol{\theta})$, then $g(\hat{\boldsymbol{\theta}})$ maximizes $L(g^{-1}(\cdot))$ for any invertible $g$</li>
+          <li><strong>Bias for finite $N$:</strong> MLE is generally biased (as seen with $\sigma^2_\text{MLE}$), though bias vanishes as $N\to\infty$</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §8.4 Probabilistic Inference ─── -->
+  <section id="s8-4">
+    <div class="section-header">
+      <span class="sec-num">§8.4</span>
+      <h2 class="section-title">Probabilistic Modeling and Inference</h2>
+    </div>
+    <p class="section-lead">
+      The Bayesian view treats $\boldsymbol{\theta}$ as a <strong>random variable</strong> rather than a
+      fixed unknown. A prior $p(\boldsymbol{\theta})$ encodes belief before seeing data; the posterior
+      $p(\boldsymbol{\theta}\mid\mathcal{D})$ encodes updated belief after. MAP is a point summary of the
+      posterior; the full Bayesian prediction averages over all $\boldsymbol{\theta}$.
+    </p>
+
+    <!-- Bayesian Update SVG Diagram -->
+    <div class="diagram">
+      <div class="diagram-title">Bayesian update: from prior to posterior via the likelihood</div>
+      <svg width="560" height="130" viewBox="0 0 560 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Prior box -->
+        <rect x="20" y="30" width="140" height="64" rx="6" fill="var(--cyan)" fill-opacity=".08" stroke="var(--cyan)" stroke-opacity=".5" stroke-width="1.5"/>
+        <text x="90" y="56" text-anchor="middle" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="11" font-weight="600">Prior</text>
+        <text x="90" y="74" text-anchor="middle" fill="var(--cyan)" font-family="EB Garamond" font-size="15" font-style="italic">p(θ)</text>
+        <text x="90" y="92" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">belief before data</text>
+
+        <!-- Arrow from Prior to multiply sign -->
+        <line x1="160" y1="62" x2="205" y2="62" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+        <polygon points="203,58 211,62 203,66" fill="currentColor" fill-opacity=".35"/>
+        <text x="183" y="55" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="11" opacity=".45">×</text>
+
+        <!-- Likelihood box -->
+        <rect x="210" y="30" width="140" height="64" rx="6" fill="var(--amber)" fill-opacity=".08" stroke="var(--amber)" stroke-opacity=".5" stroke-width="1.5"/>
+        <text x="280" y="56" text-anchor="middle" fill="var(--amber)" font-family="IBM Plex Mono" font-size="11" font-weight="600">Likelihood</text>
+        <text x="280" y="74" text-anchor="middle" fill="var(--amber)" font-family="EB Garamond" font-size="15" font-style="italic">p(y | θ)</text>
+        <text x="280" y="92" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">data probability given θ</text>
+
+        <!-- Arrow from Likelihood to normalize sign -->
+        <line x1="350" y1="62" x2="395" y2="62" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+        <polygon points="393,58 401,62 393,66" fill="currentColor" fill-opacity=".35"/>
+        <text x="373" y="55" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".45">÷ Z</text>
+
+        <!-- Posterior box -->
+        <rect x="400" y="30" width="140" height="64" rx="6" fill="var(--accent)" fill-opacity=".08" stroke="var(--accent)" stroke-opacity=".5" stroke-width="1.5"/>
+        <text x="470" y="56" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="11" font-weight="600">Posterior</text>
+        <text x="470" y="74" text-anchor="middle" fill="var(--accent)" font-family="EB Garamond" font-size="15" font-style="italic">p(θ | y)</text>
+        <text x="470" y="92" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">updated belief</text>
+
+        <!-- Normalizer label at bottom -->
+        <text x="280" y="120" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">Z = p(y) = ∫ p(y|θ) p(θ) dθ  (marginal likelihood — often intractable)</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Bayes' Theorem</div>
+        <div class="formula-expr">$p(\boldsymbol{\theta}\mid\mathbf{y},\mathbf{X}) = \dfrac{p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta})\,p(\boldsymbol{\theta})}{p(\mathbf{y}\mid\mathbf{X})}$</div>
+        <div class="formula-note">Posterior $\propto$ likelihood $\times$ prior. The denominator $p(\mathbf{y}|\mathbf{X})$ is constant in $\boldsymbol{\theta}$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">MAP Estimate</div>
+        <div class="formula-expr">$\boldsymbol{\theta}_\text{MAP} = \underset{\boldsymbol{\theta}}{\arg\max}\bigl[\log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}) + \log p(\boldsymbol{\theta})\bigr]$</div>
+        <div class="formula-note">MLE plus a log-prior regularization term. The evidence $p(\mathbf{y}|\mathbf{X})$ drops out.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Marginal Likelihood</div>
+        <div class="formula-expr">$p(\mathbf{y}\mid\mathbf{X}) = \int p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta})\,p(\boldsymbol{\theta})\,\mathrm{d}\boldsymbol{\theta}$</div>
+        <div class="formula-note">The normalizing constant. Usually intractable — requires integrating over all $\boldsymbol{\theta}$ weighted by the prior.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Predictive Distribution (full Bayes)</div>
+        <div class="formula-expr">$p(y^*\mid\mathbf{x}^*,\mathbf{X},\mathbf{y}) = \int p(y^*\mid\mathbf{x}^*,\boldsymbol{\theta})\,p(\boldsymbol{\theta}\mid\mathbf{y},\mathbf{X})\,\mathrm{d}\boldsymbol{\theta}$</div>
+        <div class="formula-note">Marginalizes over all $\boldsymbol{\theta}$, weighting by posterior. Gives a distribution over $y^*$, not just a point estimate.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">MAP = regularized MLE</div>
+      A Gaussian prior $p(\boldsymbol{\theta}) = \mathcal{N}(0,\sigma_0^2 \mathbf{I})$ gives $\log p(\boldsymbol{\theta}) = -\frac{1}{2\sigma_0^2}\|\boldsymbol{\theta}\|^2 + \text{const}$, so MAP becomes:
+      $$\boldsymbol{\theta}_\text{MAP} = \underset{\boldsymbol{\theta}}{\arg\min}\left[-\sum\log p(y_i|\mathbf{x}_i,\boldsymbol{\theta}) + \frac{1}{2\sigma_0^2}\|\boldsymbol{\theta}\|^2\right]$$
+      This is exactly ridge regression ($L_2$ regularization) with $\lambda = 1/\sigma_0^2$. A Laplace prior gives $L_1$ regularization (lasso). Regularization strength = tightness of prior.
+    </div>
+
+    <details class="expand">
+      <summary>Conjugate priors and sequential Bayesian updating</summary>
+      <div class="expand-body">
+        <p><strong>Conjugate priors</strong> make the posterior analytically tractable — same family as prior:</p>
+        <ul>
+          <li>Gaussian likelihood (known $\sigma^2$) + Gaussian prior on $\mu$ → Gaussian posterior</li>
+          <li>Binomial likelihood + Beta prior on $p$ → Beta posterior</li>
+          <li>Poisson likelihood + Gamma prior on $\lambda$ → Gamma posterior</li>
+          <li>Multinomial likelihood + Dirichlet prior on $\boldsymbol{\pi}$ → Dirichlet posterior</li>
+        </ul>
+        <p><strong>Sequential learning:</strong> the posterior after seeing $N$ data points becomes the prior when the $(N+1)$-th datum arrives:
+        $$p(\boldsymbol{\theta}\mid x_1,\ldots,x_N,x_{N+1}) \propto p(x_{N+1}\mid\boldsymbol{\theta})\,p(\boldsymbol{\theta}\mid x_1,\ldots,x_N)$$
+        Bayesian learning never needs to store raw data — the posterior is a sufficient summary of all past observations.
+        </p>
+        <p><strong>MLE vs MAP vs full Bayes for prediction:</strong></p>
+        <ul>
+          <li>MLE: $p(y^*|\mathbf{x}^*,\boldsymbol{\theta}_\text{MLE})$ — ignores all parameter uncertainty</li>
+          <li>MAP: $p(y^*|\mathbf{x}^*,\boldsymbol{\theta}_\text{MAP})$ — uses a single best $\boldsymbol{\theta}$</li>
+          <li>Full Bayes: $\int p(y^*|\mathbf{x}^*,\boldsymbol{\theta})\,p(\boldsymbol{\theta}|\mathbf{y},\mathbf{X})\,\mathrm{d}\boldsymbol{\theta}$ — properly accounts for uncertainty; substantially wider predictive intervals when $N$ is small</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §8.5 Directed Graphical Models ─── -->
+  <section id="s8-5">
+    <div class="section-header">
+      <span class="sec-num">§8.5</span>
+      <h2 class="section-title">Directed Graphical Models</h2>
+    </div>
+    <p class="section-lead">
+      Directed graphical models (DGMs), or <strong>Bayesian networks</strong>, provide a visual language
+      for expressing complex joint distributions compactly. The central idea: a DAG encodes conditional
+      independence assumptions, and the joint factorizes into one term per node conditioned on its parents.
+    </p>
+
+    <!-- Bayesian Network SVG -->
+    <div class="diagram">
+      <div class="diagram-title">Bayesian network: latent chain z₁ → z₂ observed x (plate notation)</div>
+      <svg width="480" height="200" viewBox="0 0 480 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- z1 node -->
+        <circle cx="110" cy="75" r="30" fill="var(--bg3)" stroke="var(--accent)" stroke-opacity=".6" stroke-width="1.5"/>
+        <text x="110" y="70" text-anchor="middle" fill="var(--accent)" font-family="EB Garamond" font-size="16" font-style="italic">z</text>
+        <text x="110" y="84" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10">₁</text>
+        <text x="110" y="118" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">latent</text>
+
+        <!-- Arrow z1 → z2 -->
+        <line x1="141" y1="75" x2="199" y2="75" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/>
+        <polygon points="197,71 205,75 197,79" fill="currentColor" fill-opacity=".5"/>
+
+        <!-- z2 node -->
+        <circle cx="230" cy="75" r="30" fill="var(--bg3)" stroke="var(--accent)" stroke-opacity=".6" stroke-width="1.5"/>
+        <text x="230" y="70" text-anchor="middle" fill="var(--accent)" font-family="EB Garamond" font-size="16" font-style="italic">z</text>
+        <text x="230" y="84" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10">₂</text>
+        <text x="230" y="118" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">latent</text>
+
+        <!-- Arrow z2 → x (inside plate) -->
+        <line x1="230" y1="106" x2="230" y2="132" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/>
+        <polygon points="226,131 230,139 234,131" fill="currentColor" fill-opacity=".5"/>
+
+        <!-- Plate rectangle for x -->
+        <rect x="190" y="140" width="80" height="48" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <!-- x node inside plate -->
+        <circle cx="230" cy="162" r="20" fill="var(--bg2)" stroke="currentColor" stroke-opacity=".6" stroke-width="1.5"/>
+        <text x="230" y="167" text-anchor="middle" fill="var(--bright)" font-family="EB Garamond" font-size="16" font-style="italic">x</text>
+        <text x="264" y="183" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".45">N</text>
+        <text x="230" y="196" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">observed</text>
+
+        <!-- Factorization label -->
+        <text x="350" y="75" fill="currentColor" font-family="EB Garamond" font-size="14" opacity=".8">p(z₁, z₂, x₁…ₙ) =</text>
+        <text x="350" y="96" fill="var(--accent)" font-family="EB Garamond" font-size="14">p(z₁) p(z₂|z₁)</text>
+        <text x="350" y="117" fill="var(--bright)" font-family="EB Garamond" font-size="14">∏ p(xₙ|z₂)</text>
+        <text x="350" y="134" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".4">n=1..N</text>
+
+        <!-- Shaded vs unshaded legend -->
+        <circle cx="350" cy="158" r="8" fill="var(--bg3)" stroke="var(--accent)" stroke-opacity=".6" stroke-width="1.2"/>
+        <text x="365" y="162" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".6">latent (unshaded)</text>
+        <circle cx="350" cy="178" r="8" fill="var(--bg2)" stroke="currentColor" stroke-opacity=".6" stroke-width="1.2"/>
+        <text x="365" y="182" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".6">observed (shaded)</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">DGM Factorization</div>
+        <div class="formula-expr">$p(x_1,\ldots,x_K) = \prod_{k=1}^K p\!\bigl(x_k \mid \text{pa}(x_k)\bigr)$</div>
+        <div class="formula-note">One conditional per node, conditioned only on its parents $\text{pa}(x_k)$ in the DAG.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Chain Example</div>
+        <div class="formula-expr">$p(A,B,C) = p(A)\,p(B\mid A)\,p(C\mid B)$</div>
+        <div class="formula-note">$C \perp\!\!\!\perp A \mid B$: conditioning on $B$ blocks the path from $A$ to $C$.</div>
+      </div>
+    </div>
+
+    <details class="expand">
+      <summary>d-Separation: reading off conditional independence</summary>
+      <div class="expand-body">
+        <p>d-Separation is a graphical criterion for determining conditional independence without computing any distributions. Three basic patterns:</p>
+        <ul>
+          <li><strong>Chain A → B → C:</strong> $A \perp\!\!\!\perp C \mid B$. Observing $B$ blocks information flow from $A$ to $C$. Marginally they are correlated.</li>
+          <li><strong>Fork A ← B → C:</strong> $A \perp\!\!\!\perp C \mid B$. Common cause $B$ observed blocks the correlation. Marginally $A$ and $C$ are correlated through $B$.</li>
+          <li><strong>Collider A → B ← C:</strong> $A \perp\!\!\!\perp C$ marginally. But conditioning on $B$ <em>opens</em> the path — "explaining away." Classic: given an exam score (collider), ability and difficulty become negatively correlated.</li>
+        </ul>
+        <p><strong>d-Separation rule:</strong> $X \perp\!\!\!\perp Y \mid Z$ iff every path between $X$ and $Y$ is blocked given $Z$. A path is blocked if it contains a chain/fork where the middle node is in $Z$, or a collider where neither the collider nor any descendant is in $Z$.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Plate notation and the Hidden Markov Model</summary>
+      <div class="expand-body">
+        <p><strong>Plate notation:</strong> repeated structure (e.g., $N$ i.i.d. observations) is enclosed in a rectangle ("plate") with a count. Avoids drawing the same subgraph $N$ times and makes the generative story explicit.</p>
+        <p><strong>Hidden Markov Model (HMM):</strong> a chain of latent states $z_1\to z_2\to\cdots\to z_T$, each emitting an observation $x_t$:
+        $$p(z_{1:T},x_{1:T}) = p(z_1)\prod_{t=2}^T p(z_t\mid z_{t-1})\prod_{t=1}^T p(x_t\mid z_t)$$
+        </p>
+        <p><strong>Why graphical models matter:</strong></p>
+        <ul>
+          <li>Compact specification of complex joint distributions over many variables</li>
+          <li>Systematic inference algorithms (belief propagation, variational inference, MCMC) that exploit graph structure</li>
+          <li>Model assumptions become visible — independence assumptions can be checked against domain knowledge</li>
+          <li>Modularity: swap one component (e.g., emission model) without redesigning inference from scratch</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §8.6 Model Selection ─── -->
+  <section id="s8-6">
+    <div class="section-header">
+      <span class="sec-num">§8.6</span>
+      <h2 class="section-title">Model Selection</h2>
+    </div>
+    <p class="section-lead">
+      Having estimated $\boldsymbol{\theta}$ within a fixed model family, the next question is: which
+      family is best? Model selection is the problem of choosing between competing model structures —
+      and it requires criteria that penalize complexity automatically to avoid overfitting the selection
+      process itself.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Model Evidence</div>
+        <div class="formula-expr">$p(\mathbf{y}\mid\mathbf{X},\mathcal{M}_k) = \int p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta},\mathcal{M}_k)\,p(\boldsymbol{\theta}\mid\mathcal{M}_k)\,\mathrm{d}\boldsymbol{\theta}$</div>
+        <div class="formula-note">A single number per model. Automatically penalizes overly complex models (Occam's razor built in).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Model Posterior</div>
+        <div class="formula-expr">$p(\mathcal{M}_k\mid\mathbf{y},\mathbf{X}) \propto p(\mathbf{y}\mid\mathbf{X},\mathcal{M}_k)\,p(\mathcal{M}_k)$</div>
+        <div class="formula-note">With uniform model prior, comparison reduces to comparing marginal likelihoods.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">BIC</div>
+        <div class="formula-expr">$\text{BIC}(\mathcal{M}_k) = \log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}_\text{MAP}) - \dfrac{d_k}{2}\log N$</div>
+        <div class="formula-note">$d_k$ = number of parameters; $N$ = data size. Select model with <em>highest</em> BIC. Penalty grows with $\log N$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">BMA — Bayesian Model Averaging</div>
+        <div class="formula-expr">$p(y^*\mid\mathbf{x}^*,\mathbf{X},\mathbf{y}) = \sum_k p(y^*\mid\mathbf{x}^*,\mathcal{M}_k,\mathbf{X},\mathbf{y})\,p(\mathcal{M}_k\mid\mathbf{y},\mathbf{X})$</div>
+        <div class="formula-note">Average over all models weighted by posterior. Most principled but computationally expensive.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Occam's Razor is built into the marginal likelihood</div>
+      A complex model (many parameters, diffuse prior) spreads probability mass across many possible datasets — it assigns low probability to any specific observed dataset unless the parameters fit very well. A simpler model concentrates mass on fewer datasets, assigning higher probability to any one of them. The marginal likelihood automatically penalizes complexity without an explicit penalty term.
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Method</th><th>What it measures</th><th>Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Train/val/test split</td><td>Generalization on a single holdout set</td><td>Cheap; low variance when $N$ is large</td></tr>
+        <tr><td>$K$-fold CV</td><td>Average generalization over $K$ holdouts</td><td>Moderate ($K$ fits required)</td></tr>
+        <tr><td>AIC</td><td>Estimated KL divergence to true model</td><td>One MLE fit</td></tr>
+        <tr><td>BIC</td><td>Approximate log marginal likelihood</td><td>One MAP fit</td></tr>
+        <tr><td>Marginal likelihood</td><td>Exact Bayesian model score</td><td>Expensive (integration over $\boldsymbol{\theta}$)</td></tr>
+      </tbody>
+    </table>
+
+    <details class="expand">
+      <summary>BIC vs AIC: when to use each</summary>
+      <div class="expand-body">
+        <p>Both criteria trade off fit against complexity, but from different starting points:</p>
+        $$\text{AIC}(\mathcal{M}_k) = 2\log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}_\text{MLE}) - 2d_k$$
+        $$\text{BIC}(\mathcal{M}_k) = 2\log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}_\text{MLE}) - d_k\log N$$
+        <p><strong>AIC</strong> is derived from information theory (Kullback-Leibler divergence to the true model). It is better suited for prediction tasks where the goal is to minimize expected out-of-sample loss.</p>
+        <p><strong>BIC</strong> approximates the Bayesian marginal likelihood via a Laplace approximation around $\boldsymbol{\theta}_\text{MAP}$. It is better for model identification — finding the correct structural form as $N\to\infty$. The penalty $d_k\log N$ grows without bound (unlike AIC's constant 2), so BIC is more aggressive at penalizing large models when $N$ is large.</p>
+        <p><strong>LOO cross-validation for linear models:</strong> Leave-one-out CV (the most thorough form) has a closed-form solution via the hat matrix trick, costing no more than a single fit.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── Key Formulas Reference ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Empirical risk</td><td>$R_\text{emp}(\boldsymbol{\theta}) = \frac{1}{N}\sum_{i=1}^N \ell(f(\mathbf{x}_i,\boldsymbol{\theta}),y_i)$</td><td>Computable proxy for true risk $R(\boldsymbol{\theta})$</td></tr>
+        <tr><td>ERM</td><td>$\boldsymbol{\theta}^* = \arg\min_{\boldsymbol{\theta}} R_\text{emp}(\boldsymbol{\theta})$</td><td>Core learning equation — most algorithms are special cases</td></tr>
+        <tr><td>Regularized ERM</td><td>$\boldsymbol{\theta}^* = \arg\min_{\boldsymbol{\theta}}\bigl[R_\text{emp}(\boldsymbol{\theta}) + \lambda\,\Omega(\boldsymbol{\theta})\bigr]$</td><td>$\lambda$ controls regularization; corresponds to a prior on $\boldsymbol{\theta}$</td></tr>
+        <tr><td>Likelihood</td><td>$L(\boldsymbol{\theta}\mid\mathcal{D}) = \prod_{i=1}^N p(x_i\mid\boldsymbol{\theta})$</td><td>Product over i.i.d. data; NOT a distribution over $\boldsymbol{\theta}$</td></tr>
+        <tr><td>Log-likelihood</td><td>$\ell(\boldsymbol{\theta}) = \sum_{i=1}^N \log p(x_i\mid\boldsymbol{\theta})$</td><td>Numerically stable sum; maximizing is equivalent to maximizing $L$</td></tr>
+        <tr><td>MLE</td><td>$\boldsymbol{\theta}_\text{MLE} = \arg\max_{\boldsymbol{\theta}} \ell(\boldsymbol{\theta})$</td><td>Equivalent to ERM with NLL loss</td></tr>
+        <tr><td>Gaussian MLE ($\mu$)</td><td>$\mu_\text{MLE} = \frac{1}{N}\sum_{i=1}^N x_i$</td><td>Sample mean; unbiased</td></tr>
+        <tr><td>Gaussian MLE ($\sigma^2$)</td><td>$\sigma^2_\text{MLE} = \frac{1}{N}\sum_{i=1}^N (x_i - \mu_\text{MLE})^2$</td><td>Biased by factor $(N-1)/N$; use $(N-1)$ for Bessel's correction</td></tr>
+        <tr><td>Bayes' theorem</td><td>$p(\boldsymbol{\theta}\mid\mathbf{y},\mathbf{X}) \propto p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta})\,p(\boldsymbol{\theta})$</td><td>Posterior $\propto$ likelihood $\times$ prior</td></tr>
+        <tr><td>MAP objective</td><td>$\boldsymbol{\theta}_\text{MAP} = \arg\max_{\boldsymbol{\theta}}\bigl[\log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}) + \log p(\boldsymbol{\theta})\bigr]$</td><td>MLE + log-prior; Gaussian prior gives ridge regression</td></tr>
+        <tr><td>Posterior (full form)</td><td>$p(\boldsymbol{\theta}\mid\mathbf{y},\mathbf{X}) = \frac{p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta})\,p(\boldsymbol{\theta})}{p(\mathbf{y}\mid\mathbf{X})}$</td><td>Denominator is marginal likelihood — usually intractable</td></tr>
+        <tr><td>DGM factorization</td><td>$p(x_1,\ldots,x_K) = \prod_{k=1}^K p(x_k\mid\text{pa}(x_k))$</td><td>One conditional per node; key equation of graphical models</td></tr>
+        <tr><td>BIC</td><td>$\text{BIC}(\mathcal{M}_k) = \log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}_\text{MAP}) - \frac{d_k}{2}\log N$</td><td>Penalizes complexity by $\log N$; Laplace approx. of $\log p(\mathbf{y}|\mathbf{X},\mathcal{M}_k)$</td></tr>
+        <tr><td>Bias–variance</td><td>$\mathbb{E}_\mathcal{D}[(y-\hat{f})^2] = \text{Bias}(\hat{f})^2 + \text{Var}(\hat{f}) + \sigma^2$</td><td>Test error decomposition; $\sigma^2$ is irreducible noise</td></tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to other chapters</div>
+      <div class="chip-row">
+        <span class="chip">C5: matrix calculus — gradients of log-likelihood w.r.t. μ, Σ</span>
+        <span class="chip">C6: probability foundations — Gaussian, conditional distributions</span>
+        <span class="chip">C7: optimization — gradient descent to minimize NLL / ERM</span>
+        <span class="chip">C9: linear regression — MLE + Gaussian noise = least squares; MAP = ridge</span>
+        <span class="chip">C10: PCA as ERM — probabilistic PCA is a Gaussian latent variable model</span>
+        <span class="chip">C11: GMM — density estimation uses latent variable graphical model</span>
+        <span class="chip">C12: SVM as ERM — hinge loss + L2 regularization; GP marginal likelihood for hyperparameters</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+// Theme — load from localStorage
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+
+// KaTeX — render all math in document
+renderMathInElement(document.body, {
+  delimiters: [
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError: false,
+  trust: true,
+});
+
+// Active sidebar nav tracking on scroll
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){
+    if(s.offsetTop - 80 <= scrollY) active = s.id;
+  });
+  navItems.forEach(function(n){
+    var href = n.getAttribute('href').slice(1);
+    n.classList.toggle('active', href === active);
+  });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

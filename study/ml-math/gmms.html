@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaussian Mixture Models — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3; --bg2:#ffffff; --bg3:#f2efe8; --bg4:#ede9e0;
+  --border:#d6d0c4; --border-hi:#bfb8a8;
+  --text:#363b48; --dim:#65707a; --bright:#141a1e;
+  --accent:#7c3aed; --accent2:#9b5cf6; --accent-soft:#7c3aed10; --accent-mid:#7c3aed20;
+  --green:#2e6e3e; --green-soft:#2e6e3e12; --amber:#8a6e1e; --amber-soft:#8a6e1e12;
+  --red:#8b2020; --red-soft:#8b202012; --cyan:#2e6ab4; --cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06; --grad2:#2e6ab404;
+  --sidebar-w: 220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18; --bg2:#0f1322; --bg3:#151b30; --bg4:#1a2240;
+  --border:#1c2440; --border-hi:#283558;
+  --text:#8490aa; --dim:#546080; --bright:#dce0ec;
+  --accent:#9b7aed; --accent2:#b598ff; --accent-soft:#9b7aed0c; --accent-mid:#9b7aed18;
+  --green:#4ee8a8; --green-soft:#4ee8a810; --amber:#e8c870; --amber-soft:#e8c87010;
+  --red:#e87090; --red-soft:#e8709010; --cyan:#4ee8d0; --cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06; --grad2:#4ee8d004;
+  --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  display:flex;min-height:100vh;
+  transition:background .4s,color .3s;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),
+    radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);
+  transition:background 1s;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; position:sticky; top:0;
+  border-right:1px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:10;
+  transition:background .4s;
+}
+.sidebar-head {
+  padding:20px 16px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-back {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); text-decoration:none;
+  display:flex; align-items:center; gap:6px; margin-bottom:12px;
+  transition:color .2s;
+}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:2px;
+}
+.sidebar-title {
+  font-family:var(--serif); font-size:17px; color:var(--bright);
+  line-height:1.3;
+}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav {
+  flex:1; overflow-y:auto; padding:12px 0;
+}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item {
+  display:flex; align-items:baseline; gap:8px;
+  padding:6px 16px; cursor:pointer; transition:all .15s;
+  font-size:13px; color:var(--dim); text-decoration:none; border:none; background:none;
+  width:100%; text-align:left;
+}
+.nav-item:hover{color:var(--text); background:var(--accent-soft)}
+.nav-item.active{color:var(--accent); background:var(--accent-soft)}
+.nav-item .num{
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  color:var(--accent); opacity:.7; flex-shrink:0;
+}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{
+  padding:12px 16px; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:1px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.theme-btn {
+  background:transparent; border:1px solid var(--border);
+  color:var(--dim); font-size:14px; width:28px; height:28px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center;
+}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Main ─── */
+main {
+  flex:1; overflow-y:auto;
+  padding:40px max(48px, calc((100% - 820px) / 2)) 80px;
+  position:relative; z-index:1;
+}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+
+.page-header {
+  margin-bottom:40px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.page-badge {
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title {
+  font-family:var(--sans); font-size:34px; font-weight:500;
+  color:var(--bright); letter-spacing:.3px; line-height:1.2; margin-bottom:8px;
+}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta {
+  margin-top:16px; display:flex; gap:20px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.5px;
+}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+
+/* ─── Sections ─── */
+section {
+  margin-bottom:48px; scroll-margin-top:24px;
+}
+.section-header {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px; cursor:pointer;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.section-header:hover .section-title{color:var(--accent)}
+.sec-num {
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  color:var(--accent); letter-spacing:1px; flex-shrink:0;
+}
+.section-title {
+  font-family:var(--serif); font-size:24px; color:var(--bright);
+  font-weight:400; transition:color .2s;
+}
+.section-lead {
+  font-size:15px; line-height:1.7; color:var(--text);
+  margin-bottom:20px;
+}
+.section-lead strong{color:var(--bright);font-weight:600}
+
+/* ─── Formula cards ─── */
+.formula-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px; margin-bottom:20px;
+}
+.formula-card {
+  background:var(--bg2); border:1px solid var(--border);
+  padding:16px 18px; transition:border-color .2s;
+}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); margin-bottom:8px;
+}
+.formula-expr {
+  font-family:var(--serif); font-size:18px; color:var(--bright);
+  line-height:1.4; margin-bottom:6px;
+}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+
+/* ─── Callout boxes ─── */
+.callout {
+  padding:16px 20px; border-left:3px solid var(--accent);
+  background:var(--accent-soft); margin:20px 0; font-size:14px; line-height:1.7;
+}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:6px; opacity:.8;
+}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.red{color:var(--red)}
+.callout-title.accent{color:var(--accent)}
+
+/* ─── Expandable details ─── */
+.expand {
+  border:1px solid var(--border); margin-top:16px;
+  transition:border-color .2s;
+}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary {
+  padding:12px 16px; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--dim); list-style:none;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:color .2s;
+  user-select:none;
+}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body {
+  padding:20px 20px 16px;
+  font-size:14px; line-height:1.75; color:var(--text);
+}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+
+/* ─── Tables ─── */
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.data-table code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--accent-soft);padding:1px 5px}
+
+/* ─── Comparison table (no mono first-col) ─── */
+.cmp-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.cmp-table th{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;
+}
+.cmp-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.cmp-table tr:last-child td{border-bottom:none}
+.cmp-table td:first-child{font-size:13px;font-weight:600;color:var(--bright)}
+
+/* ─── SVG diagrams ─── */
+.diagram {
+  margin:24px 0; padding:24px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+}
+.diagram-title {
+  font-family:var(--mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim); align-self:flex-start;
+}
+.diagram svg{max-width:100%;height:auto}
+
+/* ─── Connection chips ─── */
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:var(--mono);font-size:11px;letter-spacing:.5px;
+  padding:3px 10px;border:1px solid var(--border);color:var(--dim);
+  background:var(--bg3);transition:all .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ─── KaTeX tweaks ─── */
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+
+/* ─── Prose paragraphs ─── */
+.prose{font-size:15px;line-height:1.75;color:var(--text);margin-bottom:16px}
+.prose strong{color:var(--bright);font-weight:600}
+
+/* ─── Responsive ─── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  main{padding:24px 20px 60px}
+  .formula-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title">Gaussian <em>Mixture Models</em></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s11-1" class="nav-item"><span class="num">11.1</span>Gaussian Mixture Model</a>
+    <a href="#s11-2" class="nav-item"><span class="num">11.2</span>Maximum Likelihood</a>
+    <a href="#s11-3" class="nav-item"><span class="num">11.3</span>EM Algorithm ★</a>
+    <a href="#s11-4" class="nav-item"><span class="num">11.4</span>ELBO &amp; Latent Variables</a>
+    <a href="#s11-5" class="nav-item"><span class="num">11.5</span>Density Estimation</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 348–368</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART III</div>
+    <h1 class="page-title"><em>Gaussian Mixture Models</em></h1>
+    <p class="page-sub">A single Gaussian is rarely rich enough to describe real data. GMMs superimpose K Gaussians — each with its own mean and covariance — weighted so they form a valid density. Fitting those weights forces a confrontation with the EM algorithm, latent variables, and the ELBO.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 11 (pp 348–368)</span>
+      <a href="notes/gmms.md">Raw notes ↗</a>
+      <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank">3B1B: Neural networks (intuition) ↗</a>
+      <a href="http://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf" target="_blank">CS229 EM notes ↗</a>
+    </div>
+  </div>
+
+  <!-- ─── §11.1 Gaussian Mixture Model ─── -->
+  <section id="s11-1">
+    <div class="section-header">
+      <span class="sec-num">§11.1</span>
+      <h2 class="section-title">Gaussian Mixture Model</h2>
+    </div>
+    <p class="section-lead">
+      A <strong>Gaussian Mixture Model (GMM)</strong> represents a distribution as a weighted sum of $K$ Gaussian components. Each component has its own mean $\boldsymbol{\mu}_k$, covariance $\boldsymbol{\Sigma}_k$, and mixture weight $\pi_k$. The weights form a probability simplex: $\pi_k \geq 0$ and $\sum_k \pi_k = 1$.
+    </p>
+
+    <!-- Bimodal density SVG -->
+    <div class="diagram">
+      <div class="diagram-title">1-D GMM — two Gaussian components and their mixture</div>
+      <svg width="680" height="200" viewBox="0 0 680 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- axes -->
+        <line x1="40" y1="170" x2="640" y2="170" stroke="currentColor" stroke-opacity=".25" stroke-width="1.2"/>
+        <line x1="40" y1="20" x2="40" y2="170" stroke="currentColor" stroke-opacity=".25" stroke-width="1.2"/>
+        <text x="648" y="174" fill="currentColor" font-family="IBM Plex Mono" font-size="11" opacity=".4">x</text>
+        <text x="32" y="18" fill="currentColor" font-family="IBM Plex Mono" font-size="11" opacity=".4">p</text>
+
+        <!-- Component 1: mean at x≈210, σ=55, π=0.45 -->
+        <!-- Dashed curve: component 1 -->
+        <path d="
+          M40,169 C80,169 120,168 150,163 C165,160 175,150 185,135
+          C195,120 200,100 210,82 C215,73 217,68 218,65
+          C219,62 221,60 222,58 C224,56 225,56 226,56
+          C228,55 230,55 232,56 C235,58 237,60 240,66
+          C245,76 250,95 258,113 C266,131 275,150 290,162
+          C305,168 330,169 380,169 C500,169 600,169 640,169
+        " stroke="var(--cyan)" stroke-width="2" stroke-dasharray="6,4" fill="none" opacity=".8"/>
+        <!-- Fill under component 1 -->
+        <path d="
+          M40,169 C80,169 120,168 150,163 C165,160 175,150 185,135
+          C195,120 200,100 210,82 C215,73 217,68 218,65
+          C219,62 221,60 222,58 C224,56 225,56 226,56
+          C228,55 230,55 232,56 C235,58 237,60 240,66
+          C245,76 250,95 258,113 C266,131 275,150 290,162
+          C305,168 330,169 380,169 L40,169 Z
+        " fill="var(--cyan)" fill-opacity=".07"/>
+
+        <!-- Component 2: mean at x≈450, σ=65, π=0.55 -->
+        <path d="
+          M40,169 C150,169 280,169 330,168 C360,167 380,162 400,150
+          C415,140 425,120 438,100 C445,89 450,78 453,70
+          C455,65 456,62 458,60 C459,58 460,57 462,57
+          C464,56 467,56 470,58 C473,61 476,65 480,74
+          C490,93 498,115 510,138 C522,158 540,166 570,168
+          C600,169 630,169 640,169
+        " stroke="var(--green)" stroke-width="2" stroke-dasharray="6,4" fill="none" opacity=".8"/>
+        <!-- Fill under component 2 -->
+        <path d="
+          M40,169 C150,169 280,169 330,168 C360,167 380,162 400,150
+          C415,140 425,120 438,100 C445,89 450,78 453,70
+          C455,65 456,62 458,60 C459,58 460,57 462,57
+          C464,56 467,56 470,58 C473,61 476,65 480,74
+          C490,93 498,115 510,138 C522,158 540,166 570,168
+          C600,169 630,169 640,169 L40,169 Z
+        " fill="var(--green)" fill-opacity=".07"/>
+
+        <!-- Mixture (solid): sum of both, bimodal -->
+        <path d="
+          M40,169 C70,169 110,168 140,165 C155,162 167,155 178,144
+          C188,133 196,115 205,97 C210,87 213,79 216,71
+          C218,66 219,63 220,61 C222,58 224,57 226,56
+          C228,55 230,55 232,57 C235,60 239,67 245,79
+          C252,93 258,108 267,122 C276,136 287,149 300,158
+          C314,165 330,168 348,169 C365,169 380,168 395,165
+          C408,161 420,153 433,139
+          C442,129 448,115 455,98
+          C458,89 460,80 462,72
+          C464,66 465,62 467,60
+          C469,58 471,57 473,57
+          C475,56 477,57 479,59
+          C483,63 487,73 493,88
+          C500,104 506,122 515,140
+          C524,156 538,165 558,168
+          C580,169 610,169 640,169
+        " stroke="var(--accent)" stroke-width="2.5" fill="none"/>
+        <!-- Fill under mixture -->
+        <path d="
+          M40,169 C70,169 110,168 140,165 C155,162 167,155 178,144
+          C188,133 196,115 205,97 C210,87 213,79 216,71
+          C218,66 219,63 220,61 C222,58 224,57 226,56
+          C228,55 230,55 232,57 C235,60 239,67 245,79
+          C252,93 258,108 267,122 C276,136 287,149 300,158
+          C314,165 330,168 348,169 C365,169 380,168 395,165
+          C408,161 420,153 433,139
+          C442,129 448,115 455,98
+          C458,89 460,80 462,72
+          C464,66 465,62 467,60
+          C469,58 471,57 473,57
+          C475,56 477,57 479,59
+          C483,63 487,73 493,88
+          C500,104 506,122 515,140
+          C524,156 538,165 558,168
+          C580,169 610,169 640,169 L40,169 Z
+        " fill="var(--accent)" fill-opacity=".08"/>
+
+        <!-- Peak markers -->
+        <line x1="226" y1="56" x2="226" y2="170" stroke="var(--cyan)" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="222" y="50" text-anchor="middle" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="10">μ₁</text>
+        <line x1="468" y1="57" x2="468" y2="170" stroke="var(--green)" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="468" y="50" text-anchor="middle" fill="var(--green)" font-family="IBM Plex Mono" font-size="10">μ₂</text>
+
+        <!-- Legend -->
+        <line x1="460" y1="15" x2="490" y2="15" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="6,4"/>
+        <text x="496" y="18" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">π₁ N(x|μ₁,Σ₁)</text>
+        <line x1="460" y1="32" x2="490" y2="32" stroke="var(--green)" stroke-width="2" stroke-dasharray="6,4"/>
+        <text x="496" y="36" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".7">π₂ N(x|μ₂,Σ₂)</text>
+        <line x1="460" y1="49" x2="490" y2="49" stroke="var(--accent)" stroke-width="2.5"/>
+        <text x="496" y="53" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10">p(x) mixture</text>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Mixture Density</div>
+        <div class="formula-expr">$p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k \,\mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$</div>
+        <div class="formula-note">Weighted superposition of $K$ Gaussian components. Valid density because $\sum_k \pi_k = 1$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Weight Constraints (Simplex)</div>
+        <div class="formula-expr">$\pi_k \geq 0, \quad \sum_{k=1}^{K} \pi_k = 1$</div>
+        <div class="formula-note">Only $K-1$ weights are free; the $K$-th is determined by the sum-to-one constraint.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Generative Story</div>
+        <div class="formula-expr">$z \sim \text{Cat}(\pi_1,\ldots,\pi_K)$, then $\mathbf{x} \mid z=k \sim \mathcal{N}(\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$</div>
+        <div class="formula-note">Latent variable $z$ selects a component; $\mathbf{x}$ is drawn from that Gaussian. Marginalizing over $z$ recovers $p(\mathbf{x})$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Marginalisation</div>
+        <div class="formula-expr">$p(\mathbf{x}) = \sum_k p(\mathbf{x}\mid z{=}k)\,p(z{=}k)$</div>
+        <div class="formula-note">Observed density = sum over all possible component origins. The latent $z$ is hidden but reasoned about.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Why more than one component?</div>
+      A single Gaussian is unimodal and symmetric. Real data is often multimodal (heights of men and women, spectral lines), skewed, or cluster-structured. A $K=2$ GMM already captures bimodal structure; sufficiently large $K$ can approximate any smooth density.
+    </div>
+
+    <details class="expand">
+      <summary>Special cases and parameter count</summary>
+      <div class="expand-body">
+        <p><strong>$K=1$:</strong> reduces to a single Gaussian $\mathcal{N}(\mathbf{x}\mid\boldsymbol{\mu},\boldsymbol{\Sigma})$.</p>
+        <p><strong>Equal spherical covariances $\boldsymbol{\Sigma}_k = \sigma^2 I$:</strong> isotropic clusters (soft K-means). Taking $\sigma^2\to 0$ recovers hard K-means.</p>
+        <p><strong>Diagonal $\boldsymbol{\Sigma}_k$:</strong> axis-aligned ellipsoids; fewer parameters ($K\cdot D$ instead of $K\cdot D(D+1)/2$).</p>
+        <p>For a full-covariance GMM in $D$ dimensions with $K$ components, the total free parameter count is:
+        $$p(K) = \underbrace{K \cdot D}_{\text{means}} + \underbrace{K \cdot \tfrac{D(D+1)}{2}}_{\text{covariances}} + \underbrace{(K-1)}_{\text{weights}}$$</p>
+      </div>
+    </details>
+
+    <div class="connections">
+      <div class="connections-label">Feeds from</div>
+      <div class="chip-row">
+        <span class="chip">C6 §6.5 — Multivariate Gaussian: definition, properties, exponent form</span>
+        <span class="chip">C6 §6.6 — Dirichlet prior on π; Normal-Wishart on (μₖ, Σₖ)</span>
+        <span class="chip">C4 §4.4 — Spectral decomp: covariance ellipsoids</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §11.2 Maximum Likelihood ─── -->
+  <section id="s11-2">
+    <div class="section-header">
+      <span class="sec-num">§11.2</span>
+      <h2 class="section-title">Parameter Learning via Maximum Likelihood</h2>
+    </div>
+    <p class="section-lead">
+      Given $N$ i.i.d. observations $\mathbf{X} = \{\mathbf{x}_1, \ldots, \mathbf{x}_N\}$, the goal is to find $\theta = \{\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k, \pi_k\}_{k=1}^K$ that maximises the <strong>log-likelihood</strong>. The fundamental obstacle: a log sits outside a sum over $K$ terms, coupling all parameters.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Log-Likelihood</div>
+        <div class="formula-expr">$\ell(\theta) = \sum_{n=1}^{N} \log \left[ \sum_{k=1}^{K} \pi_k \,\mathcal{N}(\mathbf{x}_n \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \right]$</div>
+        <div class="formula-note"><strong>Log of a sum</strong> — no closed-form gradient solution. Setting $\partial\ell/\partial\boldsymbol{\mu}_k = 0$ gives equations that depend on $\boldsymbol{\mu}_k$ itself.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Gradient Obstruction</div>
+        <div class="formula-expr">$\frac{\partial\ell}{\partial\boldsymbol{\mu}_k} = \sum_n \frac{\pi_k \mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)}{\sum_j \pi_j \mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_j,\boldsymbol{\Sigma}_j)} \boldsymbol{\Sigma}_k^{-1}(\mathbf{x}_n - \boldsymbol{\mu}_k)$</div>
+        <div class="formula-note">The bracketed fraction depends on $\boldsymbol{\mu}_k$ — equations are coupled and have no closed form.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Why not direct gradient ascent?</div>
+      <ul style="margin-left:16px;line-height:1.9">
+        <li>The log-likelihood is <strong>non-convex</strong> with many local maxima.</li>
+        <li>Covariance matrices must remain <strong>positive definite</strong> — a constrained optimisation.</li>
+        <li>Mixture weights must satisfy the <strong>simplex constraint</strong> $\sum\pi_k=1$.</li>
+        <li>EM provides a structured, constraint-respecting iterative scheme that is simpler and numerically more stable than projected gradient methods.</li>
+      </ul>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-title red">Degeneracy / singularity</div>
+      If a single component collapses onto one data point, its covariance $\boldsymbol{\Sigma}_k \to \mathbf{0}$ and the likelihood blows up to $+\infty$ — a pathological maximum. In practice: regularise $\boldsymbol{\Sigma}_k$ by adding $\lambda I$, or use a conjugate prior (Normal-Wishart) that prevents collapse.
+    </div>
+
+    <div class="connections">
+      <div class="connections-label">Feeds from</div>
+      <div class="chip-row">
+        <span class="chip">C8 §8.3 — MLE principle and derivation pattern</span>
+        <span class="chip">C4 §4.3 — Cholesky for stable Σₖ inversion and sampling</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §11.3 EM Algorithm ─── -->
+  <section id="s11-3">
+    <div class="section-header">
+      <span class="sec-num">§11.3</span>
+      <h2 class="section-title">EM Algorithm ★</h2>
+    </div>
+    <p class="section-lead">
+      The <strong>Expectation-Maximisation (EM) algorithm</strong> alternates between two steps, guaranteed to be non-decreasing in log-likelihood at every iteration. The central quantity is the <strong>responsibility</strong> $r_{nk}$ — the posterior probability that component $k$ generated data point $\mathbf{x}_n$.
+    </p>
+
+    <!-- EM cycle SVG -->
+    <div class="diagram">
+      <div class="diagram-title">EM iteration cycle</div>
+      <svg width="560" height="160" viewBox="0 0 560 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- E-step box -->
+        <rect x="40" y="50" width="180" height="62" rx="4" fill="var(--cyan-soft)" stroke="var(--cyan)" stroke-opacity=".6" stroke-width="1.5"/>
+        <text x="130" y="76" text-anchor="middle" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="11" font-weight="600">E-STEP</text>
+        <text x="130" y="93" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".75">compute responsibilities</text>
+        <text x="130" y="107" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".55">r_nk = p(z=k | x_n, θ)</text>
+
+        <!-- M-step box -->
+        <rect x="340" y="50" width="180" height="62" rx="4" fill="var(--green-soft)" stroke="var(--green)" stroke-opacity=".6" stroke-width="1.5"/>
+        <text x="430" y="76" text-anchor="middle" fill="var(--green)" font-family="IBM Plex Mono" font-size="11" font-weight="600">M-STEP</text>
+        <text x="430" y="93" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".75">update parameters</text>
+        <text x="430" y="107" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".55">μ_k, Σ_k, π_k ← r_nk</text>
+
+        <!-- Arrow E → M (top) -->
+        <line x1="220" y1="70" x2="340" y2="70" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+        <polygon points="340,66 350,70 340,74" fill="currentColor" fill-opacity=".35"/>
+        <text x="280" y="63" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">θ fixed</text>
+
+        <!-- Arrow M → E (bottom, looping back) -->
+        <path d="M430,112 Q430,148 280,148 Q130,148 130,112" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5" fill="none"/>
+        <polygon points="126,112 130,102 134,112" fill="currentColor" fill-opacity=".35"/>
+        <text x="280" y="143" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".5">θ updated — repeat until convergence</text>
+
+        <!-- Init label -->
+        <text x="130" y="38" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="9" opacity=".45">initialise θ₀</text>
+        <line x1="130" y1="40" x2="130" y2="50" stroke="currentColor" stroke-opacity=".3" stroke-width="1" stroke-dasharray="3,2"/>
+        <polygon points="127,50 130,58 133,50" fill="currentColor" fill-opacity=".3"/>
+
+        <!-- Convergence label -->
+        <text x="430" y="25" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" opacity=".7">ℓ(θ) non-decreasing</text>
+        <text x="430" y="38" text-anchor="middle" fill="var(--accent)" font-family="IBM Plex Mono" font-size="9" opacity=".5">→ local maximum</text>
+      </svg>
+    </div>
+
+    <p class="prose">The <strong>responsibility</strong> is a posterior probability computed by Bayes' rule: prior $\pi_k$ times likelihood $\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)$, normalised over all $K$ components.</p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">E-step — Responsibility</div>
+        <div class="formula-expr">$r_{nk} = \dfrac{\pi_k\,\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)}{\displaystyle\sum_{j=1}^{K}\pi_j\,\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_j,\boldsymbol{\Sigma}_j)}$</div>
+        <div class="formula-note">Soft membership: $r_{nk}\in[0,1]$, $\sum_k r_{nk}=1$. No parameters are updated in this step.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Effective Count</div>
+        <div class="formula-expr">$N_k = \sum_{n=1}^{N} r_{nk}$</div>
+        <div class="formula-note">"Soft" cluster size. $\sum_k N_k = N$. Acts as the denominator in every M-step update.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">M-step — Mean Update</div>
+        <div class="formula-expr">$\boldsymbol{\mu}_k \leftarrow \dfrac{1}{N_k}\sum_{n=1}^{N} r_{nk}\,\mathbf{x}_n$</div>
+        <div class="formula-note">Responsibility-weighted mean. Data points near component $k$'s old mean get higher weight.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">M-step — Covariance Update</div>
+        <div class="formula-expr">$\boldsymbol{\Sigma}_k \leftarrow \dfrac{1}{N_k}\sum_{n=1}^{N} r_{nk}(\mathbf{x}_n-\boldsymbol{\mu}_k)(\mathbf{x}_n-\boldsymbol{\mu}_k)^\top$</div>
+        <div class="formula-note">Responsibility-weighted covariance. Same form as Gaussian MLE but re-weighted.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">M-step — Weight Update</div>
+        <div class="formula-expr">$\pi_k \leftarrow \dfrac{N_k}{N}$</div>
+        <div class="formula-note">Fraction of data effectively assigned to component $k$. Automatically satisfies the simplex constraint.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">Convergence guarantee</div>
+      The log-likelihood $\ell(\theta)$ is non-decreasing at every EM iteration. It converges to a local maximum (or saddle point). Global optimality is not guaranteed — multiple random restarts are standard practice.
+    </div>
+
+    <!-- K-means vs GMM comparison table -->
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--bright);margin:28px 0 8px;font-weight:400">Hard vs. Soft Assignment: K-means and EM</h3>
+    <p class="prose">K-means is the limiting case of EM for GMMs with equal spherical covariances $\boldsymbol{\Sigma}_k = \sigma^2 I$ as $\sigma^2 \to 0$. In that limit responsibilities become binary: $r_{nk} \to 1$ for the nearest cluster, $0$ otherwise.</p>
+
+    <table class="cmp-table">
+      <thead>
+        <tr><th>Property</th><th>K-means</th><th>EM for GMMs</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Assignment type</td>
+          <td>Hard (0 or 1)</td>
+          <td>Soft ($r_{nk} \in [0,1]$)</td>
+        </tr>
+        <tr>
+          <td>Cluster shape</td>
+          <td>Spherical (isotropic)</td>
+          <td>Arbitrary ellipsoid</td>
+        </tr>
+        <tr>
+          <td>Covariance</td>
+          <td>Implicit: $\sigma^2 I$, same for all</td>
+          <td>Learned per cluster: $\boldsymbol{\Sigma}_k$</td>
+        </tr>
+        <tr>
+          <td>Uncertainty output</td>
+          <td>None — hard labels only</td>
+          <td>Posterior probabilities $r_{nk}$</td>
+        </tr>
+        <tr>
+          <td>Optimisation objective</td>
+          <td>Sum of squared distances</td>
+          <td>Log-likelihood $\ell(\theta)$</td>
+        </tr>
+        <tr>
+          <td>M-step mean formula</td>
+          <td>$\boldsymbol{\mu}_k = \frac{1}{|C_k|}\sum_{n\in C_k}\mathbf{x}_n$</td>
+          <td>$\boldsymbol{\mu}_k = \frac{1}{N_k}\sum_n r_{nk}\mathbf{x}_n$</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="expand">
+      <summary>Full EM procedure step by step</summary>
+      <div class="expand-body">
+        <p><strong>1. Initialise:</strong> choose $K$; set initial $\{\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k, \pi_k\}$ (e.g., from K-means or random).</p>
+        <p><strong>2. Repeat until convergence:</strong></p>
+        <ul>
+          <li><strong>E-step:</strong> compute $r_{nk}$ for all $(n,k)$ using current parameters.</li>
+          <li><strong>M-step:</strong> update $\boldsymbol{\mu}_k$, $\boldsymbol{\Sigma}_k$, $\pi_k$ using $r_{nk}$.</li>
+          <li>Evaluate log-likelihood $\ell(\theta)$; check for convergence (e.g., $|\Delta\ell| < \epsilon$).</li>
+        </ul>
+        <p><strong>3. Return</strong> final parameters $\hat\theta$.</p>
+        <p>Each M-step update is a closed-form weighted Gaussian MLE, so no inner optimisation loop is needed. This makes EM far simpler to implement than constrained gradient methods.</p>
+      </div>
+    </details>
+
+    <div class="connections">
+      <div class="connections-label">Feeds from / connects to</div>
+      <div class="chip-row">
+        <span class="chip">C7 §7.1 — EM as coordinate ascent on ELBO</span>
+        <span class="chip">C8 §8.3 — MLE weighting pattern</span>
+        <span class="chip">C12 — K-means as hard-assignment GMM-EM</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §11.4 ELBO & Latent Variables ─── -->
+  <section id="s11-4">
+    <div class="section-header">
+      <span class="sec-num">§11.4</span>
+      <h2 class="section-title">Latent Variable Perspective &amp; ELBO</h2>
+    </div>
+    <p class="section-lead">
+      The ELBO (Evidence Lower BOund) gives EM its theoretical foundation: EM performs <strong>coordinate ascent on the ELBO</strong>, a lower bound on the log-likelihood. The E-step tightens the bound; the M-step raises it. Together they guarantee the log-likelihood is non-decreasing.
+    </p>
+
+    <!-- ELBO geometry SVG -->
+    <div class="diagram">
+      <div class="diagram-title">ELBO geometry — log-likelihood, lower bound, and KL gap</div>
+      <svg width="640" height="200" viewBox="0 0 640 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- axes -->
+        <line x1="60" y1="180" x2="600" y2="180" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+        <line x1="60" y1="20" x2="60" y2="180" stroke="currentColor" stroke-opacity=".2" stroke-width="1"/>
+        <text x="608" y="184" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".4">θ</text>
+        <text x="38" y="18" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".4">value</text>
+
+        <!-- log p(x|θ) — horizontal dashed line (treated as constant for fixed x) -->
+        <line x1="60" y1="60" x2="580" y2="60" stroke="var(--accent)" stroke-width="2" stroke-dasharray="none"/>
+        <text x="586" y="64" fill="var(--accent)" font-family="IBM Plex Mono" font-size="10">log p(x|θ)</text>
+
+        <!-- ELBO curve — starts lower, rises with M-step, touches log p at E-step tighten points -->
+        <!-- Iteration 1: θ_old (left region ~x=130) -->
+        <circle cx="140" cy="60" r="4" fill="var(--cyan)" opacity=".8"/>
+        <!-- After M-step 1, ELBO rises to a local peak, still below log p -->
+        <!-- ELBO curve segment (lower, roughly parabolic) -->
+        <path d="M80,130 C100,120 120,100 140,60 C155,40 170,55 190,85 C210,110 220,120 240,120"
+              stroke="var(--cyan)" stroke-width="2" fill="none" opacity=".8"/>
+
+        <!-- KL gap at θ_old (left) — vertical line segment -->
+        <line x1="80" y1="60" x2="80" y2="130" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="84" y="98" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity=".9">KL gap</text>
+
+        <!-- E-step annotation at θ_old: KL→0, ELBO touches log p -->
+        <text x="100" y="45" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".8">E-step</text>
+        <text x="100" y="56" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".6">KL → 0</text>
+        <line x1="135" y1="55" x2="140" y2="40" stroke="var(--cyan)" stroke-opacity=".4" stroke-width="1"/>
+
+        <!-- M-step arrow: move θ to the right (raise ELBO) -->
+        <line x1="200" y1="105" x2="300" y2="80" stroke="var(--green)" stroke-width="1.5" stroke-opacity=".7"/>
+        <polygon points="300,76 308,80 300,84" fill="var(--green)" fill-opacity=".7"/>
+        <text x="230" y="95" fill="var(--green)" font-family="IBM Plex Mono" font-size="9" opacity=".85">M-step: raise ELBO</text>
+
+        <!-- Iteration 2: θ_new (right region ~x=360) -->
+        <circle cx="360" cy="60" r="4" fill="var(--cyan)" opacity=".8"/>
+        <!-- Second ELBO curve segment -->
+        <path d="M260,115 C295,90 330,68 360,60 C380,55 400,70 420,95 C440,115 460,125 490,125"
+              stroke="var(--cyan)" stroke-width="2" fill="none" opacity=".8"/>
+
+        <!-- KL gap at θ_new (before E-step) - shown at x=490 area -->
+        <line x1="490" y1="60" x2="490" y2="125" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="494" y="96" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity=".9">KL gap</text>
+
+        <!-- E-step at θ_new: tighten bound again -->
+        <text x="325" y="45" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".8">E-step</text>
+        <text x="325" y="56" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".6">KL → 0</text>
+        <line x1="353" y1="55" x2="358" y2="40" stroke="var(--cyan)" stroke-opacity=".4" stroke-width="1"/>
+
+        <!-- ELBO label -->
+        <text x="175" y="88" fill="var(--cyan)" font-family="IBM Plex Mono" font-size="9" opacity=".8">ELBO(q,θ)</text>
+
+        <!-- Decomposition label at bottom -->
+        <text x="340" y="175" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono" font-size="10" opacity=".45">log p(x|θ) = ELBO(q,θ) + KL(q(z) ‖ p(z|x,θ))</text>
+      </svg>
+    </div>
+
+    <p class="prose">The key identity is a decomposition of the log-likelihood:</p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Jensen's Inequality (applied)</div>
+        <div class="formula-expr">$\log \mathbb{E}_q[g(z)] \;\geq\; \mathbb{E}_q[\log g(z)]$</div>
+        <div class="formula-note">Log is concave. Applying this with $g(z)=p(\mathbf{x},z|\theta)/q(z)$ yields the ELBO lower bound.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">ELBO Definition</div>
+        <div class="formula-expr">$\mathcal{L}(q,\theta) = \sum_k q(z{=}k)\log\frac{p(\mathbf{x},z{=}k|\theta)}{q(z{=}k)}$</div>
+        <div class="formula-note">Evidence Lower BOund. Valid for any distribution $q$ over latent $z$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Decomposition</div>
+        <div class="formula-expr">$\log p(\mathbf{x}|\theta) = \mathcal{L}(q,\theta) + \mathrm{KL}(q(z)\,\|\,p(z|\mathbf{x},\theta))$</div>
+        <div class="formula-note">Since $\mathrm{KL}\geq 0$, the ELBO is always a lower bound. The gap equals the KL divergence.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">EM as Coordinate Ascent</div>
+        <div class="formula-expr">E: $q^*=p(z|\mathbf{x},\theta)$ (KL→0); M: $\theta^* = \arg\max_\theta \mathcal{L}(q,\theta)$</div>
+        <div class="formula-note">E-step sets $q$ to the posterior — ELBO equals log-likelihood. M-step maximises ELBO over $\theta$.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">Why the KL gap matters</div>
+      After an M-step, $\theta$ has changed so the old $q$ is no longer the exact posterior — a KL gap reopens. The next E-step closes it by recomputing $q=p(z|\mathbf{x},\theta^{\text{new}})$. This alternation is exactly the EM cycle: tighten, raise, tighten, raise ...
+    </div>
+
+    <details class="expand">
+      <summary>Generality: beyond GMMs</summary>
+      <div class="expand-body">
+        <p>The ELBO/EM framework applies to any latent variable model where the posterior $p(z|\mathbf{x},\theta)$ is tractable:</p>
+        <ul>
+          <li><strong>Hidden Markov Models:</strong> E-step via forward-backward algorithm.</li>
+          <li><strong>Probabilistic PCA:</strong> E-step gives low-dimensional projections; M-step updates the loading matrix.</li>
+          <li><strong>Variational Autoencoders (VAEs):</strong> the posterior is intractable, so it is approximated by a neural encoder $q_\phi(z|\mathbf{x})$. The ELBO is still maximised — now jointly over $\theta$ (decoder) and $\phi$ (encoder). Same Jensen lower bound, different parameterisation of $q$.</li>
+        </ul>
+        <p>The GMM is the cleanest worked example because the posterior $p(z|\mathbf{x},\theta)$ is a simple categorical distribution (the responsibilities $r_{nk}$).</p>
+      </div>
+    </details>
+
+    <div class="connections">
+      <div class="connections-label">Feeds from / connects to</div>
+      <div class="chip-row">
+        <span class="chip">C7 §7.1 — Coordinate ascent optimisation</span>
+        <span class="chip">C6 — Jensen's inequality in information-theoretic derivations</span>
+        <span class="chip">C8 §8.4 — Bayesian marginalisation over parameters</span>
+        <span class="chip">C9 — Variational inference: ELBO in Bayesian linear regression</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §11.5 Density Estimation ─── -->
+  <section id="s11-5">
+    <div class="section-header">
+      <span class="sec-num">§11.5</span>
+      <h2 class="section-title">GMMs for Density Estimation</h2>
+    </div>
+    <p class="section-lead">
+      Any smooth probability density on $\mathbb{R}^D$ can be approximated arbitrarily well by a GMM with sufficiently many components $K$. The smoothness of the individual Gaussians is inherited by the mixture — but choosing $K$ is a model-selection problem requiring principled criteria.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Bayesian Information Criterion</div>
+        <div class="formula-expr">$\mathrm{BIC}(K) = -2\,\ell(\hat\theta) + p(K)\log N$</div>
+        <div class="formula-note">$\ell(\hat\theta)$ = maximised log-likelihood; $p(K)$ = free parameters; $N$ = data points. Choose $K^* = \arg\min_K \mathrm{BIC}(K)$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Free Parameter Count</div>
+        <div class="formula-expr">$p(K) = K\!\cdot\!D + K\!\cdot\!\tfrac{D(D+1)}{2} + (K\!-\!1)$</div>
+        <div class="formula-note">Means + covariances + weights (full covariances). Diagonal covariances reduce the middle term to $K\cdot D$.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">BIC vs. AIC</div>
+      AIC uses penalty $2p(K)$ (constant). BIC uses $p(K)\log N$ — grows with $N$, matching the Bayesian model evidence approximation. For large $N$, BIC penalises complexity more strongly and is asymptotically consistent for model selection; AIC is not.
+    </div>
+
+    <details class="expand">
+      <summary>Practical workflow for GMM density estimation</summary>
+      <div class="expand-body">
+        <p>For $K \in \{1, 2, 3, \ldots, K_{\max}\}$:</p>
+        <ul>
+          <li>Run EM (multiple random restarts) to obtain $\hat\theta_K$.</li>
+          <li>Compute $\mathrm{BIC}(K)$.</li>
+        </ul>
+        <p>Select $K^* = \arg\min_K \mathrm{BIC}(K)$ and use that GMM as the density estimate.</p>
+        <p><strong>Limitations:</strong></p>
+        <ul>
+          <li>Requires choosing $K$ (BIC helps but does not eliminate ambiguity).</li>
+          <li>All components are Gaussian — cannot capture heavy-tailed sub-populations without many $K$.</li>
+          <li>EM finds local optima; results depend on initialisation.</li>
+          <li>Curse of dimensionality: in high $D$, covariance estimation requires many data points. Diagonal or tied covariances mitigate this.</li>
+        </ul>
+        <p><strong>Nonparametric alternative:</strong> Dirichlet Process GMMs allow $K$ to grow with data — avoiding the choice entirely.</p>
+      </div>
+    </details>
+
+    <div class="connections">
+      <div class="connections-label">Feeds from</div>
+      <div class="chip-row">
+        <span class="chip">C8 §8.3 — MLE principle; model selection via marginal likelihood</span>
+        <span class="chip">C4 §4.3 — Cholesky for stable Σₖ; §4.4 — spectral for ellipsoid visualisation</span>
+        <span class="chip">C4 §4.6 — Low-rank Σₖ (factor analysis, probabilistic PCA)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GMM density</td>
+          <td>$p(\mathbf{x}) = \sum_k \pi_k \mathcal{N}(\mathbf{x}|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)$</td>
+          <td>$K$ weighted Gaussian components; $\sum_k\pi_k=1$</td>
+        </tr>
+        <tr>
+          <td>Log-likelihood</td>
+          <td>$\ell(\theta) = \sum_n \log\sum_k \pi_k\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)$</td>
+          <td>No closed form — log of a sum</td>
+        </tr>
+        <tr>
+          <td>Responsibility (E-step)</td>
+          <td>$r_{nk} = \dfrac{\pi_k\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k)}{\sum_j\pi_j\mathcal{N}(\mathbf{x}_n|\boldsymbol{\mu}_j,\boldsymbol{\Sigma}_j)}$</td>
+          <td>Posterior $p(z=k|\mathbf{x}_n)$; soft membership</td>
+        </tr>
+        <tr>
+          <td>Effective count</td>
+          <td>$N_k = \sum_n r_{nk}$</td>
+          <td>Soft cluster size; $\sum_k N_k = N$</td>
+        </tr>
+        <tr>
+          <td>$\boldsymbol{\mu}_k$ update (M-step)</td>
+          <td>$\boldsymbol{\mu}_k \leftarrow \frac{1}{N_k}\sum_n r_{nk}\mathbf{x}_n$</td>
+          <td>Responsibility-weighted mean</td>
+        </tr>
+        <tr>
+          <td>$\boldsymbol{\Sigma}_k$ update (M-step)</td>
+          <td>$\boldsymbol{\Sigma}_k \leftarrow \frac{1}{N_k}\sum_n r_{nk}(\mathbf{x}_n-\boldsymbol{\mu}_k)(\mathbf{x}_n-\boldsymbol{\mu}_k)^\top$</td>
+          <td>Responsibility-weighted covariance</td>
+        </tr>
+        <tr>
+          <td>$\pi_k$ update (M-step)</td>
+          <td>$\pi_k \leftarrow N_k / N$</td>
+          <td>Fraction of data; satisfies simplex automatically</td>
+        </tr>
+        <tr>
+          <td>ELBO</td>
+          <td>$\mathcal{L}(q,\theta) = \sum_k q(z{=}k)\log\frac{p(\mathbf{x},z{=}k|\theta)}{q(z{=}k)}$</td>
+          <td>Lower bound on $\log p(\mathbf{x}|\theta)$; gap = KL</td>
+        </tr>
+        <tr>
+          <td>BIC</td>
+          <td>$\mathrm{BIC}(K) = -2\ell(\hat\theta) + p(K)\log N$</td>
+          <td>Minimise over $K$; $p(K)$ = free parameter count</td>
+        </tr>
+        <tr>
+          <td>Free parameters</td>
+          <td>$p(K) = KD + K\tfrac{D(D+1)}{2} + (K-1)$</td>
+          <td>Full covariances; diagonal reduces middle to $KD$</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Chapter connections</div>
+      <div class="chip-row">
+        <span class="chip">C6 — Gaussian building blocks: N(x|μ,Σ), marginals, conditionals</span>
+        <span class="chip">C7 — EM as coordinate ascent on ELBO</span>
+        <span class="chip">C8 — MLE principle; BIC from Bayesian model evidence</span>
+        <span class="chip">C4 — Cholesky/spectral for Σₖ inversion and ellipsoid visualisation</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+// Theme
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+
+// KaTeX
+renderMathInElement(document.body, {
+  delimiters: [
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError: false,
+  trust: true,
+});
+
+// Active sidebar nav on scroll
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){
+    if(s.offsetTop - 80 <= scrollY) active = s.id;
+  });
+  navItems.forEach(function(n){
+    var href = n.getAttribute('href').slice(1);
+    n.classList.toggle('active', href === active);
+  });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>

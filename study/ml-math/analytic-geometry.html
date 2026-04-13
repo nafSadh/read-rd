@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytic Geometry — MML Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <style>
+[data-theme="light"] {
+  --bg:#faf8f3;--bg2:#ffffff;--bg3:#f2efe8;--bg4:#ede9e0;
+  --border:#d6d0c4;--border-hi:#bfb8a8;
+  --text:#363b48;--dim:#65707a;--bright:#141a1e;
+  --accent:#7c3aed;--accent2:#9b5cf6;--accent-soft:#7c3aed10;--accent-mid:#7c3aed20;
+  --green:#2e6e3e;--green-soft:#2e6e3e12;--amber:#8a6e1e;--amber-soft:#8a6e1e12;
+  --red:#8b2020;--red-soft:#8b202012;--cyan:#2e6ab4;--cyan-soft:#2e6ab412;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#7c3aed06;--grad2:#2e6ab404;
+  --sidebar-w:220px;
+}
+[data-theme="dark"] {
+  --bg:#0b0e18;--bg2:#0f1322;--bg3:#151b30;--bg4:#1a2240;
+  --border:#1c2440;--border-hi:#283558;
+  --text:#8490aa;--dim:#546080;--bright:#dce0ec;
+  --accent:#9b7aed;--accent2:#b598ff;--accent-soft:#9b7aed0c;--accent-mid:#9b7aed18;
+  --green:#4ee8a8;--green-soft:#4ee8a810;--amber:#e8c870;--amber-soft:#e8c87010;
+  --red:#e87090;--red-soft:#e8709010;--cyan:#4ee8d0;--cyan-soft:#4ee8d010;
+  --serif:'EB Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --grad1:#9b7aed06;--grad2:#4ee8d004;
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;transition:background .4s,color .3s}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 50% at 15% 20%,var(--grad1),transparent),radial-gradient(ellipse 50% 40% at 85% 80%,var(--grad2),transparent);transition:background 1s}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;position:sticky;top:0;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;z-index:10;transition:background .4s}
+.sidebar-head{padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-back{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;display:flex;align-items:center;gap:6px;margin-bottom:12px;transition:color .2s}
+.sidebar-back:hover{color:var(--accent)}
+.sidebar-chapter{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.sidebar-title{font-family:var(--serif);font-size:17px;color:var(--bright);line-height:1.3}
+.sidebar-title em{font-style:italic;color:var(--accent)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border)}
+.nav-item{display:flex;align-items:baseline;gap:8px;padding:6px 16px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--dim);text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:var(--accent-soft)}
+.nav-item.active{color:var(--accent);background:var(--accent-soft)}
+.nav-item .num{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--accent);opacity:.7;flex-shrink:0}
+.nav-item.active .num{opacity:1}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;display:flex;justify-content:space-between;align-items:center}
+.theme-btn{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;width:28px;height:28px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+main{flex:1;overflow-y:auto;padding:40px max(48px,calc((100% - 820px)/2)) 80px;position:relative;z-index:1}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-thumb{background:var(--border)}
+.page-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-badge{font-family:var(--mono);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.page-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-title{font-family:var(--sans);font-size:34px;font-weight:500;color:var(--bright);letter-spacing:.3px;line-height:1.2;margin-bottom:8px}
+.page-title em{font-style:italic;font-family:var(--serif);color:var(--accent)}
+.page-sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.5}
+.page-meta{margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.5px}
+.page-meta a{color:var(--dim);text-decoration:none;border-bottom:1px dotted var(--border);transition:color .2s}
+.page-meta a:hover{color:var(--accent)}
+section{margin-bottom:48px;scroll-margin-top:24px}
+.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1px;flex-shrink:0}
+.section-title{font-family:var(--serif);font-size:24px;color:var(--bright);font-weight:400}
+.section-lead{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:20px}
+.section-lead strong{color:var(--bright);font-weight:600}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.formula-card{background:var(--bg2);border:1px solid var(--border);padding:16px 18px;transition:border-color .2s}
+.formula-card:hover{border-color:var(--accent)}
+.formula-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.formula-expr{font-family:var(--serif);font-size:18px;color:var(--bright);line-height:1.4;margin-bottom:6px}
+.formula-note{font-size:13px;color:var(--dim);line-height:1.5}
+.formula-note strong{color:var(--text);font-weight:600}
+.callout{padding:16px 20px;border-left:3px solid var(--accent);background:var(--accent-soft);margin:20px 0;font-size:14px;line-height:1.7}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.callout.cyan{border-color:var(--cyan);background:var(--cyan-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.callout-title.green{color:var(--green)}
+.callout-title.cyan{color:var(--cyan)}
+.callout-title.amber{color:var(--amber)}
+.callout-title.accent{color:var(--accent)}
+.expand{border:1px solid var(--border);margin-top:16px;transition:border-color .2s}
+.expand:hover{border-color:var(--border-hi)}
+.expand summary{padding:12px 16px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);list-style:none;display:flex;align-items:center;justify-content:space-between;transition:color .2s;user-select:none}
+.expand summary::-webkit-details-marker{display:none}
+.expand summary:hover{color:var(--accent)}
+.expand[open] summary{color:var(--accent);border-bottom:1px solid var(--border)}
+.expand summary::after{content:'↓';transition:transform .2s}
+.expand[open] summary::after{transform:rotate(180deg)}
+.expand-body{padding:20px 20px 16px;font-size:14px;line-height:1.75;color:var(--text)}
+.expand-body p{margin-bottom:12px}
+.expand-body ul{margin:10px 0 12px 18px;line-height:1.7}
+.expand-body li{margin-bottom:4px}
+.expand-body strong{color:var(--bright);font-weight:600}
+.expand-body .katex-display{margin:14px 0}
+.data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.data-table th{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--bg3);line-height:1.5}
+.data-table tr:last-child td{border-bottom:none}
+.data-table td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+.diagram{margin:24px 0;padding:24px;background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px}
+.diagram-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);align-self:flex-start}
+.diagram svg{max-width:100%;height:auto}
+.connections{margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+.connections-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.5px;padding:3px 10px;border:1px solid var(--border);color:var(--dim);background:var(--bg3);transition:all .2s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.katex{font-size:1.05em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+@media(max-width:700px){.sidebar{display:none}main{padding:24px 20px 60px}.formula-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-theme="light">
+
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <a href="index.html" class="sidebar-back">← MML Study</a>
+    <div class="sidebar-title"><em>Analytic</em> Geometry</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#s3-1" class="nav-item"><span class="num">3.1</span>Norms</a>
+    <a href="#s3-2" class="nav-item"><span class="num">3.2</span>Inner Products</a>
+    <a href="#s3-3" class="nav-item"><span class="num">3.3</span>Lengths &amp; Distances</a>
+    <a href="#s3-4" class="nav-item"><span class="num">3.4</span>Angles &amp; Orthogonality</a>
+    <a href="#s3-6" class="nav-item"><span class="num">3.6</span>Orthogonal Complement</a>
+    <a href="#s3-7" class="nav-item"><span class="num">3.7</span>Functions as Vectors</a>
+    <a href="#s3-8" class="nav-item"><span class="num">3.8</span>Projections ⭐</a>
+    <a href="#s3-9" class="nav-item"><span class="num">3.9</span>Rotations</a>
+    <a href="#ref" class="nav-item"><span class="num">↗</span>Key Formulas</a>
+  </nav>
+  <div class="sidebar-footer">
+    <span>pp 70–95</span>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-badge"><span class="dot"></span> MML STUDY &middot; MATHEMATICS FOR ML &middot; PART I</div>
+    <h1 class="page-title"><em>Analytic</em> Geometry</h1>
+    <p class="page-sub">Geometry built on top of algebra. Inner products add length, angle, and distance to vector spaces — enabling projections, orthogonalization, and rotations that underlie PCA, regression, and SVMs.</p>
+    <div class="page-meta">
+      <span>Deisenroth, Faisal &amp; Ong — Ch 3 (pp 70–95)</span>
+      <a href="notes/analytic-geometry.md">Raw notes ↗</a>
+      <a href="linear-algebra.dd.html">← C2 Linear Algebra</a>
+    </div>
+  </div>
+
+  <!-- ─── §3.1 Norms ─── -->
+  <section id="s3-1">
+    <div class="section-header">
+      <span class="sec-num">§3.1</span>
+      <h2 class="section-title">Norms</h2>
+    </div>
+    <p class="section-lead">
+      A <strong>norm</strong> assigns a non-negative length $\|\mathbf{x}\|$ to every vector.
+      Three axioms pin down what "length" must mean. Different norms give different shapes for the
+      unit ball — and different geometries for the same vector space.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">Unit balls: L1 (Manhattan) vs L2 (Euclidean)</div>
+      <svg width="400" height="160" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- L1 unit ball (diamond) -->
+        <polygon points="100,20 160,80 100,140 40,80" fill="var(--accent)" fill-opacity=".07" stroke="var(--accent)" stroke-opacity=".5" stroke-width="1.5"/>
+        <text x="100" y="155" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="var(--accent)">‖x‖₁ = 1</text>
+        <text x="100" y="168" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".5">Manhattan / L1</text>
+        <!-- axes L1 -->
+        <line x1="100" y1="10" x2="100" y2="150" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <line x1="30" y1="80" x2="170" y2="80" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <!-- L2 unit ball (circle) -->
+        <circle cx="300" cy="80" r="60" fill="var(--green)" fill-opacity=".07" stroke="var(--green)" stroke-opacity=".5" stroke-width="1.5"/>
+        <text x="300" y="155" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">‖x‖₂ = 1</text>
+        <text x="300" y="168" text-anchor="middle" font-family="EB Garamond" font-size="12" fill="currentColor" opacity=".5">Euclidean / L2</text>
+        <!-- axes L2 -->
+        <line x1="300" y1="10" x2="300" y2="150" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+        <line x1="230" y1="80" x2="370" y2="80" stroke="currentColor" stroke-opacity=".15" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Three axioms (any norm)</div>
+        <div class="formula-expr">Homogeneous · Triangle · Positive definite</div>
+        <div class="formula-note">
+          $\|\lambda\mathbf{x}\| = |\lambda|\|\mathbf{x}\|$ &nbsp;·&nbsp;
+          $\|\mathbf{x}+\mathbf{y}\| \leq \|\mathbf{x}\|+\|\mathbf{y}\|$ &nbsp;·&nbsp;
+          $\|\mathbf{x}\|\geq 0$ and $=0$ iff $\mathbf{x}=\mathbf{0}$.
+        </div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Euclidean norm (default)</div>
+        <div class="formula-expr">$\|\mathbf{x}\|_2 = \sqrt{\mathbf{x}^\top\mathbf{x}} = \sqrt{\sum_i x_i^2}$</div>
+        <div class="formula-note">Used by default throughout MML unless stated otherwise. Also called the $\ell_2$ norm.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Manhattan norm</div>
+        <div class="formula-expr">$\|\mathbf{x}\|_1 = \sum_i |x_i|$</div>
+        <div class="formula-note">Taxi-cab distance. Not induced by any inner product — shows norms and inner products are distinct concepts.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §3.2 Inner Products ─── -->
+  <section id="s3-2">
+    <div class="section-header">
+      <span class="sec-num">§3.2</span>
+      <h2 class="section-title">Inner Products</h2>
+    </div>
+    <p class="section-lead">
+      An <strong>inner product</strong> $\langle\mathbf{x},\mathbf{y}\rangle$ is a bilinear map that is symmetric and positive definite.
+      It's strictly more structure than a norm: inner products let you measure <em>angles</em>, not just lengths.
+      Any symmetric positive definite (SPD) matrix defines one.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Dot product (standard)</div>
+        <div class="formula-expr">$\langle\mathbf{x},\mathbf{y}\rangle = \mathbf{x}^\top\mathbf{y} = \sum_i x_i y_i$</div>
+        <div class="formula-note">The default inner product on $\mathbb{R}^n$. The pair $(\mathbb{R}^n, \langle\cdot,\cdot\rangle)$ is a Euclidean vector space.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">General inner product</div>
+        <div class="formula-expr">$\langle\mathbf{x},\mathbf{y}\rangle = \mathbf{x}^\top A \mathbf{y}$</div>
+        <div class="formula-note">Any SPD matrix $A$ defines a valid inner product. Different $A$ gives different geometry — different angles and distances on the same vectors.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">SPD matrix condition</div>
+        <div class="formula-expr">$A = A^\top$ and $\mathbf{x}^\top A\mathbf{x} > 0 \;\forall\mathbf{x}\neq\mathbf{0}$</div>
+        <div class="formula-note">Symmetric + all eigenvalues positive. $A_1=\bigl[\begin{smallmatrix}9&6\\6&5\end{smallmatrix}\bigr]$ is SPD; $A_2=\bigl[\begin{smallmatrix}9&6\\6&3\end{smallmatrix}\bigr]$ is not.</div>
+      </div>
+    </div>
+
+    <div class="callout cyan">
+      <div class="callout-title cyan">Why this matters for ML</div>
+      The "kernel trick" (Ch 12) replaces inner products with a kernel function $k(\mathbf{x},\mathbf{y})$,
+      implicitly computing $\langle\phi(\mathbf{x}),\phi(\mathbf{y})\rangle$ in a high-dimensional feature space
+      without ever forming $\phi(\mathbf{x})$ explicitly. The theory works because kernels are inner products.
+    </div>
+  </section>
+
+  <!-- ─── §3.3 Lengths & Distances ─── -->
+  <section id="s3-3">
+    <div class="section-header">
+      <span class="sec-num">§3.3</span>
+      <h2 class="section-title">Lengths &amp; Distances</h2>
+    </div>
+    <p class="section-lead">
+      Every inner product <em>induces</em> a norm: $\|\mathbf{x}\| = \sqrt{\langle\mathbf{x},\mathbf{x}\rangle}$.
+      But not every norm comes from an inner product (Manhattan doesn't).
+      The <strong>Cauchy-Schwarz inequality</strong> is the key result that makes angles well-defined.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Induced norm</div>
+        <div class="formula-expr">$\|\mathbf{x}\| = \sqrt{\langle\mathbf{x},\mathbf{x}\rangle}$</div>
+        <div class="formula-note">Inner product → norm (always). Norm → inner product (only sometimes, via polarization identity).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Cauchy-Schwarz</div>
+        <div class="formula-expr">$|\langle\mathbf{x},\mathbf{y}\rangle| \leq \|\mathbf{x}\|\|\mathbf{y}\|$</div>
+        <div class="formula-note">Ensures $-1 \leq \frac{\langle\mathbf{x},\mathbf{y}\rangle}{\|\mathbf{x}\|\|\mathbf{y}\|} \leq 1$, so $\cos\omega$ is always in range. Foundation for the angle formula.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Distance (metric)</div>
+        <div class="formula-expr">$d(\mathbf{x},\mathbf{y}) = \|\mathbf{x}-\mathbf{y}\|$</div>
+        <div class="formula-note">Positive definite · symmetric · triangle inequality. Note: inner product is <em>large</em> when vectors are similar; distance is <em>small</em>. Opposite directions.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §3.4–3.5 Angles & Orthogonality ─── -->
+  <section id="s3-4">
+    <div class="section-header">
+      <span class="sec-num">§3.4–3.5</span>
+      <h2 class="section-title">Angles &amp; Orthogonality</h2>
+    </div>
+    <p class="section-lead">
+      Once you have an inner product, you can define angles.
+      <strong>Orthogonality</strong> ($\langle\mathbf{x},\mathbf{y}\rangle=0$) generalizes perpendicularity
+      and is the geometric heart of projections, the Gram-Schmidt algorithm, and the SVD.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Angle between vectors</div>
+        <div class="formula-expr">$\cos\omega = \dfrac{\langle\mathbf{x},\mathbf{y}\rangle}{\|\mathbf{x}\|\|\mathbf{y}\|}$</div>
+        <div class="formula-note">Cauchy-Schwarz guarantees this is in $[-1,1]$. Orthogonal ($\omega=90°$) when numerator = 0.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Orthogonality</div>
+        <div class="formula-expr">$\mathbf{x} \perp \mathbf{y} \iff \langle\mathbf{x},\mathbf{y}\rangle = 0$</div>
+        <div class="formula-note">The zero vector is orthogonal to everything. Orthogonal + unit length = orthonormal. Depends on the choice of inner product!</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Orthogonal matrix</div>
+        <div class="formula-expr">$AA^\top = I = A^\top A$</div>
+        <div class="formula-note">Columns are orthonormal. $A^{-1} = A^\top$ (cheap to compute). Preserves both distances and angles. Called "orthogonal" but "orthonormal" is more precise.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Orthonormal basis (ONB)</div>
+        <div class="formula-expr">$\langle\mathbf{b}_i,\mathbf{b}_j\rangle = \delta_{ij}$</div>
+        <div class="formula-note">$\delta_{ij}=1$ if $i=j$, else 0. Every basis vector has unit length; all pairs are orthogonal. ONBs make coordinate computation trivial: $\lambda_i = \langle\mathbf{x},\mathbf{b}_i\rangle$.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">Orthogonality depends on the inner product</div>
+      Two vectors orthogonal under the dot product ($\mathbf{x}^\top\mathbf{y}=0$) need not be orthogonal
+      under $\mathbf{x}^\top A\mathbf{y}$ for some other SPD $A$.
+      Geometry is relative to the inner product you choose.
+    </div>
+  </section>
+
+  <!-- ─── §3.6 Orthogonal Complement ─── -->
+  <section id="s3-6">
+    <div class="section-header">
+      <span class="sec-num">§3.6</span>
+      <h2 class="section-title">Orthogonal Complement</h2>
+    </div>
+    <p class="section-lead">
+      The <strong>orthogonal complement</strong> $U^\perp$ of a subspace $U$ collects all vectors orthogonal to $U$.
+      It gives a clean decomposition of any vector into a $U$-component and a $U^\perp$-component —
+      the mathematical foundation for normal vectors and hyperplanes.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Definition</div>
+        <div class="formula-expr">$U^\perp = \{\mathbf{v} : \langle\mathbf{v},\mathbf{u}\rangle=0\;\forall\mathbf{u}\in U\}$</div>
+        <div class="formula-note">$U$ and $U^\perp$ together span the whole space: $\dim(U) + \dim(U^\perp) = \dim(V)$. Any $\mathbf{x}$ decomposes uniquely as $\mathbf{x} = \mathbf{u} + \mathbf{u}^\perp$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Normal vector</div>
+        <div class="formula-expr">$\mathbf{w} \perp U$, $\|\mathbf{w}\|=1$</div>
+        <div class="formula-note">If $U$ is a plane in 3D, $U^\perp$ is 1D — spanned by a single normal vector $\mathbf{w}$. A hyperplane in $\mathbb{R}^n$ has a 1D orthogonal complement. SVMs (Ch 12) classify via the normal to a hyperplane.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── §3.7 Functions as Vectors ─── -->
+  <section id="s3-7">
+    <div class="section-header">
+      <span class="sec-num">§3.7</span>
+      <h2 class="section-title">Functions as Vectors</h2>
+    </div>
+    <p class="section-lead">
+      Inner products generalize to function spaces via integration.
+      This is the bridge to Fourier analysis, Hilbert spaces, and Gaussian processes.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Function inner product</div>
+        <div class="formula-expr">$\langle u, v \rangle = \int_a^b u(x)\,v(x)\,dx$</div>
+        <div class="formula-note">If this is 0, the functions are orthogonal. $\sin(x) \perp \cos(x)$ on $[-\pi,\pi]$ — the basis for Fourier series.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title accent">Why this matters</div>
+      Fourier series are exactly projections of functions onto an orthonormal basis of sines and cosines.
+      Gaussian processes (Ch 9 extension) and kernels (Ch 12) live in Hilbert spaces — infinite-dimensional inner product spaces where this integral definition is the inner product.
+    </div>
+  </section>
+
+  <!-- ─── §3.8 Orthogonal Projections ─── -->
+  <section id="s3-8">
+    <div class="section-header">
+      <span class="sec-num">§3.8</span>
+      <h2 class="section-title">Orthogonal Projections ⭐</h2>
+    </div>
+    <p class="section-lead">
+      The most important section in C3. The <strong>orthogonal projection</strong> $\pi_U(\mathbf{x})$
+      is the closest point in subspace $U$ to $\mathbf{x}$.
+      "Closest" means the displacement vector $\mathbf{x} - \pi_U(\mathbf{x})$ is orthogonal to $U$.
+      This single idea underlies linear regression, PCA, and least-squares.
+    </p>
+
+    <div class="diagram">
+      <div class="diagram-title">Orthogonal projection onto a 1D subspace</div>
+      <svg width="480" height="200" viewBox="0 0 480 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--cyan)"/>
+          </marker>
+          <marker id="arrowAccent" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="var(--green)"/>
+          </marker>
+        </defs>
+        <!-- Subspace U (the line through origin) -->
+        <line x1="40" y1="170" x2="440" y2="80" stroke="currentColor" stroke-opacity=".2" stroke-width="1.5"/>
+        <text x="445" y="80" font-family="IBM Plex Mono" font-size="12" fill="currentColor" opacity=".5">U</text>
+        <!-- Origin -->
+        <circle cx="160" cy="148" r="3" fill="currentColor" opacity=".4"/>
+        <text x="150" y="165" font-family="IBM Plex Mono" font-size="10" fill="currentColor" opacity=".4">O</text>
+        <!-- Basis vector b -->
+        <line x1="160" y1="148" x2="320" y2="113" stroke="var(--cyan)" stroke-width="2" marker-end="url(#arrowBlue)"/>
+        <text x="248" y="148" font-family="EB Garamond" font-size="15" fill="var(--cyan)" font-style="italic">b</text>
+        <!-- Vector x (from origin) -->
+        <line x1="160" y1="148" x2="280" y2="40" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrowAccent)"/>
+        <text x="285" y="36" font-family="EB Garamond" font-size="15" fill="var(--accent)" font-style="italic">x</text>
+        <!-- Projection πᵤ(x) -->
+        <circle cx="296" cy="109" r="5" fill="var(--green)" fill-opacity=".7"/>
+        <text x="298" y="128" font-family="EB Garamond" font-size="14" fill="var(--green)">πᵤ(x)</text>
+        <!-- Projection line (green, from origin) -->
+        <line x1="160" y1="148" x2="292" y2="111" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
+        <!-- Displacement vector x - πᵤ(x) (dashed) -->
+        <line x1="296" y1="109" x2="280" y2="40" stroke="var(--dim)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <text x="300" y="72" font-family="EB Garamond" font-size="13" fill="var(--dim)" font-style="italic">x − πᵤ(x)</text>
+        <!-- Right angle mark -->
+        <rect x="290" y="103" width="8" height="8" fill="none" stroke="var(--dim)" stroke-opacity=".5" stroke-width="1" transform="rotate(-25,294,107)"/>
+        <!-- Lambda label -->
+        <text x="218" y="137" font-family="IBM Plex Mono" font-size="11" fill="var(--green)">λ</text>
+      </svg>
+      <p style="font-size:13px;color:var(--dim);font-family:var(--serif);font-style:italic;text-align:center">
+        The displacement $\mathbf{x}-\pi_U(\mathbf{x})$ is orthogonal to $U$.
+        The coordinate $\lambda = \langle\mathbf{x},\mathbf{b}\rangle/\|\mathbf{b}\|^2$ locates the projection.
+      </p>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">1D projection (onto span{b})</div>
+        <div class="formula-expr">$\pi_U(\mathbf{x}) = \dfrac{\mathbf{b}^\top\mathbf{x}}{\|\mathbf{b}\|^2}\,\mathbf{b}$</div>
+        <div class="formula-note">Coordinate: $\lambda = \mathbf{b}^\top\mathbf{x}/\|\mathbf{b}\|^2$. Length: $\|\pi_U(\mathbf{x})\| = |\cos\omega|\|\mathbf{x}\|$. Same as the trig projection you know from physics.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">1D projection matrix</div>
+        <div class="formula-expr">$P_\pi = \dfrac{\mathbf{b}\mathbf{b}^\top}{\mathbf{b}^\top\mathbf{b}}$</div>
+        <div class="formula-note">$P_\pi^2 = P_\pi$ (idempotent — projecting twice = projecting once). $P_\pi$ is symmetric.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">General projection (onto span of B)</div>
+        <div class="formula-expr">$\pi_U(\mathbf{x}) = B(B^\top B)^{-1}B^\top\mathbf{x}$</div>
+        <div class="formula-note">$B = [\mathbf{b}_1,\ldots,\mathbf{b}_m]$ has full column rank. The coordinates $\boldsymbol{\lambda} = (B^\top B)^{-1}B^\top\mathbf{x}$ come from the normal equations.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">General projection matrix</div>
+        <div class="formula-expr">$P_\pi = B(B^\top B)^{-1}B^\top$</div>
+        <div class="formula-note">The most important formula in C3. Ridge regression adds $\lambda I$: $(B^\top B + \lambda I)^{-1}B^\top$ — improves stability, derived rigorously in Ch 9.</div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title green">The normal equations</div>
+      The condition $B^\top(\mathbf{x} - B\boldsymbol{\lambda}) = \mathbf{0}$ gives $B^\top B\boldsymbol{\lambda} = B^\top\mathbf{x}$.
+      This is the normal equations. In Ch 9, with $B = X$ (data matrix) and $\mathbf{x} = \mathbf{y}$ (labels),
+      this becomes least-squares linear regression. The projection matrix $P_\pi = X(X^\top X)^{-1}X^\top$ is the "hat matrix."
+    </div>
+
+    <details class="expand">
+      <summary>Gram-Schmidt orthogonalization</summary>
+      <div class="expand-body">
+        <p>Given any basis $\{\mathbf{b}_1,\ldots,\mathbf{b}_n\}$, Gram-Schmidt builds an ONB iteratively:</p>
+        $$\mathbf{u}_1 = \mathbf{b}_1$$
+        $$\mathbf{u}_k = \mathbf{b}_k - \pi_{\text{span}[\mathbf{u}_1,\ldots,\mathbf{u}_{k-1}]}(\mathbf{b}_k), \quad k=2,\ldots,n$$
+        <p>Each step: subtract the projection of $\mathbf{b}_k$ onto the already-orthogonalized vectors. Then normalize by $\|\mathbf{u}_k\|$ to get unit length.</p>
+        <p><strong>Why it works:</strong> The projection subtracts the "component already explained" by the previous vectors, leaving only the genuinely new direction. The result always spans the same space: $\text{span}\{\mathbf{u}_1,\ldots,\mathbf{u}_n\} = \text{span}\{\mathbf{b}_1,\ldots,\mathbf{b}_n\}$.</p>
+        <p><strong>Connection to QR decomposition (Ch 4):</strong> Gram-Schmidt is numerically equivalent to QR factorization. $A = QR$ where $Q$ has orthonormal columns and $R$ is upper triangular.</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>Projection onto affine subspaces</summary>
+      <div class="expand-body">
+        <p>For an affine subspace $L = \mathbf{x}_0 + U$:</p>
+        <ol style="margin:10px 0 12px 18px;line-height:1.9">
+          <li>Translate: form $\mathbf{x} - \mathbf{x}_0$ and project onto $U$ (the direction space)</li>
+          <li>$\pi_U(\mathbf{x}-\mathbf{x}_0) = B(B^\top B)^{-1}B^\top(\mathbf{x}-\mathbf{x}_0)$</li>
+          <li>Translate back: $\pi_L(\mathbf{x}) = \mathbf{x}_0 + \pi_U(\mathbf{x}-\mathbf{x}_0)$</li>
+        </ol>
+        <p>This appears in regression (the design matrix includes an intercept, so the column space of $X$ is an affine subspace when centered) and in SVMs (decision boundaries are affine hyperplanes).</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ─── §3.9 Rotations ─── -->
+  <section id="s3-9">
+    <div class="section-header">
+      <span class="sec-num">§3.9</span>
+      <h2 class="section-title">Rotations</h2>
+    </div>
+    <p class="section-lead">
+      Rotations are the special orthogonal transformations that preserve both lengths and angles
+      and have determinant $+1$ (no reflection). They generalize cleanly from 2D to $n$D via Givens rotations.
+    </p>
+
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="formula-label">Rotation in ℝ²</div>
+        <div class="formula-expr">$R(\theta) = \begin{pmatrix}\cos\theta & -\sin\theta \\ \sin\theta & \cos\theta\end{pmatrix}$</div>
+        <div class="formula-note">Positive $\theta$ = counterclockwise. $R(\theta)^\top = R(-\theta) = R(\theta)^{-1}$. In 2D, all rotations commute: $R(\alpha)R(\beta) = R(\alpha+\beta)$.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Rotation in ℝ³ (about $e_3$)</div>
+        <div class="formula-expr">$R_3(\theta) = \begin{pmatrix}\cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1\end{pmatrix}$</div>
+        <div class="formula-note">The $e_3$ axis is fixed; rotation happens in the $e_1 e_2$-plane. Similar $R_1, R_2$ matrices for the other axes.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-label">Givens rotation (ℝⁿ)</div>
+        <div class="formula-expr">$R_{ij}(\theta) = I$ with $r_{ii}=r_{jj}=\cos\theta$, $r_{ij}=-\sin\theta$, $r_{ji}=\sin\theta$</div>
+        <div class="formula-note">Rotates in the $(i,j)$-plane, fixes all other dimensions. Any rotation in $\mathbb{R}^n$ is a product of Givens rotations.</div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title amber">3D+ rotations do NOT commute</div>
+      In 3D, rotating about $x$ then $y$ differs from rotating about $y$ then $x$.
+      This is why Euler angles have gimbal lock and why quaternions exist.
+      Rotation matrices in $\text{SO}(n)$ form a non-abelian group for $n \geq 3$.
+    </div>
+  </section>
+
+  <!-- ─── Key Formulas ─── -->
+  <section id="ref">
+    <div class="section-header">
+      <span class="sec-num">⊞</span>
+      <h2 class="section-title">Key Formulas Reference</h2>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Concept</th><th>Formula</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Induced norm</td><td>$\|\mathbf{x}\|=\sqrt{\langle\mathbf{x},\mathbf{x}\rangle}$</td><td>Every inner product gives a norm</td></tr>
+        <tr><td>Cauchy-Schwarz</td><td>$|\langle\mathbf{x},\mathbf{y}\rangle| \leq \|\mathbf{x}\|\|\mathbf{y}\|$</td><td>Makes angles well-defined</td></tr>
+        <tr><td>Angle</td><td>$\cos\omega = \langle\mathbf{x},\mathbf{y}\rangle / (\|\mathbf{x}\|\|\mathbf{y}\|)$</td><td>$\omega=90°$ iff orthogonal</td></tr>
+        <tr><td>Orthogonal matrix</td><td>$A^{-1} = A^\top$</td><td>Preserves distances and angles</td></tr>
+        <tr><td>Projection (1D)</td><td>$P_\pi = \mathbf{b}\mathbf{b}^\top / \mathbf{b}^\top\mathbf{b}$</td><td>Idempotent: $P_\pi^2 = P_\pi$</td></tr>
+        <tr><td>Projection (mD)</td><td>$P_\pi = B(B^\top B)^{-1}B^\top$</td><td>Normal equations: $B^\top B\boldsymbol{\lambda} = B^\top\mathbf{x}$</td></tr>
+        <tr><td>Gram-Schmidt</td><td>$\mathbf{u}_k = \mathbf{b}_k - \sum_{i<k}\pi_{\mathbf{u}_i}(\mathbf{b}_k)$</td><td>Iterative orthogonalization</td></tr>
+        <tr><td>Rotation ℝ²</td><td>$[\cos\theta,-\sin\theta;\sin\theta,\cos\theta]$</td><td>Positive $\theta$ = CCW</td></tr>
+      </tbody>
+    </table>
+
+    <div class="connections">
+      <div class="connections-label">Connections to later chapters</div>
+      <div class="chip-row">
+        <span class="chip">C4: QR decomp (Gram-Schmidt), SVD (orthogonal matrices)</span>
+        <span class="chip">C9: Normal equations = projection formula</span>
+        <span class="chip">C10: PCA = projection onto principal subspace</span>
+        <span class="chip">C12: SVM hyperplanes defined by normal vectors</span>
+        <span class="chip">C6: Cauchy-Schwarz → correlation bounds</span>
+        <span class="chip">Kernels: inner products in high-dim spaces</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+  var saved = localStorage.getItem('mml-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+})();
+document.getElementById('themeBtn').addEventListener('click', function(){
+  var t = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('mml-theme', t);
+});
+renderMathInElement(document.body, {
+  delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false},
+  ],
+  throwOnError:false,
+  trust:true,
+});
+var sections = document.querySelectorAll('section[id]');
+var navItems = document.querySelectorAll('.nav-item[href^="#"]');
+function updateActive(){
+  var scrollY = document.querySelector('main').scrollTop;
+  var active = null;
+  sections.forEach(function(s){ if(s.offsetTop-80<=scrollY) active=s.id; });
+  navItems.forEach(function(n){ n.classList.toggle('active',n.getAttribute('href').slice(1)===active); });
+}
+document.querySelector('main').addEventListener('scroll', updateActive);
+updateActive();
+</script>
+</body>
+</html>
