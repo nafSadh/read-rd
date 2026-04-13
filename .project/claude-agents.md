@@ -83,3 +83,7 @@ No contradictions or broken arguments found in any project. Structure and method
 | 32 | 2026-04-10 | mml-c10-dd | Build interactive page for MML C10 | done | study/ml-math/c10-pca.dd.html |
 | 33 | 2026-04-10 | mml-c11-dd | Build interactive page for MML C11 | done | study/ml-math/c11-gmms.dd.html |
 | 34 | 2026-04-10 | mml-c12-dd | Build interactive page for MML C12 | done | study/ml-math/c12-svms.dd.html |
+| 35 | 2026-04-12 | mml-notebooks-c2c3 | Create Jupyter notebooks for MML C2 (Linear Algebra) and C3 (Analytic Geometry) | done | study/ml-math/notebooks/linear-algebra.ipynb, study/ml-math/notebooks/analytic-geometry.ipynb |
+| 36 | 2026-04-12 | mml-notebooks-c4c5 | Create Jupyter notebooks for MML C4 (Matrix Decompositions) and C5 (Vector Calculus) | done | study/ml-math/notebooks/matrix-decompositions.ipynb, study/ml-math/notebooks/vector-calculus.ipynb |
+| 37 | 2026-04-12 | mml-notebooks-c8c9 | Create Jupyter notebooks for MML C8 (Models & Data) and C9 (Linear Regression) | done | study/ml-math/notebooks/models-data.ipynb, study/ml-math/notebooks/linear-regression.ipynb |
+| 38 | 2026-04-12 | mml-notebooks-c6c7 | Create Jupyter notebooks for MML C6 (Probability Distributions) and C7 (Continuous Optimization) | done | study/ml-math/notebooks/probability-distributions.ipynb, study/ml-math/notebooks/continuous-optimization.ipynb |
