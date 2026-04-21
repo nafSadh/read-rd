@@ -87,3 +87,35 @@ No contradictions or broken arguments found in any project. Structure and method
 | 36 | 2026-04-12 | mml-notebooks-c4c5 | Create Jupyter notebooks for MML C4 (Matrix Decompositions) and C5 (Vector Calculus) | done | study/ml-math/notebooks/matrix-decompositions.ipynb, study/ml-math/notebooks/vector-calculus.ipynb |
 | 37 | 2026-04-12 | mml-notebooks-c8c9 | Create Jupyter notebooks for MML C8 (Models & Data) and C9 (Linear Regression) | done | study/ml-math/notebooks/models-data.ipynb, study/ml-math/notebooks/linear-regression.ipynb |
 | 38 | 2026-04-12 | mml-notebooks-c6c7 | Create Jupyter notebooks for MML C6 (Probability Distributions) and C7 (Continuous Optimization) | done | study/ml-math/notebooks/probability-distributions.ipynb, study/ml-math/notebooks/continuous-optimization.ipynb |
+| 39 | 2026-04-20 | code-audit | Code audit of scripts, site-wide JS/CSS, study/ml-math pages — found 3 broken manifest refs + 1 dead Python ternary | done | fixed in commit d00732f |
+
+---
+
+# NPOV Review Round 2 — Agent Tracking
+**Started**: 2026-04-20
+**Goal**: NPOV/scholastic rigor review for 22 paper-drive projects that have no `claude-npov-rvw.md` (post-2026-03-27 builds + backfill where prior reviews went missing)
+
+## Active
+| # | Date | Agent ID | Scope / Task | Status | Output |
+|---|------|----------|--------------|--------|--------|
+| 40 | 2026-04-20 | npov-ai-r2 | ai/agentic-lm-survey, ai/genai-2026-outlook (4 papers) | done | ai/{agentic-lm-survey,genai-2026-outlook}/claude-npov-rvw.md |
+| 41 | 2026-04-20 | npov-anthro-r2 | anthro/{bananas-foster,ice-cream-culture,waffle-evolution,religion-today} (7 papers) | done | anthro/{bananas-foster,ice-cream-culture,waffle-evolution,religion-today}/claude-npov-rvw.md (4 files) |
+| 42 | 2026-04-20 | npov-mix-r2 | culture/{april-fools-death,west-wing}, policy/climate-finance, physics/the-cosmos, sci-fi-te/retrocausal-emotion (6 papers) | done | culture/{april-fools-death,west-wing}/, policy/climate-finance/, physics/the-cosmos/, sci-fi-te/retrocausal-emotion/claude-npov-rvw.md (5 files) |
+| 43 | 2026-04-20 | npov-cog1-r2 | cog-sci/{attachment-theory,brain-energy,dream-incorporation} (3 papers) | done | cog-sci/{attachment-theory,brain-energy,dream-incorporation}/claude-npov-rvw.md |
+| 44 | 2026-04-20 | npov-cog2-r2 | cog-sci/{fashionable-despair,religion-psychology,science-of-humor} (5 papers) | done | cog-sci/{fashionable-despair,religion-psychology,science-of-humor}/claude-npov-rvw.md (3 files) |
+| 45 | 2026-04-20 | npov-cog3-r2 | cog-sci/{sleep-and-dreams,stoicism-in-practice,atrophy-decisions} (6 papers) | done | cog-sci/{sleep-and-dreams,stoicism-in-practice,atrophy-decisions}/claude-npov-rvw.md (3 files) |
+| 46 | 2026-04-20 | npov-craft-r2 | craft/{art-of-typography,constructed-languages} (2 papers) | done | craft/{art-of-typography,constructed-languages}/claude-npov-rvw.md (2 files) |
+| 47 | 2026-04-20 | npov-craft-r2-rerun | craft/{art-of-typography,constructed-languages} survey-paper.html review (backfill) | done | craft/art-of-typography/claude-npov-rvw.md, craft/constructed-languages/claude-npov-rvw.md |
+
+## Fix Pass (applies priority fixes from round-2 reviews)
+| # | Date | Agent ID | Scope / Task | Status | Output |
+|---|------|----------|--------------|--------|--------|
+| 48 | 2026-04-20 | fix-ai-r2 | Apply priority fixes: ai/{agentic-lm-survey,genai-2026-outlook} | done | 4 papers edited, 22 fixes applied, 10 skipped |
+| 49 | 2026-04-20 | fix-anthro-r2 | Apply priority fixes: anthro/{bananas-foster,ice-cream-culture,waffle-evolution,religion-today} | done | 6 papers edited, ~52 fixes applied |
+| 50 | 2026-04-20 | fix-mix-r2 | Apply priority fixes: culture/{april-fools-death,west-wing}, policy/climate-finance, physics/the-cosmos, sci-fi-te/retrocausal-emotion | done | 6 papers edited, ~61 fixes applied |
+| 51 | 2026-04-20 | fix-cog1-r2 | Apply priority fixes: cog-sci/{attachment-theory,brain-energy,dream-incorporation} | partial | Completed attachment-theory only; brain-energy+dream-incorporation deferred to 51b |
+| 51b | 2026-04-20 | fix-cog1-r2-resume | Resume fix-cog1: cog-sci/{brain-energy,dream-incorporation} | done | 2 papers edited, 25 fixes applied, 12 skipped |
+| 52 | 2026-04-20 | fix-cog2-r2 | Apply priority fixes: cog-sci/{fashionable-despair,religion-psychology,science-of-humor} | partial | Completed religion-psychology only; fashionable-despair+science-of-humor deferred to 52b |
+| 52b | 2026-04-20 | fix-cog2-r2-resume | Resume fix-cog2: cog-sci/{fashionable-despair,science-of-humor} | done | 4 papers edited, 35 fixes applied, 13 skipped |
+| 53 | 2026-04-20 | fix-cog3-r2 | Apply priority fixes: cog-sci/{sleep-and-dreams,stoicism-in-practice,atrophy-decisions} | done | 6 papers edited, ~31 fixes applied |
+| 54 | 2026-04-20 | fix-craft-r2 | Apply priority fixes: craft/{art-of-typography,constructed-languages} | done | 2 papers edited, 27 fixes applied |
