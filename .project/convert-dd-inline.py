@@ -270,7 +270,7 @@ def extract_sections(text):
         sections.append({
             'num': num.group(1) if num else '',
             'short': short.group(1) if short else '',
-            'title': title_val if not title else title_val,
+            'title': title_val,
         })
 
     return sections if sections else None
