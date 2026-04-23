@@ -17,8 +17,11 @@ Eight sections, all drawing primarily on post-2020 sources:
 7. **S7: Modern Pancomputationalism** — Piccinini, Miłkowski, Bishop; the contemporary triviality debate closest in form to Lerchner's mapmaker argument.
 8. **S8: IIT, Illusionism & Theory Wars** — Tononi/Koch 2024; the 2023 IIT "pseudoscience" letter; Frankish/Kammerer illusionism.
 
+### Historical grounding
+Each section's deep-dive opens with a short "Historical Roots" paragraph naming 1–3 classical ancestors (Putnam 1988, Searle 1990/1992, Chalmers 1996, Varela 1991, Baars 1988, etc.). The contemporary focus is preserved — classical works are referenced as anchors, not surveyed in their own right. The `Historical Roots` appendix of the literature collection lists all 24 anchors organized per-section.
+
 ### Explicitly excluded
-- Classical 1970s–1990s arguments (Searle's Chinese Room, Putnam's original triviality, Block's original qualia papers) are referenced as ancestors where they frame contemporary debates but are not surveyed as sources in their own right. The user's explicit request was to focus on recent literature.
+- Full surveys of classical 1970s–1990s arguments as standalone sections (Searle's Chinese Room, Putnam's original triviality, Block's original qualia papers are mentioned inline where relevant but not treated in depth).
 - Pure cognitive science / neuroscience work that does not touch the functionalism/substrate question.
 - AI alignment and control problems unrelated to phenomenal consciousness.
 

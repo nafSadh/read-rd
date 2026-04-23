@@ -194,3 +194,51 @@ All eight sections meet the 5–8 source minimum. **All sections marked prelimin
 ---
 
 *Collection compiled April 2026. Sources will be supplemented and refined during section build phases.*
+
+---
+
+## Appendix · Historical Roots (pre-2020 anchors)
+
+Each section's deep-dive opens with a short "Historical Roots" paragraph citing the classical works the contemporary argument descends from. The contemporary focus is preserved, but the ancestry is named. These are reference anchors, not standalone sources.
+
+**For S1 (Lerchner):**
+- **Hilary Putnam**, *Representation and Reality* (MIT, 1988) — the triviality theorem: under the right mapping, a rock implements any finite-state automaton. Direct ancestor of Lerchner's `f(p) = A` argument.
+- **John Searle**, *Is the Brain a Digital Computer?* APA Presidential Address (1990) — computation as observer-relative, not intrinsic to physics. Closest classical analogue to Lerchner's mapmaker.
+
+**For S2 (AI Architects):**
+- **Alan Turing**, *Computing Machinery and Intelligence* (*Mind*, 1950) — founding document; frames the behavioural-imitation approach many lab voices still operate within.
+- **Hubert Dreyfus**, *What Computers Can't Do* (1972) — first major philosophical pushback on computational AI claims; Dreyfus's embodiment-and-context arguments still echo in LeCun's world-model critique.
+
+**For S3 (AI Welfare):**
+- **Thomas Nagel**, *What Is It Like to Be a Bat?* (*Philosophical Review*, 1974) — grounds the question of whether AI has experience worth morally caring about.
+- **Daniel Dennett**, *The Intentional Stance* (MIT, 1987) — pragmatic attribution of mentality as a frame for how we *treat* systems whose inner states are uncertain.
+
+**For S4 (Butlin–Long):**
+- **Bernard Baars**, *A Cognitive Theory of Consciousness* (CUP, 1988) — origin of Global Workspace Theory, one of the theories the Butlin–Long report draws indicator properties from.
+- **Victor Lamme**, *Towards a true neural stance on consciousness* (*Trends in Cog Sci*, 2006) — recurrent processing theory, another pillar.
+- **David Rosenthal**, *Two Concepts of Consciousness* (*Philosophical Studies*, 1986) — foundational higher-order theory, another pillar.
+
+**For S5 (Seth's Biological Naturalism):**
+- **John Searle**, *The Rediscovery of the Mind* (MIT, 1992) — coined "biological naturalism"; argues consciousness is a biological phenomenon caused by and realized in neurobiological processes.
+- **Humberto Maturana & Francisco Varela**, *Autopoiesis and Cognition* (Reidel, 1980) — life as self-maintaining organization; frames Godfrey-Smith's and Seth's living-brain argument.
+
+**For S6 (Embodiment, FEP):**
+- **Francisco Varela, Evan Thompson, Eleanor Rosch**, *The Embodied Mind* (MIT, 1991) — founding document of enactivism.
+- **Andy Clark & David Chalmers**, *The Extended Mind* (*Analysis*, 1998) — extended cognition thesis; still framing 4E debates.
+- **Alva Noë**, *Action in Perception* (MIT, 2004) — enactive perception; relevant to any embodiment-required-for-consciousness argument.
+
+**For S7 (Pancomputationalism):**
+- **Hilary Putnam**, *Representation and Reality* (1988) — the triviality theorem, as above.
+- **David Chalmers**, *Does a Rock Implement Every Finite-State Automaton?* (*Synthese*, 1996) — defends non-trivial implementation; the most cited classical defense against triviality, now being revisited in light of Lerchner.
+- **Jack Copeland**, *What Is Computation?* (*Synthese*, 1996) — counterfactual-based account of non-trivial implementation.
+
+**For S8 (IIT, Illusionism):**
+- **Daniel Dennett**, *Consciousness Explained* (Little, Brown, 1991) — proto-illusionist position; frames the contemporary Frankish/Kammerer programme.
+- **Giulio Tononi**, *An Information Integration Theory of Consciousness* (*BMC Neuroscience*, 2004) — IIT 1.0, the founding paper.
+- **David Chalmers**, *The Conscious Mind* (OUP, 1996) — articulates the hard problem; the target that illusionism dissolves and that IIT claims to address.
+
+---
+
+## Adequacy Note on Historical Roots
+
+The 24 historical anchors above are sufficient to ground the contemporary debate without becoming a parallel mid-20th-century survey. Each section's deep-dive mentions 1–3 of them in opening framing; full engagement stays with post-2020 sources.

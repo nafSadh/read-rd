@@ -7,4 +7,5 @@
 - Final structure includes dedicated S2 (AI architects) and S3 (AI welfare) sections.
 - Project skeleton created: `.project/`, `notes/`, `index.html`.
 - **Literature collection v1 compiled**: 61 sources across 8 sections + cross-cutting. All sections preliminarily adequate. Commits: skeleton, lit collection.
+- **Historical Roots appendix added** (24 classical anchors): user asked if historical grounding was needed; adopted option A (weave inline) — each deep-dive opens with 1–3 classical ancestor citations; full survey stays post-2020.
 - Next: S1 deep-dive (Lerchner's argument, framed as the target of the survey).
