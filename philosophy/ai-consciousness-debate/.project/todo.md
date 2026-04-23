@@ -27,19 +27,21 @@ Each section: source assessment → markdown notes → HTML deep-dive → verifi
 
 ## Source Adequacy Table
 
-| Section | Current Sources | Adequate? | Gaps |
-|---------|----------------|-----------|------|
-| S1: Lerchner's Argument | 0 | TBD | Need the paper itself + any immediate responses/commentary |
-| S2: AI Architects | 0 | TBD | Coverage of all target figures (Legg, Shanahan, Hinton, Sutskever, Bengio, LeCun, Bach, Amodei) |
-| S3: AI Welfare | 0 | TBD | Fish, Long, Askell, Carlsmith, Schwitzgebel, Simon, Bostrom |
-| S4: Butlin–Long | 0 | TBD | The 2023 report + follow-ups, updates, critiques |
-| S5: Seth Biological Naturalism | 0 | TBD | Seth 2024 paper + *Being You* + Godfrey-Smith |
-| S6: Embodiment/FEP | 0 | TBD | Thompson, Wiese/Friston, 4E cognition contra-LLM |
-| S7: Pancomputationalism | 0 | TBD | Piccinini, Miłkowski, Bishop, Chalmers "rock implement" response |
-| S8: IIT/Illusionism | 0 | TBD | Tononi/Koch 2024; IIT pseudoscience letter; Frankish/Kammerer |
+| Section | Current Sources | Adequate? | Gaps to watch |
+|---------|----------------|-----------|---------------|
+| S1: Lerchner's Argument | 2 | Preliminary yes | Lerchner paper + companion slides — may want response/commentary once published |
+| S2: AI Architects | 11 | Yes | Demis Hassabis long-form voice would round out DeepMind co-founder perspective |
+| S3: AI Welfare | 10 | Yes | More on Anthropic's specific welfare work beyond Fish profiles |
+| S4: Butlin–Long | 5 | Yes | Fetch 2025 *Trends in Cognitive Sciences* followup in full before building |
+| S5: Seth Biological Naturalism | 6 | Yes | Peer-reviewed critiques of Godfrey-Smith *Living on Earth* |
+| S6: Embodiment/FEP | 6 | Yes | Any Thompson 2020+ output directly on LLMs |
+| S7: Pancomputationalism | 8 | Yes | Specific Piccinini–Miłkowski vs Bishop exchange |
+| S8: IIT/Illusionism | 10 | Yes | Add IIT 4.0 primary paper (Albantakis et al 2023) |
+
+**Total: 61 sources across 8 sections + cross-cutting.** All sections preliminarily adequate; per-section re-assessment before each deep-dive build.
 
 ---
 
 ## Near-Term Next Step
 
-Run web searches across all 8 dimensions, fetch Lerchner PDF, build literature collection. Commit and push before any section work begins.
+S1 build: source assessment → markdown notes (reading Lerchner's argument structure against the companion slides we already have) → HTML deep-dive. The deep-dive should be framed as *summarizing the argument being debated*, not endorsing it.

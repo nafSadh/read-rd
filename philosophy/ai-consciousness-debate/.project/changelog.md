@@ -6,4 +6,5 @@
 - Second pivot: added strong representation of AI-lab voices (Legg, Shanahan, Hinton, etc.) after user flagged the absence of practitioner perspectives.
 - Final structure includes dedicated S2 (AI architects) and S3 (AI welfare) sections.
 - Project skeleton created: `.project/`, `notes/`, `index.html`.
-- Next: literature collection.
+- **Literature collection v1 compiled**: 61 sources across 8 sections + cross-cutting. All sections preliminarily adequate. Commits: skeleton, lit collection.
+- Next: S1 deep-dive (Lerchner's argument, framed as the target of the survey).
