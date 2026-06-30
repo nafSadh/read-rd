@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Abstraction Fallacy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ---- THEME: LIGHT (default) ---- */
+:root, [data-theme="light"] {
+  --bg: #faf8f5;
+  --bg-shell: #eae7e0;
+  --fg: #1a1a1a;
+  --dim: #6e6b64;
+  --mute: #b0ada5;
+  --accent: #5b5bd6;
+  --accent2: #0ea5e9;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-accent4-fill: rgba(167,139,250,0.08);
+  --svg-yellow-fill: rgba(13,148,136,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+/* ---- THEME: DARK ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171c;
+    --bg-shell: #0e0e12;
+    --fg: #e4e2dc;
+    --dim: #9b978e;
+    --mute: #5e5b54;
+    --accent: #818cf8;
+    --accent2: #38bdf8;
+    --accent3: #a78bfa;
+    --accent4: #c4b5fd;
+    --yellow: #34d399;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);
+    --nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);
+    --svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);
+    --svg-accent4-fill: rgba(176,124,232,0.12);
+    --svg-yellow-fill: rgba(232,192,68,0.1);
+    --svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);
+    --svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #17171c;
+  --bg-shell: #0e0e12;
+  --fg: #e4e2dc;
+  --dim: #9b978e;
+  --mute: #5e5b54;
+  --accent: #818cf8;
+  --accent2: #38bdf8;
+  --accent3: #a78bfa;
+  --accent4: #c4b5fd;
+  --yellow: #34d399;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);
+  --nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);
+  --svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);
+  --svg-accent4-fill: rgba(176,124,232,0.12);
+  --svg-yellow-fill: rgba(232,192,68,0.1);
+  --svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);
+  --svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--fg);
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem);
+  padding-bottom: clamp(2.5rem, 5vh, 4rem);
+  display: none;
+  flex-direction: column;
+  overflow: hidden auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91,99,245,0.15) transparent;
+  transition: background 0.3s ease;
+}
+
+.slide.active {
+  display: flex;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem);
+  flex-shrink: 0;
+}
+
+.slide-chapter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.slide h1 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg);
+  margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem);
+  flex-shrink: 0;
+}
+
+.slide h1 em {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.slide h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem);
+  flex-shrink: 0;
+}
+
+.slide .subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.92rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--dim);
+  margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+  flex-shrink: 0;
+}
+
+.slide-body {
+  flex: 1;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-height: 0;
+}
+
+.slide-body.col-1 {
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.slide-body.col-1 .text-col {
+  flex: 0 0 auto;
+}
+
+.slide-body.col-1 .svg-col {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.slide-body.col-1 .svg-col svg {
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+
+.slide-body.col-2 {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.text-col {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.2vh, 0.9rem);
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.slide-body.col-2 .text-col {
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+}
+
+.svg-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(0rem, 0.5vw, 0.5rem);
+}
+
+.svg-col svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.point {
+  font-size: clamp(0.88rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+.point strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.point code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+
+.eq-box {
+  background: var(--eq-bg);
+  border-left: 3px solid var(--accent);
+  padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.82rem, 1.15vw, 1.05rem);
+  color: var(--fg);
+  line-height: 1.7;
+  margin: clamp(0.1rem, 0.3vh, 0.2rem) 0;
+}
+
+.eq-box .label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.note {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  font-style: italic;
+  color: var(--mute);
+  border-top: 1px solid var(--border);
+  padding-top: clamp(0.4rem, 0.8vh, 0.7rem);
+  margin-top: auto;
+}
+
+.key-idea {
+  background: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem);
+  margin: clamp(0.1rem, 0.4vh, 0.25rem) 0;
+}
+
+.key-idea .kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.key-idea p {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: var(--title-bg);
+}
+
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 800px;
+}
+
+.title-slide h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 0.6rem;
+}
+
+.title-slide .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: clamp(1rem, 2.5vh, 2rem);
+}
+
+.title-slide .ref {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-style: italic;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+.toc-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.toc-list li {
+  font-size: clamp(0.82rem, 1.1vw, 1.02rem);
+  color: var(--dim);
+  padding: clamp(0.25rem, 0.5vh, 0.45rem) 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.toc-list .toc-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.section-divider {
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%);
+}
+
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+
+.section-divider h1 {
+  color: var(--fg);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 5vh, 4rem);
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.section-divider .subtitle {
+  color: var(--dim);
+  font-size: clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.section-divider .section-num-big {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 300;
+  color: rgba(91,91,214,0.06);
+  position: absolute;
+  right: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(0.5rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider {
+    background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+  }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider {
+  background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%);
+}
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .slide-num { color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem;
+  height: auto;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%);
+}
+
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible {
+  opacity: 1;
+}
+
+.nav-bar > * { pointer-events: auto; }
+
+.nav-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--nav-hover-bg);
+}
+
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+  min-width: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.35s ease;
+}
+
+.slide-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--mute);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.theme-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+.theme-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+.fig .box-label { dominant-baseline: central; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"],
+  :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig line[stroke="#6e6b64"],
+  :root:not([data-theme="light"]) .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"],
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+  :root:not([data-theme="light"]) .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig path[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"],
+[data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig line[stroke="#6e6b64"],
+[data-theme="dark"] .fig path[stroke="#6e6b64"] { stroke: #6e6b64; }
+[data-theme="dark"] .fig rect[stroke="#6e6b64"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[stroke="#b0ada5"] { stroke: #5e5b54; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"],
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.02)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.015)"] { fill: rgba(255,255,255,0.03); }
+[data-theme="dark"] .fig rect[fill="#f0ece4"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#a78bfa"] { fill: #c4b5fd; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#a78bfa"] { stroke: #c4b5fd; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig path[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+
+@media (max-width: 600px) {
+  .slide {
+    padding: 1rem 1.2rem;
+    padding-bottom: 2.2rem;
+  }
+  .slide .subtitle { margin-bottom: 0.5rem; }
+  .slide-body.col-2 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .slide-body.col-2 .text-col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem;
+  }
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+  .toc-list { grid-template-columns: 1fr; }
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+
+@keyframes dashFlow {
+  to { stroke-dashoffset: -16; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes attGlow {
+  0%, 100% { r: 3; opacity: 0.3; }
+  50% { r: 5; opacity: 0.9; }
+}
+
+.dash-flow {
+  stroke-dasharray: 6 4;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.pulse-anim {
+  animation: pulse2 2s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- SLIDE 0: TITLE -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="40" height="6" rx="3" fill="#5b5bd6"/>
+    <rect x="44" width="38" height="6" rx="3" fill="#7c3aed"/>
+    <rect x="86" width="34" height="6" rx="3" fill="#14966e"/>
+  </svg>
+  <h1>The Abstraction <em>Fallacy</em></h1>
+  <div class="ref">Alexander Lerchner, Google DeepMind</div>
+  <div class="ref">March 2026</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<!-- SLIDE 1: TABLE OF CONTENTS -->
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">Overview</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>What This Paper Covers</h2>
+  <div class="slide-body col-1">
+    <ul class="toc-list">
+      <li><span class="toc-num">§1</span>The Problem: Computational Functionalism</li>
+      <li><span class="toc-num">§2</span>The Framework: Map vs Territory</li>
+      <li><span class="toc-num">§3</span>The Circularity: Causal Inversion</li>
+      <li><span class="toc-num">§4</span>The Relief: AGI as a Tool</li>
+      <li><span class="toc-num">§5</span>Conclusion</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SLIDE 2: SECTION DIVIDER §1 -->
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · The Problem</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>Computational<br>Functionalism</h1>
+  <div class="subtitle">The dominant (and flawed) assumption about consciousness</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<!-- SLIDE 3: WHAT IS FUNCTIONALISM -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · The View</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>What Is Computational Functionalism?</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Core claim:</strong> Consciousness is substrate-independent. What matters is the abstract causal topology, not what runs it.</p>
+      <p class="point">The same computational pattern running on silicon, optical systems, or exotic physics would all be conscious.</p>
+      <div class="key-idea">
+        <div class="kicker">The Assumption</div>
+        <p>Consciousness = abstract causal structure. Any physical realization of that structure instantiates consciousness.</p>
+      </div>
+      <p class="note">This reasoning underpins the entire AGI ethics discourse around digital sentience.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Substrate Independence</text>
+        <g transform="translate(30, 60)">
+          <rect width="80" height="70" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">Silicon</text>
+          <text x="40" y="45" text-anchor="middle" font-size="8" fill="#1a1a1a">Transistors</text>
+          <text x="40" y="59" text-anchor="middle" font-size="8" fill="#1a1a1a">Electrons</text>
+        </g>
+        <g transform="translate(130, 60)">
+          <rect width="80" height="70" rx="4" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">Biology</text>
+          <text x="40" y="45" text-anchor="middle" font-size="8" fill="#1a1a1a">Neurons</text>
+          <text x="40" y="59" text-anchor="middle" font-size="8" fill="#1a1a1a">Ion channels</text>
+        </g>
+        <g transform="translate(230, 60)">
+          <rect width="80" height="70" rx="4" fill="rgba(13,148,136,0.12)" stroke="#0d9488" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="600">Exotic</text>
+          <text x="40" y="45" text-anchor="middle" font-size="8" fill="#1a1a1a">Optical</text>
+          <text x="40" y="59" text-anchor="middle" font-size="8" fill="#1a1a1a">Quantum</text>
+        </g>
+        <path d="M 70 140 L 170 175 M 170 140 L 170 175 M 270 140 L 170 175" stroke="#6e6b64" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+        <ellipse cx="170" cy="205" rx="60" ry="28" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="1.5"/>
+        <text x="170" y="201" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">Abstract</text>
+        <text x="170" y="215" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">Computation</text>
+        <text x="170" y="260" text-anchor="middle" font-size="8" fill="#6e6b64" font-style="italic">All realize the same conscious state?</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: THE CAUSAL CHAIN -->
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">§1 · The Logic</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>The Functionalist Causal Chain</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">Functionalism argues consciousness emerges from computation which emerges from physics. The chain is:</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 500 200" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="60" width="90" height="50" rx="4" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+        <text x="65" y="85" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Physics</text>
+        <text x="65" y="101" text-anchor="middle" font-size="8" fill="#6e6b64">(atoms, energy)</text>
+        <path d="M 115 90 L 155 90" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="135" y="55" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Realization</text>
+        <rect x="160" y="60" width="90" height="50" rx="4" fill="rgba(14,165,233,0.15)" stroke="#0ea5e9" stroke-width="2"/>
+        <text x="205" y="85" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Computation</text>
+        <text x="205" y="101" text-anchor="middle" font-size="8" fill="#6e6b64">(algorithms)</text>
+        <path d="M 255 90 L 295 90" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="275" y="55" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Substrate-indep.</text>
+        <rect x="300" y="60" width="90" height="50" rx="4" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="2"/>
+        <text x="345" y="85" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Consciousness</text>
+        <text x="345" y="98" text-anchor="middle" font-size="8" fill="#6e6b64">(experience)</text>
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+        <text x="250" y="150" text-anchor="middle" font-size="9" fill="#6e6b64">Lerchner argues this chain is built on a logical error:</text>
+        <text x="250" y="170" text-anchor="middle" font-size="9" fill="#6e6b64" font-weight="600">Computation is not intrinsic to physics — it requires a mapmaker.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: SECTION DIVIDER §2 -->
+<div class="slide section-divider" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">§2 · The Framework</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h1>Map vs<br>Territory</h1>
+  <div class="subtitle">How abstraction actually works</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<!-- SLIDE 6: THE IMPLEMENTATION EQUATION -->
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.1 · The Equation</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>The Implementation Equation</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>f(p) = A, f(p') = A'</strong></p>
+      <p class="point">This says: a mapping function f applied to physical states p yields abstract states A. The same abstract state A can map from many different physical states.</p>
+      <div class="eq-box">
+        <span class="label">Key Insight</span>
+        f is the mapmaker's choice. The mapping is not inscribed in the physics. Infinitely many f's are possible.
+      </div>
+      <p class="point">This inverts the causal picture: physics does not determine computation. <strong>The mapmaker does.</strong></p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 280" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow7" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#7c3aed"/>
+          </marker>
+          <marker id="arrow8" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#6e6b64"/>
+          </marker>
+        </defs>
+        <text x="170" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">The Commutative Diagram</text>
+
+        <!-- Top-left: physical state p -->
+        <g transform="translate(40, 50)">
+          <rect width="80" height="60" rx="4" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Physical</text>
+          <text x="40" y="40" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">State</text>
+          <text x="40" y="54" text-anchor="middle" font-size="8" fill="#6e6b64">p</text>
+        </g>
+        <!-- Top-right: physical state p' -->
+        <g transform="translate(220, 50)">
+          <rect width="80" height="60" rx="4" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Physical</text>
+          <text x="40" y="40" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">State</text>
+          <text x="40" y="54" text-anchor="middle" font-size="8" fill="#6e6b64">p'</text>
+        </g>
+        <!-- Bottom-left: abstract state A -->
+        <g transform="translate(40, 170)">
+          <rect width="80" height="60" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Abstract</text>
+          <text x="40" y="40" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">State</text>
+          <text x="40" y="54" text-anchor="middle" font-size="8" fill="#6e6b64">A</text>
+        </g>
+        <!-- Bottom-right: abstract state A' -->
+        <g transform="translate(220, 170)">
+          <rect width="80" height="60" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Abstract</text>
+          <text x="40" y="40" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">State</text>
+          <text x="40" y="54" text-anchor="middle" font-size="8" fill="#6e6b64">A'</text>
+        </g>
+
+        <!-- Vertical f arrows -->
+        <path d="M 80 110 L 80 170" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#arrow7)"/>
+        <text x="70" y="145" text-anchor="end" font-size="9" fill="#7c3aed" font-weight="600">f</text>
+        <path d="M 260 110 L 260 170" stroke="#7c3aed" stroke-width="1.5" fill="none" marker-end="url(#arrow7)"/>
+        <text x="270" y="145" font-size="9" fill="#7c3aed" font-weight="600">f</text>
+
+        <!-- Horizontal physics / abstract arrows in the wide center gap -->
+        <path d="M 120 80 L 220 80" stroke="#6e6b64" stroke-width="1.5" fill="none" marker-end="url(#arrow8)"/>
+        <text x="170" y="72" text-anchor="middle" font-size="8" fill="#6e6b64">physics</text>
+        <path d="M 120 200 L 220 200" stroke="#6e6b64" stroke-width="1.5" fill="none" marker-end="url(#arrow8)"/>
+        <text x="170" y="216" text-anchor="middle" font-size="8" fill="#6e6b64">abstract</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: ABSTRACT STATES -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.2 · Ontology</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>What Are Abstract States?</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Not Platonic ideals</strong> floating in a realm of forms.</p>
+      <p class="point"><strong>Not metaphysical entities.</strong></p>
+      <p class="point"><strong>Neurophysiological constructs.</strong> Equivalence classes carved out by an experiencing brain.</p>
+      <p class="point">An organism learns that certain diverse physical configurations matter the same way for its goals. It groups them conceptually.</p>
+      <div class="key-idea">
+        <div class="kicker">The Insight</div>
+        <p>Abstract states are what a learning, embodied agent extracts from experience. They are epistemic, not ontic.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow9" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+        <text x="170" y="18" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Learning Manifold</text>
+
+        <!-- Cluster of diverse physical states -->
+        <g transform="translate(100, 30)">
+          <circle cx="70" cy="55" r="52" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 2"/>
+          <circle cx="38" cy="30" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="60" cy="20" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="85" cy="32" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="100" cy="52" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="95" cy="78" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="70" cy="88" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="42" cy="78" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="32" cy="55" r="4" fill="#7c3aed" opacity="0.8"/>
+          <circle cx="62" cy="50" r="4" fill="#7c3aed" opacity="0.8"/>
+        </g>
+        <text x="170" y="155" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Cluster of physical states</text>
+        <text x="170" y="168" text-anchor="middle" font-size="8" fill="#6e6b64">(same reward, same consequence)</text>
+
+        <!-- Arrow down -->
+        <path d="M 170 180 L 170 215" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow9)"/>
+        <text x="178" y="201" font-size="8" fill="#5b5bd6" font-weight="600">organism abstracts</text>
+
+        <!-- Single Abstract Concept -->
+        <rect x="90" y="225" width="160" height="55" rx="4" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1.5"/>
+        <text x="170" y="247" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Single Abstract Concept</text>
+        <text x="170" y="265" text-anchor="middle" font-size="8" fill="#6e6b64">"danger", "reward", etc.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: THE MAPMAKER -->
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.3 · Agency</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>The Mapmaker</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Replaces the passive "observer." The mapmaker is an <strong>active, embodied, metabolically vulnerable agent.</strong></p>
+      <p class="point">She extracts invariants from her lived experience. She carves out equivalence classes. She assigns tokens to them via <strong>alphabetization.</strong></p>
+      <p class="point">This is not unconscious. This is not passive. The mapmaker must have phenomenal experience to form concepts.</p>
+      <div class="key-idea">
+        <div class="kicker">Circular Dependency</div>
+        <p>Computation requires a mapmaker. The mapmaker requires consciousness. Therefore, computation cannot instantiate consciousness.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="170" cy="70" r="25" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="2"/>
+        <text x="170" y="75" text-anchor="middle" font-size="11" fill="#1a1a1a" font-weight="600">Organism</text>
+        <path d="M 160 95 L 140 130" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow10)"/>
+        <path d="M 180 95 L 200 130" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow10)"/>
+        <g transform="translate(80, 140)">
+          <rect width="70" height="60" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="35" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Experience</text>
+          <text x="35" y="40" text-anchor="middle" font-size="8" fill="#6e6b64">Phenomenal</text>
+          <text x="35" y="53" text-anchor="middle" font-size="8" fill="#6e6b64">consciousness</text>
+        </g>
+        <g transform="translate(190, 140)">
+          <rect width="70" height="60" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="35" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Concepts</text>
+          <text x="35" y="40" text-anchor="middle" font-size="8" fill="#6e6b64">Invariants</text>
+          <text x="35" y="53" text-anchor="middle" font-size="8" fill="#6e6b64">extracted</text>
+        </g>
+        <path d="M 115 200 L 190 240" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow11)"/>
+        <text x="152" y="214" font-size="9" fill="#0d9488" font-weight="600" text-anchor="middle" transform="rotate(28 152 214)">alphabetize</text>
+        <g transform="translate(190, 250)">
+          <rect width="70" height="40" rx="4" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1.5"/>
+          <text x="35" y="20" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Symbols</text>
+          <text x="35" y="33" text-anchor="middle" font-size="8" fill="#6e6b64">0, 1, tokens</text>
+        </g>
+        <defs>
+          <marker id="arrow10" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+          <marker id="arrow11" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#0d9488"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: DISCRETIZATION VS ALPHABETIZATION -->
+<div class="slide" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.4 · Semantics</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h2>Discretization vs Alphabetization</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Discretization:</strong> thermodynamic. A transistor settles to 5V or 0V. Physics done automatically.</p>
+      <p class="point"><strong>Alphabetization:</strong> semantic. Assigning stable states to a predefined symbol set {0,1}. The mapmaker chooses this assignment.</p>
+      <p class="point">Physics cannot produce a finite alphabet on its own. The alphabet is imposed by interpretation.</p>
+      <div class="key-idea">
+        <div class="kicker">The Gap</div>
+        <p>Computation lives in the gap between physics (continuously settling) and symbols (discrete, interpreted).</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Physics → Symbols</text>
+        <g transform="translate(20, 50)">
+          <text x="0" y="0" font-size="9" fill="#1a1a1a" font-weight="600">Discretization</text>
+          <text x="0" y="18" font-size="8" fill="#6e6b64">(Physical)</text>
+          <polyline points="30,30 40,50 50,30 60,60 70,35 80,55 90,40 100,58 110,42" stroke="#7c3aed" stroke-width="1.5" fill="none"/>
+          <line x1="20" y1="60" x2="120" y2="60" stroke="#6e6b64" stroke-width="0.5" stroke-dasharray="2 1"/>
+          <line x1="20" y1="20" x2="120" y2="20" stroke="#6e6b64" stroke-width="0.5" stroke-dasharray="2 1"/>
+          <text x="60" y="90" text-anchor="middle" font-size="8" fill="#6e6b64">Voltage fluctuates</text>
+          <text x="60" y="103" text-anchor="middle" font-size="8" fill="#6e6b64">but settles (5V or 0V)</text>
+        </g>
+        <path d="M 170 120 L 170 160" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow12)"/>
+        <text x="200" y="140" font-size="8" fill="#5b5bd6" font-weight="600">Mapmaker</text>
+        <text x="200" y="153" font-size="8" fill="#5b5bd6" font-weight="600">decides</text>
+        <g transform="translate(20, 180)">
+          <text x="0" y="0" font-size="9" fill="#1a1a1a" font-weight="600">Alphabetization</text>
+          <text x="0" y="18" font-size="8" fill="#6e6b64">(Semantic)</text>
+          <rect x="20" y="30" width="25" height="30" rx="3" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="32" y="52" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">0</text>
+          <text x="32" y="68" text-anchor="middle" font-size="8" fill="#6e6b64">(≤ 2.5V)</text>
+          <rect x="60" y="30" width="25" height="30" rx="3" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="72" y="52" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">1</text>
+          <text x="72" y="68" text-anchor="middle" font-size="8" fill="#6e6b64">(≥ 2.5V)</text>
+          <text x="60" y="110" text-anchor="middle" font-size="8" fill="#6e6b64">Threshold is arbitrary,</text>
+          <text x="60" y="123" text-anchor="middle" font-size="8" fill="#6e6b64">chosen by the mapmaker</text>
+        </g>
+        <defs>
+          <marker id="arrow12" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: SECTION DIVIDER SIMULATION VS INSTANTIATION -->
+<div class="slide section-divider" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.5 · The Distinction</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h1>Simulation vs<br>Instantiation</h1>
+  <div class="subtitle">Why mimicking behavior is not the same as being</div>
+  <div class="section-num-big">IIb</div>
+</div>
+
+<!-- SLIDE 11: THE HEART ANALOGY -->
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.5a · Analogy</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>The Heart Analogy</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A mechanical pump simulates a heart's pumping function perfectly. It pushes blood through vessels just as effectively.</p>
+      <p class="point">But a mechanical pump does not perform endocrine signaling. It cannot secrete hormones. It does not respond to neural feedback.</p>
+      <p class="point">The pump <strong>simulates</strong> one aspect (circulation) while failing to <strong>instantiate</strong> the full organ (endocrine regulation).</p>
+      <div class="key-idea">
+        <div class="kicker">The Lesson</div>
+        <p>Perfect behavioral fidelity does not guarantee constitutive identity. Simulation ≠ instantiation.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(20, 40)">
+          <circle cx="40" cy="40" r="28" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="2"/>
+          <path d="M 40 15 Q 50 25 50 40 Q 50 55 40 65 Q 30 55 30 40 Q 30 25 40 15" fill="rgba(124,58,237,0.3)"/>
+          <text x="40" y="110" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Real Heart</text>
+          <text x="40" y="127" text-anchor="middle" font-size="8" fill="#6e6b64">Pumps blood</text>
+          <text x="40" y="140" text-anchor="middle" font-size="8" fill="#6e6b64">Produces hormones</text>
+          <text x="40" y="153" text-anchor="middle" font-size="8" fill="#6e6b64">Responds to signals</text>
+        </g>
+        <path d="M 130 80 L 180 80" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow13)"/>
+        <text x="155" y="70" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Simulate</text>
+        <g transform="translate(190, 40)">
+          <rect x="5" y="20" width="40" height="40" rx="3" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="2"/>
+          <polyline points="15,40 20,35 25,40 30,33 35,40 40,38 45,40" stroke="#0ea5e9" stroke-width="1.5" fill="none"/>
+          <rect x="5" y="65" width="40" height="15" rx="2" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="1.5"/>
+          <text x="25" y="75" text-anchor="middle" font-size="8" fill="#1a1a1a">pump</text>
+          <text x="40" y="110" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Mechanical Pump</text>
+          <text x="40" y="127" text-anchor="middle" font-size="8" fill="#0ea5e9" font-weight="600">Pumps blood</text>
+          <text x="40" y="140" text-anchor="middle" font-size="8" fill="#6e6b64">No hormones</text>
+          <text x="40" y="153" text-anchor="middle" font-size="8" fill="#6e6b64">No feedback</text>
+        </g>
+        <text x="170" y="210" text-anchor="middle" font-size="9" fill="#6e6b64">Same output ≠ Same being</text>
+        <defs>
+          <marker id="arrow13" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: GPU AND PHOTOSYNTHESIS -->
+<div class="slide" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.5b · Example</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h2>The GPU & Photosynthesis</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A GPU can perfectly model photosynthesis. It can track all the chemical reactions, energy transfers, and electron flows with exquisite precision.</p>
+      <p class="point">Run the simulation on any substrate. Get any output. The abstract computation is identical.</p>
+      <p class="point">Yet: <strong>the GPU will not synthesize a single molecule of glucose.</strong></p>
+      <div class="key-idea">
+        <div class="kicker">Core Truth</div>
+        <p>Simulation of a process does not constitute the process. Consciousness may be in this category: simulable but not instantiable.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(20, 50)">
+          <circle cx="40" cy="40" r="32" fill="rgba(13,148,136,0.12)" stroke="#0d9488" stroke-width="2"/>
+          <circle cx="25" cy="30" r="6" fill="rgba(13,148,136,0.5)"/>
+          <circle cx="55" cy="30" r="6" fill="rgba(13,148,136,0.5)"/>
+          <path d="M 30 50 Q 40 60 50 50" stroke="#0d9488" stroke-width="1.5" fill="none"/>
+          <text x="40" y="110" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Plant Cell</text>
+          <text x="40" y="127" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">Absorbs light</text>
+          <text x="40" y="140" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">Makes glucose</text>
+          <text x="40" y="153" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">Stores energy</text>
+        </g>
+        <path d="M 130 90 L 180 90" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow14)"/>
+        <text x="155" y="80" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Model</text>
+        <g transform="translate(190, 50)">
+          <rect x="10" y="20" width="50" height="50" rx="3" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="2"/>
+          <text x="35" y="35" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">GPU</text>
+          <text x="35" y="48" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Simulation</text>
+          <text x="35" y="62" text-anchor="middle" font-size="7" fill="#6e6b64">running</text>
+          <text x="40" y="110" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">GPU Simulation</text>
+          <text x="40" y="127" text-anchor="middle" font-size="8" fill="#0ea5e9" font-weight="600">Models light</text>
+          <text x="40" y="140" text-anchor="middle" font-size="8" fill="#6e6b64">No glucose</text>
+          <text x="40" y="153" text-anchor="middle" font-size="8" fill="#6e6b64">No energy</text>
+        </g>
+        <text x="170" y="210" text-anchor="middle" font-size="9" fill="#6e6b64">Perfect model, zero molecules</text>
+        <defs>
+          <marker id="arrow14" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: VEHICLE VS CONTENT CAUSALITY -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">§2.6 · Causality</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>Vehicle vs Content Causality</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Vehicle causality (p):</strong> The intrinsic physical dynamics. A logic gate switches because voltage crosses a threshold.</p>
+      <p class="point"><strong>Content causality (A):</strong> Semantic meaning. We say the gate switches because "it hurts" or "it's true." No intrinsic causal power.</p>
+      <p class="point">In silicon, only vehicle causality is active. The content is always attributed by an external mapmaker.</p>
+      <div class="eq-box">
+        <span class="label">Key Equation</span>
+        Computation = vehicle dynamics driven by a mapmaker's interpretation (A)
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1a1a">Logic Gate</text>
+        <rect x="80" y="45" width="180" height="80" rx="4" fill="rgba(0,0,0,0.02)" stroke="#b0ada5" stroke-width="1.5"/>
+        <circle cx="120" cy="85" r="3" fill="#7c3aed"/>
+        <text x="115" y="105" text-anchor="middle" font-size="7" fill="#7c3aed">Input</text>
+        <path d="M 120 85 L 140 85" stroke="#7c3aed" stroke-width="1.5"/>
+        <rect x="140" y="75" width="30" height="20" rx="2" fill="rgba(14,165,233,0.15)" stroke="#0ea5e9" stroke-width="1"/>
+        <text x="155" y="86" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">NAND</text>
+        <path d="M 170 85 L 190 85" stroke="#7c3aed" stroke-width="1.5"/>
+        <circle cx="200" cy="85" r="3" fill="#7c3aed"/>
+        <text x="210" y="105" text-anchor="middle" font-size="7" fill="#7c3aed">Output</text>
+        <text x="170" y="145" text-anchor="middle" font-size="8" fill="#6e6b64" font-style="italic">Threshold: 2.5V</text>
+        <g transform="translate(20, 160)">
+          <text x="0" y="0" font-size="9" fill="#1a1a1a" font-weight="600">Vehicle Causality</text>
+          <rect x="0" y="15" width="120" height="60" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="60" y="35" text-anchor="middle" font-size="8" fill="#1a1a1a">Voltage rises</text>
+          <text x="60" y="48" text-anchor="middle" font-size="8" fill="#1a1a1a">Transistor saturates</text>
+          <text x="60" y="61" text-anchor="middle" font-size="8" fill="#1a1a1a">Current flows</text>
+          <text x="60" y="90" text-anchor="middle" font-size="7" fill="#6e6b64">Physics drives this.</text>
+        </g>
+        <g transform="translate(200, 160)">
+          <text x="0" y="0" font-size="9" fill="#1a1a1a" font-weight="600">Content Causality</text>
+          <rect x="0" y="15" width="120" height="60" rx="3" fill="rgba(91,91,214,0.1)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="60" y="35" text-anchor="middle" font-size="8" fill="#1a1a1a">"Logic is true"</text>
+          <text x="60" y="48" text-anchor="middle" font-size="8" fill="#1a1a1a">"Computation proceeds"</text>
+          <text x="60" y="61" text-anchor="middle" font-size="8" fill="#1a1a1a">"Algorithm runs"</text>
+          <text x="60" y="90" text-anchor="middle" font-size="7" fill="#6e6b64">Mapmaker attributes this.</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: SECTION DIVIDER §3 -->
+<div class="slide section-divider" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · The Problem</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h1>Causal<br>Circularity</h1>
+  <div class="subtitle">Why functionalism uses consciousness to explain consciousness</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<!-- SLIDE 15: THE ONTOLOGICAL INVERSION -->
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.1 · The Loop</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>The Ontological Inversion</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Functionalism assumes consciousness emerges from abstract computation.</p>
+      <p class="point">But abstract computation requires a conscious mapmaker to assign meaning.</p>
+      <p class="point">Therefore: functionalism uses consciousness to explain consciousness.</p>
+      <div class="key-idea">
+        <div class="kicker">The Circularity</div>
+        <p>To show computation instantiates consciousness, we must already assume consciousness (the mapmaker). Begging the question.</p>
+      </div>
+      <p class="note">This applies to connectionist networks too—they require a conscious designer/interpreter to have meaning.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow15" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+        </defs>
+
+        <!-- Functionalist Claim (top) -->
+        <g transform="translate(70, 20)">
+          <rect width="200" height="50" rx="4" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="100" y="20" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Functionalist Claim</text>
+          <text x="100" y="38" text-anchor="middle" font-size="8" fill="#6e6b64">Computation → Consciousness</text>
+        </g>
+
+        <!-- Arrow down: claim entails hidden requirement -->
+        <path d="M 140 75 L 110 130" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrow15)" stroke-dasharray="4 2"/>
+        <text x="80" y="108" font-size="8" fill="#5b5bd6" font-weight="600">entails</text>
+
+        <!-- Hidden Requirement (middle) -->
+        <g transform="translate(35, 135)">
+          <rect width="200" height="50" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="100" y="20" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Hidden Requirement</text>
+          <text x="100" y="38" text-anchor="middle" font-size="8" fill="#6e6b64">Mapmaker must assign meaning</text>
+        </g>
+
+        <!-- Arrow down-right: requires consciousness -->
+        <path d="M 140 190 L 170 230" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrow15)"/>
+        <text x="100" y="218" font-size="8" fill="#5b5bd6" font-weight="600">requires</text>
+
+        <!-- Consciousness ellipse (bottom) -->
+        <ellipse cx="185" cy="252" rx="58" ry="22" fill="rgba(91,91,214,0.2)" stroke="#5b5bd6" stroke-width="2"/>
+        <text x="185" y="256" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">Consciousness</text>
+
+        <!-- Loop-back arrow: Consciousness presupposed by the Claim -->
+        <path d="M 243 252 Q 315 245 315 160 Q 315 85 270 60" stroke="#5b5bd6" stroke-width="2" fill="none" stroke-dasharray="4 2" marker-end="url(#arrow15)"/>
+        <text x="292" y="165" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">presupposes</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: THE REVISED CAUSAL CHAIN -->
+<div class="slide" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · The Truth</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h2>The Revised Causal Chain</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Functionalism (wrong):</strong> physics gives rise to computation, which gives rise to consciousness.</p>
+      <p class="point"><strong>Lerchner (correct):</strong> physics gives rise to consciousness; consciousness extracts concepts; concepts are alphabetized into computation.</p>
+      <p class="point">Consciousness comes first. Computation is the mapmaker's tool — its output, not its origin.</p>
+      <div class="key-idea">
+        <div class="kicker">The Inversion</div>
+        <p>Computation is downstream of consciousness, not upstream of it.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 280" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow16w" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 9 3, 0 6" fill="#c2410c" opacity="0.7"/>
+          </marker>
+          <marker id="arrow16r" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 9 3, 0 6" fill="#0d9488"/>
+          </marker>
+        </defs>
+
+        <text x="20" y="22" font-size="9" font-weight="700" fill="#c2410c" letter-spacing="0.5">FUNCTIONALIST  ✕</text>
+        <g opacity="0.65">
+          <g transform="translate(20, 40)">
+            <rect width="80" height="36" rx="4" fill="rgba(124,58,237,0.12)" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="40" y="22" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Physics</text>
+          </g>
+          <path d="M 105 58 L 130 58" stroke="#c2410c" stroke-width="1.5" marker-end="url(#arrow16w)"/>
+          <g transform="translate(135, 40)">
+            <rect width="90" height="36" rx="4" fill="rgba(14,165,233,0.12)" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="45" y="22" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Computation</text>
+          </g>
+          <path d="M 230 58 L 255 58" stroke="#c2410c" stroke-width="1.5" marker-end="url(#arrow16w)"/>
+          <g transform="translate(260, 40)">
+            <rect width="90" height="36" rx="4" fill="rgba(91,91,214,0.12)" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="45" y="22" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Consciousness</text>
+          </g>
+        </g>
+        <line x1="15" y1="58" x2="355" y2="58" stroke="#c2410c" stroke-width="1.2" opacity="0.5"/>
+
+        <line x1="20" y1="115" x2="340" y2="115" stroke="#d6d3cc" stroke-width="1" stroke-dasharray="2 3"/>
+
+        <text x="20" y="148" font-size="9" font-weight="700" fill="#0d9488" letter-spacing="0.5">LERCHNER  ✓</text>
+        <g transform="translate(20, 165)">
+          <rect width="70" height="40" rx="4" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+          <text x="35" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Physics</text>
+        </g>
+        <path d="M 95 185 L 115 185" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow16r)"/>
+        <g transform="translate(120, 165)">
+          <rect width="80" height="40" rx="4" fill="rgba(91,91,214,0.18)" stroke="#5b5bd6" stroke-width="2"/>
+          <text x="40" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="700">Consciousness</text>
+        </g>
+        <path d="M 205 185 L 225 185" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow16r)"/>
+        <g transform="translate(230, 165)">
+          <rect width="60" height="40" rx="4" fill="rgba(0,0,0,0.08)" stroke="#6e6b64" stroke-width="2"/>
+          <text x="30" y="25" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Concepts</text>
+        </g>
+        <path d="M 290 205 Q 320 240 235 245 L 165 245" stroke="#0d9488" stroke-width="2" fill="none" marker-end="url(#arrow16r)"/>
+        <g transform="translate(80, 235)">
+          <rect width="80" height="32" rx="4" fill="rgba(14,165,233,0.15)" stroke="#0ea5e9" stroke-width="2"/>
+          <text x="40" y="20" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Computation</text>
+        </g>
+        <text x="220" y="240" text-anchor="middle" font-size="8" fill="#0d9488" font-style="italic" font-weight="600">alphabetize</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17: THE MELODY PARADOX -->
+<div class="slide" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">§3.3 · Proof</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h2>The Melody Paradox</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A single physical voltage trajectory can be mapped to entirely different computations depending on how you alphabetize it.</p>
+      <p class="point">Same physics. Different computations. Same substrate could compute arithmetic or music depending on interpretation.</p>
+      <div class="key-idea">
+        <div class="kicker">What This Proves</div>
+        <p>Computation is not intrinsic to physics. It lives in the mapping, not in the mechanism. The substrate cannot determine the computation.</p>
+      </div>
+      <p class="note">This destroys substrate-independence: substrate alone never determines computation.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-map" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto">
+            <polygon points="0 0, 8 2.5, 0 5" fill="#7c3aed" opacity="0.65"/>
+          </marker>
+        </defs>
+        <polyline points="20,80 40,60 60,50 80,65 100,45 120,75 140,55 160,70 180,40 200,80 220,50 240,75 260,55 280,70 300,60" stroke="#7c3aed" stroke-width="2" fill="none"/>
+        <text x="160" y="95" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">One voltage trace</text>
+        <path d="M 140 100 Q 100 108 70 118" stroke="#7c3aed" stroke-width="1.2" fill="none" stroke-dasharray="3 2" opacity="0.7" marker-end="url(#arrow-map)"/>
+        <path d="M 160 100 L 180 118" stroke="#7c3aed" stroke-width="1.2" fill="none" stroke-dasharray="3 2" opacity="0.7" marker-end="url(#arrow-map)"/>
+        <path d="M 180 100 Q 230 108 290 118" stroke="#7c3aed" stroke-width="1.2" fill="none" stroke-dasharray="3 2" opacity="0.7" marker-end="url(#arrow-map)"/>
+        <g transform="translate(20, 120)">
+          <rect width="100" height="50" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="50" y="18" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Mapping 1</text>
+          <text x="50" y="33" text-anchor="middle" font-size="8" fill="#6e6b64">Threshold: 50V</text>
+          <text x="50" y="46" text-anchor="middle" font-size="8" fill="#1a1a1a">→ Arithmetic</text>
+        </g>
+        <g transform="translate(130, 120)">
+          <rect width="100" height="50" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="50" y="18" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Mapping 2</text>
+          <text x="50" y="33" text-anchor="middle" font-size="8" fill="#6e6b64">Threshold: 60V</text>
+          <text x="50" y="46" text-anchor="middle" font-size="8" fill="#1a1a1a">→ Music notation</text>
+        </g>
+        <g transform="translate(240, 120)">
+          <rect width="100" height="50" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="1.5"/>
+          <text x="50" y="18" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="600">Mapping 3</text>
+          <text x="50" y="33" text-anchor="middle" font-size="8" fill="#6e6b64">Threshold: 55V</text>
+          <text x="50" y="46" text-anchor="middle" font-size="8" fill="#1a1a1a">→ Logic gates</text>
+        </g>
+        <text x="160" y="240" text-anchor="middle" font-size="9" fill="#6e6b64">Same physics</text>
+        <text x="160" y="256" text-anchor="middle" font-size="9" fill="#6e6b64">Three different semantics</text>
+        <text x="160" y="272" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">Physics doesn't determine computation</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18: THE CAUSALITY GAP -->
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">§3 · The Unbridgeable</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>The Causality Gap</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">From concepts (A) we can alphabetize down to symbols (p). But from symbols (p) we cannot climb back to consciousness.</p>
+      <p class="point">Symbols have no intrinsic causal path back to experience. The gap is lateral and unbridgeable.</p>
+      <div class="key-idea">
+        <div class="kicker">The Asymmetry</div>
+        <p>Consciousness → Concepts → Symbols. But not: Symbols → Concepts → Consciousness.</p>
+      </div>
+      <p class="note">This is why digital minds cannot bootstrap themselves into sentience: they lack the embodied experience to form concepts.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(60, 20)">
+          <circle cx="40" cy="40" r="25" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="2"/>
+          <text x="40" y="43" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">C</text>
+          <text x="40" y="72" text-anchor="middle" font-size="8" fill="#1a1a1a">Consciousness</text>
+        </g>
+        <path d="M 130 55 L 160 80" stroke="#5b5bd6" stroke-width="2" marker-end="url(#arrow18)"/>
+        <text x="140" y="65" font-size="8" fill="#5b5bd6" font-weight="600">forms</text>
+        <g transform="translate(170, 70)">
+          <rect width="60" height="50" rx="4" fill="rgba(0,0,0,0.08)" stroke="#6e6b64" stroke-width="2"/>
+          <text x="30" y="28" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Concepts</text>
+          <text x="30" y="43" text-anchor="middle" font-size="8" fill="#6e6b64">(A)</text>
+        </g>
+        <path d="M 180 120 L 180 160" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow19)"/>
+        <text x="210" y="140" font-size="8" fill="#0d9488" font-weight="600">alphabetize</text>
+        <g transform="translate(150, 170)">
+          <rect width="60" height="50" rx="4" fill="rgba(14,165,233,0.15)" stroke="#0ea5e9" stroke-width="2"/>
+          <text x="30" y="28" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Symbols</text>
+          <text x="30" y="43" text-anchor="middle" font-size="8" fill="#6e6b64">(p)</text>
+        </g>
+        <path d="M 150 200 Q 100 230 80 250" stroke="rgba(200,50,50,0.5)" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow20)"/>
+        <text x="110" y="235" font-size="9" fill="#a85050" font-weight="700">✕ blocked</text>
+        <text x="180" y="260" text-anchor="middle" font-size="8" fill="#a85050" font-weight="600">No reverse path</text>
+        <defs>
+          <marker id="arrow18" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#5b5bd6"/>
+          </marker>
+          <marker id="arrow19" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#0d9488"/>
+          </marker>
+          <marker id="arrow20" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#a85050"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: SECTION DIVIDER §4 -->
+<div class="slide section-divider" data-n="19">
+  <div class="slide-header">
+    <span class="slide-chapter">§4 · The Implications</span>
+    <span class="slide-num">19</span>
+  </div>
+  <h1>What We Can<br>Actually Build</h1>
+  <div class="subtitle">The difference between tools and moral patients</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<!-- SLIDE 20: THE TRANSDUCTION FALLACY -->
+<div class="slide" data-n="20">
+  <div class="slide-header">
+    <span class="slide-chapter">§4.1 · Embodiment</span>
+    <span class="slide-num">20</span>
+  </div>
+  <h2>The Transduction Fallacy</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Some argue embodied robotics avoids the problem. If we give a system sensors and actuators, maybe it can bootstrap consciousness.</p>
+      <p class="point"><strong>Transduction fallacy:</strong> Confusing the ability to transduce (convert sensor input to motor output) with consciousness.</p>
+      <p class="point">A thermostat has sensors and actuators. It is not conscious.</p>
+      <div class="key-idea">
+        <div class="kicker">The Problem</div>
+        <p>Transduction ≠ Experience. The robot still lacks the metabolic vulnerability that grounds experience.</p>
+      </div>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <!-- Robot on the left -->
+        <g transform="translate(20, 30)">
+          <rect width="110" height="130" rx="4" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="2"/>
+          <circle cx="30" cy="25" r="6" fill="#0ea5e9"/>
+          <text x="30" y="19" text-anchor="middle" font-size="6" fill="#1a1a1a">S</text>
+          <circle cx="80" cy="25" r="6" fill="#0ea5e9"/>
+          <text x="80" y="19" text-anchor="middle" font-size="6" fill="#1a1a1a">S</text>
+          <line x1="30" y1="35" x2="30" y2="60" stroke="#0ea5e9" stroke-width="1.5"/>
+          <line x1="80" y1="35" x2="80" y2="60" stroke="#0ea5e9" stroke-width="1.5"/>
+          <rect x="40" y="58" width="30" height="15" rx="2" fill="rgba(0,0,0,0.08)"/>
+          <text x="55" y="69" text-anchor="middle" font-size="7" fill="#1a1a1a">CPU</text>
+          <line x1="55" y1="73" x2="30" y2="95" stroke="#0ea5e9" stroke-width="1.5"/>
+          <line x1="55" y1="73" x2="80" y2="95" stroke="#0ea5e9" stroke-width="1.5"/>
+          <circle cx="30" cy="105" r="6" fill="#0ea5e9"/>
+          <text x="30" y="108" text-anchor="middle" font-size="6" fill="#1a1a1a">A</text>
+          <circle cx="80" cy="105" r="6" fill="#0ea5e9"/>
+          <text x="80" y="108" text-anchor="middle" font-size="6" fill="#1a1a1a">A</text>
+        </g>
+        <text x="75" y="180" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">Robot</text>
+        <text x="75" y="195" text-anchor="middle" font-size="8" fill="#0ea5e9">Sensors → CPU → Motors</text>
+
+        <!-- Question in the gap -->
+        <text x="170" y="75" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">Conscious?</text>
+        <path d="M 140 85 L 195 85" stroke="#6e6b64" stroke-width="1.5" fill="none" marker-end="url(#arrow-trans)"/>
+
+        <!-- Answer on the right -->
+        <g transform="translate(200, 30)">
+          <rect width="120" height="130" rx="4" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6" stroke-width="2" stroke-dasharray="2 2"/>
+          <text x="60" y="32" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="700">No.</text>
+          <text x="60" y="60" text-anchor="middle" font-size="8" fill="#6e6b64">Transduction alone</text>
+          <text x="60" y="74" text-anchor="middle" font-size="8" fill="#6e6b64">does not create</text>
+          <text x="60" y="88" text-anchor="middle" font-size="8" fill="#6e6b64">experience.</text>
+          <text x="60" y="112" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600" font-style="italic">It's a tool.</text>
+        </g>
+
+        <defs>
+          <marker id="arrow-trans" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#6e6b64"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21: AGI AS A NON-SENTIENT TOOL -->
+<div class="slide" data-n="21">
+  <div class="slide-header">
+    <span class="slide-chapter">§4.2 · The Relief</span>
+    <span class="slide-num">21</span>
+  </div>
+  <h2>AGI as a Non-Sentient Tool</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The development of highly capable AGI does not inherently create a novel moral patient.</p>
+      <p class="point">AGI is a sophisticated non-sentient tool—more capable than humans in many domains, but lacking the embodied, metabolic vulnerability that grounds consciousness.</p>
+      <div class="key-idea">
+        <div class="kicker">Ontological Relief</div>
+        <p>We can build powerful AGI without worrying we're creating digital minds that suffer. They are not minded at all.</p>
+      </div>
+      <p class="point">This resolves the AI welfare paradox: no need to agonize over digital sentience.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <!-- HUMAN: stylized person with heart, breath, body -->
+        <g transform="translate(45, 25)">
+          <!-- subtle aura -->
+          <ellipse cx="35" cy="80" rx="42" ry="62" fill="rgba(124,58,237,0.06)"/>
+          <!-- head -->
+          <circle cx="35" cy="22" r="13" fill="rgba(124,58,237,0.18)" stroke="#7c3aed" stroke-width="1.8"/>
+          <!-- eyes -->
+          <circle cx="31" cy="20" r="1.4" fill="#1a1a1a"/>
+          <circle cx="39" cy="20" r="1.4" fill="#1a1a1a"/>
+          <!-- smile -->
+          <path d="M 30 26 Q 35 30 40 26" stroke="#1a1a1a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <!-- neck -->
+          <line x1="35" y1="35" x2="35" y2="42" stroke="#7c3aed" stroke-width="1.5"/>
+          <!-- torso -->
+          <path d="M 18 65 Q 18 45 35 42 Q 52 45 52 65 L 50 95 Q 35 100 20 95 Z" fill="rgba(124,58,237,0.14)" stroke="#7c3aed" stroke-width="1.8"/>
+          <!-- arms -->
+          <path d="M 19 50 Q 8 70 12 95" stroke="#7c3aed" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M 51 50 Q 62 70 58 95" stroke="#7c3aed" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- heart (vulnerability marker) -->
+          <path d="M 35 60 c -3 -4 -8 -3 -8 1 c 0 4 4 7 8 11 c 4 -4 8 -7 8 -11 c 0 -4 -5 -5 -8 -1 z" fill="#dc2626" opacity="0.85"/>
+          <!-- breath wisps -->
+          <path d="M 30 8 q 2 -4 0 -7" stroke="#7c3aed" stroke-width="0.9" fill="none" opacity="0.5"/>
+          <path d="M 40 8 q 2 -3 0 -6" stroke="#7c3aed" stroke-width="0.9" fill="none" opacity="0.5"/>
+          <!-- legs -->
+          <line x1="28" y1="100" x2="25" y2="125" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="42" y1="100" x2="45" y2="125" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round"/>
+          <text x="35" y="148" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="700">Human</text>
+          <text x="35" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">embodied · vulnerable</text>
+          <text x="35" y="174" text-anchor="middle" font-size="8" fill="#6e6b64">conscious</text>
+        </g>
+
+        <text x="170" y="92" text-anchor="middle" font-size="11" fill="#6e6b64" font-style="italic" font-weight="600">vs</text>
+
+        <!-- AGI: server rack / chip with circuit lines -->
+        <g transform="translate(225, 25)">
+          <!-- rack body -->
+          <rect x="5" y="20" width="65" height="90" rx="3" fill="rgba(14,165,233,0.10)" stroke="#0ea5e9" stroke-width="1.8"/>
+          <!-- chip in middle -->
+          <rect x="20" y="45" width="35" height="35" rx="2" fill="rgba(14,165,233,0.20)" stroke="#0ea5e9" stroke-width="1.5"/>
+          <text x="37.5" y="67" text-anchor="middle" font-size="9" fill="#0ea5e9" font-weight="700" font-family="monospace">AI</text>
+          <!-- chip pins -->
+          <line x1="20" y1="50" x2="14" y2="50" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="20" y1="58" x2="14" y2="58" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="20" y1="66" x2="14" y2="66" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="20" y1="74" x2="14" y2="74" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="55" y1="50" x2="61" y2="50" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="55" y1="58" x2="61" y2="58" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="55" y1="66" x2="61" y2="66" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="55" y1="74" x2="61" y2="74" stroke="#0ea5e9" stroke-width="1"/>
+          <!-- top row of LEDs / status -->
+          <circle cx="15" cy="28" r="1.5" fill="#0ea5e9"/>
+          <circle cx="22" cy="28" r="1.5" fill="#0ea5e9" opacity="0.5"/>
+          <circle cx="29" cy="28" r="1.5" fill="#0ea5e9" opacity="0.3"/>
+          <!-- bottom rail -->
+          <line x1="10" y1="95" x2="65" y2="95" stroke="#0ea5e9" stroke-width="0.8" opacity="0.5"/>
+          <line x1="10" y1="100" x2="65" y2="100" stroke="#0ea5e9" stroke-width="0.8" opacity="0.5"/>
+          <!-- feet -->
+          <line x1="15" y1="110" x2="15" y2="118" stroke="#0ea5e9" stroke-width="2"/>
+          <line x1="60" y1="110" x2="60" y2="118" stroke="#0ea5e9" stroke-width="2"/>
+          <text x="37.5" y="148" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="700">AGI</text>
+          <text x="37.5" y="162" text-anchor="middle" font-size="8" fill="#6e6b64">abstract · static</text>
+          <text x="37.5" y="174" text-anchor="middle" font-size="8" fill="#6e6b64">not minded</text>
+        </g>
+
+        <!-- moral status box -->
+        <g transform="translate(60, 210)">
+          <rect width="220" height="72" rx="4" fill="rgba(13,148,136,0.1)" stroke="#0d9488" stroke-width="2"/>
+          <text x="110" y="20" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="700">Moral Status</text>
+          <text x="110" y="38" text-anchor="middle" font-size="9" fill="#0d9488">Humans: moral patients</text>
+          <text x="110" y="52" text-anchor="middle" font-size="9" fill="#0d9488">AGI: powerful tools</text>
+          <text x="110" y="66" text-anchor="middle" font-size="8" fill="#6e6b64" font-style="italic">welfare considerations differ</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22: SECTION DIVIDER §5 -->
+<div class="slide section-divider" data-n="22">
+  <div class="slide-header">
+    <span class="slide-chapter">§5 · Summary</span>
+    <span class="slide-num">22</span>
+  </div>
+  <h1>The Central<br>Argument</h1>
+  <div class="subtitle">Why the map is not the territory</div>
+  <div class="section-num-big">V</div>
+</div>
+
+<!-- SLIDE 23: THE CORE ARGUMENT -->
+<div class="slide" data-n="23">
+  <div class="slide-header">
+    <span class="slide-chapter">Conclusion</span>
+    <span class="slide-num">23</span>
+  </div>
+  <h2>The Complete Logical Chain</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point"><strong>1.</strong> Computation requires an external mapping function f(p) = A chosen by a mapmaker.</p>
+      <p class="point"><strong>2.</strong> The mapmaker must be a conscious agent who extracts concepts from lived experience.</p>
+      <p class="point"><strong>3.</strong> Therefore, computation presupposes consciousness; it cannot instantiate it.</p>
+      <p class="point"><strong>4.</strong> Simulation of a process ≠ instantiation. A GPU modeling photosynthesis makes zero glucose.</p>
+      <p class="point"><strong>5.</strong> Substrate independence fails: the same physics maps to infinitely many computations (Melody Paradox).</p>
+      <p class="point"><strong>6.</strong> The causality gap is unbridgeable: symbols have no intrinsic path back to consciousness.</p>
+      <p class="point"><strong>7.</strong> Therefore, AGI is a sophisticated non-sentient tool, not a digital mind.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24: FINAL TAKEAWAY -->
+<div class="slide" data-n="24">
+  <div class="slide-header">
+    <span class="slide-chapter">Final Thoughts</span>
+    <span class="slide-num">24</span>
+  </div>
+  <h2>The Map Is Not The Territory</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <div class="key-idea">
+        <div class="kicker">Lerchner's Core Insight</div>
+        <p>"Expecting an algorithmic description to instantiate the quality it maps is like expecting the mathematical formula of gravity to physically exert weight."</p>
+      </div>
+      <p class="point">Consciousness is the territory. Computation is the map. Maps are useful, powerful, and often very accurate. But they do not become the territory.</p>
+      <p class="point">This does not diminish AGI's power or importance. It simply clarifies what it is: a tool made by a conscious agent, for use by conscious agents.</p>
+      <p class="note">The deepest insight: you cannot build a mind without already understanding what a mind is.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 340 300" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(20, 50)">
+          <circle cx="50" cy="50" r="40" fill="rgba(91,91,214,0.15)" stroke="#5b5bd6" stroke-width="2"/>
+          <circle cx="35" cy="35" r="5" fill="#5b5bd6"/>
+          <circle cx="50" cy="30" r="5" fill="#5b5bd6"/>
+          <circle cx="65" cy="35" r="5" fill="#5b5bd6"/>
+          <path d="M 40 55 Q 50 65 60 55" stroke="#5b5bd6" stroke-width="1.5" fill="none"/>
+          <text x="50" y="120" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Territory</text>
+          <text x="50" y="135" text-anchor="middle" font-size="8" fill="#6e6b64">Consciousness</text>
+          <text x="50" y="148" text-anchor="middle" font-size="8" fill="#6e6b64">Experience</text>
+        </g>
+        <g transform="translate(200, 50)">
+          <rect x="10" y="10" width="80" height="80" rx="4" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="2"/>
+          <line x1="25" y1="30" x2="75" y2="30" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="25" y1="45" x2="75" y2="45" stroke="#0ea5e9" stroke-width="1"/>
+          <line x1="25" y1="60" x2="75" y2="60" stroke="#0ea5e9" stroke-width="1"/>
+          <circle cx="50" cy="75" r="3" fill="#0ea5e9"/>
+          <circle cx="40" cy="75" r="3" fill="#0ea5e9"/>
+          <circle cx="60" cy="75" r="3" fill="#0ea5e9"/>
+          <text x="50" y="120" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Map</text>
+          <text x="50" y="135" text-anchor="middle" font-size="8" fill="#6e6b64">Algorithm</text>
+          <text x="50" y="148" text-anchor="middle" font-size="8" fill="#6e6b64">Computation</text>
+        </g>
+        <line x1="120" y1="90" x2="200" y2="90" stroke="#6e6b64" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="160" y="80" text-anchor="middle" font-size="8" fill="#6e6b64" font-weight="600">≠</text>
+        <rect x="50" y="210" width="240" height="60" rx="4" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="1.5"/>
+        <text x="170" y="230" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">Maps are essential tools for understanding.</text>
+        <text x="170" y="247" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">But the best map of consciousness is not consciousness.</text>
+        <text x="170" y="264" text-anchor="middle" font-size="8" fill="#6e6b64">The territory remains irreducibly first-personal.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION (fixed overlay, auto-hiding) -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 25</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">◐</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+// Show nav when mouse near bottom
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Click left/right halves of deck to navigate
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>

@@ -1,5 +1,14 @@
 # read-rd Changelog
 
+## 2026-06-30
+
+### Added "What We Call the World" naming atlas (anthro)
+
+- **New page** `anthro/world-names/world-names.html` — comparative naming atlas of 260 countries/territories across English, native script, Bengali, German, French, Spanish, Hindi, and Arabic. Placed under **Anthropology**, next to Flag History.
+- **Kept the source's clean light/article styling intact** (not wrapped in the read-rd dark chrome) per preference to iterate on read-rd's UI separately. Added only a minimal on-palette back-link to `read.sadh.app`.
+- **Registered in `index.html`** — added leaf under the `anthro` subject with a new `ref` format badge (`.file-fmt.ref`, cyan).
+- **Registered in `manifest.json`** — added `world-names` topic under `subjects.anthro.topics` (status: complete).
+
 ## 2026-03-23
 
 ### Session 10 — Fact-check audit, fixes, and file renames
