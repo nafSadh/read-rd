@@ -2,6 +2,15 @@
 
 ## 2026-06-30
 
+### world-names — interactive table features
+
+- **Drag-to-reorder columns** — any column header can be dragged to a new position; the header, colgroup `<col>`, and every row's cells move together. Order persists in `localStorage`; "Reset columns" restores the original layout.
+- **Filter by continent** — chip bar (All + 7 continents) with live per-continent counts. Every one of the 260 entries tagged with `data-continent` (verified 260/260; ISO/pycountry convention for transcontinental cases — Russia→Europe, Turkey/Caucasus/Kazakhstan→Asia).
+- **Group by continent** — toggle inserts sorted group-header rows with counts; combines with the active continent filter and the search box.
+- **Search** — matches any name or script across all columns; live count ("N of 260").
+- **Verified** with a jsdom harness — 26 assertions (filter counts, group order, drag reorder + persistence, reset), all passing.
+- Styling reuses the page's existing design tokens; no new dependencies, still a single self-contained file.
+
 ### Added "What We Call the World" naming atlas (anthro)
 
 - **New page** `anthro/world-names/world-names.html` — comparative naming atlas of 260 countries/territories across English, native script, Bengali, German, French, Spanish, Hindi, and Arabic. Placed under **Anthropology**, next to Flag History.
