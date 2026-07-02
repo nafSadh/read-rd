@@ -93,13 +93,50 @@
   100% { background-position: 200% 0; }
 }
 
-/* When image is loaded */
+/* When image is loaded — the image lives on a child layer that is
+   blended into the page so it reads as ink on the same paper */
 .nb-img.nb-loaded {
-  background-size: cover;
-  background-position: center;
+  border-color: transparent;
+  background: transparent;
 }
 .nb-img.nb-loaded::after { display: none; }
 .nb-img.nb-loaded::before { display: none; }
+
+.nb-img-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-size: cover;
+  background-position: center;
+  /* feather all four edges into the page */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent),
+                      linear-gradient(to bottom, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent),
+              linear-gradient(to bottom, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* Sketch art (default): dissolve the artwork's paper into the page.
+   Light: multiply sinks the cream paper into the page background.
+   Dark: invert + hue-rotate turns ink light while roughly keeping hues,
+   then screen sinks the (now dark) paper into the page. */
+[data-theme="light"] .nb-img:not(.nb-photo) .nb-img-layer {
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .nb-img:not(.nb-photo) .nb-img-layer {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
+
+/* Photographic art: keep tones, just print it onto the paper */
+[data-theme="light"] .nb-img.nb-photo .nb-img-layer {
+  mix-blend-mode: multiply;
+  filter: saturate(.92);
+}
+[data-theme="dark"] .nb-img.nb-photo .nb-img-layer {
+  filter: brightness(.88) saturate(.92);
+}
 
 /* Responsive */
 @media (max-width: 900px) {

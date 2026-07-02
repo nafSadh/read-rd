@@ -34,6 +34,7 @@
   function createPlaceholder(cfg) {
     const el = document.createElement('div');
     el.className = `nb-img nb-${cfg.type || 'section'}`;
+    if (cfg.style === 'photo') el.classList.add('nb-photo');
     const copyBtn = document.createElement('button');
     copyBtn.className = 'nb-prompt-copy';
     copyBtn.textContent = 'copy prompt';
@@ -48,12 +49,16 @@
     el.appendChild(copyBtn);
     el.dataset.prompt = cfg.prompt;
 
-    // Try loading local image
+    // Try loading local image — rendered on a child layer so the
+    // paper-blend filters never touch the copy-prompt button
     const src = cfg.src || cfg.file;
     if (src) {
       const img = new Image();
       img.onload = () => {
-        el.style.backgroundImage = `url(${src})`;
+        const layer = document.createElement('div');
+        layer.className = 'nb-img-layer';
+        layer.style.backgroundImage = `url(${src})`;
+        el.insertBefore(layer, el.firstChild);
         el.classList.add('nb-loaded');
       };
       // On error, stays as placeholder — no action needed
