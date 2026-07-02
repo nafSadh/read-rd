@@ -76,8 +76,17 @@
           scrollInner.insertBefore(el, scrollInner.firstChild);
         }
       } else if (cfg.target === 'detail-hero') {
-        if (!window._nbDetailImages) window._nbDetailImages = [];
-        window._nbDetailImages.push(cfg);
+        // Inline-detail pages: sections pre-rendered as #detail-N divs
+        const detail = document.getElementById('detail-' + cfg.sectionIdx);
+        if (detail) {
+          const header = detail.querySelector('.detail-header');
+          if (header) header.insertAdjacentElement('afterend', el);
+          else detail.insertBefore(el, detail.firstChild);
+        } else {
+          // Legacy pages: detail rendered on demand, inject via openDetail hook
+          if (!window._nbDetailImages) window._nbDetailImages = [];
+          window._nbDetailImages.push(cfg);
+        }
       } else {
         const target = document.querySelector(cfg.target);
         if (target) {
