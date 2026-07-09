@@ -1,5 +1,18 @@
 # read-rd Changelog
 
+## 2026-07-09
+
+### New study bundle — cog-sci/social-influence-bias ("Why Upvotes Beget Upvotes")
+
+- **New project** on social influence bias / vote herding, built from a verified deep-research synthesis (5 search angles, 21 primary sources, 25 claims each 3-vote adversarially verified against primary full texts). Core studies: Muchnik, Aral & Taylor 2013 (*Science*), Salganik/Dodds/Watts 2006 & Salganik/Watts 2008 (MusicLab), Krumme et al. 2012.
+- **Three learning formats** (the read-aid trio), each hand-crafting the same teaching diagrams with a shared color grammar (indigo = upvotes/positive influence, coral = downvotes, amber = crowd correction, teal = quality, purple = popularity/cumulative advantage):
+  - `deep-dive.html` — 7 sections + Sources, 8 SVG diagrams, footnoted; house `dd-shared.css` scaffold, both themes.
+  - `slides.html` — 27-slide deck (7 chapters), 17 col-2 diagram slides; Crimson Pro deck style, both themes.
+  - `guide.html` — cinematic dark animated scrolling guide, 6 sections, 7 animated SVGs (snowball climb, crowd-correction push-back).
+  - `index.html` — landing hub with three format cards + a "what the research shows" summary and primary-source links.
+- **Built via a 3-agent Workflow** (`sib-build`, agents #55–57 in `claude-agents.md`) off a shared content spec; every empirical figure verified verbatim (32% first-viewer / P=1.0e-6, +25% final / P=2.3e-11, +30% to ≥10, 0.099 vs 0.054 asymmetry, MusicLab Gini/unpredictability, inversion r=0.84 vs 0.16).
+- **Verified in browser** (localhost:8090, both themes): deep-dive all 8 diagrams render, fixed one asymmetry-diagram vertical overlap (viewBox 330→400, separated the evidence-bar band); slides deck title/content/dark all clean; guide hero + section content confirmed painting. Registered in the site nav under Cognitive Science. No console errors.
+
 ## 2026-07-02
 
 ### Paper-blend treatment for nano-banana images (both themes)

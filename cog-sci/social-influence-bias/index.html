@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Upvotes Beget Upvotes — Social Influence Bias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+      --serif: 'EB Garamond', Georgia, serif;
+      --sans: 'Jost', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+        --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+        --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+      }
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e18; --bg2: #0f1322; --bg3: #151b30;
+      --border: #1c2440; --text: #8490aa; --dim: #546080; --bright: #dce0ec;
+      --accent: #9b7aed; --accent2: #b598ff; --accent-soft: #9b7aed0c;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f3; --bg2: #ffffff; --bg3: #f2efe8;
+      --border: #d6d0c4; --text: #363b48; --dim: #65707a; --bright: #141a1e;
+      --accent: #7c3aed; --accent2: #9b5cf6; --accent-soft: #7c3aed10;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    .container { max-width: 820px; margin: 0 auto; padding: 60px 24px 80px; }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      background: var(--bg2); color: var(--dim); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    h1 {
+      font-family: var(--sans); font-size: 38px; font-weight: 500;
+      color: var(--bright); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    h1 em { font-style: italic; font-family: var(--serif); color: var(--accent); font-weight: 400; }
+    .subtitle {
+      font-size: 15px; color: var(--dim); margin-bottom: 40px;
+      font-family: var(--serif); font-style: italic;
+    }
+    .rule { height: 1px; background: var(--border); margin: 32px 0; }
+    .meta {
+      font-family: var(--sans); font-size: 15px; color: var(--text);
+      margin-bottom: 32px; line-height: 1.7;
+    }
+    .meta strong { color: var(--bright); font-weight: 600; }
+    .meta .hl { color: var(--accent); font-weight: 600; }
+    h2 {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .deliverable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px; margin-bottom: 12px;
+    }
+    .format-card {
+      border: 1px solid var(--border); padding: 22px 22px 20px; transition: all 0.2s;
+      text-decoration: none; display: block; background: var(--bg2);
+    }
+    .format-card:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-2px); }
+    .format-kicker {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+    }
+    .format-title {
+      font-size: 19px; font-weight: 500; color: var(--bright);
+      margin-bottom: 6px; letter-spacing: 0.3px;
+    }
+    .format-title em { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 400; }
+    .format-desc { font-size: 13.5px; color: var(--dim); line-height: 1.55; margin-bottom: 12px; }
+    .format-go { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+    .format-card:hover .format-go { color: var(--accent); }
+    .tension-list { list-style: none; margin-top: 4px; }
+    .tension-item {
+      font-size: 14.5px; color: var(--text); line-height: 1.65;
+      padding: 10px 0; border-bottom: 1px solid var(--bg3);
+    }
+    .tension-item:last-child { border-bottom: none; }
+    .tension-num { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-right: 8px; }
+    .tension-item strong { color: var(--bright); font-weight: 600; }
+    .footer {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--dim); line-height: 1.7;
+    }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .footer .src-label { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"></button>
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Cognitive Science &middot; Study Bundle</div>
+    <h1>Why <em>Upvotes</em> Beget Upvotes</h1>
+    <div class="subtitle">Social influence bias &amp; the herding of crowds &mdash; what the randomized experiments actually show.</div>
+    <div class="rule"></div>
+
+    <div class="meta">
+      <p>We suspect we upvote what already carries upvotes &mdash; but you can&rsquo;t prove it by watching, because popular things are popular partly because they are <em>good</em>. The only way to isolate pure social influence is to secretly plant a vote on otherwise-identical content and watch what happens.</p>
+      <p style="margin-top:12px">When researchers did exactly that, the answer was yes: a single seeded upvote made the next viewer <span class="hl">32% more likely</span> to upvote too, and that nudge <span class="hl">snowballed into a 25% higher final score</span>. But the effect is lopsided &mdash; fake <em>downvotes</em> get corrected by the crowd while fake upvotes don&rsquo;t &mdash; and quality still guards the extremes: the best content rarely fails outright, the worst rarely wins. Social influence rules the vast, path-dependent middle.</p>
+    </div>
+
+    <h2>Three Ways In</h2>
+    <div class="deliverable-grid">
+      <a class="format-card" href="deep-dive.html">
+        <div class="format-kicker">Deep Dive</div>
+        <div class="format-title">The <em>Full</em> Argument</div>
+        <div class="format-desc">Seven sections, eight hand-drawn diagrams, footnoted sources &mdash; from the confound to the caveats, at reading pace.</div>
+        <div class="format-go">Open deep dive &rarr;</div>
+      </a>
+      <a class="format-card" href="slides.html">
+        <div class="format-kicker">Slide Deck</div>
+        <div class="format-title">One <em>Idea</em> a Slide</div>
+        <div class="format-desc">A 27-slide walkthrough, each with its own diagram. Arrow keys, click, or swipe. Good for teaching or a fast pass.</div>
+        <div class="format-go">Open slides &rarr;</div>
+      </a>
+      <a class="format-card" href="guide.html">
+        <div class="format-kicker">Animated Guide</div>
+        <div class="format-title">Watch It <em>Snowball</em></div>
+        <div class="format-desc">A cinematic scroll where the seeded vote climbs and the crowd&rsquo;s correction pushes back. Motion that shows the mechanism.</div>
+        <div class="format-go">Open guide &rarr;</div>
+      </a>
+    </div>
+
+    <div class="rule"></div>
+    <h2>What the Research Shows</h2>
+    <ul class="tension-list">
+      <li class="tension-item"><span class="tension-num">01</span> <strong>Upvotes beget upvotes.</strong> A single planted upvote raised the first viewer&rsquo;s chance of upvoting by 32% (P = 1.0&times;10&#8315;&#8310;) and snowballed to a 25% higher final score over five months. <em>Muchnik, Aral &amp; Taylor 2013, Science.</em></li>
+      <li class="tension-item"><span class="tension-num">02</span> <strong>The effect is asymmetric.</strong> Planted downvotes were <em>upvoted more</em> as the crowd rushed to correct them (0.099 vs 0.054); there was no significant negative herding. Praise compounds; unfair criticism rebounds.</li>
+      <li class="tension-item"><span class="tension-num">03</span> <strong>Popularity signals distort markets.</strong> Showing download counts made hits bigger and far less predictable &mdash; the same song was a smash in one world and a flop in another. <em>Salganik, Dodds &amp; Watts 2006, Science.</em></li>
+      <li class="tension-item"><span class="tension-num">04</span> <strong>Fake popularity is partly self-fulfilling.</strong> Inverting the counts made most songs track their false rank &mdash; yet the genuinely best songs climbed back. Quality still guards the extremes. <em>Salganik &amp; Watts 2008.</em></li>
+      <li class="tension-item"><span class="tension-num">05</span> <strong>The pull is informational, not peer pressure.</strong> Signals steered which songs people <em>sampled</em>, not their judgment after listening &mdash; and the count&rsquo;s grip tightened over time. <em>Krumme et al. 2012.</em></li>
+      <li class="tension-item"><span class="tension-num">06</span> <strong>Mind the limits.</strong> Single platforms, small absolute baselines, and a pre-algorithmic era. The asymmetry may not generalize &mdash; random downvotes produced negative herding on Reddit.</li>
+    </ul>
+
+    <div class="footer">
+      <span class="src-label">Primary sources</span>
+      <p>
+        <a href="https://www.science.org/doi/10.1126/science.1240466" target="_blank">Muchnik, Aral &amp; Taylor (2013), <em>Science</em></a> &middot;
+        <a href="https://www.science.org/doi/10.1126/science.1121066" target="_blank">Salganik, Dodds &amp; Watts (2006), <em>Science</em></a> &middot;
+        <a href="https://journals.sagepub.com/doi/10.1177/019027250807100404" target="_blank">Salganik &amp; Watts (2008), <em>SPQ</em></a> &middot;
+        <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0033785" target="_blank">Krumme et al. (2012), <em>PLoS ONE</em></a> &middot;
+        <a href="https://www.pnas.org/doi/10.1073/pnas.1316836111" target="_blank">van de Rijt et al. (2014), <em>PNAS</em></a>
+      </p>
+      <p style="margin-top:12px">Study bundle &middot; Cognitive Science &middot; July 2026 &middot; verified deep-research synthesis, three learning formats.</p>
+    </div>
+  </div>
+
+<script>
+function toggleTheme() {
+  const body = document.documentElement;
+  const current = body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+  body.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateBtn();
+}
+function updateBtn() {
+  const t = document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀' : '☽';
+}
+const saved = localStorage.getItem('theme');
+if (saved) document.documentElement.setAttribute('data-theme', saved);
+updateBtn();
+</script>
+</body>
+</html>

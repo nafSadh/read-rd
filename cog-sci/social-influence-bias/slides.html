@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Influence Bias — Slides</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+:root, [data-theme="light"] {
+  --bg: #faf8f3;
+  --bg-shell: #eae7e0;
+  --fg: #141a1e;
+  --dim: #65707a;
+  --mute: #8490aa;
+  --accent: #7c3aed;
+  --accent2: #9b5cf6;
+  --accent3: #7c3aed;
+  --accent4: #a78bfa;
+  --yellow: #0d9488;
+  --card: rgba(0,0,0,0.025);
+  --border: rgba(0,0,0,0.08);
+  --code-bg: rgba(0,0,0,0.04);
+  --eq-bg: rgba(0,0,0,0.025);
+  --key-bg: linear-gradient(135deg, rgba(91,91,214,0.06), rgba(124,58,237,0.04));
+  --key-border: rgba(91,91,214,0.12);
+  --nav-hover-bg: rgba(91,91,214,0.04);
+  --title-bg: linear-gradient(165deg, #faf8f5 0%, #f0ece4 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(91,91,214,0.08);
+  --svg-accent2-fill: rgba(14,165,233,0.08);
+  --svg-accent3-fill: rgba(124,58,237,0.08);
+  --svg-subtle: rgba(0,0,0,0.04);
+  --svg-info-bg: rgba(0,0,0,0.02);
+  --svg-info-border: rgba(0,0,0,0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0e18;--bg-shell: #0e0e12;--fg: #dce0ec;--dim: #546080;--mute: #546080;
+    --accent: #9b7aed;--accent2: #b598ff;--accent3: #a78bfa;--accent4: #c4b5fd;--yellow: #34d399;
+    --card: rgba(255,255,255,0.03);--border: rgba(255,255,255,0.08);--code-bg: rgba(255,255,255,0.06);
+    --eq-bg: rgba(255,255,255,0.04);
+    --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+    --key-border: rgba(129,140,248,0.18);--nav-hover-bg: rgba(129,140,248,0.08);
+    --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+    --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+    --svg-accent-fill: rgba(129,140,248,0.12);--svg-accent2-fill: rgba(78,205,196,0.12);
+    --svg-accent3-fill: rgba(91,155,213,0.12);--svg-subtle: rgba(255,255,255,0.05);
+    --svg-info-bg: rgba(255,255,255,0.03);--svg-info-border: rgba(255,255,255,0.06);
+  }
+}
+[data-theme="dark"] {
+  --bg: #0b0e18;--bg-shell: #0e0e12;--fg: #dce0ec;--dim: #546080;--mute: #546080;
+  --accent: #9b7aed;--accent2: #b598ff;--accent3: #a78bfa;--accent4: #c4b5fd;--yellow: #34d399;
+  --card: rgba(255,255,255,0.03);--border: rgba(255,255,255,0.08);--code-bg: rgba(255,255,255,0.06);
+  --eq-bg: rgba(255,255,255,0.04);
+  --key-bg: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(91,155,213,0.06));
+  --key-border: rgba(129,140,248,0.18);--nav-hover-bg: rgba(129,140,248,0.08);
+  --title-bg: linear-gradient(165deg, #17171c 0%, #1c1c24 100%);
+  --shadow: 0 2px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border);
+  --svg-accent-fill: rgba(129,140,248,0.12);--svg-accent2-fill: rgba(78,205,196,0.12);
+  --svg-accent3-fill: rgba(91,155,213,0.12);--svg-subtle: rgba(255,255,255,0.05);
+  --svg-info-bg: rgba(255,255,255,0.03);--svg-info-border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); font-family: 'Source Sans 3', sans-serif; color: var(--fg); width: 100vw; height: 100dvh; overflow: hidden; transition: background 0.3s ease, color 0.3s ease; }
+.nav-bar { user-select: none; }
+.slide-header { user-select: none; }
+
+.deck { position: absolute; inset: 0; }
+.slide { position: absolute; inset: 0; background: var(--bg); padding: clamp(1.5rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 6rem); padding-bottom: clamp(2.5rem, 5vh, 4rem); display: none; flex-direction: column; overflow: hidden auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: rgba(91,99,245,0.15) transparent; transition: background 0.3s ease; }
+.slide.active { display: flex; animation: slideIn 0.35s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+.slide-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: clamp(0.3rem, 0.8vh, 0.6rem); flex-shrink: 0; }
+.slide-chapter { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+.slide-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--mute); }
+
+.slide h1 { font-family: 'Crimson Pro', serif; font-size: clamp(1.5rem, 3.2vw, 2.5rem); font-weight: 700; line-height: 1.15; color: var(--fg); margin-bottom: clamp(0.15rem, 0.5vh, 0.3rem); flex-shrink: 0; }
+.slide h1 em { font-weight: 400; color: var(--accent); }
+.slide h2 { font-family: 'Crimson Pro', serif; font-size: clamp(1.15rem, 2.6vw, 1.85rem); font-weight: 600; color: var(--fg); margin-bottom: clamp(0.1rem, 0.4vh, 0.2rem); flex-shrink: 0; }
+.slide .subtitle { font-family: 'Crimson Pro', serif; font-size: clamp(0.92rem, 1.3vw, 1.15rem); font-style: italic; color: var(--dim); margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem); flex-shrink: 0; }
+
+.slide-body { flex: 1; display: flex; gap: clamp(1.5rem, 3vw, 3.5rem); min-height: 0; }
+.slide-body.col-1 { flex-direction: column; justify-content: center; }
+.slide-body.col-2 { flex-direction: row; align-items: stretch; }
+.text-col { flex: 1.15; display: flex; flex-direction: column; justify-content: center; gap: clamp(0.5rem, 1.2vh, 0.9rem); min-width: 0; padding-right: clamp(0rem, 1vw, 1rem); }
+.slide-body.col-2 .text-col { border-right: 1px solid var(--border); margin-right: 0; }
+.svg-col { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: clamp(0rem, 0.5vw, 0.5rem); }
+.svg-col svg { width: 100%; height: auto; max-height: 100%; }
+.slide-body.col-1 .svg-col { flex: 1; }
+
+.point { font-size: clamp(0.88rem, 1.3vw, 1.15rem); line-height: 1.6; color: var(--dim); }
+.point strong { color: var(--fg); font-weight: 600; }
+.point code { font-family: 'IBM Plex Mono', monospace; font-size: 0.88em; background: var(--code-bg); padding: 0.12em 0.4em; border-radius: 3px; color: var(--accent2); }
+.eq-box { background: var(--eq-bg); border-left: 3px solid var(--accent); padding: clamp(0.6rem, 1vh, 0.85rem) clamp(0.8rem, 1.2vw, 1.2rem); border-radius: 0 6px 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: clamp(0.82rem, 1.15vw, 1.05rem); color: var(--fg); line-height: 1.7; margin: clamp(0.1rem, 0.3vh, 0.2rem) 0; }
+.eq-box .label { font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); display: block; margin-bottom: 0.2rem; }
+.note { font-family: 'Crimson Pro', serif; font-size: clamp(0.82rem, 1.1vw, 1.02rem); font-style: italic; color: var(--mute); border-top: 1px solid var(--border); padding-top: clamp(0.4rem, 0.8vh, 0.7rem); margin-top: auto; }
+.key-idea { background: var(--key-bg); border: 1px solid var(--key-border); border-radius: 8px; padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.2vw, 1.2rem); margin: clamp(0.1rem, 0.4vh, 0.25rem) 0; }
+.key-idea .kicker { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.25rem; }
+.key-idea p { font-family: 'Crimson Pro', serif; font-size: clamp(0.9rem, 1.2vw, 1.15rem); color: var(--fg); line-height: 1.55; }
+
+.slide:not(.title-slide):not(.section-divider) > .slide-header,
+.slide:not(.title-slide):not(.section-divider) > h1,
+.slide:not(.title-slide):not(.section-divider) > h2,
+.slide:not(.title-slide):not(.section-divider) > .subtitle,
+.slide:not(.title-slide):not(.section-divider) > .slide-body { max-width: 1400px; width: 100%; margin-left: auto; margin-right: auto; }
+
+.title-slide { justify-content: center; align-items: center; text-align: center; padding: clamp(2rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem); background: var(--title-bg); }
+.title-content { display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 800px; }
+.title-slide h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0.6rem; }
+.title-slide .meta { font-family: 'IBM Plex Mono', monospace; font-size: clamp(0.65rem, 0.9vw, 0.82rem); letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); margin-top: clamp(1rem, 2.5vh, 2rem); }
+.title-slide .ref { font-family: 'Crimson Pro', serif; font-size: clamp(0.9rem, 1.3vw, 1.15rem); font-style: italic; color: var(--mute); margin-top: 0.4rem; }
+
+.toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.25rem, 0.6vh, 0.5rem) clamp(1.5rem, 3vw, 3rem); list-style: none; }
+.toc-list li { font-size: clamp(0.82rem, 1.1vw, 1.02rem); color: var(--dim); padding: clamp(0.25rem, 0.5vh, 0.45rem) 0; border-bottom: 1px solid var(--border); display: flex; gap: 0.6rem; align-items: baseline; }
+.toc-list .toc-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--accent); min-width: 2rem; flex-shrink: 0; }
+
+.section-divider { justify-content: center; align-items: flex-start; padding: clamp(2.5rem, 6vh, 5rem) clamp(2rem, 6vw, 8rem); background: linear-gradient(165deg, #f7f0ea 0%, #f0e8df 100%); }
+.section-divider .slide-chapter { color: var(--accent); opacity: 0.9; }
+.section-divider .slide-num { color: var(--mute); }
+.section-divider h1 { color: var(--fg); font-size: clamp(1.6rem, 4vw, 3rem); margin-top: clamp(1.5rem, 5vh, 4rem); margin-bottom: clamp(0.5rem, 1.5vh, 1rem); }
+.section-divider .subtitle { color: var(--dim); font-size: clamp(0.9rem, 1.3vw, 1.2rem); }
+.section-divider .section-num-big { font-family: 'Crimson Pro', serif; font-size: clamp(3rem, 10vw, 8rem); font-weight: 300; color: rgba(91,91,214,0.06); position: absolute; right: clamp(1rem, 3vw, 3rem); bottom: clamp(0.5rem, 2vw, 2rem); line-height: 1; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section-divider { background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%); }
+  :root:not([data-theme="light"]) .section-divider h1 { color: #f5f0ec; }
+  :root:not([data-theme="light"]) .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+  :root:not([data-theme="light"]) .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+}
+[data-theme="dark"] .section-divider { background: linear-gradient(165deg, #2a1518 0%, #1e1215 60%, #241820 100%); }
+[data-theme="dark"] .section-divider h1 { color: #f5f0ec; }
+[data-theme="dark"] .section-divider .subtitle { color: rgba(245,240,236,0.45); }
+[data-theme="dark"] .section-divider .section-num-big { color: rgba(129,140,248,0.1); }
+
+.nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem clamp(1rem, 3vw, 3rem) 0.4rem; height: auto; z-index: 10; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; background: linear-gradient(to bottom, transparent 0%, var(--bg) 60%); }
+.nav-bar:hover, .nav-bar:focus-within, .nav-bar.visible { opacity: 1; }
+.nav-bar > * { pointer-events: auto; }
+.nav-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--dim); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; transition: all 0.2s; flex-shrink: 0; padding: 0; line-height: 1; }
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--nav-hover-bg); }
+.progress-track { flex: 1; height: 2px; background: var(--border); border-radius: 1px; position: relative; overflow: hidden; min-width: 20px; }
+.progress-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); border-radius: 1px; transition: width 0.35s ease; }
+.slide-counter { font-family: 'IBM Plex Mono', monospace; font-size: 0.55rem; color: var(--mute); white-space: nowrap; min-width: 0; }
+.theme-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--dim); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: all 0.2s; flex-shrink: 0; padding: 0; line-height: 1; }
+.theme-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+.fig { overflow: visible; }
+.fig text { font-family: 'IBM Plex Mono', monospace; }
+.fig .label-text { font-family: 'Source Sans 3', sans-serif; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+  :root:not([data-theme="light"]) .fig text[fill="#6e6b64"], :root:not([data-theme="light"]) .fig text[fill="#b0ada5"] { fill: #9b978e; }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.04)"], :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+  :root:not([data-theme="light"]) .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+  :root:not([data-theme="light"]) .fig text[fill="#0d9488"] { fill: #34d399; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+  :root:not([data-theme="light"]) .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+  :root:not([data-theme="light"]) .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+  :root:not([data-theme="light"]) .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+}
+[data-theme="dark"] .fig text[fill="#1a1a1a"] { fill: #e4e2dc; }
+[data-theme="dark"] .fig text[fill="#6e6b64"], [data-theme="dark"] .fig text[fill="#b0ada5"] { fill: #9b978e; }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.04)"], [data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.03)"] { fill: rgba(255,255,255,0.06); }
+[data-theme="dark"] .fig rect[fill="rgba(0,0,0,0.025)"] { fill: rgba(255,255,255,0.04); }
+[data-theme="dark"] .fig text[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig text[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig text[fill="#7c3aed"] { fill: #a78bfa; }
+[data-theme="dark"] .fig text[fill="#0d9488"] { fill: #34d399; }
+[data-theme="dark"] .fig rect[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig rect[stroke="#0ea5e9"] { stroke: #38bdf8; }
+[data-theme="dark"] .fig rect[stroke="#7c3aed"] { stroke: #a78bfa; }
+[data-theme="dark"] .fig rect[stroke="#0d9488"] { stroke: #34d399; }
+[data-theme="dark"] .fig line[stroke="#5b5bd6"] { stroke: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#5b5bd6"] { fill: #818cf8; }
+[data-theme="dark"] .fig circle[fill="#0ea5e9"] { fill: #38bdf8; }
+[data-theme="dark"] .fig circle[fill="#7c3aed"] { fill: #a78bfa; }
+
+@media (max-width: 900px) {
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; }
+  .toc-list { gap: 0.2rem 1.2rem; }
+}
+@media (max-width: 600px) {
+  .slide { padding: 1rem 1.2rem; padding-bottom: 2.2rem; }
+  .slide .subtitle { margin-bottom: 0.5rem; }
+  .slide-body.col-2 { flex-direction: column; gap: 0.8rem; }
+  .slide-body.col-2 .text-col { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; }
+  .text-col { gap: 0.4rem; }
+  .svg-col { max-height: 38vh; }
+  .toc-list { grid-template-columns: 1fr; }
+  .nav-bar { padding: 0.3rem 0.8rem; }
+  .nav-btn, .theme-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+  .slide-counter { font-size: 0.5rem; }
+}
+@media (max-height: 500px) {
+  .slide { padding: 0.6rem 1.5rem 1.8rem; }
+  .text-col { gap: 0.3rem; }
+  .nav-bar { padding: 0.15rem 0.5rem; }
+  .nav-btn, .theme-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+}
+@keyframes dashFlow { to { stroke-dashoffset: -16; } }
+@keyframes pulse2 { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.dash-flow { stroke-dasharray: 6 4; animation: dashFlow 0.8s linear infinite; }
+.pulse-anim { animation: pulse2 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ===================== SLIDE 0: TITLE ===================== -->
+<div class="slide title-slide active" data-n="0">
+  <svg width="120" height="6" viewBox="0 0 120 6" style="margin-bottom:1.5rem;flex-shrink:0;">
+    <rect width="40" height="6" rx="3" fill="#5b5bd6"/>
+    <rect x="44" width="40" height="6" rx="3" fill="#d99a2b"/>
+    <rect x="88" width="32" height="6" rx="3" fill="#0d9488"/>
+  </svg>
+  <h1>Why Upvotes Beget <em>Upvotes</em></h1>
+  <div class="ref">Social Influence Bias &amp; the Herding of Crowds</div>
+  <div class="ref">Muchnik, Aral &amp; Taylor 2013 (Science) · Salganik, Dodds &amp; Watts 2006 (Science)</div>
+  <div class="meta">Arrow keys / click / swipe · ◐ for dark mode</div>
+</div>
+
+<!-- ===================== SLIDE 1: TOC ===================== -->
+<div class="slide" data-n="1">
+  <div class="slide-header">
+    <span class="slide-chapter">OVERVIEW</span>
+    <span class="slide-num">1</span>
+  </div>
+  <h2>A Single Planted Vote, Followed for Months</h2>
+  <div class="subtitle">How researchers proved that popularity partly manufactures itself</div>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <ul class="toc-list">
+        <li><span class="toc-num">I</span> The confound — why you must randomize</li>
+        <li><span class="toc-num">II</span> The experiment — Muchnik et al. 2013</li>
+        <li><span class="toc-num">III</span> The asymmetry — praise vs. criticism</li>
+        <li><span class="toc-num">IV</span> MusicLab — inequality &amp; unpredictability</li>
+        <li><span class="toc-num">V</span> The inversion — self-fulfilling but bounded</li>
+        <li><span class="toc-num">VI</span> The mechanism — attention, not pressure</li>
+        <li><span class="toc-num">VII</span> Caveats, replications &amp; what it means</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 2: SECTION DIVIDER — I ===================== -->
+<div class="slide section-divider" data-n="2">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION I</span>
+    <span class="slide-num">2</span>
+  </div>
+  <h1>The <em>Confound</em></h1>
+  <div class="subtitle">We suspect we upvote what's already upvoted. But popular things are also often good.</div>
+  <div class="section-num-big">I</div>
+</div>
+
+<!-- ===================== SLIDE 3: THE CONFOUND ===================== -->
+<div class="slide" data-n="3">
+  <div class="slide-header">
+    <span class="slide-chapter">I · POPULAR ≠ GOOD?</span>
+    <span class="slide-num">3</span>
+  </div>
+  <h2>You Can't Prove It by Watching</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A high score could mean two very different things: the content is genuinely <strong>good</strong> (teal), or people just <strong>copied the votes they already saw</strong> (indigo).</p>
+      <p class="point">In the wild these two arrows are <strong>tangled together</strong>. Observation alone can't separate quality from social influence — correlation is not causation.</p>
+      <div class="key-idea">
+        <div class="kicker">The Fix</div>
+        <p>Randomly plant a vote on otherwise-identical content. Any difference in the final score can then only be caused by that one seed.</p>
+      </div>
+      <p class="note">Ref: Muchnik, Aral &amp; Taylor 2013, Science 341:647</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">TWO CAUSES, ONE SCORE</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- quality source -->
+        <rect x="30" y="60" width="120" height="46" fill="rgba(13,148,136,0.10)" stroke="#0d9488" rx="6"/>
+        <text x="90" y="82" text-anchor="middle" font-size="9" fill="#0d9488" font-weight="500">Intrinsic quality</text>
+        <text x="90" y="97" text-anchor="middle" font-size="7" fill="#6e6b64">the true merit signal</text>
+        <!-- prior votes source -->
+        <rect x="30" y="176" width="120" height="46" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="6"/>
+        <text x="90" y="198" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="500">Prior votes seen</text>
+        <text x="90" y="213" text-anchor="middle" font-size="7" fill="#6e6b64">social influence</text>
+        <!-- outcome -->
+        <rect x="248" y="118" width="92" height="46" fill="rgba(0,0,0,0.04)" stroke="#b0ada5" rx="6"/>
+        <text x="294" y="140" text-anchor="middle" font-size="9" fill="#1a1a1a" font-weight="600">High score</text>
+        <text x="294" y="155" text-anchor="middle" font-size="7" fill="#6e6b64">what we observe</text>
+        <!-- arrows -->
+        <line x1="150" y1="83" x2="246" y2="130" stroke="#0d9488" stroke-width="2"/>
+        <polygon points="246,130 237,126 240,135" fill="#0d9488"/>
+        <line x1="150" y1="199" x2="246" y2="152" stroke="#5b5bd6" stroke-width="2"/>
+        <polygon points="246,152 240,147 237,156" fill="#5b5bd6"/>
+        <text x="196" y="98" font-size="7" fill="#0d9488">merit</text>
+        <text x="188" y="192" font-size="7" fill="#5b5bd6">herding</text>
+        <!-- confound bracket -->
+        <path d="M150,120 C185,120 185,162 150,162" fill="none" stroke="#9e9bac" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="205" y="250" text-anchor="middle" font-size="8" fill="#6e6b64">Observed together, they are</text>
+        <text x="205" y="263" text-anchor="middle" font-size="8" fill="#6e6b64">impossible to disentangle.</text>
+        <rect x="40" y="284" width="280" height="34" fill="rgba(217,154,43,0.08)" stroke="#d99a2b" stroke-width="0.6" rx="5"/>
+        <text x="180" y="299" text-anchor="middle" font-size="7.5" fill="#d99a2b">Randomization cuts the teal arrow's variance —</text>
+        <text x="180" y="311" text-anchor="middle" font-size="7.5" fill="#d99a2b">so only the indigo one can move the score.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 4: WHY RANDOMIZE ===================== -->
+<div class="slide" data-n="4">
+  <div class="slide-header">
+    <span class="slide-chapter">I · THE CAUSAL KEY</span>
+    <span class="slide-num">4</span>
+  </div>
+  <h2>Plant the Vote, Then Wait</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">If two identical comments differ only in a <strong>secret seed vote</strong> assigned by a coin flip, then on average their content, timing, and authors are the same.</p>
+      <p class="point">So any gap in their <strong>final scores months later</strong> must trace back to the seed — the very definition of a causal effect.</p>
+      <p class="point">This is why the studies that matter are <strong>randomized field experiments</strong>, not surveys of what's already popular.</p>
+      <div class="key-idea">
+        <div class="kicker">Design Logic</div>
+        <p>Coin flip &rarr; balanced groups &rarr; the only systematic difference is the nudge &rarr; the difference in outcome is caused by the nudge.</p>
+      </div>
+      <p class="note">Ref: Muchnik et al. 2013 · van de Rijt et al. 2014, PNAS</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">RANDOM ASSIGNMENT ISOLATES CAUSE</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- identical comment -->
+        <rect x="120" y="46" width="120" height="34" fill="rgba(0,0,0,0.04)" stroke="#b0ada5" rx="5"/>
+        <text x="180" y="63" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Fresh comment</text>
+        <text x="180" y="75" text-anchor="middle" font-size="7" fill="#6e6b64">content held constant</text>
+        <!-- dice -->
+        <rect x="160" y="94" width="40" height="40" fill="rgba(217,154,43,0.12)" stroke="#d99a2b" rx="7"/>
+        <circle cx="172" cy="106" r="2.5" fill="#d99a2b"/>
+        <circle cx="188" cy="106" r="2.5" fill="#d99a2b"/>
+        <circle cx="180" cy="114" r="2.5" fill="#d99a2b"/>
+        <circle cx="172" cy="122" r="2.5" fill="#d99a2b"/>
+        <circle cx="188" cy="122" r="2.5" fill="#d99a2b"/>
+        <text x="216" y="118" font-size="7" fill="#d99a2b">coin flip</text>
+        <line x1="180" y1="80" x2="180" y2="94" stroke="#b0ada5" stroke-width="1"/>
+        <!-- three arms -->
+        <line x1="170" y1="134" x2="80" y2="170" stroke="#5b5bd6" stroke-width="1.4"/>
+        <line x1="180" y1="134" x2="180" y2="170" stroke="#9e9bac" stroke-width="1.4"/>
+        <line x1="190" y1="134" x2="280" y2="170" stroke="#e0574a" stroke-width="1.4"/>
+        <rect x="30" y="172" width="100" height="40" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="5"/>
+        <text x="80" y="189" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="500">+1 up-treated</text>
+        <text x="80" y="202" text-anchor="middle" font-size="7" fill="#6e6b64">secret upvote</text>
+        <rect x="130" y="172" width="100" height="40" fill="rgba(0,0,0,0.04)" stroke="#9e9bac" rx="5"/>
+        <text x="180" y="189" text-anchor="middle" font-size="8" fill="#6e6b64" font-weight="500">control</text>
+        <text x="180" y="202" text-anchor="middle" font-size="7" fill="#6e6b64">untouched</text>
+        <rect x="230" y="172" width="100" height="40" fill="rgba(224,87,74,0.10)" stroke="#e0574a" rx="5"/>
+        <text x="280" y="189" text-anchor="middle" font-size="8" fill="#e0574a" font-weight="500">&minus;1 down-treated</text>
+        <text x="280" y="202" text-anchor="middle" font-size="7" fill="#6e6b64">secret downvote</text>
+        <!-- measure -->
+        <line x1="80" y1="212" x2="180" y2="248" stroke="#b0ada5" stroke-width="0.8"/>
+        <line x1="180" y1="212" x2="180" y2="248" stroke="#b0ada5" stroke-width="0.8"/>
+        <line x1="280" y1="212" x2="180" y2="248" stroke="#b0ada5" stroke-width="0.8"/>
+        <rect x="90" y="250" width="180" height="34" fill="rgba(13,148,136,0.08)" stroke="#0d9488" rx="5"/>
+        <text x="180" y="266" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">Measure final score, 5 months on</text>
+        <text x="180" y="278" text-anchor="middle" font-size="7" fill="#6e6b64">difference = effect of the seed</text>
+        <text x="180" y="308" text-anchor="middle" font-size="7.5" fill="#6e6b64">Groups balanced by chance &rarr; the seed is the only cause left.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 5: SECTION DIVIDER — II ===================== -->
+<div class="slide section-divider" data-n="5">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION II</span>
+    <span class="slide-num">5</span>
+  </div>
+  <h1>The <em>Experiment</em></h1>
+  <div class="subtitle">A 5-month randomized field trial on a Reddit-like news site — 101,281 comments, silently seeded.</div>
+  <div class="section-num-big">II</div>
+</div>
+
+<!-- ===================== SLIDE 6: EXPERIMENT DESIGN ===================== -->
+<div class="slide" data-n="6">
+  <div class="slide-header">
+    <span class="slide-chapter">MUCHNIK ET AL. 2013 · SCIENCE</span>
+    <span class="slide-num">6</span>
+  </div>
+  <h2>101,281 Comments, One Coin Flip Each</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Over five months, as each comment was posted it was randomly routed into one of three arms on an undisclosed social-news site.</p>
+      <p class="point"><strong>Up-treated</strong> (n = 4,049) got a secret +1 at creation; <strong>down-treated</strong> (n = 1,942) a secret &minus;1; the rest were <strong>controls</strong>.</p>
+      <p class="point">The scale is what makes it clean: <strong>&gt;10 million views</strong> and <strong>308,515 ratings</strong> from real users who never knew a vote had been planted.</p>
+      <div class="key-idea">
+        <div class="kicker">Why It Works</div>
+        <p>Random assignment means any difference in final score is caused by that one seed vote — not by content quality.</p>
+      </div>
+      <p class="note">Ref: Muchnik, Aral &amp; Taylor 2013, Science 341:647&ndash;651</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="340" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">EXPERIMENTAL DESIGN</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="105" y="44" width="150" height="40" fill="rgba(0,0,0,0.04)" stroke="#b0ada5" rx="6"/>
+        <text x="180" y="61" text-anchor="middle" font-size="10" fill="#1a1a1a" font-weight="600">101,281 comments</text>
+        <text x="180" y="76" text-anchor="middle" font-size="7" fill="#6e6b64">each randomized at creation</text>
+        <!-- fan out -->
+        <line x1="150" y1="84" x2="72" y2="112" stroke="#5b5bd6" stroke-width="1.4"/>
+        <line x1="180" y1="84" x2="180" y2="112" stroke="#9e9bac" stroke-width="1.4"/>
+        <line x1="210" y1="84" x2="288" y2="112" stroke="#e0574a" stroke-width="1.4"/>
+        <!-- up arm -->
+        <rect x="22" y="114" width="100" height="70" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="6"/>
+        <text x="72" y="132" text-anchor="middle" font-size="9" fill="#5b5bd6" font-weight="600">UP  +1</text>
+        <text x="72" y="150" text-anchor="middle" font-size="8" fill="#6e6b64">n = 4,049</text>
+        <text x="72" y="166" text-anchor="middle" font-size="7" fill="#6e6b64">secret upvote</text>
+        <text x="72" y="178" text-anchor="middle" font-size="7" fill="#6e6b64">at posting</text>
+        <!-- control arm -->
+        <rect x="130" y="114" width="100" height="70" fill="rgba(0,0,0,0.04)" stroke="#9e9bac" rx="6"/>
+        <text x="180" y="132" text-anchor="middle" font-size="9" fill="#6e6b64" font-weight="600">CONTROL</text>
+        <text x="180" y="150" text-anchor="middle" font-size="8" fill="#6e6b64">majority</text>
+        <text x="180" y="166" text-anchor="middle" font-size="7" fill="#6e6b64">untouched</text>
+        <text x="180" y="178" text-anchor="middle" font-size="7" fill="#6e6b64">baseline</text>
+        <!-- down arm -->
+        <rect x="238" y="114" width="100" height="70" fill="rgba(224,87,74,0.10)" stroke="#e0574a" rx="6"/>
+        <text x="288" y="132" text-anchor="middle" font-size="9" fill="#e0574a" font-weight="600">DOWN  &minus;1</text>
+        <text x="288" y="150" text-anchor="middle" font-size="8" fill="#6e6b64">n = 1,942</text>
+        <text x="288" y="166" text-anchor="middle" font-size="7" fill="#6e6b64">secret downvote</text>
+        <text x="288" y="178" text-anchor="middle" font-size="7" fill="#6e6b64">at posting</text>
+        <!-- exposure -->
+        <line x1="72" y1="184" x2="180" y2="212" stroke="#b0ada5" stroke-width="0.7"/>
+        <line x1="180" y1="184" x2="180" y2="212" stroke="#b0ada5" stroke-width="0.7"/>
+        <line x1="288" y1="184" x2="180" y2="212" stroke="#b0ada5" stroke-width="0.7"/>
+        <rect x="70" y="214" width="220" height="42" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" rx="6"/>
+        <text x="180" y="231" text-anchor="middle" font-size="8.5" fill="#7c3aed" font-weight="500">Real users vote for 5 months</text>
+        <text x="180" y="246" text-anchor="middle" font-size="7.5" fill="#6e6b64">&gt;10M views · 308,515 ratings collected</text>
+        <line x1="180" y1="256" x2="180" y2="272" stroke="#0d9488" stroke-width="1"/>
+        <rect x="90" y="274" width="180" height="42" fill="rgba(13,148,136,0.08)" stroke="#0d9488" rx="6"/>
+        <text x="180" y="291" text-anchor="middle" font-size="8.5" fill="#0d9488" font-weight="500">Compare FINAL scores</text>
+        <text x="180" y="306" text-anchor="middle" font-size="7.5" fill="#6e6b64">gap = causal effect of one seed vote</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 7: HEADLINE — FIRST VIEWER ===================== -->
+<div class="slide" data-n="7">
+  <div class="slide-header">
+    <span class="slide-chapter">MUCHNIK ET AL. 2013 · SCIENCE</span>
+    <span class="slide-num">7</span>
+  </div>
+  <h2>The First Viewer Catches It Immediately</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A single planted upvote raised the chance that the <strong>very first person to see the comment</strong> also upvoted it by <strong>+32%</strong> <code>P = 1.0e-6</code>.</p>
+      <p class="point">In absolute terms the baseline first-viewer upvote rate is small — about <strong>5.13%</strong> — so the nudge lifts it to roughly <strong>6.8%</strong>.</p>
+      <p class="point">Modest per person, but it fires on the <strong>first click</strong>, before quality has had any chance to sort things out.</p>
+      <div class="key-idea">
+        <div class="kicker">Read It Carefully</div>
+        <p>+32% is a relative increase over a small base rate. The absolute jump (~1.7 points) is what then gets a chance to compound.</p>
+      </div>
+      <p class="note">Ref: Muchnik et al. 2013, Science 341:647</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">FIRST-VIEWER UPVOTE PROBABILITY</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- axes -->
+        <line x1="70" y1="60" x2="70" y2="250" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="70" y1="250" x2="320" y2="250" stroke="#b0ada5" stroke-width="0.6"/>
+        <!-- gridline 5% and ~6.8% -->
+        <text x="60" y="253" text-anchor="end" font-size="7" fill="#6e6b64">0%</text>
+        <line x1="66" y1="180" x2="70" y2="180" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="60" y="183" text-anchor="end" font-size="7" fill="#6e6b64">5%</text>
+        <line x1="66" y1="110" x2="70" y2="110" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="60" y="113" text-anchor="end" font-size="7" fill="#6e6b64">7%</text>
+        <!-- control bar: 5.13% -->
+        <rect x="120" y="180" width="60" height="70" fill="rgba(158,155,172,0.35)" stroke="#9e9bac"/>
+        <text x="150" y="266" text-anchor="middle" font-size="8" fill="#6e6b64">control</text>
+        <text x="150" y="172" text-anchor="middle" font-size="8" fill="#6e6b64" font-weight="600">5.13%</text>
+        <!-- treated bar: ~6.8% -->
+        <rect x="220" y="120" width="60" height="130" fill="rgba(91,91,214,0.35)" stroke="#5b5bd6"/>
+        <text x="250" y="266" text-anchor="middle" font-size="8" fill="#5b5bd6">up-treated</text>
+        <text x="250" y="112" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">~6.8%</text>
+        <!-- delta bracket -->
+        <line x1="292" y1="120" x2="292" y2="180" stroke="#5b5bd6" stroke-width="1"/>
+        <line x1="288" y1="120" x2="296" y2="120" stroke="#5b5bd6" stroke-width="1"/>
+        <line x1="288" y1="180" x2="296" y2="180" stroke="#5b5bd6" stroke-width="1"/>
+        <text x="300" y="153" font-size="9" fill="#5b5bd6" font-weight="600">+32%</text>
+        <rect x="70" y="284" width="220" height="34" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.6" rx="5"/>
+        <text x="180" y="299" text-anchor="middle" font-size="8" fill="#5b5bd6">One seed vote &rarr; +32% relative</text>
+        <text x="180" y="311" text-anchor="middle" font-size="7.5" fill="#6e6b64">P = 1.0e-6 · effect on the very first rater</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 8: THE SNOWBALL ===================== -->
+<div class="slide" data-n="8">
+  <div class="slide-header">
+    <span class="slide-chapter">MUCHNIK ET AL. 2013 · SCIENCE</span>
+    <span class="slide-num">8</span>
+  </div>
+  <h2>It Doesn't Fade — It Snowballs</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The nudge could have washed out as more people voted. Instead it <strong>accumulated</strong>: up-treated comments ended the study with <strong>+25%</strong> higher mean scores <code>P = 2.3e-11</code>.</p>
+      <p class="point">They were also <strong>+30% more likely to reach a score of ≥10</strong> — <strong>6.4%</strong> of treated vs <strong>4.9%</strong> of controls cleared that bar.</p>
+      <p class="point">Absolute effects stayed modest — mean score drifted from about <strong>1.9 to 2.4</strong> — and clustered in certain topic categories.</p>
+      <div class="key-idea">
+        <div class="kicker">Path Dependence</div>
+        <p>Early luck compounds: a comment nudged upward keeps attracting the votes that push it further up.</p>
+      </div>
+      <p class="note">Ref: Muchnik et al. 2013, Science 341:647</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">ACCUMULATING HERDING OVER 5 MONTHS</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- axes -->
+        <line x1="56" y1="52" x2="56" y2="220" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="56" y1="220" x2="330" y2="220" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="50" y="60" text-anchor="end" font-size="7" fill="#6e6b64">score</text>
+        <text x="60" y="234" font-size="7" fill="#6e6b64">seed</text>
+        <text x="300" y="234" font-size="7" fill="#6e6b64">month 5</text>
+        <!-- control curve: rises 1.9-ish flat-ish -->
+        <path d="M70,180 Q160,168 320,150" fill="none" stroke="#9e9bac" stroke-width="2"/>
+        <circle cx="320" cy="150" r="3" fill="#9e9bac"/>
+        <text x="326" y="146" font-size="7.5" fill="#6e6b64">control ~1.9</text>
+        <!-- treated curve: diverges upward -->
+        <path d="M70,172 Q150,140 320,96" fill="none" stroke="#5b5bd6" stroke-width="2.4"/>
+        <circle cx="320" cy="96" r="3.5" fill="#5b5bd6"/>
+        <text x="300" y="90" text-anchor="end" font-size="7.5" fill="#5b5bd6" font-weight="600">up-treated ~2.4</text>
+        <!-- seed marker -->
+        <circle cx="70" cy="172" r="3" fill="#5b5bd6"/>
+        <text x="76" y="167" font-size="7" fill="#5b5bd6">+1</text>
+        <!-- divergence bracket -->
+        <line x1="322" y1="96" x2="322" y2="150" stroke="#5b5bd6" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <!-- +25% callout -->
+        <rect x="120" y="240" width="95" height="34" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="5"/>
+        <text x="167" y="255" text-anchor="middle" font-size="10" fill="#5b5bd6" font-weight="600">+25%</text>
+        <text x="167" y="267" text-anchor="middle" font-size="6.5" fill="#6e6b64">final mean · P=2.3e-11</text>
+        <!-- >=10 callout -->
+        <rect x="225" y="240" width="110" height="34" fill="rgba(124,58,237,0.10)" stroke="#7c3aed" rx="5"/>
+        <text x="280" y="255" text-anchor="middle" font-size="10" fill="#7c3aed" font-weight="600">+30% to ≥10</text>
+        <text x="280" y="267" text-anchor="middle" font-size="6.5" fill="#6e6b64">6.4% vs 4.9%</text>
+        <rect x="40" y="286" width="280" height="30" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="305" text-anchor="middle" font-size="7" fill="#6e6b64">The gap widens with time — herding compounds, it doesn't decay.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 9: SECTION DIVIDER — III ===================== -->
+<div class="slide section-divider" data-n="9">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION III</span>
+    <span class="slide-num">9</span>
+  </div>
+  <h1>The <em>Asymmetry</em></h1>
+  <div class="subtitle">Fake downvotes did not mirror fake upvotes. The crowd rushed to correct unfair penalties.</div>
+  <div class="section-num-big">III</div>
+</div>
+
+<!-- ===================== SLIDE 10: ASYMMETRY ===================== -->
+<div class="slide" data-n="10">
+  <div class="slide-header">
+    <span class="slide-chapter">MUCHNIK ET AL. 2013 · SCIENCE</span>
+    <span class="slide-num">10</span>
+  </div>
+  <h2>Praise Compounds, Criticism Gets Rebuffed</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">A secret downvote did <strong>not</strong> drag comments down the way an upvote lifted them. Instead, viewers <strong>upvoted the penalized comments more</strong>: probability <strong>0.099 vs 0.054</strong> in control <code>P = 1.0e-30</code>.</p>
+      <p class="point">The crowd behaved like a <strong>correction force</strong> (amber), rushing to right a perceived injustice.</p>
+      <p class="point">Net result: down-treated final scores were <strong>statistically indistinguishable from control</strong>. There was <strong>no significant negative herding</strong> in any topic category.</p>
+      <div class="key-idea">
+        <div class="kicker">The Surprise</div>
+        <p>Upward herding snowballs. Downward herding gets neutralized. Influence is asymmetric.</p>
+      </div>
+      <p class="note">Ref: Muchnik et al. 2013, Science 341:647</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 340" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="340" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">TWO NUDGES, TWO FATES</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- baseline line -->
+        <line x1="30" y1="150" x2="330" y2="150" stroke="#9e9bac" stroke-width="0.8" stroke-dasharray="4 3"/>
+        <text x="332" y="153" font-size="6.5" fill="#6e6b64" text-anchor="end" transform="translate(0,14)">baseline</text>
+        <!-- UP side -->
+        <text x="95" y="52" text-anchor="middle" font-size="8.5" fill="#5b5bd6" font-weight="600">SECRET +1</text>
+        <line x1="95" y1="150" x2="95" y2="72" stroke="#5b5bd6" stroke-width="2.4"/>
+        <polygon points="95,66 90,78 100,78" fill="#5b5bd6"/>
+        <path d="M95,72 Q120,60 130,74" fill="none" stroke="#5b5bd6" stroke-width="1.4"/>
+        <polygon points="130,74 122,71 126,80" fill="#5b5bd6"/>
+        <text x="150" y="72" font-size="7" fill="#5b5bd6">snowballs</text>
+        <text x="95" y="172" text-anchor="middle" font-size="7.5" fill="#6e6b64">no counter-force</text>
+        <text x="95" y="184" text-anchor="middle" font-size="7.5" fill="#6e6b64">&rarr; +25% final</text>
+        <!-- DOWN side -->
+        <text x="265" y="52" text-anchor="middle" font-size="8.5" fill="#e0574a" font-weight="600">SECRET &minus;1</text>
+        <line x1="265" y1="150" x2="265" y2="200" stroke="#e0574a" stroke-width="2.4"/>
+        <polygon points="265,206 260,194 270,194" fill="#e0574a"/>
+        <!-- correction arrow amber pushing back up -->
+        <line x1="285" y1="200" x2="285" y2="152" stroke="#d99a2b" stroke-width="2.4"/>
+        <polygon points="285,146 280,158 290,158" fill="#d99a2b"/>
+        <text x="292" y="180" font-size="7" fill="#d99a2b">crowd</text>
+        <text x="292" y="190" font-size="7" fill="#d99a2b">corrects</text>
+        <text x="265" y="224" text-anchor="middle" font-size="7.5" fill="#6e6b64">pulled back to</text>
+        <text x="265" y="236" text-anchor="middle" font-size="7.5" fill="#6e6b64">baseline</text>
+        <!-- numbers panel -->
+        <rect x="40" y="256" width="280" height="30" fill="rgba(217,154,43,0.08)" stroke="#d99a2b" stroke-width="0.6" rx="5"/>
+        <text x="180" y="275" text-anchor="middle" font-size="7.5" fill="#d99a2b">Down-treated upvote prob 0.099 vs 0.054 control · P=1.0e-30</text>
+        <rect x="40" y="292" width="280" height="30" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="311" text-anchor="middle" font-size="7.5" fill="#6e6b64">Final down-treated scores ≈ control · no significant negative herding</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 11: NUANCE — BOTH RESPONSES ===================== -->
+<div class="slide" data-n="11">
+  <div class="slide-header">
+    <span class="slide-chapter">MUCHNIK ET AL. 2013 · SCIENCE</span>
+    <span class="slide-num">11</span>
+  </div>
+  <h2>Both Herding and Correction Happen</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The picture isn't purely rosy. A secret downvote <strong>did</strong> nudge later viewers to downvote a little more too: probability <strong>0.014 vs 0.007</strong> in control.</p>
+      <p class="point">So <strong>two responses fired at once</strong> — a small negative-herding response and a larger corrective one. The correction simply <strong>dominated</strong>.</p>
+      <p class="point">That balance is what leaves the net downward effect statistically invisible, even though the raw herding impulse is real.</p>
+      <div class="key-idea">
+        <div class="kicker">Nuance</div>
+        <p>Asymmetry isn't the absence of negative herding — it's correction outweighing it on this platform.</p>
+      </div>
+      <p class="note">Ref: Muchnik et al. 2013, Science 341:647</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="320" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">RESPONSE TO A SECRET DOWNVOTE</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- correction (bigger) -->
+        <text x="60" y="60" font-size="8" fill="#d99a2b" font-weight="600">Correction &mdash; later UPVOTES</text>
+        <line x1="60" y1="72" x2="60" y2="110" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="60" y="80" width="55" height="22" fill="rgba(158,155,172,0.35)" stroke="#9e9bac"/>
+        <text x="122" y="95" font-size="7.5" fill="#6e6b64">control 0.054</text>
+        <rect x="60" y="108" width="185" height="22" fill="rgba(217,154,43,0.35)" stroke="#d99a2b"/>
+        <text x="252" y="123" font-size="7.5" fill="#d99a2b" font-weight="600">down-treated 0.099</text>
+        <!-- herding (smaller) -->
+        <text x="60" y="170" font-size="8" fill="#e0574a" font-weight="600">Herding &mdash; later DOWNVOTES</text>
+        <rect x="60" y="184" width="24" height="20" fill="rgba(158,155,172,0.35)" stroke="#9e9bac"/>
+        <text x="90" y="198" font-size="7.5" fill="#6e6b64">control 0.007</text>
+        <rect x="60" y="210" width="48" height="20" fill="rgba(224,87,74,0.35)" stroke="#e0574a"/>
+        <text x="114" y="224" font-size="7.5" fill="#e0574a" font-weight="600">down-treated 0.014</text>
+        <!-- scale metaphor -->
+        <rect x="40" y="252" width="280" height="54" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="270" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Correction (amber, large) &gt; Herding (coral, small)</text>
+        <text x="180" y="285" text-anchor="middle" font-size="7.5" fill="#6e6b64">Both are real; the corrective push is roughly twice as strong,</text>
+        <text x="180" y="298" text-anchor="middle" font-size="7.5" fill="#6e6b64">so the net downward effect vanishes into the noise.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 12: SECTION DIVIDER — IV ===================== -->
+<div class="slide section-divider" data-n="12">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION IV</span>
+    <span class="slide-num">12</span>
+  </div>
+  <h1><em>MusicLab</em></h1>
+  <div class="subtitle">An artificial music market, run in parallel worlds — the independent proof that popularity manufactures itself.</div>
+  <div class="section-num-big">IV</div>
+</div>
+
+<!-- ===================== SLIDE 13: MUSICLAB DESIGN ===================== -->
+<div class="slide" data-n="13">
+  <div class="slide-header">
+    <span class="slide-chapter">MUSICLAB · SALGANIK 2006 · SCIENCE</span>
+    <span class="slide-num">13</span>
+  </div>
+  <h2>Nine Parallel Worlds, Same 48 Songs</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>14,341 participants</strong> browsed and downloaded among <strong>48 unknown songs</strong> by real but unknown bands.</p>
+      <p class="point">One <strong>independent world</strong> showed no social information. Eight <strong>social-influence worlds</strong> each showed download counts — and each evolved on its own.</p>
+      <p class="point">Because the worlds started identical, comparing them isolates what <strong>seeing the counts</strong> does — the same logic as Muchnik, run at the level of whole markets.</p>
+      <div class="key-idea">
+        <div class="kicker">Setup</div>
+        <p>Same songs, same start. The only difference between worlds is whether — and how — popularity was shown.</p>
+      </div>
+      <p class="note">Ref: Salganik, Dodds &amp; Watts 2006, Science 311:854</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">PARALLEL-WORLDS DESIGN</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <rect x="115" y="42" width="130" height="34" fill="rgba(0,0,0,0.04)" stroke="#b0ada5" rx="6"/>
+        <text x="180" y="58" text-anchor="middle" font-size="8.5" fill="#1a1a1a" font-weight="600">14,341 people · 48 songs</text>
+        <text x="180" y="70" text-anchor="middle" font-size="7" fill="#6e6b64">assigned at random to a world</text>
+        <!-- independent world -->
+        <rect x="30" y="98" width="90" height="52" fill="rgba(13,148,136,0.10)" stroke="#0d9488" rx="6"/>
+        <text x="75" y="116" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">Independent</text>
+        <text x="75" y="130" text-anchor="middle" font-size="7" fill="#6e6b64">no counts shown</text>
+        <text x="75" y="142" text-anchor="middle" font-size="7" fill="#6e6b64">= pure quality</text>
+        <line x1="180" y1="76" x2="90" y2="98" stroke="#0d9488" stroke-width="1"/>
+        <line x1="180" y1="76" x2="255" y2="96" stroke="#7c3aed" stroke-width="1"/>
+        <!-- 8 social worlds grid -->
+        <text x="255" y="92" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">8 social-influence worlds</text>
+        <rect x="150" y="100" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="185" y="100" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="220" y="100" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="255" y="100" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="150" y="128" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="185" y="128" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="220" y="128" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <rect x="255" y="128" width="30" height="24" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="3"/>
+        <text x="300" y="120" font-size="7" fill="#6e6b64">each shows</text>
+        <text x="300" y="130" font-size="7" fill="#6e6b64">download</text>
+        <text x="300" y="140" font-size="7" fill="#6e6b64">counts</text>
+        <!-- salience note -->
+        <rect x="40" y="168" width="280" height="44" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6" rx="5"/>
+        <text x="180" y="185" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">Signal salience varied by world</text>
+        <text x="180" y="200" text-anchor="middle" font-size="7.5" fill="#6e6b64">popularity-SORTED list vs randomized grid</text>
+        <!-- purpose -->
+        <rect x="40" y="224" width="280" height="44" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="241" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Independent world = the quality yardstick</text>
+        <text x="180" y="256" text-anchor="middle" font-size="7.5" fill="#6e6b64">Any spread across the 8 social worlds = social influence</text>
+        <text x="180" y="292" text-anchor="middle" font-size="7.5" fill="#6e6b64">Next: what the counts did to inequality and predictability.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 14: INEQUALITY & UNPREDICTABILITY ===================== -->
+<div class="slide" data-n="14">
+  <div class="slide-header">
+    <span class="slide-chapter">MUSICLAB · SALGANIK 2006 · SCIENCE</span>
+    <span class="slide-num">14</span>
+  </div>
+  <h2>Bigger Winners, Less Predictable Ones</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>Inequality rose.</strong> Every one of the 8 social worlds had a higher Gini coefficient than the independent world <code>P &lt; 0.01</code> — winners won bigger, losers lost harder.</p>
+      <p class="point"><strong>Predictability fell.</strong> The <em>same song</em> could be a smash hit in one world and a flop in another; between-world variation far exceeded the independent baseline.</p>
+      <p class="point">Making the popularity signal more salient — a sorted list rather than a scattered grid — <strong>amplified both effects</strong>.</p>
+      <div class="key-idea">
+        <div class="kicker">Cumulative Advantage</div>
+        <p>Showing counts lets early leads feed on themselves: success breeds success, independent of any extra merit.</p>
+      </div>
+      <p class="note">Ref: Salganik, Dodds &amp; Watts 2006, Science 311:854</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">SAME SONG, DIFFERENT WORLDS</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- independent reference dot -->
+        <text x="52" y="60" font-size="7.5" fill="#0d9488" font-weight="600">Independent rank</text>
+        <line x1="55" y1="72" x2="55" y2="150" stroke="#0d9488" stroke-width="1.2"/>
+        <circle cx="55" cy="105" r="4" fill="#0d9488"/>
+        <text x="30" y="108" font-size="7" fill="#6e6b64" text-anchor="end">#8</text>
+        <!-- 8 social world outcomes scattered -->
+        <text x="200" y="60" text-anchor="middle" font-size="7.5" fill="#7c3aed" font-weight="600">Its rank across 8 social worlds</text>
+        <line x1="100" y1="150" x2="320" y2="150" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="100" y1="72" x2="100" y2="150" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="96" y="80" font-size="6.5" fill="#6e6b64" text-anchor="end">#1</text>
+        <text x="96" y="150" font-size="6.5" fill="#6e6b64" text-anchor="end">#48</text>
+        <circle cx="118" cy="88" r="3.5" fill="#7c3aed"/>
+        <circle cx="145" cy="132" r="3.5" fill="#7c3aed"/>
+        <circle cx="172" cy="78" r="3.5" fill="#7c3aed"/>
+        <circle cx="200" cy="120" r="3.5" fill="#7c3aed"/>
+        <circle cx="228" cy="100" r="3.5" fill="#7c3aed"/>
+        <circle cx="256" cy="140" r="3.5" fill="#7c3aed"/>
+        <circle cx="284" cy="84" r="3.5" fill="#7c3aed"/>
+        <circle cx="310" cy="128" r="3.5" fill="#7c3aed"/>
+        <text x="210" y="168" text-anchor="middle" font-size="7" fill="#6e6b64">hit in some worlds, flop in others &rarr; unpredictable</text>
+        <!-- inequality / gini bars -->
+        <text x="52" y="200" font-size="7.5" fill="#1a1a1a" font-weight="500">Inequality (Gini)</text>
+        <rect x="55" y="210" width="70" height="18" fill="rgba(13,148,136,0.30)" stroke="#0d9488"/>
+        <text x="130" y="223" font-size="7" fill="#0d9488">independent (lower)</text>
+        <rect x="55" y="234" width="150" height="18" fill="rgba(124,58,237,0.30)" stroke="#7c3aed"/>
+        <text x="210" y="247" font-size="7" fill="#7c3aed">all 8 social worlds (higher)</text>
+        <rect x="40" y="268" width="280" height="48" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6" rx="5"/>
+        <text x="180" y="285" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">Gini higher in all 8 social worlds · P &lt; 0.01</text>
+        <text x="180" y="300" text-anchor="middle" font-size="7.5" fill="#6e6b64">Salient (sorted-list) signal amplified inequality</text>
+        <text x="180" y="312" text-anchor="middle" font-size="7.5" fill="#6e6b64">and unpredictability further still.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 15: QUALITY ENVELOPE ===================== -->
+<div class="slide" data-n="15">
+  <div class="slide-header">
+    <span class="slide-chapter">MUSICLAB · SALGANIK 2006 · SCIENCE</span>
+    <span class="slide-num">15</span>
+  </div>
+  <h2>Quality Still Guards the Extremes</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Social influence doesn't erase merit entirely. In MusicLab, <strong>"the best songs rarely did poorly, and the worst rarely did well — but any other result was possible."</strong></p>
+      <p class="point">Quality sets an <strong>envelope</strong> (teal band): it pins down the very top and very bottom, but leaves a <strong>wide, luck-governed middle</strong>.</p>
+      <p class="point">Success in that middle is <strong>quality × luck × cumulative advantage</strong> — path-dependent, not a clean readout of merit.</p>
+      <div class="key-idea">
+        <div class="kicker">The Synthesis</div>
+        <p>Herding rules the vast middle. It rarely crowns garbage or buries brilliance — but almost everything else is up for grabs.</p>
+      </div>
+      <p class="note">Ref: Salganik, Dodds &amp; Watts 2006, Science 311:854</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">QUALITY ENVELOPE vs OUTCOME</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- axes -->
+        <line x1="64" y1="52" x2="64" y2="250" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="64" y1="250" x2="330" y2="250" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="58" y="60" text-anchor="end" font-size="7" fill="#6e6b64">market</text>
+        <text x="58" y="70" text-anchor="end" font-size="7" fill="#6e6b64">success</text>
+        <text x="180" y="266" text-anchor="middle" font-size="7.5" fill="#0d9488">intrinsic quality (independent-world appeal) &rarr;</text>
+        <!-- envelope band -->
+        <path d="M64,240 L120,232 L200,150 L280,80 L330,66 L330,150 L280,150 L200,215 L120,222 L64,248 Z" fill="rgba(13,148,136,0.10)" stroke="#0d9488" stroke-width="0.8" stroke-dasharray="4 3"/>
+        <text x="250" y="120" font-size="7" fill="#0d9488">possible-outcome band</text>
+        <!-- scatter points inside -->
+        <circle cx="86" cy="238" r="3" fill="#9e9bac"/>
+        <circle cx="110" cy="226" r="3" fill="#9e9bac"/>
+        <circle cx="150" cy="200" r="3" fill="#7c3aed"/>
+        <circle cx="150" cy="170" r="3" fill="#7c3aed"/>
+        <circle cx="200" cy="188" r="3" fill="#7c3aed"/>
+        <circle cx="200" cy="150" r="3" fill="#7c3aed"/>
+        <circle cx="240" cy="160" r="3" fill="#7c3aed"/>
+        <circle cx="240" cy="118" r="3" fill="#7c3aed"/>
+        <circle cx="300" cy="100" r="3" fill="#9e9bac"/>
+        <circle cx="316" cy="84" r="3" fill="#9e9bac"/>
+        <!-- annotations -->
+        <text x="86" y="228" font-size="6.5" fill="#6e6b64">worst rarely wins</text>
+        <text x="270" y="150" text-anchor="middle" font-size="6.5" fill="#6e6b64">best rarely fails</text>
+        <line x1="150" y1="150" x2="150" y2="215" stroke="#7c3aed" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <text x="150" y="230" text-anchor="middle" font-size="6.5" fill="#7c3aed">wide middle</text>
+        <rect x="60" y="278" width="260" height="38" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="295" text-anchor="middle" font-size="7.5" fill="#1a1a1a" font-weight="500">Success = quality × luck × cumulative advantage</text>
+        <text x="180" y="308" text-anchor="middle" font-size="7.5" fill="#6e6b64">Extremes pinned by merit; the middle is path-dependent.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 16: SECTION DIVIDER — V ===================== -->
+<div class="slide section-divider" data-n="16">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION V</span>
+    <span class="slide-num">16</span>
+  </div>
+  <h1>The <em>Inversion</em></h1>
+  <div class="subtitle">What if you lie about what's popular? Mostly it becomes true — but the best still fight back.</div>
+  <div class="section-num-big">V</div>
+</div>
+
+<!-- ===================== SLIDE 17: INVERSION — SELF-FULFILLING ===================== -->
+<div class="slide" data-n="17">
+  <div class="slide-header">
+    <span class="slide-chapter">SALGANIK &amp; WATTS 2008 · SPQ</span>
+    <span class="slide-num">17</span>
+  </div>
+  <h2>Fake Popularity Mostly Becomes Real</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">In a follow-up with <strong>12,207 participants</strong>, researchers <strong>completely inverted</strong> the displayed counts — telling people the least-popular songs were the most popular.</p>
+      <p class="point">The lie was largely <strong>self-fulfilling</strong>. In an unchanged world, early rank predicted projected final rank at <strong>r = 0.84</strong>. In the inverted worlds, that dropped to <strong>r = 0.16</strong> — the fake order took over.</p>
+      <p class="point">Perceived popularity, even when false, steered behavior toward making itself true.</p>
+      <div class="key-idea">
+        <div class="kicker">Self-Fulfilling</div>
+        <p>Tell the crowd a dud is a hit, and — for most songs — the crowd obliges.</p>
+      </div>
+      <p class="note">Ref: Salganik &amp; Watts 2008, Social Psychology Quarterly 71(4):338</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">DOES EARLY RANK PREDICT THE END?</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- normal world -->
+        <text x="105" y="54" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Unchanged world</text>
+        <line x1="60" y1="70" x2="60" y2="180" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="60" y1="180" x2="150" y2="180" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="60" y1="178" x2="150" y2="76" stroke="#7c3aed" stroke-width="1.6"/>
+        <circle cx="72" cy="166" r="2.5" fill="#7c3aed"/>
+        <circle cx="90" cy="150" r="2.5" fill="#7c3aed"/>
+        <circle cx="108" cy="124" r="2.5" fill="#7c3aed"/>
+        <circle cx="126" cy="104" r="2.5" fill="#7c3aed"/>
+        <circle cx="140" cy="86" r="2.5" fill="#7c3aed"/>
+        <text x="105" y="198" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600">r = 0.84</text>
+        <text x="105" y="210" text-anchor="middle" font-size="6.5" fill="#6e6b64">rank sticks</text>
+        <!-- inverted world -->
+        <text x="270" y="54" text-anchor="middle" font-size="8" fill="#e0574a" font-weight="600">Inverted world</text>
+        <line x1="215" y1="70" x2="215" y2="180" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="215" y1="180" x2="315" y2="180" stroke="#b0ada5" stroke-width="0.6"/>
+        <circle cx="228" cy="120" r="2.5" fill="#e0574a"/>
+        <circle cx="250" cy="90" r="2.5" fill="#e0574a"/>
+        <circle cx="262" cy="160" r="2.5" fill="#e0574a"/>
+        <circle cx="285" cy="110" r="2.5" fill="#e0574a"/>
+        <circle cx="300" cy="150" r="2.5" fill="#e0574a"/>
+        <circle cx="240" cy="140" r="2.5" fill="#e0574a"/>
+        <circle cx="295" cy="86" r="2.5" fill="#e0574a"/>
+        <text x="270" y="198" text-anchor="middle" font-size="9" fill="#e0574a" font-weight="600">r = 0.16</text>
+        <text x="270" y="210" text-anchor="middle" font-size="6.5" fill="#6e6b64">fake order wins</text>
+        <text x="187" y="130" text-anchor="middle" font-size="9" fill="#6e6b64">vs</text>
+        <rect x="40" y="232" width="280" height="30" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6" rx="5"/>
+        <text x="180" y="251" text-anchor="middle" font-size="7" fill="#7c3aed">Inverted counts detached final rank from true early standing.</text>
+        <rect x="40" y="270" width="280" height="46" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="287" text-anchor="middle" font-size="7.5" fill="#6e6b64">12,207 participants · displayed counts fully reversed</text>
+        <text x="180" y="301" text-anchor="middle" font-size="7.5" fill="#6e6b64">For most songs, the false popularity became the real outcome.</text>
+        <text x="180" y="313" text-anchor="middle" font-size="6.5" fill="#6e6b64">(final ranks are model projections — see next slide)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 18: INVERSION — BUT BOUNDED ===================== -->
+<div class="slide" data-n="18">
+  <div class="slide-header">
+    <span class="slide-chapter">SALGANIK &amp; WATTS 2008 · SPQ</span>
+    <span class="slide-num">18</span>
+  </div>
+  <h2>But the Best Songs Climb Back</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The self-fulfilling story has a limit. Even though the genuinely best songs were <strong>penalized hardest</strong> by the inversion, <strong>they recovered</strong>.</p>
+      <p class="point">The distortion still degraded the market: the appeal&rarr;outcome rank correlation fell from <strong>0.82 to ~0.40/0.45</strong>, and total downloads dropped (<strong>2,197 / 2,160 vs 2,898</strong>).</p>
+      <p class="point">So a lie about popularity is self-fulfilling for <em>individual</em> songs, but not for the market as a whole — quality reasserts itself at the top.</p>
+      <div class="key-idea">
+        <div class="kicker">Hedge</div>
+        <p>The long-run ranks are model projections; the experiment ended before the worlds fully converged. Direction is clear; exact endpoints are estimates.</p>
+      </div>
+      <p class="note">Ref: Salganik &amp; Watts 2008, SPQ 71(4):338</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">RECOVERY OF THE BEST SONG</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- rank track -->
+        <line x1="70" y1="56" x2="70" y2="196" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="70" y1="196" x2="320" y2="196" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="62" y="64" text-anchor="end" font-size="6.5" fill="#6e6b64">#1</text>
+        <text x="62" y="196" text-anchor="end" font-size="6.5" fill="#6e6b64">#48</text>
+        <text x="90" y="212" font-size="6.5" fill="#6e6b64">shown as worst</text>
+        <text x="290" y="212" font-size="6.5" fill="#6e6b64">true appeal wins</text>
+        <!-- best song penalized then recovers -->
+        <path d="M80,188 C140,188 150,110 200,90 S290,64 310,62" fill="none" stroke="#0d9488" stroke-width="2.4"/>
+        <circle cx="80" cy="188" r="4" fill="#0d9488"/>
+        <text x="86" y="182" font-size="6.5" fill="#0d9488">penalized hardest</text>
+        <circle cx="310" cy="62" r="4" fill="#0d9488"/>
+        <text x="306" y="56" text-anchor="end" font-size="6.5" fill="#0d9488" font-weight="600">recovers to top</text>
+        <!-- a mediocre fake-hit fades -->
+        <path d="M80,70 C150,72 170,150 230,170 S300,186 312,188" fill="none" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <text x="120" y="66" font-size="6.5" fill="#7c3aed">fake hit fades</text>
+        <!-- degradation metrics -->
+        <rect x="40" y="230" width="135" height="40" fill="rgba(217,154,43,0.10)" stroke="#d99a2b" stroke-width="0.6" rx="5"/>
+        <text x="107" y="247" text-anchor="middle" font-size="7.5" fill="#d99a2b" font-weight="600">appeal &rarr; outcome</text>
+        <text x="107" y="261" text-anchor="middle" font-size="7.5" fill="#6e6b64">0.82 &rarr; ~0.40/0.45</text>
+        <rect x="185" y="230" width="135" height="40" fill="rgba(158,155,172,0.14)" stroke="#9e9bac" stroke-width="0.6" rx="5"/>
+        <text x="252" y="247" text-anchor="middle" font-size="7.5" fill="#6e6b64" font-weight="600">total downloads</text>
+        <text x="252" y="261" text-anchor="middle" font-size="7.5" fill="#6e6b64">2,197/2,160 vs 2,898</text>
+        <rect x="40" y="280" width="280" height="36" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="297" text-anchor="middle" font-size="7.5" fill="#1a1a1a" font-weight="500">Self-fulfilling per song — not for the market</text>
+        <text x="180" y="310" text-anchor="middle" font-size="7" fill="#6e6b64">Distortion degrades the market, but merit recovers at the top.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 19: SECTION DIVIDER — VI ===================== -->
+<div class="slide section-divider" data-n="19">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION VI</span>
+    <span class="slide-num">19</span>
+  </div>
+  <h1>The <em>Mechanism</em></h1>
+  <div class="subtitle">Reanalyzing MusicLab: the pull is on your attention, not your taste — steering what you sample.</div>
+  <div class="section-num-big">VI</div>
+</div>
+
+<!-- ===================== SLIDE 20: TWO-STEP MECHANISM ===================== -->
+<div class="slide" data-n="20">
+  <div class="slide-header">
+    <span class="slide-chapter">KRUMME ET AL. 2012 · PLOS ONE</span>
+    <span class="slide-num">20</span>
+  </div>
+  <h2>Sample First, Then Decide</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Krumme and colleagues split the MusicLab choice into <strong>two steps</strong>: first you <strong>click to listen</strong> (sample), then you decide whether to <strong>download</strong>.</p>
+      <p class="point">Social influence acted on <strong>step 1 only</strong>. Popularity counts changed which songs people sampled — but <code>P(download | listened)</code> was statistically independent of the count.</p>
+      <p class="point">Once someone actually listened, the count no longer swayed their <strong>quality judgment</strong>. The signal steered attention, not taste.</p>
+      <div class="key-idea">
+        <div class="kicker">Informational, Not Normative</div>
+        <p>The pull is a shortcut for "what's worth my time," not pressure to conform — at least in this market.</p>
+      </div>
+      <p class="note">Ref: Krumme, Cebrian, Pickard &amp; Pentland 2012, PLoS ONE 7(5):e33785</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">TWO-STEP CHOICE FUNNEL</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- popularity signal source -->
+        <rect x="20" y="70" width="80" height="46" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" rx="6"/>
+        <text x="60" y="90" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Download</text>
+        <text x="60" y="103" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">count shown</text>
+        <!-- step 1: sample (fat arrow influenced) -->
+        <text x="185" y="62" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">STEP 1 · sample (click)</text>
+        <polygon points="110,80 200,68 200,74 205,80 200,86 200,92 110,104" fill="rgba(124,58,237,0.30)" stroke="#7c3aed"/>
+        <text x="150" y="90" text-anchor="middle" font-size="7" fill="#7c3aed">signal acts here</text>
+        <rect x="210" y="72" width="80" height="40" fill="rgba(124,58,237,0.10)" stroke="#7c3aed" rx="6"/>
+        <text x="250" y="90" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">Listened</text>
+        <text x="250" y="103" text-anchor="middle" font-size="7" fill="#6e6b64">attention steered</text>
+        <!-- step 2: download (thin arrow, independent) -->
+        <text x="185" y="150" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">STEP 2 · download</text>
+        <line x1="250" y1="112" x2="250" y2="164" stroke="#0d9488" stroke-width="1.4"/>
+        <polygon points="250,170 245,158 255,158" fill="#0d9488"/>
+        <rect x="210" y="172" width="80" height="40" fill="rgba(13,148,136,0.10)" stroke="#0d9488" rx="6"/>
+        <text x="250" y="190" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">Downloaded</text>
+        <text x="250" y="203" text-anchor="middle" font-size="7" fill="#6e6b64">= quality judgment</text>
+        <!-- independence note -->
+        <line x1="100" y1="116" x2="100" y2="192" stroke="#9e9bac" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="100" y1="192" x2="206" y2="192" stroke="#9e9bac" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="150" y="188" font-size="6.5" fill="#6e6b64">count does NOT</text>
+        <text x="150" y="180" font-size="6.5" fill="#6e6b64">reach step 2</text>
+        <rect x="40" y="232" width="280" height="34" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="0.6" rx="5"/>
+        <text x="180" y="248" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="500">P(download | listened) ⟂ popularity count</text>
+        <text x="180" y="260" text-anchor="middle" font-size="7" fill="#6e6b64">taste is unmoved once the song is actually heard</text>
+        <rect x="40" y="274" width="280" height="42" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="291" text-anchor="middle" font-size="7.5" fill="#1a1a1a" font-weight="500">Influence = informational (attention)</text>
+        <text x="180" y="305" text-anchor="middle" font-size="7.5" fill="#6e6b64">not normative (conforming to be liked) — in this market</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 21: WEIGHT GROWS / DOMAIN TENSION ===================== -->
+<div class="slide" data-n="21">
+  <div class="slide-header">
+    <span class="slide-chapter">KRUMME ET AL. 2012 · PLOS ONE</span>
+    <span class="slide-num">21</span>
+  </div>
+  <h2>The Count's Grip Tightens Over Time</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">As a world matured, the <strong>weight of the download count grew</strong> relative to a song's intrinsic appeal in predicting the next click.</p>
+      <p class="point">That is the engine of <strong>cumulative advantage</strong> (purple): early leads get louder over time, so the rich get richer.</p>
+      <p class="point">A tension worth flagging: Muchnik's comment study <strong>did</strong> find genuine opinion change, so the "attention-only" account may be <strong>domain-specific</strong> — normative influence can dominate elsewhere.</p>
+      <div class="key-idea">
+        <div class="kicker">Caveat on Mechanism</div>
+        <p>Attention-steering explains MusicLab; it need not be the whole story on opinion-driven platforms.</p>
+      </div>
+      <p class="note">Ref: Krumme et al. 2012 · cf. Muchnik et al. 2013</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 320" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="320" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">WHAT DRIVES THE NEXT CLICK</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- axes -->
+        <line x1="60" y1="52" x2="60" y2="210" stroke="#b0ada5" stroke-width="0.6"/>
+        <line x1="60" y1="210" x2="330" y2="210" stroke="#b0ada5" stroke-width="0.6"/>
+        <text x="54" y="60" text-anchor="end" font-size="7" fill="#6e6b64">weight</text>
+        <text x="60" y="224" font-size="7" fill="#6e6b64">early</text>
+        <text x="300" y="224" font-size="7" fill="#6e6b64">late</text>
+        <!-- appeal weight declines -->
+        <path d="M60,90 Q160,120 320,160" fill="none" stroke="#0d9488" stroke-width="2.2"/>
+        <circle cx="320" cy="160" r="3" fill="#0d9488"/>
+        <text x="300" y="150" text-anchor="end" font-size="7" fill="#0d9488">song appeal ↓</text>
+        <!-- count weight rises -->
+        <path d="M60,180 Q160,130 320,72" fill="none" stroke="#7c3aed" stroke-width="2.6"/>
+        <circle cx="320" cy="72" r="3.5" fill="#7c3aed"/>
+        <text x="300" y="66" text-anchor="end" font-size="7" fill="#7c3aed" font-weight="600">download count ↑</text>
+        <!-- crossover -->
+        <circle cx="168" cy="128" r="3" fill="#9e9bac"/>
+        <text x="168" y="145" text-anchor="middle" font-size="6.5" fill="#6e6b64">count overtakes appeal</text>
+        <rect x="40" y="230" width="280" height="30" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6" rx="5"/>
+        <text x="180" y="249" text-anchor="middle" font-size="7.5" fill="#7c3aed">Rising count-weight = cumulative advantage (rich get richer)</text>
+        <rect x="40" y="266" width="280" height="44" fill="rgba(0,0,0,0.03)" rx="5"/>
+        <text x="180" y="283" text-anchor="middle" font-size="7.5" fill="#1a1a1a" font-weight="500">Domain tension</text>
+        <text x="180" y="297" text-anchor="middle" font-size="7" fill="#6e6b64">MusicLab: attention only. Muchnik comments: real opinion change.</text>
+        <text x="180" y="308" text-anchor="middle" font-size="7" fill="#6e6b64">Mechanism likely varies by platform.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 22: SECTION DIVIDER — VII ===================== -->
+<div class="slide section-divider" data-n="22">
+  <div class="slide-header">
+    <span class="slide-chapter">SECTION VII</span>
+    <span class="slide-num">22</span>
+  </div>
+  <h1>Caveats &amp; <em>Meaning</em></h1>
+  <div class="subtitle">Replications, boundary conditions, and what all of it says about the scores we trust.</div>
+  <div class="section-num-big">VII</div>
+</div>
+
+<!-- ===================== SLIDE 23: REPLICATIONS ===================== -->
+<div class="slide" data-n="23">
+  <div class="slide-header">
+    <span class="slide-chapter">VII · CONVERGENT EVIDENCE</span>
+    <span class="slide-num">23</span>
+  </div>
+  <h2>The Effect Shows Up Again and Again</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point"><strong>van de Rijt et al. 2014 (PNAS)</strong>: arbitrarily bestowed early success boosted later success across <strong>Kickstarter, Epinions, Wikipedia, and change.org</strong> — four platforms, one pattern.</p>
+      <p class="point"><strong>Lee, Hosanagar &amp; Tan 2015 (Management Science)</strong>: herding in online movie ratings, where the <strong>crowd's signal outweighed friends'</strong>.</p>
+      <p class="point"><strong>Cicognani et al.</strong>: a field experiment manipulating prior ratings for an Italian hotel found the same positive social-influence bias.</p>
+      <div class="key-idea">
+        <div class="kicker">Robustness</div>
+        <p>Positive social-influence bias replicates across products, platforms, and rating systems — it isn't a quirk of one site.</p>
+      </div>
+      <p class="note">Refs: van de Rijt 2014, PNAS 111:6934 · Lee et al. 2015 · Cicognani et al.</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">SAME BIAS, MANY PLATFORMS</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- central node -->
+        <circle cx="180" cy="120" r="34" fill="rgba(91,91,214,0.12)" stroke="#5b5bd6"/>
+        <text x="180" y="116" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">early</text>
+        <text x="180" y="128" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">success</text>
+        <!-- spokes to platforms -->
+        <line x1="180" y1="86" x2="180" y2="60" stroke="#5b5bd6" stroke-width="1"/>
+        <rect x="130" y="44" width="100" height="18" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="4"/>
+        <text x="180" y="57" text-anchor="middle" font-size="7" fill="#5b5bd6">Kickstarter</text>
+        <line x1="146" y1="120" x2="90" y2="120" stroke="#5b5bd6" stroke-width="1"/>
+        <rect x="20" y="111" width="70" height="18" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="4"/>
+        <text x="55" y="124" text-anchor="middle" font-size="7" fill="#5b5bd6">Epinions</text>
+        <line x1="214" y1="120" x2="270" y2="120" stroke="#5b5bd6" stroke-width="1"/>
+        <rect x="270" y="111" width="70" height="18" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="4"/>
+        <text x="305" y="124" text-anchor="middle" font-size="7" fill="#5b5bd6">Wikipedia</text>
+        <line x1="160" y1="150" x2="120" y2="178" stroke="#5b5bd6" stroke-width="1"/>
+        <rect x="70" y="178" width="80" height="18" fill="rgba(91,91,214,0.10)" stroke="#5b5bd6" rx="4"/>
+        <text x="110" y="191" text-anchor="middle" font-size="7" fill="#5b5bd6">change.org</text>
+        <line x1="200" y1="150" x2="240" y2="178" stroke="#0d9488" stroke-width="1"/>
+        <rect x="212" y="178" width="90" height="18" fill="rgba(13,148,136,0.10)" stroke="#0d9488" rx="4"/>
+        <text x="257" y="191" text-anchor="middle" font-size="7" fill="#0d9488">movie ratings</text>
+        <!-- footnote panels -->
+        <rect x="40" y="212" width="280" height="30" fill="rgba(158,155,172,0.14)" stroke="#9e9bac" stroke-width="0.5" rx="5"/>
+        <text x="180" y="231" text-anchor="middle" font-size="7.5" fill="#6e6b64">Lee et al. 2015: crowd signal &gt; friends' signal</text>
+        <rect x="40" y="248" width="280" height="30" fill="rgba(158,155,172,0.14)" stroke="#9e9bac" stroke-width="0.5" rx="5"/>
+        <text x="180" y="267" text-anchor="middle" font-size="7.5" fill="#6e6b64">Cicognani et al.: same bias for Italian-hotel ratings</text>
+        <rect x="40" y="284" width="280" height="30" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.6" rx="5"/>
+        <text x="180" y="303" text-anchor="middle" font-size="7.5" fill="#5b5bd6">van de Rijt 2014: arbitrary early boost &rarr; lasting advantage</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 24: BOUNDARY CONDITIONS ===================== -->
+<div class="slide" data-n="24">
+  <div class="slide-header">
+    <span class="slide-chapter">VII · BOUNDARY CONDITIONS</span>
+    <span class="slide-num">24</span>
+  </div>
+  <h2>Where the Clean Story Frays</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">The asymmetry may be <strong>platform-specific</strong>. <strong>Glenski &amp; Weninger (2017)</strong> found <em>negative</em> herding from random downvotes on Reddit — the crowd didn't always correct.</p>
+      <p class="point">Effects are <strong>relative over small absolute baselines</strong> and <strong>topic-dependent</strong>; the headline percentages ride on modest raw rates.</p>
+      <p class="point">Core studies are <strong>2006&ndash;2013</strong> — before modern algorithmic ranking, hidden vote counts, and recommender feedback loops, which could <strong>amplify</strong> cumulative advantage well beyond raw displayed counts.</p>
+      <div class="key-idea">
+        <div class="kicker">Read With Care</div>
+        <p>The RCTs cleanly separate popularity from quality; most real platforms still confound position with popularity.</p>
+      </div>
+      <p class="note">Ref: Glenski &amp; Weninger 2017, arXiv:1606.06140</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">CAVEATS &amp; LIMITS</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- card 1: reddit -->
+        <rect x="30" y="44" width="300" height="50" fill="rgba(224,87,74,0.08)" stroke="#e0574a" stroke-width="0.6" rx="6"/>
+        <text x="45" y="62" font-size="8.5" fill="#e0574a" font-weight="600">Asymmetry may be platform-specific</text>
+        <text x="45" y="77" font-size="7.5" fill="#6e6b64">Glenski &amp; Weninger 2017: random downvotes on Reddit</text>
+        <text x="45" y="88" font-size="7.5" fill="#6e6b64">produced NEGATIVE herding — no rescue by the crowd</text>
+        <!-- card 2: baselines -->
+        <rect x="30" y="102" width="300" height="50" fill="rgba(217,154,43,0.08)" stroke="#d99a2b" stroke-width="0.6" rx="6"/>
+        <text x="45" y="120" font-size="8.5" fill="#d99a2b" font-weight="600">Relative effects, small baselines</text>
+        <text x="45" y="135" font-size="7.5" fill="#6e6b64">+32% rides on a ~5.13% base rate; effects are</text>
+        <text x="45" y="146" font-size="7.5" fill="#6e6b64">topic-dependent and modest in absolute terms</text>
+        <!-- card 3: era -->
+        <rect x="30" y="160" width="300" height="50" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="0.6" rx="6"/>
+        <text x="45" y="178" font-size="8.5" fill="#7c3aed" font-weight="600">Pre-algorithmic era (2006–2013)</text>
+        <text x="45" y="193" font-size="7.5" fill="#6e6b64">Before hidden counts, recommender loops, ranking AI —</text>
+        <text x="45" y="204" font-size="7.5" fill="#6e6b64">which could amplify cumulative advantage further</text>
+        <!-- card 4: confound -->
+        <rect x="30" y="218" width="300" height="50" fill="rgba(158,155,172,0.14)" stroke="#9e9bac" stroke-width="0.6" rx="6"/>
+        <text x="45" y="236" font-size="8.5" fill="#6e6b64" font-weight="600">Position ⟂ popularity? Rarely</text>
+        <text x="45" y="251" font-size="7.5" fill="#6e6b64">In most observational settings the two are confounded;</text>
+        <text x="45" y="262" font-size="7.5" fill="#6e6b64">the RCTs above are the clean exceptions</text>
+        <rect x="30" y="278" width="300" height="38" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="0.6" rx="6"/>
+        <text x="180" y="295" text-anchor="middle" font-size="7.5" fill="#0d9488" font-weight="500">Direction is robust; magnitudes are context-bound.</text>
+        <text x="180" y="308" text-anchor="middle" font-size="7" fill="#6e6b64">Trust the causal claim; hedge the exact numbers.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 25: WHAT IT MEANS ===================== -->
+<div class="slide" data-n="25">
+  <div class="slide-header">
+    <span class="slide-chapter">VII · SO WHAT</span>
+    <span class="slide-num">25</span>
+  </div>
+  <h2>Scores Are Partly Social Artifacts</h2>
+  <div class="slide-body col-2">
+    <div class="text-col">
+      <p class="point">Vote counts and review scores are <strong>not pure quality signals</strong>. They are partly self-fulfilling social artifacts — merit blended with the momentum of who voted first.</p>
+      <p class="point"><strong>Early votes matter disproportionately.</strong> A comment nudged up in its first minutes can end months ahead; the same content can land anywhere in the wide middle.</p>
+      <p class="point"><strong>Design changes outcomes.</strong> Hiding counts, delaying their display, or sorting by quality rather than raw popularity measurably alters what rises.</p>
+      <div class="key-idea">
+        <div class="kicker">The Thesis</div>
+        <p>Upvotes beget upvotes — asymmetrically, and bounded by quality. Popularity is real, but it is partly manufactured by being shown.</p>
+      </div>
+      <p class="note">Synthesis across Muchnik 2013, Salganik 2006/2008, Krumme 2012</p>
+    </div>
+    <div class="svg-col">
+      <svg viewBox="0 0 360 330" class="fig" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="360" height="330" fill="rgba(0,0,0,0.025)" rx="6"/>
+        <text x="180" y="22" text-anchor="middle" font-size="8.5" fill="#5b5bd6" letter-spacing="0.1em">WHAT A SCORE ACTUALLY CONTAINS</text>
+        <line x1="24" y1="32" x2="336" y2="32" stroke="#b0ada5" stroke-width="0.5"/>
+        <!-- stacked bar: a displayed score -->
+        <text x="180" y="52" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">A displayed score =</text>
+        <rect x="90" y="62" width="180" height="30" fill="rgba(13,148,136,0.35)" stroke="#0d9488"/>
+        <text x="180" y="81" text-anchor="middle" font-size="8" fill="#0d9488" font-weight="600">intrinsic quality</text>
+        <rect x="90" y="92" width="180" height="30" fill="rgba(91,91,214,0.35)" stroke="#5b5bd6"/>
+        <text x="180" y="111" text-anchor="middle" font-size="8" fill="#5b5bd6" font-weight="600">social herding</text>
+        <rect x="90" y="122" width="180" height="24" fill="rgba(124,58,237,0.35)" stroke="#7c3aed"/>
+        <text x="180" y="138" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="600">early luck × cumulative advantage</text>
+        <!-- three levers -->
+        <text x="180" y="172" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Levers platform design can pull</text>
+        <rect x="34" y="182" width="94" height="46" fill="rgba(217,154,43,0.10)" stroke="#d99a2b" rx="5"/>
+        <text x="81" y="200" text-anchor="middle" font-size="7.5" fill="#d99a2b" font-weight="600">hide counts</text>
+        <text x="81" y="214" text-anchor="middle" font-size="6.5" fill="#6e6b64">less herding</text>
+        <rect x="133" y="182" width="94" height="46" fill="rgba(217,154,43,0.10)" stroke="#d99a2b" rx="5"/>
+        <text x="180" y="200" text-anchor="middle" font-size="7.5" fill="#d99a2b" font-weight="600">delay display</text>
+        <text x="180" y="214" text-anchor="middle" font-size="6.5" fill="#6e6b64">let merit set in</text>
+        <rect x="232" y="182" width="94" height="46" fill="rgba(217,154,43,0.10)" stroke="#d99a2b" rx="5"/>
+        <text x="279" y="197" text-anchor="middle" font-size="7.5" fill="#d99a2b" font-weight="600">sort by</text>
+        <text x="279" y="208" text-anchor="middle" font-size="7.5" fill="#d99a2b" font-weight="600">quality</text>
+        <text x="279" y="220" text-anchor="middle" font-size="6.5" fill="#6e6b64">not raw count</text>
+        <rect x="34" y="242" width="292" height="72" fill="rgba(91,91,214,0.08)" stroke="#5b5bd6" stroke-width="0.6" rx="6"/>
+        <text x="180" y="262" text-anchor="middle" font-size="8.5" fill="#5b5bd6" font-weight="600">Upvotes beget upvotes —</text>
+        <text x="180" y="278" text-anchor="middle" font-size="7.5" fill="#6e6b64">asymmetrically (praise compounds, criticism rebuffed)</text>
+        <text x="180" y="292" text-anchor="middle" font-size="7.5" fill="#6e6b64">and bounded by quality (best rise, worst sink).</text>
+        <text x="180" y="306" text-anchor="middle" font-size="7.5" fill="#6e6b64">The wide middle is path-dependent.</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SLIDE 26: CLOSING ===================== -->
+<div class="slide" data-n="26">
+  <div class="slide-header">
+    <span class="slide-chapter">CONCLUSION</span>
+    <span class="slide-num">26</span>
+  </div>
+  <h2>Popularity, Partly Manufactured</h2>
+  <div class="slide-body col-1">
+    <div class="text-col">
+      <p class="point">By planting a single secret vote and following it for months, Muchnik, Aral &amp; Taylor turned a hunch into a measured causal fact: <strong>seeing upvotes makes people upvote more</strong>, and the nudge snowballs into a higher final score.</p>
+      <p class="point">MusicLab's parallel worlds and its inversion showed the same force at market scale — <strong>bigger winners, less predictable ones, and false popularity that mostly makes itself true</strong> — while quality still guarded the extremes.</p>
+      <div class="key-idea">
+        <div class="kicker">The Core Idea</div>
+        <p>The scores we lean on are part merit, part momentum. Early votes echo; praise compounds while unfair criticism gets rebuffed; and the crowded middle is governed as much by luck and timing as by quality.</p>
+      </div>
+      <p class="note">Muchnik 2013 · Salganik 2006 &amp; 2008 · Krumme 2012 · van de Rijt 2014 · Lee 2015 · Glenski 2017</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="slide-counter" id="slideCounter">1 / 27</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle dark/light">◐</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const navBar = document.getElementById('navBar');
+let current = 0;
+let navTimeout;
+
+function flashNav() {
+  navBar.classList.add('visible');
+  clearTimeout(navTimeout);
+  navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2000);
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('progressFill').style.width = ((current / (total - 1)) * 100) + '%';
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+  flashNav();
+}
+
+document.addEventListener('mousemove', e => {
+  if (e.clientY > window.innerHeight - 60) {
+    navBar.classList.add('visible');
+    clearTimeout(navTimeout);
+    navTimeout = setTimeout(() => navBar.classList.remove('visible'), 2500);
+  }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('.nav-bar, button, a')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width * 0.35) goTo(current - 1);
+  else if (x > rect.width * 0.65) goTo(current + 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (dx < -40) goTo(current + 1);
+  if (dx > 40) goTo(current - 1);
+});
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    root.removeAttribute('data-theme');
+    themeBtn.textContent = '◐';
+    themeBtn.title = 'Using system theme — click to toggle';
+  } else {
+    root.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀' : '☽';
+    themeBtn.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  }
+}
+
+let themeState = 'system';
+themeBtn.addEventListener('click', () => {
+  const sys = getSystemTheme();
+  if (themeState === 'system') {
+    themeState = sys === 'dark' ? 'light' : 'dark';
+  } else if (themeState === 'dark') {
+    themeState = 'light';
+  } else {
+    themeState = 'system';
+  }
+  applyTheme(themeState);
+});
+
+applyTheme('system');
+goTo(0);
+</script>
+
+</body>
+</html>

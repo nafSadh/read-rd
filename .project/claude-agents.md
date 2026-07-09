@@ -119,3 +119,18 @@ No contradictions or broken arguments found in any project. Structure and method
 | 52b | 2026-04-20 | fix-cog2-r2-resume | Resume fix-cog2: cog-sci/{fashionable-despair,science-of-humor} | done | 4 papers edited, 35 fixes applied, 13 skipped |
 | 53 | 2026-04-20 | fix-cog3-r2 | Apply priority fixes: cog-sci/{sleep-and-dreams,stoicism-in-practice,atrophy-decisions} | done | 6 papers edited, ~31 fixes applied |
 | 54 | 2026-04-20 | fix-craft-r2 | Apply priority fixes: craft/{art-of-typography,constructed-languages} | done | 2 papers edited, 27 fixes applied |
+
+---
+
+# Social Influence Bias — Study Page Build (read-aid, 3 formats)
+**Started**: 2026-07-09
+**Goal**: Turn verified deep-research on social influence bias / vote herding (Muchnik 2013, MusicLab) into three learning formats under `cog-sci/social-influence-bias/`. Spawned via Workflow (`sib-build`).
+
+## Agents
+| # | Date | Agent ID | Scope / Task | Status | Output |
+|---|------|----------|--------------|--------|--------|
+| 55 | 2026-07-09 | sib-deepdive | Build deep-dive (house dd-shared.css scaffold) | done | cog-sci/social-influence-bias/deep-dive.html (8 SVGs, 7+Sources; index.html→deep-dive.html after adding hub) |
+| 56 | 2026-07-09 | sib-slides | Build slide deck slides.html (Crimson Pro deck style) | done | cog-sci/social-influence-bias/slides.html (27 slides, 17 SVGs) |
+| 57 | 2026-07-09 | sib-guide | Build animated scrolling guide guide.html (cinematic dark, read-aid template) | done | cog-sci/social-influence-bias/guide.html (6 sections, 7 SVGs) |
+
+**Post-build (main agent):** verified all three in browser (both themes); fixed asymmetry SVG overlap in deep-dive; added `index.html` landing hub; registered project in site nav (`index.html`); changelog updated.
