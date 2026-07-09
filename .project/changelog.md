@@ -1,6 +1,30 @@
 # read-rd Changelog
 
+## 2026-07-02
+
+### Paper-blend treatment for nano-banana images (both themes)
+
+- **Images now dissolve into the page** instead of sitting in bordered boxes: the image moved to a `.nb-img-layer` child (so filters never touch the copy-prompt button) with 28px feathered edge masks on all four sides; border and placeholder background clear on load.
+- **Sketch art (default)** — light theme: `mix-blend-mode: multiply` sinks the artwork's cream paper into the page; dark theme: `invert(1) hue-rotate(180deg)` + `screen` turns ink light-on-dark while roughly preserving hues (violet accents survive).
+- **Photo art (`style: 'photo'` in NB_IMAGES)** — light: multiply + slight desaturation for a printed-plate look; dark: dimmed (`brightness(.88)`) with the same feathered vignette, no inversion. Tagged on flag-history (except sketch-style s6) and project-hail-mary (12 entries).
+- **Verified in browser, both themes**: typography overview (sketch hero + detail panels), flag-history s1 (photo hero + aquila detail image inside the right panel). No console errors.
+
+### Restored nano-banana hero/section images on 34 dd pages
+
+- **Root cause**: the `5a8ae9f` inline-HTML refactor stripped every `NB_IMAGES` block + `nano-banana.js` include, so generated images sat unused in `img/` folders (only april-fools-death kept its wiring). Blocks recovered verbatim from `5a8ae9f^` and re-appended to all 33 affected pages; `sci-fi-te/time-travel-fiction/overview.dd.html` (never wired) got a hero entry with its original prompt from `generate-images.mjs`.
+- **`nano-banana.js`**: `detail-hero` now injects directly into inline `#detail-{N}` panels (post-refactor structure) at load, falling back to the legacy `openDetail` hook for dynamic pages. Also fixes april-fools-death section images, which previously could only land in the first panel.
+- **Path fix**: `sci-fi-te/nonlinear-time.dd.html` hero now points at `../physics/img/nonlinear-time-hero.png` (page moved out of `physics/`, image didn't).
+- **13 entries reference not-yet-generated images** (typography s2–s6, cosmos s2–s7, flag s7) — these show the designed shimmer placeholder with copy-prompt button.
+- **Verified in browser** (typography overview 7/7 loaded incl. all detail panels, hail-mary `.section-block` targets, nonlinear-time cross-dir path, fermi placeholder, april-fools 4/4): no console errors.
+
 ## 2026-06-30
+
+### world-names — added a merged Codes column (ccTLD · ISO-3 · FIFA)
+
+- **One `Codes` column** at the far right: ccTLD, ISO 3166-1 alpha-3, and FIFA — with FIFA shown only where it differs from ISO-3 (Zimbabwe `.zw ZWE ZIM`, Germany `.de DEU GER`); where they match it's hidden (France `.fr FRA`). Native column narrowed (15.5% → 13%) to make room.
+- **Data sourced authoritatively, not from memory**: ISO alpha-2/alpha-3 and ccTLD via `pycountry`; FIFA from the RSSSF list (211 members, updated Sept 2025). Zero lookup errors. FIFA differs from ISO-3 for 69 of 206 entries; 5 are FIFA-only (home nations + Kosovo).
+- **Edge cases**: home nations show FIFA only (England → `ENG`); the UK shows `.uk GBR` (no FIFA); Kosovo → `KVX`; Ascension → `.ac`; Antarctica → `.aq ATA`; all-absent shows `—`.
+- **Draggable + searchable** like the other columns — KEYS now 10; jsdom suite updated (17 assertions) and passing.
 
 ### world-names — interactive table features
 
