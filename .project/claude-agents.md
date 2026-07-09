@@ -134,3 +134,12 @@ No contradictions or broken arguments found in any project. Structure and method
 | 57 | 2026-07-09 | sib-guide | Build animated scrolling guide guide.html (cinematic dark, read-aid template) | done | cog-sci/social-influence-bias/guide.html (6 sections, 7 SVGs) |
 
 **Post-build (main agent):** verified all three in browser (both themes); fixed asymmetry SVG overlap in deep-dive; added `index.html` landing hub; registered project in site nav (`index.html`); changelog updated.
+
+## Revision round (user feedback: slides too clinical, guide SVG bugs, writing quality)
+| # | Date | Agent ID | Scope / Task | Status | Output |
+|---|------|----------|--------------|--------|--------|
+| 58 | 2026-07-09 | sib-rw-slides | Rewrite slides.html prose — de-clinicalize, story-driven voice | running | cog-sci/social-influence-bias/slides.html |
+| 59 | 2026-07-09 | sib-rw-deepdive | Prose quality pass on deep-dive.html | running | cog-sci/social-influence-bias/deep-dive.html |
+| 60 | 2026-07-09 | sib-rw-guide | Prose pass on guide.html (no SVG edits) + hub index.html | running | cog-sci/social-influence-bias/{guide,index}.html |
+
+(Guide SVG bugs fixed directly by main agent before launching #58–60: marker sizing via userSpaceOnUse, label/path collisions in asymmetry, MusicLab, inversion, two-step diagrams.)
