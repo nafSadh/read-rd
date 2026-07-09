@@ -138,8 +138,8 @@ No contradictions or broken arguments found in any project. Structure and method
 ## Revision round (user feedback: slides too clinical, guide SVG bugs, writing quality)
 | # | Date | Agent ID | Scope / Task | Status | Output |
 |---|------|----------|--------------|--------|--------|
-| 58 | 2026-07-09 | sib-rw-slides | Rewrite slides.html prose — de-clinicalize, story-driven voice | running | cog-sci/social-influence-bias/slides.html |
-| 59 | 2026-07-09 | sib-rw-deepdive | Prose quality pass on deep-dive.html | running | cog-sci/social-influence-bias/deep-dive.html |
-| 60 | 2026-07-09 | sib-rw-guide | Prose pass on guide.html (no SVG edits) + hub index.html | running | cog-sci/social-influence-bias/{guide,index}.html |
+| 58 | 2026-07-09 | sib-rw-slides | Rewrite slides.html prose — de-clinicalize, story-driven voice | done | slides.html rewritten; verifier caught+fixed 5 factual drifts (e.g. invented "~1.7 points" → spec's 5.13%→6.8%) |
+| 59 | 2026-07-09 | sib-rw-deepdive | Prose quality pass on deep-dive.html | done | deep-dive.html rewritten; verifier: 0 errors; flagged van de Rijt title nit (fixed by main agent) |
+| 60 | 2026-07-09 | sib-rw-guide | Prose pass on guide.html (no SVG edits) + hub index.html | done | guide.html + index.html rewritten; verifier: numbers/hedges intact, 0 fixes |
 
 (Guide SVG bugs fixed directly by main agent before launching #58–60: marker sizing via userSpaceOnUse, label/path collisions in asymmetry, MusicLab, inversion, two-step diagrams.)

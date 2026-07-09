@@ -1,5 +1,16 @@
 # read-rd Changelog
 
+## 2026-07-09 (revision)
+
+### social-influence-bias — SVG bug fixes + full de-clinicalizing prose rewrite
+
+User feedback: slides too clinical, SVG bugs in guide.html, writing quality overall.
+
+- **Guide SVG bugs fixed** (root cause: `<marker>` arrowheads scale with stroke-width by default — thick strokes got giant heads, worst on the 16px SAMPLE arrow). All 10 markers converted to fixed `markerUnits="userSpaceOnUse"` sizing; label/path collisions fixed in the asymmetry (crowd-corrects box, no-counter-force), MusicLab (clipped "indep.", W1/W8 dot kisses), inversion (best-song label on bar, quality-climbs-back on curve), and two-step (P(download|listen) split to two lines, fat arrow got a proportionate dedicated head) diagrams. Verified via a temp one-SVG-per-screen viewer (window-scroll pages defeat below-fold screenshots) + programmatic getBBox audit: 0 out-of-bounds, 0 text overlaps across all 8 SVGs. Also nudged the deep-dive confound diagram's "quality path" label off its dashed arrow.
+- **Prose rewritten across all four pages** (3 writer + 3 adversarial-verifier agents, #58–60): scene-first openings, findings-as-headlines ("The Crowd Un-Downvotes You", "Tell a lie about popularity. Watch it come true."), staged numbers, aphorism key-ideas ("Praise compounds. Unfair criticism gets bodyguards."). Verifiers confirmed every spec figure verbatim and all four hedges intact; the slides verifier caught and fixed 5 factual drifts the rewrite introduced (invented "~1.7 points" → 5.13%→6.8%; "all seeded" → "a few thousand seeded"; scoped 308,515 ratings; restored the MusicLab verbatim quote; "permanently" → "measurably").
+- **Accuracy nit**: corrected van de Rijt et al. 2014 title in deep-dive Sources ("The Field of Success" → "Field experiments of success-breeds-success dynamics").
+- **Validated**: HTMLParser + node --check pass on all four files; no console errors; slides/deep-dive/guide spot-checked in browser. Removed the temp `.tmp-svg-viewer.html` that rode along in interim commit 7ee7d0b.
+
 ## 2026-07-09
 
 ### New study bundle — cog-sci/social-influence-bias ("Why Upvotes Beget Upvotes")
